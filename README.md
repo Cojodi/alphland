@@ -30,7 +30,7 @@ If you are building a dapp on Alephium and want to showcase it in Alphadapps, yo
 
 Steps:
 
-1. Create your images: 320x320 logo, 1920x400 banner and 700x400 preview. Use the <a href="https://www.figma.com/community/file/1163928128813560560">Dappland Figma template</a> to help you.
+1. Create your images: 320x320 logo, 1920x400 banner and 700x400 preview. Use the <a href="https://www.figma.com/file/6S69MxzfC99Sn6VxhqVuYL/Alphadapps-Figma-Template?type=design&mode=design&t=6fBBlhafVyg77AlZ-1">Alphadapps Figma template</a> to help you.
 2. Please optimise your images using tinypng.com – JPGs are best for photos and PNGs for graphics. Or you can convert to WebP.
 3. Fork this repo and create a new folder with your dapp name under `/public/dapps/`
 4. Add your optimised images to the folder

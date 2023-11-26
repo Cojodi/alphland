@@ -40,7 +40,7 @@ const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
             variant="primary"
             className="h-min"
             style={{ padding: "13px 24px", lineHeight: "normal" }}
-            href="https://github.com/argentlabs/dappland#-add-your-dapp-to-dappland"
+            href="https://github.com/fugashu/alphadapps#-add-your-dapp-to-alphadapps"
             target="_blank"
             rel="noopener noreferrer"
           >

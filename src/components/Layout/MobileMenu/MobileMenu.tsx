@@ -1,16 +1,16 @@
-import home from "../../../assets/icons/home.svg"
-import homeDark from "../../../assets/icons/home_dark.svg"
-import moon from "../../../assets/icons/moon.svg"
-import sun from "../../../assets/icons/sun.svg"
-import logoLight from "../../../assets/logo-dappland-mobile-light.svg"
-import logo from "../../../assets/logo-dappland-mobile.svg"
-import { useCategoryStore } from "../../../hooks/useCategoryStore"
-import Button from "../../Button/Button"
-import ConnectWallet from "../../Button/ConnectWallet"
-import Image from "next/image"
-import Link from "next/link"
-import React, { useEffect, useRef, useState } from "react"
-import styled from "styled-components"
+import home from "../../../assets/icons/home.svg";
+import homeDark from "../../../assets/icons/home_dark.svg";
+import moon from "../../../assets/icons/moon.svg";
+import sun from "../../../assets/icons/sun.svg";
+import logoLight from "../../../assets/logo-dappland-mobile-light.svg";
+import logo from "../../../assets/logo-dappland-mobile.svg";
+import { useCategoryStore } from "../../../hooks/useCategoryStore";
+import Button from "../../Button/Button";
+import ConnectWallet from "../../Button/ConnectWallet";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
 
 const MenuContainer = styled.div`
   box-shadow: none;
@@ -35,11 +35,11 @@ const MenuContainer = styled.div`
   .is-active-menu {
     display: block;
   }
-`
+`;
 
 interface MobileMenuProps {
-  currentTheme?: string
-  setTheme: (theme: string) => void
+  currentTheme?: string;
+  setTheme: (theme: string) => void;
 }
 
 const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
@@ -54,41 +54,41 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
       href: "/about/",
       icon: currentTheme === "dark" ? infoDark : info,
     },*/,
-  ]
+  ];
 
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isNavbarScrolled, setIsNavbarScrolled] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isNavbarScrolled, setIsNavbarScrolled] = useState(false);
 
-  const nav = useRef<HTMLDivElement>(null)
+  const nav = useRef<HTMLDivElement>(null);
 
-  const [mounted, setMounted] = useState(false)
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   const handleScroll = () => {
-    const position = window.pageYOffset
+    const position = window.pageYOffset;
     if (nav.current) {
       if (position > 15) {
-        setIsNavbarScrolled(true)
+        setIsNavbarScrolled(true);
       } else {
-        setIsNavbarScrolled(false)
+        setIsNavbarScrolled(false);
       }
     }
-  }
+  };
 
   useEffect(() => {
-    handleScroll()
-    window.addEventListener("scroll", handleScroll)
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll)
-    }
-  }, [])
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
-  const setFilters = useCategoryStore((state) => state.setFilters)
-  const changeCategory = useCategoryStore((state) => state.changeCategory)
-  const setSort = useCategoryStore((state) => state.setSelectedSort)
+  const setFilters = useCategoryStore((state) => state.setFilters);
+  const changeCategory = useCategoryStore((state) => state.changeCategory);
+  const setSort = useCategoryStore((state) => state.setSelectedSort);
 
   return (
     <MenuContainer
@@ -141,9 +141,9 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
                 <a
                   className="flex items-center py-3 px-6 bg-white dark:bg-light-black uppercase font-medium font-base"
                   onClick={() => {
-                    setFilters([])
-                    setSort(null)
-                    changeCategory("all")
+                    setFilters([]);
+                    setSort(null);
+                    changeCategory("all");
                   }}
                 >
                   <Image src={item.icon} alt={item.name} />
@@ -173,7 +173,7 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
             variant="primary"
             className="w-full"
             withoutMobile
-            href="https://github.com/argentlabs/dappland#-add-your-dapp-to-dappland"
+            href="https://github.com/fugashu/alphadapps#-add-your-dapp-to-alphadapps"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -185,7 +185,7 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
         </div>
       </div>
     </MenuContainer>
-  )
-}
+  );
+};
 
-export default MobileMenu
+export default MobileMenu;
