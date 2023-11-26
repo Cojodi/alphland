@@ -1,5 +1,5 @@
-import Layout from "../components/Layout"
-import styled from "styled-components"
+import Layout from "../components/Layout";
+import styled from "styled-components";
 
 const StyledSection = styled.section`
   grid-template-areas:
@@ -15,20 +15,21 @@ const StyledSection = styled.section`
   .categories {
     grid-area: list;
   }
-`
+`;
 
 const Home = () => {
+  // todo
   return (
     <Layout>
       <div className="container p-16 lg:py-48 mx-auto max-w-screen-md">
         <h1 className="bg-black dark:bg-white text-white dark:text-black pl-4 pr-4 pt-1 pb-2 text-center text-[32px] font-bold leading-[38px] rounded-md mb-6">
-          Dappland.com Terms of Use
+          Alphad.app Terms of Use
         </h1>
         <h3 className="text-[24px] font-bold mt-[24px]">Terms of Use</h3>
 
         <p>
           These Terms of Use define the rights and obligations of the parties in
-          connection with the use of the website accessible at www.dappland.com
+          connection with the use of the website accessible at www.alphad.app
           (hereinafter the &quot;Site&quot;). These terms of use may be amended
           at our discretion.
         </p>
@@ -61,7 +62,7 @@ const Home = () => {
 
         <h3 className="text-[24px] font-bold mt-[24px]">Disclaimer</h3>
         <p>
-          The dApps accessible via dappland.com are presented for informational
+          The dApps accessible via alphad.app are presented for informational
           purposes. The information included on the Site does not constitute
           legal, financial or investment advice and is not intended as a
           recommendation for buying, trading or selling crypto assets. It is
@@ -88,7 +89,7 @@ const Home = () => {
         </p>
       </div>
     </Layout>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

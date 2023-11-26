@@ -1,19 +1,4 @@
 {
-  "useTabs": false,
-  "trailingComma": "all",
-  "singleQuote": false,
-  "semi": false,
-  "pluginSearchDirs": ["."],
-  "overrides": [
-    {
-      "files": "*.md",
-      "options": {
-        "printWidth": 70,
-        "useTabs": false,
-        "trailingComma": "none",
-        "arrowParens": "avoid",
-        "proseWrap": "never"
-      }
-    }
-  ]
+  "tabWidth": 2,
+  "useTabs": false
 }

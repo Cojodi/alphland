@@ -1,32 +1,32 @@
-import FilterButton from "../../components/Button/FilterButton"
-import Card from "../../components/Card/Card"
-import Categories from "../../components/Categories/Categories"
-import FilterMenu from "../../components/FilterMenu/FilterMenu"
-import Layout from "../../components/Layout"
-import Select from "../../components/Select/Select"
+import FilterButton from "../../components/Button/FilterButton";
+import Card from "../../components/Card/Card";
+import Categories from "../../components/Categories/Categories";
+import FilterMenu from "../../components/FilterMenu/FilterMenu";
+import Layout from "../../components/Layout";
+import Select from "../../components/Select/Select";
 import {
   allCategories,
   categories,
   changeTagsToCategoriesSlug,
   reputation,
-} from "../../data/categories"
-import { getAllDapps } from "../../data/getAllDapps"
+} from "../../data/categories";
+import { getAllDapps } from "../../data/getAllDapps";
 import {
   filterCategoryDapps,
   filterDapps,
   generateUrl,
-} from "../../helpers/category"
+} from "../../helpers/category";
 import {
   filterDappcardsByRating,
   getRatings,
   getRatingsFromUser,
-} from "../../helpers/rating"
-import sortByAttribute from "../../helpers/sort"
-import { useCategoryStore } from "../../hooks/useCategoryStore"
-import { GetStaticPaths, GetStaticProps } from "next"
-import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
-import styled from "styled-components"
+} from "../../helpers/rating";
+import sortByAttribute from "../../helpers/sort";
+import { useCategoryStore } from "../../hooks/useCategoryStore";
+import { GetStaticPaths, GetStaticProps } from "next";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
 
 const StyledSection = styled.section`
   grid-template-areas:
@@ -42,82 +42,82 @@ const StyledSection = styled.section`
   .cards {
     grid-area: cards;
   }
-`
+`;
 
 const CategoryPage = ({
   dappCards,
   category,
 }: {
-  dappCards: Array<DappCard & { categories: string[] }>
-  category: string
+  dappCards: Array<DappCard & { categories: string[] }>;
+  category: string;
 }) => {
-  const router = useRouter()
-  const [showMobileFilters, setShowMobileFilters] = useState(false)
+  const router = useRouter();
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [dappRatings, setDappRatings] = useState<{ [key: string]: string[] }>(
     {},
-  )
-  const selectedCategory = useCategoryStore((state) => state.selectedCategory)
-  const changeCategory = useCategoryStore((state) => state.changeCategory)
-  const setFilters = useCategoryStore((state) => state.setFilters)
-  const setRatings = useCategoryStore((state) => state.setRatings)
-  const selectedFilters = useCategoryStore((state) => state.selectedFilters)
-  const selectedSort = useCategoryStore((state) => state.selectedSort)
-  const setSelectedSort = useCategoryStore((state) => state.setSelectedSort)
-  const selectedRatings = useCategoryStore((state) => state.selectedRatings)
+  );
+  const selectedCategory = useCategoryStore((state) => state.selectedCategory);
+  const changeCategory = useCategoryStore((state) => state.changeCategory);
+  const setFilters = useCategoryStore((state) => state.setFilters);
+  const setRatings = useCategoryStore((state) => state.setRatings);
+  const selectedFilters = useCategoryStore((state) => state.selectedFilters);
+  const selectedSort = useCategoryStore((state) => state.selectedSort);
+  const setSelectedSort = useCategoryStore((state) => state.setSelectedSort);
+  const selectedRatings = useCategoryStore((state) => state.selectedRatings);
   useEffect(() => {
     const getAllRatings = async () => {
-      const ratings = await getRatings()
-      setDappRatings(ratings)
-    }
-    getAllRatings()
-  }, [])
+      const ratings = await getRatings();
+      setDappRatings(ratings);
+    };
+    getAllRatings();
+  }, []);
   useEffect(() => {
     const url = generateUrl({
       selectedCategory,
       selectedSort,
       selectedFilters,
       selectedRatings,
-    })
+    });
     if (router.isReady && selectedCategory !== "all" && router.asPath !== url) {
-      router.push(url)
+      router.push(url);
     }
-  }, [selectedFilters, selectedSort, selectedRatings])
+  }, [selectedFilters, selectedSort, selectedRatings]);
 
   useEffect(() => {
-    changeCategory((router?.query?.category as string) || "all")
+    changeCategory((router?.query?.category as string) || "all");
     return () => {
-      setFilters([])
-      setSelectedSort(null)
-      setRatings([])
-      changeCategory("all")
-    }
-  }, [])
+      setFilters([]);
+      setSelectedSort(null);
+      setRatings([]);
+      changeCategory("all");
+    };
+  }, []);
 
-  const categoryDapps = filterCategoryDapps({ dappCards, category })
+  const categoryDapps = filterCategoryDapps({ dappCards, category });
 
   // Check if all filters apply to a category
   const filteredDapps = filterDapps({
     dappCards: categoryDapps,
     filters: selectedFilters,
-  })
+  });
 
   const getFilterCount = () => {
-    let count = 0
+    let count = 0;
     if (selectedCategory !== "all") {
-      count++
+      count++;
     }
-    count += selectedFilters.length + selectedRatings.length
-    return count
-  }
+    count += selectedFilters.length + selectedRatings.length;
+    return count;
+  };
 
-  const filterCount = getFilterCount()
+  const filterCount = getFilterCount();
   const dappCardsByRating = filterDappcardsByRating({
     dappRatings,
     dappCards: filteredDapps,
     selectedRatings,
     isMainCategory: false,
-  })
-  const sortedDapps = sortByAttribute(dappCardsByRating, selectedSort)
+  });
+  const sortedDapps = sortByAttribute(dappCardsByRating, selectedSort);
   return (
     <Layout>
       <div className="container px-4 mx-auto mb-16 lg:mb-32">
@@ -129,7 +129,7 @@ const CategoryPage = ({
           />
           <div className="cards">
             <h1 className="lg:hidden font-semibold text-xl leading-none mb-5 mt-8">
-              {"Starknet " +
+              {"Alephium " +
                 allCategories.find((item) => item.key === selectedCategory)
                   ?.name}
             </h1>
@@ -167,15 +167,15 @@ const CategoryPage = ({
         </StyledSection>
       </div>
     </Layout>
-  )
-}
+  );
+};
 
 export const getStaticProps: GetStaticProps<{ dappCards: DappCard[] }> = async (
   context,
 ) => {
-  const category = context?.params?.category as string
+  const category = context?.params?.category as string;
 
-  const dapps = await getAllDapps()
+  const dapps = await getAllDapps();
 
   const parsedDapps = dapps.map((dapp: DappInfo & { url: string }) => ({
     short_description: dapp.short_description,
@@ -189,18 +189,18 @@ export const getStaticProps: GetStaticProps<{ dappCards: DappCard[] }> = async (
     annonymous: dapp.teamInfo.anonymous,
     audits: dapp.audits,
     verified: dapp.verified,
-  }))
+  }));
 
   return {
     props: {
       dappCards: parsedDapps,
       category,
     },
-  }
-}
+  };
+};
 
 export const getStaticPaths: GetStaticPaths<{
-  category: string
+  category: string;
 }> = () => {
   return {
     paths: [...categories, ...reputation].map((item) => ({
@@ -209,7 +209,7 @@ export const getStaticPaths: GetStaticPaths<{
       },
     })),
     fallback: false,
-  }
-}
+  };
+};
 
-export default CategoryPage
+export default CategoryPage;

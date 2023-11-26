@@ -1,17 +1,17 @@
-import home from "../../../assets/icons/home.svg"
-import homeDark from "../../../assets/icons/home_dark.svg"
-import info from "../../../assets/icons/info-circle.svg"
-import infoDark from "../../../assets/icons/info-circle_dark.svg"
-import moon from "../../../assets/icons/moon.svg"
-import sun from "../../../assets/icons/sun.svg"
-import logoLight from "../../../assets/logo-dappland-mobile-light.svg"
-import logo from "../../../assets/logo-dappland-mobile.svg"
-import Button from "../../Button/Button"
-import ConnectWallet from "../../Button/ConnectWallet"
-import Image from "next/image"
-import Link from "next/link"
-import React, { useEffect, useRef, useState } from "react"
-import styled from "styled-components"
+import home from "../../../assets/icons/home.svg";
+import homeDark from "../../../assets/icons/home_dark.svg";
+import info from "../../../assets/icons/info-circle.svg";
+import infoDark from "../../../assets/icons/info-circle_dark.svg";
+import moon from "../../../assets/icons/moon.svg";
+import sun from "../../../assets/icons/sun.svg";
+import logoLight from "../../../assets/logo-dappland-mobile-light.svg";
+import logo from "../../../assets/logo-dappland-mobile.svg";
+import Button from "../../Button/Button";
+import ConnectWallet from "../../Button/ConnectWallet";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
 
 const MenuContainer = styled.div`
   box-shadow: none;
@@ -35,51 +35,51 @@ const MenuContainer = styled.div`
   .is-active-menu {
     display: block;
   }
-`
+`;
 
 interface MobileMenuProps {
-  currentTheme?: string
-  setTheme: (theme: string) => void
+  currentTheme?: string;
+  setTheme: (theme: string) => void;
 }
 
 type NavbarItem = {
-  name: string
-  href: string
-  icon: string
-}
+  name: string;
+  href: string;
+  icon: string;
+};
 
 const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
-  const navbarItems: NavbarItem[] = []
+  const navbarItems: NavbarItem[] = [];
 
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isNavbarScrolled, setIsNavbarScrolled] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isNavbarScrolled, setIsNavbarScrolled] = useState(false);
 
-  const nav = useRef<HTMLDivElement>(null)
+  const nav = useRef<HTMLDivElement>(null);
 
-  const [mounted, setMounted] = useState(false)
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   const handleScroll = () => {
-    const position = window.scrollY
+    const position = window.scrollY;
     if (nav.current) {
       if (position > 30) {
-        setIsNavbarScrolled(true)
+        setIsNavbarScrolled(true);
       } else {
-        setIsNavbarScrolled(false)
+        setIsNavbarScrolled(false);
       }
     }
-  }
+  };
 
   useEffect(() => {
-    handleScroll()
-    window.addEventListener("scroll", handleScroll)
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll)
-    }
-  }, [])
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <>
@@ -158,7 +158,7 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
               variant="primary"
               className="w-full"
               withoutMobile
-              href="https://github.com/argentlabs/dappland#-add-your-dapp-to-dappland"
+              href="https://github.com/fugashu/alphadapps#-add-your-dapp-to-alphadapps"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -174,14 +174,14 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
         className={`flex flex-col justify-center items-center pb-8 mt-3 pt-[56px] bg-white dark:bg-hero-dark lg:hidden`}
       >
         <h1 className="bg-black dark:bg-white text-white dark:text-black pl-4 pr-4 pt-1 pb-2 text-center text-[18px] font-semibold leading-[22px] rounded-md mb-2">
-          Discover the best dapps on Starknet
+          Discover the best dapps on Alephium
         </h1>
         <h2 className="text-black dark:text-white text-[16px] leading-[20px] font-lighter">
           Games, NFTs, DeFi, DAOs and more.
         </h2>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default MobileMenu
+export default MobileMenu;

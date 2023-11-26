@@ -1,23 +1,23 @@
-import { useCategoryStore } from "../../hooks/useCategoryStore"
-import Footer from "./Footer"
-import Header from "./Header"
-import HomeHeader from "./HomeHeader"
-import Head from "next/head"
-import styled from "styled-components"
+import { useCategoryStore } from "../../hooks/useCategoryStore";
+import Footer from "./Footer";
+import Header from "./Header";
+import HomeHeader from "./HomeHeader";
+import Head from "next/head";
+import styled from "styled-components";
 
 const MainContainer = styled.main`
   padding-top: 0;
   @media (min-width: 1024px) {
     padding-top: 0;
   }
-`
+`;
 
 interface LayoutProps {
-  children: React.ReactNode
-  title?: string
-  description?: string
-  image?: string
-  isHome?: boolean
+  children: React.ReactNode;
+  title?: string;
+  description?: string;
+  image?: string;
+  isHome?: boolean;
 }
 
 export const Layout = ({
@@ -27,38 +27,38 @@ export const Layout = ({
   image,
   isHome,
 }: LayoutProps) => {
-  const selectedFilters = useCategoryStore((state) => state.selectedFilters)
-  const selectedRatings = useCategoryStore((state) => state.selectedRatings)
+  const selectedFilters = useCategoryStore((state) => state.selectedFilters);
+  const selectedRatings = useCategoryStore((state) => state.selectedRatings);
   return (
     <>
       <Head>
         <title>
           {title
-            ? `${title} on Dappland – The best dapps on Starknet`
-            : `Dappland | The best dapps on Starknet`}
+            ? `${title} on Alphadapps – The best dapps on Alephium`
+            : `Alphadapps | The best dapps on Alephium`}
         </title>
         <meta
           name="description"
           content={
             description
               ? `${description}`
-              : `Dappland | The best dapps on Starknet`
+              : `Alphadapps | The best dapps on Alephium`
           }
         />
 
-        <meta property="og:site_name" content="dappland.com" />
+        <meta property="og:site_name" content="Alphadapps.com" />
         <meta
           property="og:title"
           content={
             title
-              ? `Discover ${title} on Dappland – The best dapps on Starknet`
-              : `Dappland | The best dapps on Starknet`
+              ? `Discover ${title} on Alphadapps – The best dapps on Alephium`
+              : `Alphadapps | The best dapps on Alephium`
           }
         />
         {description && <meta name="og:description" content={description} />}
         <meta
           name="og:image"
-          content={image ?? "https://www.dappland.com/share-preview.png"}
+          content={image ?? "https://www.Alphadapps.com/share-preview.png"}
         />
         <meta property="og:type" content="website" />
 
@@ -67,10 +67,11 @@ export const Layout = ({
           property="twitter:title"
           content={
             title
-              ? `Discover ${title} on Dappland – The best dapps on Starknet`
-              : `Dappland | The best dapps on Starknet`
+              ? `Discover ${title} on Alphadapps – The best dapps on Alephium`
+              : `Alphadapps | The best dapps on Alephium`
           }
         />
+
         {description && (
           <meta name="twitter:description" content={description} />
         )}
@@ -105,5 +106,5 @@ export const Layout = ({
       <MainContainer>{children}</MainContainer>
       <Footer />
     </>
-  )
-}
+  );
+};

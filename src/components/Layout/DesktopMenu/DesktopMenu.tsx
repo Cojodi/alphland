@@ -1,41 +1,40 @@
-import moon from "../../../assets/icons/moon.svg"
-import sun from "../../../assets/icons/sun.svg"
-import logoDarkLottie from "../../../assets/logo-dark-lottie.json"
-import logoLightLottie from "../../../assets/logo-light-lottie.json"
-import { useCategoryStore } from "../../../hooks/useCategoryStore"
-import { useWalletStore } from "../../../hooks/useWalletStore"
-import { AnnouncementBar } from "../../AnnouncementBar"
-import Button from "../../Button/Button"
-import ConnectWallet from "../../Button/ConnectWallet"
-import Lottie from "lottie-react"
-import Image from "next/image"
-import Link from "next/link"
+import moon from "../../../assets/icons/moon.svg";
+import sun from "../../../assets/icons/sun.svg";
+import logoDarkLottie from "../../../assets/logo-dark-lottie.json";
+import logoLightLottie from "../../../assets/logo-light-lottie.json";
+import { useCategoryStore } from "../../../hooks/useCategoryStore";
+import { useWalletStore } from "../../../hooks/useWalletStore";
+import { AnnouncementBar } from "../../AnnouncementBar";
+import Button from "../../Button/Button";
+import ConnectWallet from "../../Button/ConnectWallet";
+import Lottie from "lottie-react";
+import Image from "next/image";
+import Link from "next/link";
 
 interface DesktopMenuProps {
-  currentTheme?: string
-  setTheme: (theme: string) => void
+  currentTheme?: string;
+  setTheme: (theme: string) => void;
 }
 
 const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
-  const setFilters = useCategoryStore((state) => state.setFilters)
-  const changeCategory = useCategoryStore((state) => state.changeCategory)
-  const setSort = useCategoryStore((state) => state.setSelectedSort)
-  const setRatings = useCategoryStore((state) => state.setRatings)
+  const setFilters = useCategoryStore((state) => state.setFilters);
+  const changeCategory = useCategoryStore((state) => state.changeCategory);
+  const setSort = useCategoryStore((state) => state.setSelectedSort);
+  const setRatings = useCategoryStore((state) => state.setRatings);
   return (
     <div className="hidden lg:block bg-white dark:bg-light-black">
       <AnnouncementBar>
-        The best Starknet Dapps. Built by{" "}
-        <a href="https://www.argent.xyz/?utm_source=dappland">Argent</a>
+        The best {process.env.CHAIN_NAME} Dapps.
       </AnnouncementBar>
       <div className="relative w-full flex justify-between items-center pr-6 border-t border-b border-border-grey dark:border-white/10">
         <div className="absolute w-full h-full flex justify-center items-center">
           <Link href="/">
             <div
               onClick={() => {
-                setFilters([])
-                setSort(null)
-                setRatings([])
-                changeCategory("all")
+                setFilters([]);
+                setSort(null);
+                setRatings([]);
+                changeCategory("all");
               }}
             >
               <Lottie
@@ -69,10 +68,10 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
             <a
               className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10"
               onClick={() => {
-                setFilters([])
-                setSort(null)
-                setRatings([])
-                changeCategory("all")
+                setFilters([]);
+                setSort(null);
+                setRatings([]);
+                changeCategory("all");
               }}
             >
               HOME
@@ -85,7 +84,7 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
             variant="primary"
             className="h-min"
             style={{ padding: "13px 24px", lineHeight: "normal" }}
-            href="https://github.com/argentlabs/dappland#-add-your-dapp-to-dappland"
+            href="https://github.com/fugashu/alphadapps#-add-your-dapp-to-alphadapps"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -94,7 +93,7 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DesktopMenu
+export default DesktopMenu;

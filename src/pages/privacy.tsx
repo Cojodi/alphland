@@ -1,5 +1,5 @@
-import Layout from "../components/Layout"
-import styled from "styled-components"
+import Layout from "../components/Layout";
+import styled from "styled-components";
 
 const StyledSection = styled.section`
   grid-template-areas:
@@ -15,22 +15,23 @@ const StyledSection = styled.section`
   .categories {
     grid-area: list;
   }
-`
+`;
 
 const Home = () => {
+  // todo
   return (
     <Layout>
       <div className="container p-16 lg:py-48 mx-auto max-w-screen-md">
         <h1 className="bg-black dark:bg-white text-white dark:text-black pl-4 pr-4 pt-1 pb-2 text-center text-[32px] font-bold leading-[38px] rounded-md mb-6">
-          Dappland.com Privacy Policy
+          Alphad.app Privacy Policy
         </h1>
 
         <p className="my-4">
-          This is the privacy policy (&quot;Privacy Policy”) for dappland.com
-          (&quot;Dappland”) operated by ARGENT LABS LIMITED, company
-          registration number 11093638, with its registered office address at 5
-          New Street Square, London, England, EC4A 3TW (&quot;our”, &quot;we”,
-          or &quot;Argent”). Argent is the controller of your personal data
+          This is the privacy policy (&quot;Privacy Policy”) for alphad.app
+          (&quot;Dappland”) operated by Cojodi UG Limited, company registration
+          number 11093638, with its registered office address at 5 New Street
+          Square, London, England, EC4A 3TW (&quot;our”, &quot;we”, or
+          &quot;Argent”). Argent is the controller of your personal data
           collected through Dappland and we are committed to protecting and
           respecting your privacy.
         </p>
@@ -615,7 +616,7 @@ const Home = () => {
         </p>
       </div>
     </Layout>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

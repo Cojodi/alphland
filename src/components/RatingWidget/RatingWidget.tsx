@@ -1,39 +1,39 @@
-import starEmpty from "../../assets/icons/starEmpty.svg"
-import starFilled from "../../assets/icons/starFilled.svg"
-import logoLight from "../../assets/logo-dappland-light.svg"
-import logo from "../../assets/logo-dappland.svg"
-import { useDarkMode } from "../../hooks/useDarkMode"
-import useRatingData from "../../hooks/useRatingData"
-import Loading from "./Loading/Loading"
-import Image from "next/image"
-import React from "react"
-import { ReactElement, useEffect, useState } from "react"
+import starEmpty from "../../assets/icons/starEmpty.svg";
+import starFilled from "../../assets/icons/starFilled.svg";
+import logoLight from "../../assets/logo-dappland-light.svg";
+import logo from "../../assets/logo-alephium-dark.png";
+import { useDarkMode } from "../../hooks/useDarkMode";
+import useRatingData from "../../hooks/useRatingData";
+import Loading from "./Loading/Loading";
+import Image from "next/image";
+import React from "react";
+import { ReactElement, useEffect, useState } from "react";
 
 const RatingWidget = (): ReactElement => {
-  const [dappName, setDappName] = useState("")
-  const { ratingData, isLoading } = useRatingData(dappName)
-  const { currentTheme, setTheme } = useDarkMode()
-  const totalStars = 5
-  const activeStars = ratingData ? ratingData.averageRating : 0
-  const url = `https://www.dappland.com/${dappName}`
+  const [dappName, setDappName] = useState("");
+  const { ratingData, isLoading } = useRatingData(dappName);
+  const { currentTheme, setTheme } = useDarkMode();
+  const totalStars = 5;
+  const activeStars = ratingData ? ratingData.averageRating : 0;
+  const url = `https://www.alphad.app/${dappName}`;
 
   function handleClick() {
     if (window.top) {
-      window.top.location.href = url
+      window.top.location.href = url;
     }
   }
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const name = params.get("dappname")
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get("dappname");
     if (name) {
-      setDappName(name.toLowerCase())
+      setDappName(name.toLowerCase());
     }
-    const userTheme = params.get("theme")
+    const userTheme = params.get("theme");
     if (userTheme) {
-      setTheme(userTheme)
+      setTheme(userTheme);
     }
-  }, [])
+  }, []);
 
   return (
     <div
@@ -88,7 +88,7 @@ const RatingWidget = (): ReactElement => {
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default RatingWidget
+export default RatingWidget;

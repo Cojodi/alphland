@@ -1,15 +1,15 @@
-import Bowser from "bowser"
-import { FC, useEffect, useState } from "react"
+import Bowser from "bowser";
+import { FC, useEffect, useState } from "react";
 
-type StoreVersions = "chrome" | "firefox" | null
+type StoreVersions = "chrome" | "firefox" | null;
 
 export function getStoreVersionFromBrowser(): StoreVersions {
   const browserName = Bowser.getParser(window.navigator.userAgent)
     .getBrowserName()
-    ?.toLowerCase()
+    ?.toLowerCase();
   switch (browserName) {
     case "firefox":
-      return "firefox"
+      return "firefox";
     case "microsoft edge": // Edge is based on Chrome
     case "android browser":
     case "chrome":
@@ -17,36 +17,37 @@ export function getStoreVersionFromBrowser(): StoreVersions {
     case "electron":
     case "opera": // opera is chromium based
     case "vivaldi": // vivaldi is chromium based
-      return "chrome"
+      return "chrome";
     default:
-      return null
+      return null;
   }
 }
 
 export const DownloadButton: FC<{
-  name: string
+  name: string;
 }> = ({ name }) => {
-  const [storeVersion, setStoreVersion] = useState<StoreVersions>(null)
+  const [storeVersion, setStoreVersion] = useState<StoreVersions>(null);
   useEffect(() => {
-    setStoreVersion(getStoreVersionFromBrowser())
-  }, [])
+    setStoreVersion(getStoreVersionFromBrowser());
+  }, []);
   return storeVersion === "chrome" ? (
     <DownloadChrome name={name} />
   ) : storeVersion === "firefox" ? (
     <DownloadFirefox name={name} />
-  ) : null
-}
+  ) : null;
+};
 
 export const DownloadFirefox: FC<{
-  name: string
+  name: string;
 }> = ({ name }) => {
   return (
     <a
       href={
-        "https://addons.mozilla.org/en-US/firefox/addon/argent-x?utm_source=dappland&utm_medium=referral&utm_campaign=" +
+        "https://addons.mozilla.org/de/firefox/addon/alephiumextensionwallet/" +
         name
       }
-      target="_blank" rel="noreferrer"
+      target="_blank"
+      rel="noreferrer"
     >
       <svg
         width="215"
@@ -316,19 +317,20 @@ export const DownloadFirefox: FC<{
         </defs>
       </svg>
     </a>
-  )
-}
+  );
+};
 
 export const DownloadChrome: FC<{
-  name: string
+  name: string;
 }> = ({ name }) => {
   return (
     <a
       href={
-        "https://chrome.google.com/webstore/detail/argent-x/dlcobpjiigpikoobohmabehhmhfoodbb?utm_source=dappland&utm_medium=referral&utm_campaign=" +
+        "https://chromewebstore.google.com/detail/alephium-extension-wallet/gdokollfhmnbfckbobkdbakhilldkhcj" +
         name
       }
-      target="_blank" rel="noreferrer"
+      target="_blank"
+      rel="noreferrer"
     >
       <svg
         width="219"
@@ -429,5 +431,5 @@ export const DownloadChrome: FC<{
         </defs>
       </svg>
     </a>
-  )
-}
+  );
+};

@@ -1,18 +1,20 @@
-import moon from "../../../assets/icons/moon.svg"
-import sun from "../../../assets/icons/sun.svg"
-import logoDarkLottie from "../../../assets/logo-dark-lottie.json"
-import logoLightLottie from "../../../assets/logo-light-lottie.json"
-import { AnnouncementBar } from "../../AnnouncementBar"
-import Button from "../../Button/Button"
-import ConnectWallet from "../../Button/ConnectWallet"
-import Lottie from "lottie-react"
-import Image from "next/image"
-import Link from "next/link"
-import React from "react"
+import moon from "../../../assets/icons/moon.svg";
+import sun from "../../../assets/icons/sun.svg";
+// import logoDarkLottie from "../../../assets/logo-dark-lottie.json"
+// import logoLightLottie from "../../../assets/logo-light-lottie.json"
+import logoDarkLottie from "../../../assets/logo-alephium-dark.png";
+import logoLightLottie from "../../../assets/logo-alephium-dark.png";
+import { AnnouncementBar } from "../../AnnouncementBar";
+import Button from "../../Button/Button";
+import ConnectWallet from "../../Button/ConnectWallet";
+import Lottie from "lottie-react";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
 
 interface DesktopMenuProps {
-  currentTheme?: string
-  setTheme: (theme: string) => void
+  currentTheme?: string;
+  setTheme: (theme: string) => void;
 }
 
 const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
@@ -48,7 +50,7 @@ const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
       </div>
       <div className="relative flex flex-col justify-center items-center pb-[86px]">
         <Link href="/">
-          <Lottie
+          {/*todo <Lottie
             style={{
               transform: "scale(0.75)",
               maxHeight: "200px",
@@ -59,21 +61,26 @@ const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
             animationData={
               currentTheme === "dark" ? logoDarkLottie : logoLightLottie
             }
-          />
+          /> */}
+          <Image
+            src={currentTheme === "dark" ? logoDarkLottie : logoLightLottie}
+            width={525}
+            height={150}
+          ></Image>
         </Link>
         <h1 className="bg-black dark:bg-white text-white dark:text-black pl-4 pr-4 pt-1 pb-2 text-center text-[32px] font-bold leading-[38px] rounded-md mb-6">
-          Discover the best dapps on Starknet
+          Discover the best dapps on Alephium
         </h1>
         <h2 className="text-black dark:text-white text-[28px] leading-[34px] font-lighter">
           Games, NFTs, DeFi, DAOs and more.
         </h2>
-        <p className="text-center font-normal text-base leading-[16px] mt-16">
+        {/* <p className="text-center font-normal text-base leading-[16px] mt-16">
           Built with ❤️ by{" "}
           <a href="https://www.argent.xyz/?utm_source=dappland">Argent</a>
-        </p>
+        </p> */}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomeDesktopMenu
+export default HomeDesktopMenu;

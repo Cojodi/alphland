@@ -1,24 +1,25 @@
-import React from "react"
+import React from "react";
 
 export const getRatingForDapp = async (name: string) => {
+  // alphad.app/tokens/dapps/ratings/ayin
   // return await fetch(`${process.env.API_URL}tokens/dapps/ratings/${name}`).then(
   //   (res) => res.json(),
   // )
-}
+};
 
 export const getRatingsFromUser = async ({
   account,
   dappKey,
 }: {
-  account: string
-  dappKey: string
+  account: string;
+  dappKey: string;
 }) => {
   // const data = await fetch(
   //   `${process.env.API_URL}tokens/dapps/ratings/${dappKey}?account=${account}`,
   // ).then((res) => res.json())
   // return data?.userRating || null
-  return null
-}
+  return null;
+};
 
 export const getRatings = async () => {
   // const data = await fetch(`${process.env.API_URL}tokens/dapps/ratings`).then(
@@ -26,30 +27,30 @@ export const getRatings = async () => {
   // )
 
   // const ratings: Rating[] = data?.ratings || []
-  let ratings: Rating[] = []
+  let ratings: Rating[] = [];
 
-  const ratingsMap = new Map()
+  const ratingsMap = new Map();
 
   ratings.forEach((rating) => {
-    const key = Math.round(rating.averageRating)
+    const key = Math.round(rating.averageRating);
     if (!ratingsMap.get(key)) {
-      ratingsMap.set(key, [])
+      ratingsMap.set(key, []);
     }
-    ratingsMap.set(key, [...ratingsMap.get(key), rating])
-  })
+    ratingsMap.set(key, [...ratingsMap.get(key), rating]);
+  });
   const ratingEntries: {
-    [key: string]: Rating[]
-  } = Object.fromEntries(ratingsMap)
+    [key: string]: Rating[];
+  } = Object.fromEntries(ratingsMap);
   const dappsByRating: {
-    [key: string]: string[]
-  } = {}
+    [key: string]: string[];
+  } = {};
 
   Object.keys(ratingEntries).forEach((key) => {
-    const dappKeys = ratingEntries[key].map((obj) => obj.dappKey)
-    dappsByRating[key] = dappKeys
-  })
-  return dappsByRating
-}
+    const dappKeys = ratingEntries[key].map((obj) => obj.dappKey);
+    dappsByRating[key] = dappKeys;
+  });
+  return dappsByRating;
+};
 
 export const filterDappcardsByRating = ({
   dappRatings,
@@ -57,23 +58,23 @@ export const filterDappcardsByRating = ({
   selectedRatings,
   isMainCategory,
 }: {
-  dappCards: DappCard[]
-  dappRatings: { [key: string]: string[] }
-  selectedRatings: string[]
-  isMainCategory?: boolean
+  dappCards: DappCard[];
+  dappRatings: { [key: string]: string[] };
+  selectedRatings: string[];
+  isMainCategory?: boolean;
 }) => {
   if (!selectedRatings.length) {
-    return dappCards
+    return dappCards;
   }
   const availableRatings = Object.fromEntries(
     Object.entries(dappRatings).filter(([key]) =>
       selectedRatings.includes(key),
     ),
-  )
+  );
   return dappCards.filter((dappCard) =>
     Object.values(availableRatings).some(
       (array) =>
         array.includes(dappCard.url.replace("/", "")) || isMainCategory,
     ),
-  )
-}
+  );
+};
