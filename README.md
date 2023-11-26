@@ -5,6 +5,8 @@ TODO logo
 
 </div>
 
+![Vercel](https://vercelbadge.vercel.app/api/fugashu/alphadapps)
+
 [![Node.js CI](https://github.com/fugashu/alphadapps/actions/workflows/deploy.yml/badge.svg)](https://github.com/fugashu/alphadapps/actions/workflows/deploy.yml)
 
 ## 🧭 Explore the Alephium ecosystem
