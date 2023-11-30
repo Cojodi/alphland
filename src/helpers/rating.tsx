@@ -1,5 +1,3 @@
-import React from "react";
-
 export const getRatingForDapp = async (name: string) => {
   // alphad.app/tokens/dapps/ratings/ayin
   // return await fetch(`${process.env.API_URL}tokens/dapps/ratings/${name}`).then(
@@ -67,14 +65,11 @@ export const filterDappcardsByRating = ({
     return dappCards;
   }
   const availableRatings = Object.fromEntries(
-    Object.entries(dappRatings).filter(([key]) =>
-      selectedRatings.includes(key),
-    ),
+    Object.entries(dappRatings).filter(([key]) => selectedRatings.includes(key))
   );
   return dappCards.filter((dappCard) =>
     Object.values(availableRatings).some(
-      (array) =>
-        array.includes(dappCard.url.replace("/", "")) || isMainCategory,
-    ),
+      (array) => array.includes(dappCard.url.replace("/", "")) || isMainCategory
+    )
   );
 };

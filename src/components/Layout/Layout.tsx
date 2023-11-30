@@ -49,7 +49,7 @@ export const Layout = ({
           }
         />
 
-        <meta property="og:site_name" content="Alphadapps.com" />
+        <meta property="og:site_name" content="Alphad.app" />
         <meta
           property="og:title"
           content={
