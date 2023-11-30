@@ -6,7 +6,6 @@ import { useCategoryStore } from "../../../hooks/useCategoryStore";
 import { AnnouncementBar } from "../../AnnouncementBar";
 import Button from "../../Button/Button";
 import ConnectWallet from "../../Button/ConnectWallet";
-import Lottie from "lottie-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -22,9 +21,7 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
   const setRatings = useCategoryStore((state) => state.setRatings);
   return (
     <div className="hidden lg:block bg-white dark:bg-light-black">
-      <AnnouncementBar>
-        The best {process.env.CHAIN_NAME} Dapps.
-      </AnnouncementBar>
+      <AnnouncementBar>The best Alephium Dapps.</AnnouncementBar>
       <div className="relative w-full flex justify-between items-center pr-6 border-t border-b border-border-grey dark:border-white/10">
         <div className="absolute w-full h-full flex justify-center items-center">
           <Link href="/">
@@ -36,17 +33,10 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
                 changeCategory("all");
               }}
             >
-              <Lottie
-                style={{
-                  transform: "scale(0.5) translateY(-50%)",
-                  maxHeight: "56px",
-                  cursor: "pointer",
-                }}
-                loop={false}
-                initialSegment={[0, 150]}
-                animationData={
-                  currentTheme === "dark" ? logoDarkLottie : logoLightLottie
-                }
+              <Image
+                src={currentTheme === "dark" ? logoLightLottie : logoDarkLottie}
+                width={200}
+                alt={"alphadapps logo"}
               />
             </div>
           </Link>
