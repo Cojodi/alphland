@@ -88,7 +88,7 @@ const Home = () => {
           anyone under the age of 18 and we do not knowingly collect data
           relating to children. If you believe we have collected personal
           information about your child, you may contact us at{" "}
-          <a href="mailto:legal@argent.xyz" className="text-pink">
+          <a href="mailto:legal@argent.xyz" className="text-orange">
             legal@argent.xyz
           </a>{" "}
           and request that we remove information about them.
@@ -175,7 +175,7 @@ const Home = () => {
         <p className="my-4">
           If you want to update the information you have previously given to us,
           you can contact us at{" "}
-          <a href="mailto:legal@argent.xyz" className="text-pink">
+          <a href="mailto:legal@argent.xyz" className="text-orange">
             legal@argent.xyz
           </a>
           .
@@ -404,7 +404,7 @@ const Home = () => {
           By submitting your personal information, you agree to this transfer,
           storing or processing. If you would like more information about the
           mechanism via which your personal data is transferred please contact{" "}
-          <a href="mailto:legal@argent.xyz" className="text-pink">
+          <a href="mailto:legal@argent.xyz" className="text-orange">
             legal@argent.xyz
           </a>
           .
@@ -598,7 +598,7 @@ const Home = () => {
           If you have any queries regarding this Privacy Policy, if you wish to
           exercise any of your rights set out above or if you think that the
           Privacy Policy has not been followed, please contact us by emailing at{" "}
-          <a href="mailto:legal@argent.xyz" className="text-pink">
+          <a href="mailto:legal@argent.xyz" className="text-orange">
             legal@argent.xyz
           </a>
           .
@@ -607,7 +607,7 @@ const Home = () => {
           You also have the right to lodge a complaint to the Information
           Commissioner’s Office (ICO), the UK supervisory authority for data
           protection issues (
-          <a href="https://www.ico.org.uk" className="text-pink">
+          <a href="https://www.ico.org.uk" className="text-orange">
             www.ico.org.uk
           </a>
           ). We would, however, appreciate the chance to deal with your concerns

@@ -1,13 +1,9 @@
 import moon from "../../../assets/icons/moon.svg";
 import sun from "../../../assets/icons/sun.svg";
-// import logoDarkLottie from "../../../assets/logo-dark-lottie.json"
-// import logoLightLottie from "../../../assets/logo-light-lottie.json"
-import logoDarkLottie from "../../../assets/logo-alephium-dark.png";
-import logoLightLottie from "../../../assets/logo-alephium-dark.png";
-import { AnnouncementBar } from "../../AnnouncementBar";
+import logoLight from "../../../assets/logo-alphadapps-light.svg";
+import logoDark from "../../../assets/logo-alphadapps.svg";
 import Button from "../../Button/Button";
 import ConnectWallet from "../../Button/ConnectWallet";
-import Lottie from "lottie-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -50,20 +46,8 @@ const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
       </div>
       <div className="relative flex flex-col justify-center items-center pb-[86px]">
         <Link href="/">
-          {/*todo <Lottie
-            style={{
-              transform: "scale(0.75)",
-              maxHeight: "200px",
-              cursor: "pointer",
-            }}
-            loop={false}
-            initialSegment={[0, 150]}
-            animationData={
-              currentTheme === "dark" ? logoDarkLottie : logoLightLottie
-            }
-          /> */}
           <Image
-            src={currentTheme === "dark" ? logoDarkLottie : logoLightLottie}
+            src={currentTheme === "dark" ? logoLight : logoDark}
             width={525}
             height={150}
           ></Image>

@@ -1,17 +1,17 @@
-import React, { ForwardedRef } from "react"
+import React, { ForwardedRef } from "react";
 
 interface ButtonProps {
-  variant: "primary" | "secondary" | "white"
-  disabled?: boolean
-  withoutMobile?: boolean
-  children: React.ReactNode
-  type?: "button" | "submit" | "reset"
-  className?: string
-  style?: React.CSSProperties
-  href?: string
-  target?: string
-  rel?: string
-  onClick?: () => void
+  variant: "primary" | "secondary" | "white";
+  disabled?: boolean;
+  withoutMobile?: boolean;
+  children: React.ReactNode;
+  type?: "button" | "submit" | "reset";
+  className?: string;
+  style?: React.CSSProperties;
+  href?: string;
+  target?: string;
+  rel?: string;
+  onClick?: () => void;
 }
 
 const Button = React.forwardRef(
@@ -29,32 +29,32 @@ const Button = React.forwardRef(
       target,
       rel,
     }: ButtonProps,
-    ref,
+    ref
   ) => {
     const handleClassName = () => {
       switch (variant) {
         case "primary":
-          return `flex items-center justify-center bg-pink hover:bg-primary-dark text-button text-white font-semibold rounded-full ${
+          return `flex items-center justify-center bg-orange hover:bg-primary-dark text-button text-white font-semibold rounded-full ${
             withoutMobile
               ? "px-6 py-[14.5px]"
               : "px-8 py-[7.25px] lg:px-6 lg:py-[14.5px]"
-          }`
+          }`;
         case "secondary":
           return `flex items-center justify-center bg-black hover:bg-primary-dark text-button text-white font-semibold rounded-full ${
             withoutMobile
               ? "px-6 py-[14.5px]"
               : "px-8 py-[7.25px] lg:px-6 lg:py-[14.5px]"
-          }`
+          }`;
         case "white":
           return `flex items-center justify-center bg-white text-button text-black font-semibold rounded-full ${
             withoutMobile
               ? "px-6 py-[14.5px]"
               : "px-8 py-[7.25px] lg:px-6 lg:py-[14.5px]"
-          }`
+          }`;
         default:
-          return ""
+          return "";
       }
-    }
+    };
 
     if (href) {
       return (
@@ -69,7 +69,7 @@ const Button = React.forwardRef(
         >
           {children}
         </a>
-      )
+      );
     }
 
     return (
@@ -82,10 +82,10 @@ const Button = React.forwardRef(
       >
         {children}
       </button>
-    )
-  },
-)
+    );
+  }
+);
 
-Button.displayName = "Button"
+Button.displayName = "Button";
 
-export default Button
+export default Button;

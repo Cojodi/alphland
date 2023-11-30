@@ -1,10 +1,10 @@
-import alephiumLogo from "../../assets/logo-alephium-dark.png";
+import alephiumLogo from "../../assets/alephium-logos/dark/Logo-Horizontal-Dark.svg";
 import alert from "../../assets/icons/alert.svg";
 import Button from "../Button/Button";
 import Modal from "./Modal";
+import { AlephiumConnectButton } from "@alephium/web3-react";
 import Image from "next/image";
 import React from "react";
-import { AlephiumConnectButton } from "@alephium/web3-react";
 
 type Props = {
   isOpen: boolean;

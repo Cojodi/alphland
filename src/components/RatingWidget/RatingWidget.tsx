@@ -1,13 +1,12 @@
+import logo from "../../assets/alephium-logos/dark/Logo-Horizontal-Dark.svg";
 import starEmpty from "../../assets/icons/starEmpty.svg";
 import starFilled from "../../assets/icons/starFilled.svg";
-import logoLight from "../../assets/logo-dappland-light.svg";
-import logo from "../../assets/logo-alephium-dark.png";
+import logoLight from "../../assets/logo-alphadapps-light.svg";
 import { useDarkMode } from "../../hooks/useDarkMode";
 import useRatingData from "../../hooks/useRatingData";
 import Loading from "./Loading/Loading";
 import Image from "next/image";
-import React from "react";
-import { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 
 const RatingWidget = (): ReactElement => {
   const [dappName, setDappName] = useState("");
@@ -71,7 +70,7 @@ const RatingWidget = (): ReactElement => {
                     height={20}
                   />
                 </span>
-              ),
+              )
             )}
           </div>
           <div className="mt-1 font-bold">

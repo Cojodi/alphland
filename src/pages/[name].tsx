@@ -1,20 +1,18 @@
 // next page with ssg for every file in `data` folder
-import arrow from "../assets/icons/arrowLeft.svg"
-import Layout from "../components/Layout"
-import { getRatingForDapp } from "../helpers/rating"
-import DappPageDetails from "../sections/DappPage/DappPageDetails"
-import DappPageHeader from "../sections/DappPage/DappPageHeader"
-import DappPageTwitter from "../sections/DappPage/DappPageTwitter"
-import NFTPageStats from "../sections/NFTPage/NFTPageStats"
-import { readdir, readFile } from "fs/promises"
-import { GetStaticPaths, GetStaticProps, NextPage } from "next"
-import Image from "next/image"
-import Router from "next/router"
-import { useRouter } from "next/router"
-import path from "path"
-import { useEffect, useState } from "react"
-import styled from "styled-components"
-import { Swiper, SwiperSlide } from "swiper/react"
+import arrow from "../assets/icons/arrowLeft.svg";
+import Layout from "../components/Layout";
+import DappPageDetails from "../sections/DappPage/DappPageDetails";
+import DappPageHeader from "../sections/DappPage/DappPageHeader";
+import DappPageTwitter from "../sections/DappPage/DappPageTwitter";
+import NFTPageStats from "../sections/NFTPage/NFTPageStats";
+import { readdir, readFile } from "fs/promises";
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import Image from "next/image";
+import Router, { useRouter } from "next/router";
+import path from "path";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const SwiperContainer = styled.div`
   .swiper-slide {
@@ -42,12 +40,12 @@ const SwiperContainer = styled.div`
       }
     }
   }
-`
+`;
 
 interface DappPageProps {
-  dappInfo: DappInfo
-  twitterPosts: TwitterData
-  nftData: NFTData | null
+  dappInfo: DappInfo;
+  twitterPosts: TwitterData;
+  nftData: NFTData | null;
 }
 
 const DappPage: NextPage<DappPageProps> = ({
@@ -55,17 +53,17 @@ const DappPage: NextPage<DappPageProps> = ({
   twitterPosts,
   nftData,
 }) => {
-  const [showPrev, setShowPrev] = useState(false)
-  const router = useRouter()
-  const name = (router?.query?.name as string) || ""
+  const [showPrev, setShowPrev] = useState(false);
+  const router = useRouter();
+  const name = (router?.query?.name as string) || "";
   useEffect(() => {
     // @ts-ignore
-    import("swiper/css")
+    import("swiper/css");
     const pid = setTimeout(() => {
-      setShowPrev(!history.state?.options?.shallow)
-    }, 40) // need to wait for next router to update
-    return () => clearTimeout(pid)
-  }, [])
+      setShowPrev(!history.state?.options?.shallow);
+    }, 40); // need to wait for next router to update
+    return () => clearTimeout(pid);
+  }, []);
 
   return (
     <Layout
@@ -93,7 +91,7 @@ const DappPage: NextPage<DappPageProps> = ({
         <div className="px-4 md:mx-[10vw] xl:mx-[15vw] 2xl:mx-[20vw] hidden lg:block max-w-[1200px]">
           <button
             onClick={() => Router.back()}
-            className="text-pink text-xl leading-[26px] font-semibold mb-16 mt-2"
+            className="text-orange text-xl leading-[26px] font-semibold mb-16 mt-2"
           >
             <Image src={arrow} alt="arrow" />{" "}
             <span className="ml-2">Back to search results</span>
@@ -153,22 +151,22 @@ const DappPage: NextPage<DappPageProps> = ({
         <DappPageTwitter dappInfo={dappInfo} twitterPosts={twitterPosts} />
       </div>
     </Layout>
-  )
-}
+  );
+};
 
 export const getStaticProps: GetStaticProps<DappPageProps> = async (
-  context,
+  context
 ) => {
-  const name = context.params?.name
+  const name = context.params?.name;
 
   if (!name) {
-    throw new Error("Name not provided")
+    throw new Error("Name not provided");
   }
 
-  const dappFile = path.join(process.cwd(), "data", `${name}.json`)
-  const content = await readFile(dappFile, "utf8")
+  const dappFile = path.join(process.cwd(), "data", `${name}.json`);
+  const content = await readFile(dappFile, "utf8");
 
-  const dappInfo: DappInfo = JSON.parse(content)
+  const dappInfo: DappInfo = JSON.parse(content);
 
   const nftData =
     // TODO: replace by unframed api (not easy, as metrics are missing)
@@ -177,13 +175,13 @@ export const getStaticProps: GetStaticProps<DappPageProps> = async (
     //       `https://api.aspect.co/api/v0/contract/${dappInfo.nft.collectionContract}`,
     //     ).then((res) => res.json())
     //   : null
-    null
+    null;
   const twitterName =
     dappInfo.twitterName ||
     (dappInfo.links?.twitter.length > 0 &&
-      dappInfo.links?.twitter.split("/").pop())
+      dappInfo.links?.twitter.split("/").pop());
 
-  const twitterUserIdUrl = `https://api.twitter.com/2/users/by/username/${twitterName}`
+  const twitterUserIdUrl = `https://api.twitter.com/2/users/by/username/${twitterName}`;
 
   const twitterUserId =
     twitterName &&
@@ -191,11 +189,11 @@ export const getStaticProps: GetStaticProps<DappPageProps> = async (
       headers: {
         Authorization: `Bearer ${process.env.TWITTER_BEARER}`,
       },
-    }).then((res) => res.json()))
+    }).then((res) => res.json()));
 
   const twitterUrl =
     twitterUserId?.data?.id &&
-    `https://api.twitter.com/2/users/${twitterUserId.data.id}/tweets?max_results=5&tweet.fields=created_at,public_metrics&expansions=author_id&user.fields=profile_image_url,username,verified`
+    `https://api.twitter.com/2/users/${twitterUserId.data.id}/tweets?max_results=5&tweet.fields=created_at,public_metrics&expansions=author_id&user.fields=profile_image_url,username,verified`;
 
   const twitterPosts = !twitterUrl
     ? []
@@ -203,7 +201,7 @@ export const getStaticProps: GetStaticProps<DappPageProps> = async (
         headers: {
           Authorization: `Bearer ${process.env.TWITTER_BEARER}`,
         },
-      }).then((res) => res.json())
+      }).then((res) => res.json());
 
   return {
     props: {
@@ -212,17 +210,17 @@ export const getStaticProps: GetStaticProps<DappPageProps> = async (
       nftData,
     },
     revalidate: 10,
-  }
-}
+  };
+};
 
 export const getStaticPaths: GetStaticPaths<{ name: string }> = async () => {
-  const dappsDirectory = path.join(process.cwd(), "data")
-  const filenames = await readdir(dappsDirectory)
+  const dappsDirectory = path.join(process.cwd(), "data");
+  const filenames = await readdir(dappsDirectory);
 
   return {
     paths: filenames
       .filter((filename) => {
-        return filename.endsWith(".json")
+        return filename.endsWith(".json");
       })
       .map((filename) => ({
         params: {
@@ -230,7 +228,7 @@ export const getStaticPaths: GetStaticPaths<{ name: string }> = async () => {
         },
       })),
     fallback: false,
-  }
-}
+  };
+};
 
-export default DappPage
+export default DappPage;

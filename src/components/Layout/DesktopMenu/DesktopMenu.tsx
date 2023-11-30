@@ -1,9 +1,8 @@
 import moon from "../../../assets/icons/moon.svg";
 import sun from "../../../assets/icons/sun.svg";
-import logoDarkLottie from "../../../assets/logo-dark-lottie.json";
-import logoLightLottie from "../../../assets/logo-light-lottie.json";
+import logoLightLottie from "../../../assets/logo-alphadapps-light.svg";
+import logoDarkLottie from "../../../assets/logo-alphadapps.svg";
 import { useCategoryStore } from "../../../hooks/useCategoryStore";
-import { useWalletStore } from "../../../hooks/useWalletStore";
 import { AnnouncementBar } from "../../AnnouncementBar";
 import Button from "../../Button/Button";
 import ConnectWallet from "../../Button/ConnectWallet";

@@ -1,18 +1,18 @@
-import expandIcon from "../../assets/icons/expand.svg"
-import flagIcon from "../../assets/icons/flag.svg"
-import Button from "../../components/Button/Button"
-import { DappStoreButton } from "../../components/Button/DappStore"
+import expandIcon from "../../assets/icons/expand.svg";
+import flagIcon from "../../assets/icons/flag.svg";
+import Button from "../../components/Button/Button";
+import { DappStoreButton } from "../../components/Button/DappStore";
 import {
   DownloadButton,
   getStoreVersionFromBrowser,
-} from "../../components/Button/Download"
-import SocialLink from "../../components/SocialLink/SocialLink"
-import Tag from "../../components/Tag/Tag"
-import DappPageRating from "./DappPageRating"
-import Image from "next/image"
-import Link from "next/link"
-import { useEffect, useState } from "react"
-import styled from "styled-components"
+} from "../../components/Button/Download";
+import SocialLink from "../../components/SocialLink/SocialLink";
+import Tag from "../../components/Tag/Tag";
+import DappPageRating from "./DappPageRating";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
 
 const HeaderButtonsContainer = styled.div`
   .visit-button {
@@ -24,7 +24,7 @@ const HeaderButtonsContainer = styled.div`
     width: 40px;
     height: 40px;
   }
-`
+`;
 
 const linkOrder = [
   "twitter",
@@ -34,34 +34,34 @@ const linkOrder = [
   "github",
   "youtube",
   "mirror",
-] as unknown as Array<keyof Links>
+] as unknown as Array<keyof Links>;
 
 const DappPageHeader = ({
   dappInfo,
   dappKey,
 }: {
-  dappInfo: DappInfo
-  dappKey: string
+  dappInfo: DappInfo;
+  dappKey: string;
 }) => {
-  const [showArgentXInstallGuide, setArgentXInstallGuide] = useState(false)
+  const [showArgentXInstallGuide, setArgentXInstallGuide] = useState(false);
   useEffect(() => {
-    const argentXInstalled = (window as any).starknet?.id === "argentX"
-    const browserSupportsArgentX = getStoreVersionFromBrowser() !== null
-    setArgentXInstallGuide(browserSupportsArgentX && !argentXInstalled)
-  }, [])
+    const argentXInstalled = (window as any).starknet?.id === "argentX";
+    const browserSupportsArgentX = getStoreVersionFromBrowser() !== null;
+    setArgentXInstallGuide(browserSupportsArgentX && !argentXInstalled);
+  }, []);
 
   const handleLinksOrder = () => {
-    const links = dappInfo.links
-    const orderedLinks: Array<{ name: keyof Links; link: string }> = []
+    const links = dappInfo.links;
+    const orderedLinks: Array<{ name: keyof Links; link: string }> = [];
     linkOrder.forEach((link) => {
       if (links[link]) {
-        orderedLinks.push({ name: link, link: links[link] })
+        orderedLinks.push({ name: link, link: links[link] });
       } else {
-        orderedLinks.push({ name: link, link: "" })
+        orderedLinks.push({ name: link, link: "" });
       }
-    })
-    return orderedLinks
-  }
+    });
+    return orderedLinks;
+  };
 
   return (
     <section className="flex px-4 flex-col xl:grid xl:gap-x-16 xl:grid-cols-dapp-header">
@@ -74,7 +74,7 @@ const DappPageHeader = ({
             {dappInfo.links?.website && (
               <Link href={dappInfo.links.website + "?utm_source=dappland"}>
                 <a
-                  className="block text-xl leading-[26px] font-semibold text-pink mt-4"
+                  className="block text-xl leading-[26px] font-semibold text-orange mt-4"
                   target="_blank"
                 >
                   {new URL(dappInfo.links.website).hostname}
@@ -153,7 +153,7 @@ const DappPageHeader = ({
       </div>
       <DappPageRating dappKey={dappKey} />
     </section>
-  )
-}
+  );
+};
 
-export default DappPageHeader
+export default DappPageHeader;

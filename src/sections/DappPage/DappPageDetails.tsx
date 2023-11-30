@@ -1,6 +1,6 @@
-import expand from "../../assets/icons/expand.svg"
-import Image from "next/image"
-import styled from "styled-components"
+import expand from "../../assets/icons/expand.svg";
+import Image from "next/image";
+import styled from "styled-components";
 
 const DetailsContainer = styled.div`
   display: flex;
@@ -30,7 +30,7 @@ const DetailsContainer = styled.div`
       margin: 0 2rem;
     }
   }
-`
+`;
 
 const DappPageDetails = ({ dappInfo }: { dappInfo: DappInfo }) => {
   return (
@@ -71,7 +71,7 @@ const DappPageDetails = ({ dappInfo }: { dappInfo: DappInfo }) => {
           {dappInfo.audits.length > 0 ? "Yes" : "No"}
           {dappInfo.audits.length > 0 && dappInfo.audits[0].url && (
             <a
-              className="inline-block text-pink leading-6 text-base font-semibold ml-2"
+              className="inline-block text-orange leading-6 text-base font-semibold ml-2"
               href={dappInfo.audits[0].url}
               target="_blank"
               rel="noopener noreferrer"
@@ -93,7 +93,7 @@ const DappPageDetails = ({ dappInfo }: { dappInfo: DappInfo }) => {
                 href={`https://starkscan.co/contract/${item.address}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-pink text-base truncate max-w-[200px] leading-6 font-semibold"
+                className="block text-orange text-base truncate max-w-[200px] leading-6 font-semibold"
               >
                 {item.name}
               </a>
@@ -106,7 +106,7 @@ const DappPageDetails = ({ dappInfo }: { dappInfo: DappInfo }) => {
                 href={`https://testnet.starkscan.co/contract/${item.address}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-pink text-base truncate max-w-[200px] leading-6 font-semibold"
+                className="block text-orange text-base truncate max-w-[200px] leading-6 font-semibold"
               >
                 {item.name}
               </a>
@@ -139,7 +139,7 @@ const DappPageDetails = ({ dappInfo }: { dappInfo: DappInfo }) => {
                 href={`https://starkscan.co/contract/${item.address}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-pink text-base truncate max-w-[200px] leading-6 font-semibold"
+                className="block text-orange text-base truncate max-w-[200px] leading-6 font-semibold"
               >
                 {item.symbol}
               </a>
@@ -150,7 +150,7 @@ const DappPageDetails = ({ dappInfo }: { dappInfo: DappInfo }) => {
         )}
       </div>
     </DetailsContainer>
-  )
-}
+  );
+};
 
-export default DappPageDetails
+export default DappPageDetails;

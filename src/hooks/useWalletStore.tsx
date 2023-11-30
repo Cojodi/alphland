@@ -1,8 +1,8 @@
-import create from "zustand"
+import { create } from "zustand";
 
 interface WalletState {
-  connectedWallet: any
-  setConnectedWallet: (wallet: any) => void
+  connectedWallet: any;
+  setConnectedWallet: (wallet: any) => void;
 }
 
 export const useWalletStore = create<WalletState>((set) => ({
@@ -11,4 +11,4 @@ export const useWalletStore = create<WalletState>((set) => ({
     set(() => ({
       connectedWallet: wallet,
     })),
-}))
+}));

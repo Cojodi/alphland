@@ -2,56 +2,56 @@ export const filterCategoryDapps = ({
   dappCards,
   category,
 }: {
-  dappCards: Array<DappCard & { categories: string[] }>
-  category: string
+  dappCards: Array<DappCard & { categories: string[] }>;
+  category: string;
 }) => {
   return dappCards.filter((dapp) => {
     if (category === "dotw") {
-      return dapp.featured
+      return dapp.featured;
     }
     if (category === "doxxed") {
-      return !dapp.annonymous
+      return !dapp.annonymous;
     }
     if (category === "audited") {
-      return dapp.audits && dapp.audits.length > 0
+      return dapp.audits && dapp.audits.length > 0;
     }
     if (category === "verified") {
-      return dapp.verified
+      return dapp.verified;
     }
-    return dapp.categories.includes(category)
-  })
-}
+    return dapp.categories.includes(category);
+  });
+};
 
 export const filterDapps = ({
   dappCards,
   filters,
 }: {
-  dappCards: Array<DappCard & { categories: string[] }>
-  filters: string[]
+  dappCards: Array<DappCard & { categories: string[] }>;
+  filters: string[];
 }) => {
   return dappCards.filter((dapp) => {
     return (
       filters.reduce((acc, val) => {
         if (val === "dotw" && dapp.featured) {
-          acc = acc + 1
+          acc = acc + 1;
         }
         if (val === "doxxed" && !dapp.annonymous) {
-          acc = acc + 1
+          acc = acc + 1;
         }
         if (val === "audited" && dapp.audits && dapp.audits.length > 0) {
-          acc = acc + 1
+          acc = acc + 1;
         }
         if (val === "verified" && dapp.verified) {
-          acc = acc + 1
+          acc = acc + 1;
         }
         if (dapp.categories.includes(val)) {
-          acc = acc + 1
+          acc = acc + 1;
         }
-        return acc
+        return acc;
       }, 0) === filters.length
-    )
-  })
-}
+    );
+  });
+};
 
 export const generateUrl = ({
   selectedSort,
@@ -59,16 +59,16 @@ export const generateUrl = ({
   selectedCategory,
   selectedRatings = [],
 }: {
-  selectedCategory: string
-  selectedSort: string | null
-  selectedFilters: string[]
-  selectedRatings?: string[]
+  selectedCategory: string;
+  selectedSort: string | null;
+  selectedFilters: string[];
+  selectedRatings?: string[];
 }) => {
-  const allFilters = selectedFilters.join(",")
-  const allRatings = selectedRatings.join(",")
+  const allFilters = selectedFilters.join(",");
+  const allRatings = selectedRatings.join(",");
   const categoryUrl =
-    selectedCategory === "all" ? "/" : `/category/${selectedCategory}`
-  const url = `${categoryUrl}${
+    selectedCategory === "all" ? "/" : `/category/${selectedCategory}`;
+  return `${categoryUrl}${
     selectedFilters.length
       ? `?filters=${allFilters}${selectedSort ? `&sort=${selectedSort}` : ""}${
           selectedRatings.length ? `&ratings=${allRatings}` : ""
@@ -78,28 +78,27 @@ export const generateUrl = ({
           selectedRatings.length ? `&ratings=${allRatings}` : ""
         }`
       : `${selectedRatings.length ? `?ratings=${allRatings}` : ""}`
-  }`
-  return url
-}
+  }`;
+};
 
 export const checkIfCategoryExists = (
   dappCard: DappCard,
   category: string,
-  dappRatings?: { [key: string]: string[] },
+  dappRatings?: { [key: string]: string[] }
 ) => {
   switch (category) {
     case "Dapp of the Week":
     case "featured":
-      return dappCard.featured
+      return dappCard.featured;
     case "Public team":
     case "doxxed":
-      return !dappCard.annonymous
+      return !dappCard.annonymous;
     case "Audited":
     case "audited":
-      return dappCard.audits && dappCard.audits.length
+      return dappCard.audits && dappCard.audits.length;
     case "Verified contracts":
     case "verified":
-      return dappCard.verified
+      return dappCard.verified;
     case "1":
     case "2":
     case "3":
@@ -108,8 +107,8 @@ export const checkIfCategoryExists = (
       return (
         dappRatings &&
         dappRatings[category]?.includes(dappCard.url.replace("/", ""))
-      )
+      );
     default:
-      return dappCard.tags.indexOf(category) !== -1
+      return dappCard.tags.indexOf(category) !== -1;
   }
-}
+};

@@ -39,7 +39,7 @@ const Home = () => {
           The Site is provided on an &quot;as is&quot; and &quot;as
           available&quot; basis. Access to the Site may be suspended due to
           technical maintenance, migration or updates, or due to breakdowns or
-          constraints in relation with the operation of the Internet. Argent
+          constraints in relation with the operation of the Internet. Cojodi
           gives no warranty regarding the Site and to the maximum extent
           permitted by law accepts no liability for any losses you suffer as a
           result of using the Site.
@@ -49,14 +49,14 @@ const Home = () => {
           Intellectual Property Rights
         </h3>
         <p>
-          Argent is the sole owner of all intellectual property rights related
+          Cojodi is the sole owner of all intellectual property rights related
           to the Site. Any content presently displayed or made available in the
           future, such as text, logos, images, music, digital downloads, and
-          data compilations, is the property of Argent, its affiliates or its
+          data compilations, is the property of Cojodi, its affiliates or its
           suppliers and is protected by English and international intellectual
-          property law. Argent&apos;s names and logos are trademarks of Argent.
+          property law. Cojodi&apos;s names and logos are trademarks of Cojodi.
           Accordingly, you agree not to reproduce, represent, extract and use in
-          any way any or all of Argent&apos;s trademarks, logos, or other
+          any way any or all of Cojodi&apos;s trademarks, logos, or other
           content on the Site.
         </p>
 
@@ -67,10 +67,10 @@ const Home = () => {
           legal, financial or investment advice and is not intended as a
           recommendation for buying, trading or selling crypto assets. It is
           recommended to seek advice from legal and financial experts before
-          starting buying, trading or selling crypto assets. Argent Labs Ltd,
-          and all other companies mentioned on the Site will not be responsible
-          for the consequences of reliance upon any opinion or statement
-          contained herein or for any omission.
+          starting buying, trading or selling crypto assets. Cojodi UG, and all
+          other companies mentioned on the Site will not be responsible for the
+          consequences of reliance upon any opinion or statement contained
+          herein or for any omission.
         </p>
         <p>
           Crypto assets are volatile. You should be fully aware of the level of

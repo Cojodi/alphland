@@ -1,4 +1,5 @@
 import { useCategoryStore } from "../../hooks/useCategoryStore";
+import { useDarkMode } from "../../hooks/useDarkMode";
 import Footer from "./Footer";
 import Header from "./Header";
 import HomeHeader from "./HomeHeader";
@@ -29,6 +30,8 @@ export const Layout = ({
 }: LayoutProps) => {
   const selectedFilters = useCategoryStore((state) => state.selectedFilters);
   const selectedRatings = useCategoryStore((state) => state.selectedRatings);
+  const { currentTheme } = useDarkMode();
+
   return (
     <>
       <Head>
@@ -104,7 +107,7 @@ export const Layout = ({
         <HomeHeader />
       )}
       <MainContainer>{children}</MainContainer>
-      <Footer />
+      <Footer currentTheme={currentTheme} />
     </>
   );
 };

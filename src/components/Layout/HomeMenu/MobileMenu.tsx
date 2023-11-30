@@ -1,11 +1,7 @@
-import home from "../../../assets/icons/home.svg";
-import homeDark from "../../../assets/icons/home_dark.svg";
-import info from "../../../assets/icons/info-circle.svg";
-import infoDark from "../../../assets/icons/info-circle_dark.svg";
 import moon from "../../../assets/icons/moon.svg";
 import sun from "../../../assets/icons/sun.svg";
-import logoLight from "../../../assets/logo-dappland-mobile-light.svg";
-import logo from "../../../assets/logo-dappland-mobile.svg";
+import logoLight from "../../../assets/logo-alphadapps-light.svg";
+import logo from "../../../assets/logo-alphadapps.svg";
 import Button from "../../Button/Button";
 import ConnectWallet from "../../Button/ConnectWallet";
 import Image from "next/image";
@@ -97,7 +93,7 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
               <Image
                 src={currentTheme === "dark" ? logoLight : logo}
                 alt="logo"
-                width={133}
+                width={180}
                 height={40}
                 style={{ height: "auto !important" }}
               />
