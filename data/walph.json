@@ -1,18 +1,8 @@
 {
-  "name": "<Name of your Dapp>",
+  "name": "Walph",
   "description": "<100 to 500 characters description of your project>",
   "short_description": "<One-liner description. Max 20 characters>",
-  "tags": [
-    "Onramps",
-    "Bridges",
-    "DeFi",
-    "Games",
-    "NFTs",
-    "Social",
-    "DAOs",
-    "Infrastructure"
-  ],
-  // Remove all that don't apply. Please delete this and all other comments.
+  "tags": ["Games"],
   "contracts": [
     {
       "name": "<Name of Mainnet contract 1 (remove entry in array if it doesn't apply, add more entries if there are more contracts)>",
@@ -30,11 +20,9 @@
     }
   ],
   "verified": false,
-  // change to true if your contracts are verified on Alephium
   "dotw": false,
-  //leave 'false'
   "links": {
-    "website": "<URL of the dapp's website. Leave empty if non-existent>",
+    "website": "https://walph.io/",
     "careers": "<URL of the dapp's carreer page. Can also be 'mailto:example@mydapp.com'. Leave empty if non-existent>",
     "twitter": "<URL of the dapp's Twitter account>. Leave empty if non-existent",
     "telegram": "<URL of the dapp's Telegram>. Leave empty if non-existent",
@@ -47,10 +35,8 @@
   "twitterName": "Twitter username. Leave empty if none",
   "teamInfo": {
     "contactEmail": "<Email address>",
-    // For Alphadapps to be able to contact you. Will not be published on Alphadapps.
     "founded": "Founding date of the project. EXAMPLE: 2022-05-24T00:00:00.000Z",
     "anonymous": true
-    // If at least one of the founders has a public profile with their real name linked to the project, set this to true.
   },
   "tokens": [
     {
@@ -58,25 +44,10 @@
       "symbol": "e.g. ETH"
     }
   ],
-  "nft": {
-    "collectionContract": "<Address of the NFT contract you wish to showcase>",
-    "collectionLink": "<https url for link to view full collection>",
-    "collectionName": "<Name of NFT collection>",
-    "collectionPreview": [
-      {
-        "image_url": "/dapps/yourdappname/collection-nft-01.[png, jpg, webp or svg]",
-        "name": "<NFT name and/or number>"
-      },
-      {
-        "image_url": "/dapps/yourdappname/collection-nft-02.[png, jpg, webp or svg]",
-        "name": "<NFT name and/or number>"
-      }
-    ]
-  },
   "media": {
-    "logoUrl": "/dapps/yourdappname/yourdappname-logo.[png, jpg or webp] Resolution: 320 × 320 pixels>",
-    "bannerUrl": "/dapps/yourdappname/yourdappname-banner.[png, jpg or webp] Resolution: 1920 × 400 pixels>",
-    "previewUrl": "/dapps/yourdappname/yourdappname-preview.[png, jpg or webp] Resolution: 700 × 400 pixels>",
+    "logoUrl": "/dapps/walph/dapp-icon-walph.png",
+    "bannerUrl": "/dapps/walph/dapp-header-walph.png",
+    "previewUrl": "/dapps/walph/dapp-preview-walph.png",
     "videoUrl": "<URL for a video of the dapp (hosted externally)>",
     "gallery": [
       {
