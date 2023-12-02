@@ -16,7 +16,7 @@
   "audits": [
     {
       "name": "<Name of the publicly available Security Audit. Remove entry from 'audits' array if non-existent. Add more entries to the 'audits' array if relevant>",
-      "url": "URL to access the security audit. Only audits that are publicly available will be considered to be included in Dappland. If they're private, please don't include them in the 'audits' array>"
+      "url": "URL to access the security audit. Only audits that are publicly available will be considered to be included in Alphadapps. If they're private, please don't include them in the 'audits' array>"
     }
   ],
   "verified": false,

@@ -60,7 +60,7 @@ const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
         </h2>
         {/* <p className="text-center font-normal text-base leading-[16px] mt-16">
           Built with ❤️ by{" "}
-          <a href="https://www.argent.xyz/?utm_source=dappland">Argent</a>
+          <a href="https://www.argent.xyz/?utm_source=alphadapps">Argent</a>
         </p> */}
       </div>
     </div>

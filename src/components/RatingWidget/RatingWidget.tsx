@@ -79,9 +79,9 @@ const RatingWidget = (): ReactElement => {
           </div>
           <div className="mt-2 w-[124px] h-[37px]">
             {currentTheme === "dark" ? (
-              <Image src={logoLight} alt="Dappland logo" />
+              <Image src={logoLight} alt="Alphadapps logo" />
             ) : (
-              <Image src={logo} alt="Dappland logo" />
+              <Image src={logo} alt="Alphadapps logo" />
             )}
           </div>
         </>

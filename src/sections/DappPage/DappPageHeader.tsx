@@ -72,7 +72,7 @@ const DappPageHeader = ({
               {dappInfo.name}
             </h1>
             {dappInfo.links?.website && (
-              <Link href={dappInfo.links.website + "?utm_source=dappland"}>
+              <Link href={dappInfo.links.website + "?utm_source=alphadapps"}>
                 <a
                   className="block text-xl leading-[26px] font-semibold text-orange mt-4"
                   target="_blank"
@@ -101,7 +101,7 @@ const DappPageHeader = ({
         <HeaderButtonsContainer className="flex mt-8">
           {!showArgentXInstallGuide ? (
             <Link
-              href={dappInfo.links?.website + "?utm_source=dappland" || "/"}
+              href={dappInfo.links?.website + "?utm_source=alphadapps" || "/"}
               passHref
             >
               <Button
@@ -116,7 +116,9 @@ const DappPageHeader = ({
           ) : (
             <div className="flex gap-10 flex-col sm:flex-row">
               <div>
-                <h3 className="font-bold text-lg mb-2">1. Install Argent X</h3>
+                <h3 className="font-bold text-lg mb-2">
+                  1. Install Alephium Wallet
+                </h3>
                 <DownloadButton name={dappInfo.name} />
               </div>
               <div>
@@ -124,7 +126,7 @@ const DappPageHeader = ({
                 <DappStoreButton
                   iconUrl={dappInfo.media.logoUrl}
                   name={dappInfo.name}
-                  href={dappInfo.links.website + "?utm_source=dappland"}
+                  href={dappInfo.links.website + "?utm_source=alphadapps"}
                 />
               </div>
             </div>

@@ -28,11 +28,11 @@ const Home = () => {
 
         <p className="my-4">
           This is the privacy policy (&quot;Privacy Policy”) for alphad.app
-          (&quot;Dappland”) operated by Cojodi UG Limited, company registration
-          number 11093638, with its registered office address at 5 New Street
-          Square, London, England, EC4A 3TW (&quot;our”, &quot;we”, or
-          &quot;Argent”). Argent is the controller of your personal data
-          collected through Dappland and we are committed to protecting and
+          (&quot;Alphadapps”) operated by Cojodi UG Limited, company
+          registration number 11093638, with its registered office address at 5
+          New Street Square, London, England, EC4A 3TW (&quot;our”, &quot;we”,
+          or &quot;Cojodi”). Cojodi is the controller of your personal data
+          collected through Alphadapps and we are committed to protecting and
           respecting your privacy.
         </p>
 
@@ -40,7 +40,7 @@ const Home = () => {
 
         <p className="my-4">
           This Privacy Policy explains who we are, why and how we process
-          personal data collected through your use of Dappland and, if you are
+          personal data collected through your use of Alphadapps and, if you are
           the subject of any of the personal data concerned, what rights you
           have and how to get in touch with us if you need to.
         </p>
@@ -75,7 +75,7 @@ const Home = () => {
         </p>
         <p className="my-4">
           If, for any reason, you do not agree to the terms of this Privacy
-          Policy, please stop using Dappland.
+          Policy, please stop using Alphadapps.
         </p>
         <p className="my-4">
           We reserve the right to revise or amend this Privacy Policy at any
@@ -84,12 +84,12 @@ const Home = () => {
           registered users to make sure that they are informed of such changes.
         </p>
         <p className="my-4">
-          Please note that Dappland is not intended for use by nor directed at
+          Please note that Alphadapps is not intended for use by nor directed at
           anyone under the age of 18 and we do not knowingly collect data
           relating to children. If you believe we have collected personal
           information about your child, you may contact us at{" "}
-          <a href="mailto:legal@argent.xyz" className="text-orange">
-            legal@argent.xyz
+          <a href="mailto:info@cojodi.com" className="text-orange">
+            info@cojodi.com
           </a>{" "}
           and request that we remove information about them.
         </p>
@@ -118,11 +118,12 @@ const Home = () => {
         </p>
 
         <h4 className="text-[20px] font-bold mt-[20px]">
-          How and what types of data we collect from you when you use Dappland?
+          How and what types of data we collect from you when you use
+          Alphadapps?
         </h4>
 
         <p className="my-4">
-          When you use Dappland we may collect, store and use certain personal
+          When you use Alphadapps we may collect, store and use certain personal
           information that you disclose to us.
         </p>
         <p className="my-4">
@@ -131,7 +132,7 @@ const Home = () => {
         </p>
         <p className="my-4">
           We shall also collect information about you when you visit and
-          interact with Dappland through the use of technologies such as
+          interact with Alphadapps through the use of technologies such as
           cookies. The following are examples of information we may collect:
         </p>
 
@@ -142,15 +143,15 @@ const Home = () => {
           <li className="mb-2">time zone setting;</li>
           <li className="mb-2">your IP address;</li>
           <li className="mb-2">
-            information about interactions you have with Dappland (such as
+            information about interactions you have with Alphadapps (such as
             scrolling and clicks);
           </li>
           <li className="mb-2">
             information about the way you use and the actions you take within
-            Dappland;
+            Alphadapps;
           </li>
           <li className="mb-2">
-            length of time on Dappland and time spent within certain sections;
+            length of time on Alphadapps and time spent within certain sections;
           </li>
           <li className="mb-2">response times; and</li>
           <li className="mb-2">download errors.</li>
@@ -159,11 +160,11 @@ const Home = () => {
         <p className="my-4">
           Please refer to your device’s help material to learn what controls you
           can use to remove cookies, block cookies, or disable IDFA tracking. If
-          you do this, it may affect your use of Dappland.
+          you do this, it may affect your use of Alphadapps.
         </p>
         <p className="my-4">
           We may also partner with third parties who may collect anonymous usage
-          or statistical data through your use of Dappland (including, for
+          or statistical data through your use of Alphadapps (including, for
           example, sub-contractors in technical services, business partners,
           advertising networks, analytics providers).
         </p>
@@ -175,8 +176,8 @@ const Home = () => {
         <p className="my-4">
           If you want to update the information you have previously given to us,
           you can contact us at{" "}
-          <a href="mailto:legal@argent.xyz" className="text-orange">
-            legal@argent.xyz
+          <a href="mailto:info@cojodi.com" className="text-orange">
+            info@cojodi.com
           </a>
           .
         </p>
@@ -252,7 +253,7 @@ const Home = () => {
           </li>
           <li className="mb-2">
             with analytics that assist us in the improvement and optimisation of
-            Dappland.
+            Alphadapps.
           </li>
         </ul>
 
@@ -268,7 +269,7 @@ const Home = () => {
             or buyer of such business or assets;
           </li>
           <li className="mb-2">
-            if Argent or substantially all of its assets are acquired by a third
+            if Cojodi or substantially all of its assets are acquired by a third
             party, in which case personal information held by us about our
             customers will be one of the transferred assets; or
           </li>
@@ -302,9 +303,9 @@ const Home = () => {
 
         <h4 className="text-[20px] font-bold mt-[20px]">Other Disclosures</h4>
         <p className="my-4">
-          During your use of Dappland, your mobile network operator may also
-          collect personal information about you regarding your use of Dappland
-          such as your identity, your usage and location.
+          During your use of Alphadapps, your mobile network operator may also
+          collect personal information about you regarding your use of
+          Alphadapps such as your identity, your usage and location.
         </p>
         <p className="my-4">
           These third parties shall act as separate and independent controllers
@@ -350,7 +351,7 @@ const Home = () => {
 
         <h3 className="text-[24px] font-bold mt-[32px]">5. Security</h3>
         <p className="my-4">
-          Argent takes the protection of your information very seriously. We
+          Cojodi takes the protection of your information very seriously. We
           have put in place appropriate physical, electronic and managerial
           security measures to prevent your personal data from being
           accidentally lost, used or accessed in an unauthorised way, altered or
@@ -404,8 +405,8 @@ const Home = () => {
           By submitting your personal information, you agree to this transfer,
           storing or processing. If you would like more information about the
           mechanism via which your personal data is transferred please contact{" "}
-          <a href="mailto:legal@argent.xyz" className="text-orange">
-            legal@argent.xyz
+          <a href="mailto:info@cojodi.com" className="text-orange">
+            info@cojodi.com
           </a>
           .
         </p>
@@ -598,8 +599,8 @@ const Home = () => {
           If you have any queries regarding this Privacy Policy, if you wish to
           exercise any of your rights set out above or if you think that the
           Privacy Policy has not been followed, please contact us by emailing at{" "}
-          <a href="mailto:legal@argent.xyz" className="text-orange">
-            legal@argent.xyz
+          <a href="mailto:info@cojodi.com" className="text-orange">
+            info@cojodi.com
           </a>
           .
         </p>

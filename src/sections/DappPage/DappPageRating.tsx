@@ -3,13 +3,13 @@ import starFilled from "../../assets/icons/starFilled.svg";
 import ConnectWalletModal from "../../components/Modal/ConnectWalletModal";
 import { getRatingForDapp, getRatingsFromUser } from "../../helpers/rating";
 import { useWalletStore } from "../../hooks/useWalletStore";
-import { setCookie, getCookie, hasCookie } from "cookies-next";
+import { getCookie, hasCookie, setCookie } from "cookies-next";
 import { connect } from "get-starknet";
 import sn from "get-starknet-core";
 import chunk from "lodash.chunk";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { Signature, number } from "starknet";
+import { number, Signature } from "starknet";
 
 type Props = {
   dappKey?: string;
@@ -25,7 +25,7 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
       ? hasCookie(dappKey)
         ? parseInt(cookieValue || "")
         : null
-      : null,
+      : null
   );
   const [isRatingModalOpen, setRatingModalOpen] = useState(false);
   useEffect(() => {
@@ -38,7 +38,7 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
 
   const connectedWallet = useWalletStore((state) => state.connectedWallet);
   const setConnectedWallet = useWalletStore(
-    (state) => state.setConnectedWallet,
+    (state) => state.setConnectedWallet
   );
 
   useEffect(() => {
@@ -115,7 +115,7 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
             rating: ratingValue,
           },
           domain: {
-            name: "Dappland",
+            name: "Alphadapps",
             chainId,
             version: "1.0",
           },
