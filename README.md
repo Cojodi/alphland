@@ -1,6 +1,5 @@
-TODO logo
 <div align="center">
-    <img src="./src/assets/logo-alephium-dark.png" alt="Alephium logo"width=400 alt="alephium-logo" />
+    <img src="./src/assets/logo-alphadapps-light.svg" alt="Alephium logo"width=400 alt="alephium-logo" />
     <h4>The home for all dapps in the Alephium ecosystem</h4>
 
 </div>
