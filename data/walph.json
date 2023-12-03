@@ -19,7 +19,7 @@
   "twitterName": "WalphLottery",
   "teamInfo": {
     "contactEmail": "hello@notrustveify.ch",
-    "founded": "Founding date of the project. EXAMPLE: 2022-08-18T00:00:00.000Z",
+    "founded": "2022-08-18T00:00:00.000Z",
     "anonymous": true
   },
   "media": {
@@ -28,5 +28,5 @@
     "previewUrl": "/dapps/walph/dapp-preview-walph.png"
   },
   "audits": [],
-  "tokens": [{}]
+  "tokens": []
 }
