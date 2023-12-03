@@ -1,7 +1,7 @@
 {
   "name": "Walph",
-  "description": "<100 to 500 characters description of your project>",
-  "short_description": "<One-liner description. Max 20 characters>",
+  "description": "Experience a decentralized lottery powered by Alephium, offering transparent fair and secure draw",
+  "short_description": "Luck based dApp",
   "tags": ["Games", "Social"],
   "verified": false,
   "dotw": false,
@@ -26,5 +26,7 @@
     "logoUrl": "/dapps/walph/dapp-icon-walph.png",
     "bannerUrl": "/dapps/walph/dapp-header-walph.png",
     "previewUrl": "/dapps/walph/dapp-preview-walph.png"
-  }
+  },
+  "audits": [],
+  "tokens": []
 }
