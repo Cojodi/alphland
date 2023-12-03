@@ -1,61 +1,38 @@
 {
-  "name": "<Name of your Dapp>",
-  "description": "<100 to 500 characters description of your project>",
-  "short_description": "<One-liner description. Max 20 characters>",
+  "name": "Walph",
+  "description": "Experience a decentralized lottery powered by Alephium, offering transparent fair and secure draw",
+  "short_description": "Lucky based dApp",
   "tags": [
-    "Onramps",
-    "Bridges",
-    "DeFi",
     "Games",
-    "NFTs",
     "Social",
-    "DAOs",
-    "Infrastructure"
-  ],
-  // Remove all that don't apply. Please delete this and all other comments.
-  "contracts": [
-    {
-      "name": "<Name of Mainnet contract 1 (remove entry in array if it doesn't apply, add more entries if there are more contracts)>",
-      "address": "<Address of Mainnet contract 1>"
-    },
-    {
-      "name": "<Name of Mainnet contract 2 (remove entry in array if it doesn't apply, add more entries if there are more contracts)>",
-      "address": "<Address of Mainnet contract 2>"
-    }
-  ],
-  "audits": [
-    {
-      "name": "<Name of the publicly available Security Audit. Remove entry from 'audits' array if non-existent. Add more entries to the 'audits' array if relevant>",
-      "url": "URL to access the security audit. Only audits that are publicly available will be considered to be included in Alphadapps. If they're private, please don't include them in the 'audits' array>"
-    }
   ],
   "verified": false,
   // change to true if your contracts are verified on Alephium
   "dotw": false,
   //leave 'false'
   "links": {
-    "website": "<URL of the dapp's website. Leave empty if non-existent>",
-    "careers": "<URL of the dapp's carreer page. Can also be 'mailto:example@mydapp.com'. Leave empty if non-existent>",
-    "twitter": "<URL of the dapp's Twitter account>. Leave empty if non-existent",
-    "telegram": "<URL of the dapp's Telegram>. Leave empty if non-existent",
-    "discord": "<URL of the dapp's Discord invite>. Leave empty if non-existent",
-    "github": "<URL of the dapp's Github>. Leave empty if non-existent",
-    "youtube": "<URL of the dapp's Youtube channel>. Leave empty if non-existent",
-    "medium": "<URL of the dapp's Medium>. Leave empty if non-existent",
-    "mirror": "<URL of the dapp's Mirror page>. Leave empty if non-existent"
+    "website": "https://walph.io",
+    "careers": "",
+    "twitter": "https://twitter.com/WalphLottery",
+    "telegram": "https://t.me/walphLottery",
+    "discord": "",
+    "github": "",
+    "youtube": "https://github.com/notrustverify/walph-frontend",
+    "medium": "https://medium.com/notrustverify",
+    "mirror": ""
   },
-  "twitterName": "Twitter username. Leave empty if none",
+  "twitterName": "WalphLottery",
   "teamInfo": {
-    "contactEmail": "<Email address>",
+    "contactEmail": "hello@notrustveify.ch",
     // For Alphadapps to be able to contact you. Will not be published on Alphadapps.
-    "founded": "Founding date of the project. EXAMPLE: 2022-05-24T00:00:00.000Z",
+    "founded": "Founding date of the project. EXAMPLE: 2022-08-18T00:00:00.000Z",
     "anonymous": true
     // If at least one of the founders has a public profile with their real name linked to the project, set this to true.
   },
   "tokens": [
     {
-      "address": "<Address of any Mainnet tokens created by the dapp>",
-      "symbol": "e.g. ETH"
+      "address": "",
+      "symbol": ""
     }
   ],
   "nft": {
