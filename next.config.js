@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    API_URL: process.env.API_URL,
+    API_URL: "https://alphadappsapi.fresenius.ai/",
   },
   swcMinify: true,
   compiler: {
@@ -10,7 +10,7 @@ const nextConfig = {
   },
   webpack(config) {
     const fileLoaderRule = config.module.rules.find(
-      (rule) => rule.test && rule.test.test(".svg"),
+      (rule) => rule.test && rule.test.test(".svg")
     );
     fileLoaderRule.exclude = /\.icon\.svg$/;
     config.module.rules.push({

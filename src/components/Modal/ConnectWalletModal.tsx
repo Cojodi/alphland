@@ -39,7 +39,13 @@ const ConnectWalletModal = ({
         <AlephiumConnectButton.Custom>
           {({ show }) => {
             return (
-              <Button variant="primary" onClick={show}>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  onConfirm();
+                  show?.();
+                }}
+              >
                 Connect and rate
               </Button>
             );
