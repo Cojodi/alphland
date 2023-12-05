@@ -1,0 +1,32 @@
+{
+  "name": "Alephium Bridge",
+  "description": "The Alephium Bridge enables unlimited, decentralized cross-chain transfer of tokens",
+  "short_description": "Unlimited, decentralized cross-chain transfer of tokens",
+  "tags": ["Bridge"],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://bridge.alephium.org",
+    "careers": "",
+    "twitter": "https://twitter.com/alephium",
+    "telegram": "https://t.me/alephiumgroup",
+    "discord": "https://discord.gg/3y8HvQ97s4",
+    "github": "https://github.com/alephium/wormhole-fork",
+    "youtube": "https://www.youtube.com/@alephium",
+    "medium": "https://medium.com/@alephium",
+    "mirror": ""
+  },
+  "twitterName": "alephium",
+  "teamInfo": {
+    "contactEmail": "info@alephium.org",
+    "founded": "2023-11-09T00:00:00.000Z",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/alephium-bridge/dapp-icon-alephium-bridge.png",
+    "bannerUrl": "/dapps/alephium-bridge/dapp-header-alephium-bridge.png",
+    "previewUrl": "/dapps/alephium-bridge/dapp-preview-alephium-bridge.png"
+  },
+  "audits": [],
+  "tokens": []
+}
