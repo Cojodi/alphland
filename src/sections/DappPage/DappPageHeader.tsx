@@ -1,11 +1,7 @@
 import expandIcon from "../../assets/icons/expand.svg";
 import flagIcon from "../../assets/icons/flag.svg";
 import Button from "../../components/Button/Button";
-import { DappStoreButton } from "../../components/Button/DappStore";
-import {
-  DownloadButton,
-  getStoreVersionFromBrowser,
-} from "../../components/Button/Download";
+import { getStoreVersionFromBrowser } from "../../components/Button/Download";
 import SocialLink from "../../components/SocialLink/SocialLink";
 import Tag from "../../components/Tag/Tag";
 import DappPageRating from "./DappPageRating";
@@ -99,7 +95,7 @@ const DappPageHeader = ({
           {dappInfo.description}
         </p>
         <HeaderButtonsContainer className="flex mt-8">
-          {!showArgentXInstallGuide ? (
+          {
             <Link
               href={dappInfo.links?.website + "?utm_source=alphadapps" || "/"}
               passHref
@@ -113,24 +109,7 @@ const DappPageHeader = ({
                 Visit Dapp
               </Button>
             </Link>
-          ) : (
-            <div className="flex gap-10 flex-col sm:flex-row">
-              <div>
-                <h3 className="font-bold text-lg mb-2">
-                  1. Install Alephium Wallet
-                </h3>
-                <DownloadButton name={dappInfo.name} />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg mb-2">2. Visit Dapp</h3>
-                <DappStoreButton
-                  iconUrl={dappInfo.media.logoUrl}
-                  name={dappInfo.name}
-                  href={dappInfo.links.website + "?utm_source=alphadapps"}
-                />
-              </div>
-            </div>
-          )}
+          }
         </HeaderButtonsContainer>
       </div>
       <div>
