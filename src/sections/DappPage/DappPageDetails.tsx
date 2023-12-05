@@ -126,7 +126,7 @@ const DappPageDetails = ({ dappInfo }: { dappInfo: DappInfo }) => {
         </p>
 
         <p className="font-bold text-xl leading-6 mt-2">
-          {dappInfo.tokens.length > 0 ? "Yes" : "Not yet"}
+          {dappInfo.tokens.length > 0 ? "Yes" : "No"}
         </p>
         <p className="text-light-charcoal dark:text-clay font-medium text-xl leading-6 mt-8 lg:mt-10">
           Tokens

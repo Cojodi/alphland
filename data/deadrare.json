@@ -1,0 +1,54 @@
+{
+  "name": "Deadrare",
+  "description": "DeadRare is an NFT marketplace for the Alephium blockchain, allowing anyone to buy and sell Alephium NFTs. DeadRare aims to promote innovation within the NFT space such as AI, dynamic NFTs, and DeFi Gaming.",
+  "short_description": "NFT Marketplace",
+  "tags": ["NFTs"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://deadrare.io/",
+    "careers": "",
+    "twitter": "https://twitter.com/DeadRareNFT",
+    "telegram": "",
+    "discord": "https://discord.gg/BNuqnG5jZ9",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "DeadRareNFT",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2023-10-24T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {
+    "collectionContract": "https://deadrare.io/collection/alphatauri",
+    "collectionLink": "https://deadrare.io/collection/alphatauri",
+    "collectionName": "ALPHatauri",
+    "collectionPreview": [
+      {
+        "image_url": "/dapps/deadrare/collection-nft-01.png",
+        "name": "Alphatauri #4"
+      },
+      {
+        "image_url": "/dapps/deadrare/collection-nft-02.png",
+        "name": "Alphatauri #42"
+      },
+      {
+        "image_url": "/dapps/deadrare/collection-nft-03.png",
+        "name": "Alphatauri #18"
+      }
+    ]
+  },
+  "media": {
+    "logoUrl": "/dapps/deadrare/dapp-icon-deadrare.png",
+    "bannerUrl": "/dapps/deadrare/dapp-header-deadrare.png",
+    "previewUrl": "/dapps/deadrare/dapp-preview-deadrare.png",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
