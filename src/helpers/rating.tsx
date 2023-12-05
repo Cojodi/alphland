@@ -24,7 +24,7 @@ export const getRatings = async () => {
   // const data = await fetch(
   //   `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings`
   // ).then((res) => res.json());
-  const ratings = [];
+  const ratings: Rating[] = [];
   // const ratings: Rating[] = data?.ratings || [];
 
   const ratingsMap = new Map();
