@@ -30,7 +30,7 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
   useEffect(() => {
     const getRatingsData = async () => {
       const dappRatings = await getRatingForDapp(dappKey);
-      setAverageRating(dappRatings?.averageRating || null);
+      // todo setAverageRating(dappRatings?.averageRating || null);
     };
     getRatingsData();
   }, []);
