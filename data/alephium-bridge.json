@@ -3,6 +3,36 @@
   "description": "The Alephium Bridge enables unlimited, decentralized cross-chain transfer of tokens",
   "short_description": "Unlimited, decentralized cross-chain transfer of tokens",
   "tags": ["Bridge"],
+  "contracts": [
+    {
+      "name": "Token Bridge",
+      "address": "23Fj7xr1pxWfYLixz3aBC3u5dUJVpAjXArbpiYWxeGjQT"
+    },
+    {
+      "name": "Governance",
+      "address": "uvVP76UfwQ1fmPTZWojUGYY2tKyuKe7Br76KDecfMbjM"
+    },
+    {
+      "name": "Wrapped ETH (Alph Bridge)",
+      "address": "vP6XSUyjmgWCB2B9tD5Rqun56WJqDdExWnfwZVEqzhQb"
+    },
+    {
+      "name": "Wrapped BTC (Alph Bridge)",
+      "address": "xUTp3RXGJ1fJpCGqsAY6GgyfRQ3WQ1MdcYR1SiwndAbR"
+    },
+    {
+      "name": "Tether USD (Alph Bridge)",
+      "address": "zSRgc7goAYUgYsEBYdAzogyyeKv3ne3uvWb3VDtxnaEK"
+    },
+    {
+      "name": "USD Coin (Alph Bridge)",
+      "address": "22Nb9JajRpAh9A2fWNgoKt867PA6zNyi541rtoraDfKXV"
+    },
+    {
+      "name": "Dai Stablecoin (Alph Bridge)",
+      "address": "xoDuoek5V2T1dL2HWwvbHT1JEHjMjtJfJoUS2xKsjFg3"
+    }
+  ],
   "verified": false,
   "dotw": false,
   "links": {
