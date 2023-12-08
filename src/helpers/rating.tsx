@@ -1,8 +1,7 @@
 export const getRatingForDapp = async (name: string) => {
-  // return await fetch(
-  //   `${process.env.API_URL}/tokens/dapps/ratings/name/${name}`
-  // ).then((res) => res.json());
-  return "";
+  return await fetch(
+    `${process.env.API_URL}/tokens/dapps/ratings/name/${name}`
+  ).then((res) => res.json());
 };
 
 export const getRatingsFromUser = async ({
@@ -12,20 +11,17 @@ export const getRatingsFromUser = async ({
   account: string;
   dappKey: string;
 }) => {
-  // const data = await fetch(
-  //   `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings/key/${dappKey}?account=${account}`
-  // ).then((res) => res.json());
-  // return data?.userRating || null;
-
-  return null;
+  const data = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings/key/${dappKey}?account=${account}`
+  ).then((res) => res.json());
+  return data?.userRating || null;
 };
 
 export const getRatings = async () => {
-  // const data = await fetch(
-  //   `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings`
-  // ).then((res) => res.json());
-  const ratings: Rating[] = [];
-  // const ratings: Rating[] = data?.ratings || [];
+  const data = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings`
+  ).then((res) => res.json());
+  const ratings: Rating[] = data?.ratings || [];
 
   const ratingsMap = new Map();
 

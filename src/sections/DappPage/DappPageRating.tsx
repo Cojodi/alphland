@@ -2,7 +2,7 @@ import starEmpty from "../../assets/icons/starEmpty.svg";
 import starFilled from "../../assets/icons/starFilled.svg";
 import ConnectWalletModal from "../../components/Modal/ConnectWalletModal";
 import { getRatingForDapp, getRatingsFromUser } from "../../helpers/rating";
-import { useWalletStore } from "../../hooks/useWalletStore";
+import { SignMessageParams } from "@alephium/web3";
 import { useWallet } from "@alephium/web3-react";
 import { getCookie, hasCookie, setCookie } from "cookies-next";
 import Image from "next/image";
@@ -17,7 +17,7 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
   const [error, setError] = useState<string | null>(null);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const cookieValue = getCookie(dappKey) as string;
-  const { account, connectionStatus } = useWallet();
+  const { account, connectionStatus, signer } = useWallet();
 
   const [currentRating, setCurrentRating] = useState<number | null>(
     typeof window !== "undefined"
@@ -30,15 +30,10 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
   useEffect(() => {
     const getRatingsData = async () => {
       const dappRatings = await getRatingForDapp(dappKey);
-      // todo setAverageRating(dappRatings?.averageRating || null);
+      setAverageRating(dappRatings?.averageRating || null);
     };
     getRatingsData();
   }, []);
-
-  const connectedWallet = useWalletStore((state) => state.connectedWallet);
-  const setConnectedWallet = useWalletStore(
-    (state) => state.setConnectedWallet
-  );
 
   useEffect(() => {
     const getUserOldRatings = async ({ account }: { account: string }) => {
@@ -47,10 +42,10 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
         setCurrentRating(rating - 1);
       }
     };
-    if (connectedWallet) {
-      getUserOldRatings({ account: connectedWallet.selectedAddress });
+    if (account?.address) {
+      getUserOldRatings({ account: account.address });
     }
-  }, [connectedWallet]);
+  }, []);
 
   const determineIfMainnet = () => {
     if (typeof window !== "undefined") {
@@ -140,7 +135,16 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
     //       r: number.toHexString(sign[0]),
     //       s: number.toHexString(sign[1]),
     //     }));
-    const signatures = "todo-sig";
+    if (!account?.address) {
+      throw Error("Invalid account address");
+    }
+    const messageParams: SignMessageParams = {
+      message: `${dappKey},${ratingValue}`,
+      signerAddress: account?.address,
+      messageHasher: "alephium",
+    };
+    const signatures = signer?.signMessage(messageParams);
+
     const bodyData = {
       dappKey,
       signatures,
@@ -234,7 +238,7 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
               onMouseLeave={() => setHoverIndex(null)}
               onClick={() => {
                 setCurrentRating(val);
-                if (!connectedWallet) {
+                if (!account?.address) {
                   setRatingModalOpen(true);
                 } else {
                   connectToWalletAndRate(val);
