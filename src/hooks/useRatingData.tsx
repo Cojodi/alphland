@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 interface RatingWidgetData {
-  averageRating: number;
+  average_rating: number;
   dappKey: string;
   voteCount: number;
   ratings: number;

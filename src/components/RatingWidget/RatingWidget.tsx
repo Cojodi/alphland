@@ -13,7 +13,7 @@ const RatingWidget = (): ReactElement => {
   const { ratingData, isLoading } = useRatingData(dappName);
   const { currentTheme, setTheme } = useDarkMode();
   const totalStars = 5;
-  const activeStars = ratingData ? ratingData.averageRating : 0;
+  const activeStars = ratingData ? ratingData.average_rating : 0;
   const url = `https://www.alphad.app/${dappName}`;
 
   function handleClick() {

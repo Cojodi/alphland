@@ -1,6 +1,6 @@
 export const getRatingForDapp = async (name: string) => {
   return await fetch(
-    `${process.env.API_URL}/tokens/dapps/ratings/name/${name}`
+    `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings/name/${name}`
   ).then((res) => res.json());
 };
 
@@ -12,7 +12,7 @@ export const getRatingsFromUser = async ({
   dappKey: string;
 }) => {
   const data = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings/key/${dappKey}?account=${account}`
+    `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings/key/${dappKey}?account_id=${account}`
   ).then((res) => res.json());
   return data?.userRating || null;
 };
@@ -26,7 +26,7 @@ export const getRatings = async () => {
   const ratingsMap = new Map();
 
   ratings.forEach((rating) => {
-    const key = Math.round(rating.averageRating);
+    const key = Math.round(rating.average_rating);
     if (!ratingsMap.get(key)) {
       ratingsMap.set(key, []);
     }
