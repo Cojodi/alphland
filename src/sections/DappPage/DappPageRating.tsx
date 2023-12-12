@@ -2,11 +2,10 @@ import starEmpty from "../../assets/icons/starEmpty.svg";
 import starFilled from "../../assets/icons/starFilled.svg";
 import ConnectWalletModal from "../../components/Modal/ConnectWalletModal";
 import { getRatingForDapp, getRatingsFromUser } from "../../helpers/rating";
-import { useWalletStore } from "../../hooks/useWalletStore";
 import { useWallet } from "@alephium/web3-react";
-import { getCookie, hasCookie, setCookie } from "cookies-next";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 type Props = {
   dappKey?: string;
@@ -16,29 +15,17 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
   const [averageRating, setAverageRating] = useState(null);
   const [error, setError] = useState<string | null>(null);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
-  const cookieValue = getCookie(dappKey) as string;
-  const { account, connectionStatus } = useWallet();
+  const { account, connectionStatus, signer } = useWallet();
 
-  const [currentRating, setCurrentRating] = useState<number | null>(
-    typeof window !== "undefined"
-      ? hasCookie(dappKey)
-        ? parseInt(cookieValue || "")
-        : null
-      : null
-  );
+  const [currentRating, setCurrentRating] = useState<number | null>(null);
   const [isRatingModalOpen, setRatingModalOpen] = useState(false);
   useEffect(() => {
     const getRatingsData = async () => {
       const dappRatings = await getRatingForDapp(dappKey);
-      // todo setAverageRating(dappRatings?.averageRating || null);
+      setAverageRating(dappRatings?.average_rating || null);
     };
     getRatingsData();
   }, []);
-
-  const connectedWallet = useWalletStore((state) => state.connectedWallet);
-  const setConnectedWallet = useWalletStore(
-    (state) => state.setConnectedWallet
-  );
 
   useEffect(() => {
     const getUserOldRatings = async ({ account }: { account: string }) => {
@@ -47,10 +34,10 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
         setCurrentRating(rating - 1);
       }
     };
-    if (connectedWallet) {
-      getUserOldRatings({ account: connectedWallet.selectedAddress });
+    if (account?.address) {
+      getUserOldRatings({ account: account.address });
     }
-  }, [connectedWallet]);
+  }, []);
 
   const determineIfMainnet = () => {
     if (typeof window !== "undefined") {
@@ -61,92 +48,36 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
     }
   };
 
-  const connectToWalletAndRate = async (rating?: number) => {
-    let starknet = null;
-    let ratingValue = rating || currentRating;
-    if (connectionStatus === "connected") {
-    } else {
-      //todo connect the wallet
-    }
+  const rateDapp = async (rating: number) => {
+    let ratingValue = rating + 1;
 
-    // if (connectedWallet) {
-    //   starknet = connectedWallet;
-    // } else {
-    //   const wallets = await sn.getAvailableWallets();
-    //   const argentWallet = wallets.find((wallet) => wallet.id === "argentX");
-    //   if (argentWallet) {
-    //     try {
-    //       const res = await sn.enable(argentWallet);
-    //       setConnectedWallet(res);
-    //       starknet = res;
-    //       setError(null);
-    //     } catch {
-    //       setError("User rejected wallet selection or wallet not found");
-    //       throw Error("User rejected wallet selection or wallet not found");
-    //     }
-    //   } else {
-    //     try {
-    //       const res = await connect();
-    //       setConnectedWallet(res);
-    //       starknet = res;
-    //       setError(null);
-    //     } catch {
-    //       setError("User rejected wallet selection or wallet not found");
-    //       throw Error("User rejected wallet selection or wallet not found");
-    //     }
-    //   }
-    // }
+    console.log(`Trying to rate dapp ${dappKey} with rating ${ratingValue}`);
+
     setError(null);
     if (ratingValue === null || ratingValue === undefined) {
       throw Error("Not rated");
     }
-    ratingValue++;
-    // try {
-    //   await starknet.enable();
-    //   if (starknet.account) {
-    //     setConnectedWallet(starknet);
-    //   } else {
-    //     setError("User rejected wallet selection or wallet not found");
-    //     throw Error("User rejected wallet selection or wallet not found");
-    //   }
-    //   if (starknet.isConnected) {
-    //     const chainId = determineIfMainnet() ? "SN_MAIN" : "SN_GOERLI";
-    //     const signature: Signature = await starknet.account.signMessage({
-    //       message: {
-    //         dappKey: dappKey,
-    //         rating: ratingValue,
-    //       },
-    //       domain: {
-    //         name: "Alphadapps",
-    //         chainId,
-    //         version: "1.0",
-    //       },
-    //       types: {
-    //         // IMPORTANT: Do not change StarkNetDomain to StarknetDomain
-    //         StarkNetDomain: [
-    //           { name: "name", type: "felt" },
-    //           { name: "chainId", type: "felt" },
-    //           { name: "version", type: "felt" },
-    //         ],
-    //         Message: [
-    //           { name: "dappKey", type: "felt" },
-    //           { name: "rating", type: "felt" },
-    //         ],
-    //       },
-    //       primaryType: "Message",
-    //     });
-    //
-    //     const signatures = chunk(signature, 2).map((sign) => ({
-    //       r: number.toHexString(sign[0]),
-    //       s: number.toHexString(sign[1]),
-    //     }));
-    const signatures = "todo-sig";
+
+    if (!account?.address) {
+      throw Error("Invalid account address");
+    }
+    //todo
+    // const messageParams: SignMessageParams = {
+    //   message: `${dappKey},${ratingValue}`,
+    //   signerAddress: account?.address,
+    //   messageHasher: "alephium",
+    // };
+    // console.log(signer);
+    // const signatures = signer?.signMessage(messageParams);
+    const signature = "test";
     const bodyData = {
-      dappKey,
-      signatures,
-      rating: ratingValue,
-      account: account?.address,
+      dapp_key: dappKey,
+      name: dappKey,
+      signature,
+      rating_score: ratingValue,
+      account_id: account?.address,
     };
+    console.log(bodyData);
 
     const handleErrors = (response: any) => {
       if (!response.ok) {
@@ -164,15 +95,16 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
     })
       .then(handleErrors)
       .then((res) => {
-        setAverageRating(res.averageRating);
+        setAverageRating(res.average_rating);
         if (ratingValue) {
-          setCookie(dappKey, ratingValue - 1);
           setCurrentRating(ratingValue - 1);
+          toast(`You rated ${dappKey} with ${ratingValue} stars!`);
         }
         setError(null);
         setRatingModalOpen(false);
       })
       .catch((err) => {
+        toast(`Rating failed.`);
         const parsedMessage = JSON.parse(err.message);
         if (parsedMessage.status) {
           setError("Error: " + parsedMessage.status);
@@ -180,14 +112,6 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
           setError("An error occurred.");
         }
       });
-    //   } else {
-    //     setError("Unable to connect");
-    //     setConnectedWallet(null);
-    //   }
-    // } catch (err: any) {
-    //   setError("Error connecting");
-    //   setCurrentRating(cookieValue ? parseInt(cookieValue || "") : null);
-    // }
   };
 
   return (
@@ -198,12 +122,12 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
           isOpen={isRatingModalOpen}
           error={error}
           onClose={() => {
-            setCurrentRating(null);
             setError(null);
             setRatingModalOpen(false);
           }}
           onConfirm={() => {
-            connectToWalletAndRate();
+            console.log("test modal");
+            setRatingModalOpen(false);
           }}
         />
         <div className="flex items-end gap-1 mb-6">
@@ -233,11 +157,14 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
               onMouseEnter={() => setHoverIndex(val)}
               onMouseLeave={() => setHoverIndex(null)}
               onClick={() => {
-                setCurrentRating(val);
-                if (!connectedWallet) {
+                if (connectionStatus === "disconnected") {
+                  console.log("wallet disconnected, opening modal");
                   setRatingModalOpen(true);
                 } else {
-                  connectToWalletAndRate(val);
+                  setCurrentRating(val);
+
+                  console.log("wallet connected, claling rate");
+                  rateDapp(val);
                 }
               }}
             >
