@@ -127,7 +127,7 @@ const DappPage: NextPage<DappPageProps> = ({
                     />
                   </SwiperSlide>
                 )}
-                {dappInfo.media.gallery.map((image, i) => (
+                {dappInfo.media.gallery?.map((image, i) => (
                   <SwiperSlide key={image.url}>
                     <div
                       className="rounded-2xl h-[240px] sm:h-[300px] lg:h-[330px] shadow-box-image-shadow bg-no-repeat bg-center bg-cover"

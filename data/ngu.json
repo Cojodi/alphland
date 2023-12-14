@@ -1,0 +1,44 @@
+{
+  "name": "NGU",
+  "description": "$NGU is a cryptocurrency designed for crypto enthusiasts seeking exposure to the dynamic world of decentralized finance (DeFi) while incorporating innovative trading utilities that enhance its usage.",
+  "short_description": "Number Go Up",
+  "tags": ["DeFi", "Social", "Trading"],
+  "contracts": [
+    {
+      "name": "Token",
+      "address": "vZkr2iopB1GSxqhVQZMVSJ2Adhiqcf4tR3RBzczwRvCF"
+    }
+  ],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://ngu.money",
+    "careers": "",
+    "twitter": "https://twitter.com/numbergoup_ngu",
+    "telegram": "",
+    "discord": "https://discord.gg/cnaDjJ4P",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "numbergoup_ngu",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2023-12-08T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [
+    {
+      "address": "29iBWdXaC94V2oe4pqV5AEM8H3JBDCXgZBStuig1QSvXh",
+      "symbol": "NGU"
+    }
+  ],
+  "media": {
+    "logoUrl": "/dapps/ngu/ngu-logo.png",
+    "bannerUrl": "/dapps/ngu/ngu-banner.png",
+    "previewUrl": "/dapps/ngu/ngu-preview.png",
+    "videoUrl": "https://player.odycdn.com/v6/streams/7bb0024c9ccb6d4bb71d58c07a2cad8e5f36f7e9/86db3b.mp4"
+  }
+}
