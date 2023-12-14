@@ -2,7 +2,7 @@
   "name": "NGU",
   "description": "$NGU is a cryptocurrency designed for crypto enthusiasts seeking exposure to the dynamic world of decentralized finance (DeFi) while incorporating innovative trading utilities that enhance its usage.",
   "short_description": "Number Go Up",
-  "tags": ["DeFi", "Social", "Trading"],
+  "tags": ["DeFi", "Social"],
   "contracts": [
     {
       "name": "Token",
