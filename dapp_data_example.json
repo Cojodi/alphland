@@ -1,7 +1,8 @@
 {
   // ATTENTION, PLEASE READ
   // Before submitting the PR, please run the app locally or and visit your dApp if everything is displayed correctly.
-  // Additionally run 'npm run build' to make sure the SSG works.
+  // Rename ```env.example``` to ```env.local```
+  // Run 'npm run build' to make sure the SSG works.
   // Please delete this and all other comments <3
 
   "name": "<Name of your Dapp>",
