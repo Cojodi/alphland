@@ -26,8 +26,6 @@ export const categories = [
   { key: "onramps", name: "Onramps", icon: card, iconDark: cardLight },
   { key: "bridges", name: "Bridges", icon: bridges, iconDark: bridgesLight },
   { key: "defi", name: "DeFi", icon: swap, iconDark: swapLight },
-  { key: "defi", name: "DeFi", icon: swap, iconDark: swapLight },
-
   { key: "games", name: "Games", icon: gaming, iconDark: gamingLight },
   { key: "nfts", name: "NFTs", icon: gallery, iconDark: galleryLight },
   { key: "social", name: "Social", icon: heart, iconDark: heartLight },
