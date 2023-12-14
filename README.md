@@ -52,7 +52,8 @@ Steps:
   }
 ```
 
-8. Create the PR
+8. Rename ```env.example``` to ```env.local```, ```npm run build``` and check if your dApp is displayed correctly.
+8. Create the PR if above steps succeeded.
 
 And that's it! 🚀
 

@@ -1,4 +1,10 @@
 {
+  // ATTENTION, PLEASE READ
+  // Before submitting the PR, please run the app locally or and visit your dApp if everything is displayed correctly.
+  // Rename ```env.example``` to ```env.local```
+  // Run 'npm run build' to make sure the SSG works.
+  // Please delete this and all other comments <3
+
   "name": "<Name of your Dapp>",
   "description": "<100 to 500 characters description of your project>",
   "short_description": "<One-liner description. Max 20 characters>",
@@ -12,7 +18,7 @@
     "DAOs",
     "Infrastructure"
   ],
-  // Remove all that don't apply. Please delete this and all other comments.
+  // Remove all that don't apply.
   "contracts": [
     {
       "name": "<Name of Mainnet contract 1 (remove entry in array if it doesn't apply, add more entries if there are more contracts)>",
