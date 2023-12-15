@@ -32,7 +32,7 @@
   "audits": [
     {
       "name": "<Name of the publicly available Security Audit. Remove entry from 'audits' array if non-existent. Add more entries to the 'audits' array if relevant>",
-      "url": "URL to access the security audit. Only audits that are publicly available will be considered to be included in Alphadapps. If they're private, please don't include them in the 'audits' array>"
+      "url": "URL to access the security audit. Only audits that are publicly available will be considered to be included in Alphland. If they're private, please don't include them in the 'audits' array>"
     }
   ],
   "verified": false,
@@ -53,7 +53,7 @@
   "twitterName": "Twitter username. Leave empty if none",
   "teamInfo": {
     "contactEmail": "<Email address>",
-    // For Alphadapps to be able to contact you. Will not be published on Alphadapps.
+    // For Alphland to be able to contact you. Will not be published on Alphland.
     "founded": "Founding date of the project. EXAMPLE: 2022-05-24T00:00:00.000Z",
     "anonymous": true
     // If at least one of the founders has a public profile with their real name linked to the project, set this to true.

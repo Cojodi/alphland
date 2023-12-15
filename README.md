@@ -1,10 +1,10 @@
 <div align="center">
-    <img src="./src/assets/logo-alphadapps-light.svg" alt="Alephium logo"width=400 alt="alephium-logo" />
+    <img src="src/assets/logo-alphland-light.svg" alt="Alephium logo"width=400 alt="alephium-logo" />
     <h4>The home for all dapps in the Alephium ecosystem</h4>
 
 </div>
 
-![Vercel CI](https://vercelbadge.vercel.app/api/fugashu/alphadapps)
+![Vercel CI](https://vercelbadge.vercel.app/api/fugashu/Alphland)
 
 ## 🧭 Explore the Alephium ecosystem
 
@@ -24,21 +24,21 @@ the Alephium Wallet Browser Extension for Chrome or Firefox:
 
 </div>
 
-## ✅ Add your dapp to Alphadapps
+## ✅ Add your dapp to Alphland
 
-If you are building a dapp on Alephium and want to showcase it in Alphadapps, you just need to submit a PR to this
+If you are building a dapp on Alephium and want to showcase it in Alphland, you just need to submit a PR to this
 repository.
 
 Steps:
 
 1. Create your images: 320x320 logo, 1920x400 banner and 700x400 preview. Use
    the <a href="https://www.figma.com/file/6S69MxzfC99Sn6VxhqVuYL/Alphadapps-Figma-Template?type=design&mode=design&t=6fBBlhafVyg77AlZ-1">
-   Alphadapps Figma template</a> to help you.
+   Alphland Figma template</a> to help you.
 2. Please optimise your images using tinypng.com – JPGs are best for photos and PNGs for graphics. Or you can convert to
    WebP.
 3. Fork this repo and create a new folder with your dapp name under `/public/dapps/`
 4. Add your optimised images to the folder
-5. Copy [`dapp_data_example.json`](https://github.com/Fugashu/alphadapps/blob/develop/dapp_data_example.json), rename it
+5. Copy [`dapp_data_example.json`](https://github.com/Cojodi/alphland/blob/develop/dapp_data_example.json), rename it
    with your dapp's name in lowercase and move it to `/data`
 6. Fill out the fields in the json file with your dapp's data
 7. Ensure the json points to your images, i.e.
@@ -57,7 +57,7 @@ Steps:
 
 And that's it! 🚀
 
-Someone from the Alphadapps team will review the PR and contact you if they need to clarify anything.
+Someone from the Alphland team will review the PR and contact you if they need to clarify anything.
 
 For any questions reach out to **Fugashu** on Discord:
 
@@ -70,21 +70,21 @@ For any questions reach out to **Fugashu** on Discord:
 TODO 
 ## 📣 Share your dapp rating with the world
 
-Embed the Alphadapps rating widget
+Embed the Alphland rating widget
 
-<img src="https://dv3jj1unlp2jl.cloudfront.net/alphadapps/widget-rating.svg" alt="Alphadapps rating widget" />
+<img src="https://dv3jj1unlp2jl.cloudfront.net/Alphland/widget-rating.svg" alt="Alphland rating widget" />
 
 #### Using the widget
 
 ```
 <a href="https://www.alphad.app/your_dapp_name" style="display:inline-block;position:relative">
   <div style="position:absolute;top:0;right:0;bottom:0;left:0;"></div>
-  <iframe src="https://www.alphad.app/widgets/rating?dappname=your_dapp_name" width="260" height="176" frameBorder="0" title="Alphadapps Widget"></iframe>
+  <iframe src="https://www.alphad.app/widgets/rating?dappname=your_dapp_name" width="260" height="176" frameBorder="0" title="Alphland Widget"></iframe>
 </a>
 ```
 
 1. Copy and paste the snippet above
-2. In `<a href="…">` change `your_dapp_name` to exactly the same as the name of your dapp as shown in your Alphadapps url.
+2. In `<a href="…">` change `your_dapp_name` to exactly the same as the name of your dapp as shown in your Alphland url.
 3. Also change `your_dapp_name` in the `<iframe src="…">`
 4. (Optional) you can also set the theme to `theme=light` or `theme=dark` 😎 (default uses the device settings).  
    Just add the `theme` param to the url after your dappname.
@@ -92,12 +92,12 @@ Embed the Alphadapps rating widget
 
 #### Widget example
 
-briq on Alphadapps is `https://www.alphad.app/briq`, so would be
+briq on Alphland is `https://www.alphad.app/briq`, so would be
 
 ```
 <a href="https://www.alphad.app/briq" style="display:inline-block;position:relative">
   <div style="position:absolute;top:0;right:0;bottom:0;left:0;"></div>
-  <iframe src="https://www.alphad.app/widgets/rating?dappname=briq" width="260" height="176" frameBorder="0" title="Alphadapps Widget"></iframe>
+  <iframe src="https://www.alphad.app/widgets/rating?dappname=briq" width="260" height="176" frameBorder="0" title="Alphland Widget"></iframe>
 </a>
 ```
  -->

@@ -1,7 +1,7 @@
 import moon from "../../../assets/icons/moon.svg";
 import sun from "../../../assets/icons/sun.svg";
-import logoLight from "../../../assets/logo-alphadapps-light.svg";
-import logo from "../../../assets/logo-alphadapps.svg";
+import logoLight from "../../../assets/logo-alphland-light.svg";
+import logo from "../../../assets/logo-alphland.svg";
 import Button from "../../Button/Button";
 import ConnectWallet from "../../Button/ConnectWallet";
 import Image from "next/image";
@@ -154,7 +154,7 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
               variant="primary"
               className="w-full"
               withoutMobile
-              href="https://github.com/fugashu/alphadapps#-add-your-dapp-to-alphadapps"
+              href="https://github.com/cojodi/Alphland#-add-your-dapp-to-Alphland"
               target="_blank"
               rel="noopener noreferrer"
             >

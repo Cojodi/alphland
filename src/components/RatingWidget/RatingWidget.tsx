@@ -1,7 +1,7 @@
 import logo from "../../assets/alephium-logos/dark/Logo-Horizontal-Dark.svg";
 import starEmpty from "../../assets/icons/starEmpty.svg";
 import starFilled from "../../assets/icons/starFilled.svg";
-import logoLight from "../../assets/logo-alphadapps-light.svg";
+import logoLight from "../../assets/logo-alphland-light.svg";
 import { useDarkMode } from "../../hooks/useDarkMode";
 import useRatingData from "../../hooks/useRatingData";
 import Loading from "./Loading/Loading";
@@ -79,9 +79,9 @@ const RatingWidget = (): ReactElement => {
           </div>
           <div className="mt-2 w-[124px] h-[37px]">
             {currentTheme === "dark" ? (
-              <Image src={logoLight} alt="Alphadapps logo" />
+              <Image src={logoLight} alt="Alphland logo" />
             ) : (
-              <Image src={logo} alt="Alphadapps logo" />
+              <Image src={logo} alt="Alphland logo" />
             )}
           </div>
         </>

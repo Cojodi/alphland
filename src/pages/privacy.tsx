@@ -28,11 +28,11 @@ const Home = () => {
 
         <p className="my-4">
           This is the privacy policy (&quot;Privacy Policy”) for alphad.app
-          (&quot;Alphadapps”) operated by Cojodi UG Limited, company
-          registration number 11093638, with its registered office address at 5
-          New Street Square, London, England, EC4A 3TW (&quot;our”, &quot;we”,
-          or &quot;Cojodi”). Cojodi is the controller of your personal data
-          collected through Alphadapps and we are committed to protecting and
+          (&quot;Alphland”) operated by Cojodi UG Limited, company registration
+          number 11093638, with its registered office address at 5 New Street
+          Square, London, England, EC4A 3TW (&quot;our”, &quot;we”, or
+          &quot;Cojodi”). Cojodi is the controller of your personal data
+          collected through Alphland and we are committed to protecting and
           respecting your privacy.
         </p>
 
@@ -40,7 +40,7 @@ const Home = () => {
 
         <p className="my-4">
           This Privacy Policy explains who we are, why and how we process
-          personal data collected through your use of Alphadapps and, if you are
+          personal data collected through your use of Alphland and, if you are
           the subject of any of the personal data concerned, what rights you
           have and how to get in touch with us if you need to.
         </p>
@@ -75,7 +75,7 @@ const Home = () => {
         </p>
         <p className="my-4">
           If, for any reason, you do not agree to the terms of this Privacy
-          Policy, please stop using Alphadapps.
+          Policy, please stop using Alphland.
         </p>
         <p className="my-4">
           We reserve the right to revise or amend this Privacy Policy at any
@@ -84,7 +84,7 @@ const Home = () => {
           registered users to make sure that they are informed of such changes.
         </p>
         <p className="my-4">
-          Please note that Alphadapps is not intended for use by nor directed at
+          Please note that Alphland is not intended for use by nor directed at
           anyone under the age of 18 and we do not knowingly collect data
           relating to children. If you believe we have collected personal
           information about your child, you may contact us at{" "}
@@ -118,12 +118,11 @@ const Home = () => {
         </p>
 
         <h4 className="text-[20px] font-bold mt-[20px]">
-          How and what types of data we collect from you when you use
-          Alphadapps?
+          How and what types of data we collect from you when you use Alphland?
         </h4>
 
         <p className="my-4">
-          When you use Alphadapps we may collect, store and use certain personal
+          When you use Alphland we may collect, store and use certain personal
           information that you disclose to us.
         </p>
         <p className="my-4">
@@ -132,7 +131,7 @@ const Home = () => {
         </p>
         <p className="my-4">
           We shall also collect information about you when you visit and
-          interact with Alphadapps through the use of technologies such as
+          interact with Alphland through the use of technologies such as
           cookies. The following are examples of information we may collect:
         </p>
 
@@ -143,15 +142,15 @@ const Home = () => {
           <li className="mb-2">time zone setting;</li>
           <li className="mb-2">your IP address;</li>
           <li className="mb-2">
-            information about interactions you have with Alphadapps (such as
+            information about interactions you have with Alphland (such as
             scrolling and clicks);
           </li>
           <li className="mb-2">
             information about the way you use and the actions you take within
-            Alphadapps;
+            Alphland;
           </li>
           <li className="mb-2">
-            length of time on Alphadapps and time spent within certain sections;
+            length of time on Alphland and time spent within certain sections;
           </li>
           <li className="mb-2">response times; and</li>
           <li className="mb-2">download errors.</li>
@@ -160,11 +159,11 @@ const Home = () => {
         <p className="my-4">
           Please refer to your device’s help material to learn what controls you
           can use to remove cookies, block cookies, or disable IDFA tracking. If
-          you do this, it may affect your use of Alphadapps.
+          you do this, it may affect your use of Alphland.
         </p>
         <p className="my-4">
           We may also partner with third parties who may collect anonymous usage
-          or statistical data through your use of Alphadapps (including, for
+          or statistical data through your use of Alphland (including, for
           example, sub-contractors in technical services, business partners,
           advertising networks, analytics providers).
         </p>
@@ -253,7 +252,7 @@ const Home = () => {
           </li>
           <li className="mb-2">
             with analytics that assist us in the improvement and optimisation of
-            Alphadapps.
+            Alphland.
           </li>
         </ul>
 
@@ -303,9 +302,9 @@ const Home = () => {
 
         <h4 className="text-[20px] font-bold mt-[20px]">Other Disclosures</h4>
         <p className="my-4">
-          During your use of Alphadapps, your mobile network operator may also
-          collect personal information about you regarding your use of
-          Alphadapps such as your identity, your usage and location.
+          During your use of Alphland, your mobile network operator may also
+          collect personal information about you regarding your use of Alphland
+          such as your identity, your usage and location.
         </p>
         <p className="my-4">
           These third parties shall act as separate and independent controllers

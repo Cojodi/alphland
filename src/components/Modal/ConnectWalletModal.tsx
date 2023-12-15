@@ -15,9 +15,9 @@ type Props = {
 };
 
 const textVariantDapp =
-  "To rate this dapp, you need to use an Alephium wallet and connect it to Alphadapps.";
+  "To rate this dapp, you need to use an Alephium wallet and connect it to Alphland.";
 const textVariantNav =
-  "To rate this dapp, you need to use an Alephium wallet and connect it to Alphadapps.";
+  "To rate this dapp, you need to use an Alephium wallet and connect it to Alphland.";
 
 const ConnectWalletModal = ({
   isOpen,

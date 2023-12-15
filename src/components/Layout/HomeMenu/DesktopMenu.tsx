@@ -1,7 +1,7 @@
 import moon from "../../../assets/icons/moon.svg";
 import sun from "../../../assets/icons/sun.svg";
-import logoLight from "../../../assets/logo-alphadapps-light.svg";
-import logoDark from "../../../assets/logo-alphadapps.svg";
+import logoLight from "../../../assets/logo-alphland-light.svg";
+import logoDark from "../../../assets/logo-alphland.svg";
 import Button from "../../Button/Button";
 import ConnectWallet from "../../Button/ConnectWallet";
 import Image from "next/image";
@@ -36,7 +36,7 @@ const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
             variant="primary"
             className="h-min"
             style={{ padding: "13px 24px", lineHeight: "normal" }}
-            href="https://github.com/fugashu/alphadapps#-add-your-dapp-to-alphadapps"
+            href="https://github.com/cojodi/Alphland#-add-your-dapp-to-Alphland"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -60,7 +60,7 @@ const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
         </h2>
         {/* <p className="text-center font-normal text-base leading-[16px] mt-16">
           Built with ❤️ by{" "}
-          <a href="https://www.argent.xyz/?utm_source=alphadapps">Argent</a>
+          <a href="https://www.argent.xyz/?utm_source=Alphland">Argent</a>
         </p> */}
       </div>
     </div>

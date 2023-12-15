@@ -17,7 +17,7 @@ const Footer = ({ currentTheme }: FooterProps) => {
         <div className="flex flex-row items-center justify-center mb-4 md:mb-0">
           <div>
             <a
-              href={"https://github.com/cojodi/alphadapps"}
+              href={"https://github.com/cojodi/Alphland"}
               className="flex justify-center items-center"
             >
               <Image

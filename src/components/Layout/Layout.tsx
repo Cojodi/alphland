@@ -37,15 +37,15 @@ export const Layout = ({
       <Head>
         <title>
           {title
-            ? `${title} on Alphadapps – The best dapps on Alephium`
-            : `Alphadapps | The best dapps on Alephium`}
+            ? `${title} on Alphland – The best dapps on Alephium`
+            : `Alphland | The best dapps on Alephium`}
         </title>
         <meta
           name="description"
           content={
             description
               ? `${description}`
-              : `Alphadapps | The best dapps on Alephium`
+              : `Alphland | The best dapps on Alephium`
           }
         />
 
@@ -54,8 +54,8 @@ export const Layout = ({
           property="og:title"
           content={
             title
-              ? `Discover ${title} on Alphadapps – The best dapps on Alephium`
-              : `Alphadapps | The best dapps on Alephium`
+              ? `Discover ${title} on Alphland – The best dapps on Alephium`
+              : `Alphland | The best dapps on Alephium`
           }
         />
         {description && <meta name="og:description" content={description} />}
@@ -70,8 +70,8 @@ export const Layout = ({
           property="twitter:title"
           content={
             title
-              ? `Discover ${title} on Alphadapps – The best dapps on Alephium`
-              : `Alphadapps | The best dapps on Alephium`
+              ? `Discover ${title} on Alphland – The best dapps on Alephium`
+              : `Alphland | The best dapps on Alephium`
           }
         />
 
