@@ -47,7 +47,7 @@ const RatingWidget = (): ReactElement => {
         <>
           {!activeStars ? (
             <h2 className="text-[22px] font-bold">
-              Error, app does not exist or has no ratings!
+              Error, {dappName} does not exist or has no ratings!
             </h2>
           ) : (
             <>
