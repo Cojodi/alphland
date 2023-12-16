@@ -79,9 +79,9 @@ Embed the Alphland rating widget
 #### Using the widget
 
 ```
-<a href="https://www.alph.land/your_dapp_name" style="display:inline-block;position:relative">
+<a href="https://www.alph.land/{your_dapp_name}" style="display:inline-block;position:relative">
   <div style="position:absolute;top:0;right:0;bottom:0;left:0;"></div>
-  <iframe src="https://www.alph.land/widgets/rating?dappname=your_dapp_name" width="260" height="176" frameBorder="0" title="Alphland Widget"></iframe>
+  <iframe src="https://www.alph.land/widgets/rating?dappname={your_dapp_name}" width="260" height="176" frameBorder="0" title="Alphland Widget"></iframe>
 </a>
 ```
 
