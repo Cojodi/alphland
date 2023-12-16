@@ -99,7 +99,7 @@ walph on Alphland would be `https://www.alph.land/walph`
 ```
 <a href="https://www.alph.land/walph" style="display:inline-block;position:relative">
   <div style="position:absolute;top:0;right:0;bottom:0;left:0;"></div>
-  <iframe src="https://www.alph.land/widgets/rating?dappname=briq" width="260" height="176" frameBorder="0" title="Alphland Widget"></iframe>
+  <iframe src="https://www.alph.land/widgets/rating?dappname=walph" width="260" height="170" frameBorder="0" title="Alphland Widget"></iframe>
 </a>
 ```
  -->
