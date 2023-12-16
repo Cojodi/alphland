@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    NEXT_PUBLIC_API_URL: "https://alphadappsapi.fresenius.ai",
+    NEXT_PUBLIC_API_URL: "https://alphlandapi.fresenius.ai",
   },
   swcMinify: true,
   compiler: {
