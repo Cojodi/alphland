@@ -56,7 +56,7 @@ const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
           Discover the best dapps on Alephium
         </h1>
         <h2 className="text-black dark:text-white text-[16px] leading-[20px] font-lighter">
-          Sponsored by{" "}
+          Proudly sponsored by{" "}
           <a href="https://alephium.org/" target={"_blank"} rel="noreferrer">
             Alephium
           </a>{" "}
