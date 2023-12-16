@@ -28,12 +28,10 @@ const Home = () => {
 
         <p className="my-4">
           This is the privacy policy (&quot;Privacy Policy”) for alph.land
-          (&quot;Alphland”) operated by Cojodi UG Limited, company registration
-          number 11093638, with its registered office address at 5 New Street
-          Square, London, England, EC4A 3TW (&quot;our”, &quot;we”, or
-          &quot;Cojodi”). Cojodi is the controller of your personal data
-          collected through Alphland and we are committed to protecting and
-          respecting your privacy.
+          (&quot;Alphland”) operated by Cojodi UG Limited, Germany (&quot;our”,
+          &quot;we”, or &quot;Cojodi”). Cojodi is the controller of your
+          personal data collected through Alphland and we are committed to
+          protecting and respecting your privacy.
         </p>
 
         <h3 className="text-[24px] font-bold mt-[32px]">1. Introduction</h3>
