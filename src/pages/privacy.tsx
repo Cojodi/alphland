@@ -23,11 +23,11 @@ const Home = () => {
     <Layout>
       <div className="container p-16 lg:py-48 mx-auto max-w-screen-md">
         <h1 className="bg-black dark:bg-white text-white dark:text-black pl-4 pr-4 pt-1 pb-2 text-center text-[32px] font-bold leading-[38px] rounded-md mb-6">
-          Alphad.app Privacy Policy
+          alph.land Privacy Policy
         </h1>
 
         <p className="my-4">
-          This is the privacy policy (&quot;Privacy Policy”) for alphad.app
+          This is the privacy policy (&quot;Privacy Policy”) for alph.land
           (&quot;Alphland”) operated by Cojodi UG Limited, company registration
           number 11093638, with its registered office address at 5 New Street
           Square, London, England, EC4A 3TW (&quot;our”, &quot;we”, or

@@ -49,7 +49,7 @@ export const Layout = ({
           }
         />
 
-        <meta property="og:site_name" content="Alphad.app" />
+        <meta property="og:site_name" content="alph.land" />
         <meta
           property="og:title"
           content={
@@ -61,7 +61,7 @@ export const Layout = ({
         {description && <meta name="og:description" content={description} />}
         <meta
           name="og:image"
-          content={image ?? "https://www.Alphad.app/share-preview.png"}
+          content={image ?? "https://www.alph.land/share-preview.png"}
         />
         <meta property="og:type" content="website" />
 

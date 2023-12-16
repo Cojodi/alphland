@@ -42,7 +42,7 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
   const determineIfMainnet = () => {
     if (typeof window !== "undefined") {
       const { hostname } = window.location;
-      return hostname.includes("alphad.app");
+      return hostname.includes("alph.land");
     } else {
       return false;
     }

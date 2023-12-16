@@ -14,7 +14,7 @@ const RatingWidget = (): ReactElement => {
   const { currentTheme, setTheme } = useDarkMode();
   const totalStars = 5;
   const activeStars = ratingData ? ratingData.average_rating : 0;
-  const url = `https://www.alphad.app/${dappName}`;
+  const url = `https://www.alph.land/${dappName}`;
 
   function handleClick() {
     if (window.top) {

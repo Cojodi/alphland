@@ -25,11 +25,11 @@ const Home = () => {
           Disclosure statement
         </h1>
         <p>
-          The dapps accessible via alphad.app are presented for informational
+          The dapps accessible via alph.land are presented for informational
           purposes only and their inclusion does not constitute an endorsement
           or validation by us. We have not audited the dapps and bear no
           responsibility for their legality, security, reliability or otherwise.
-          Your use of any dapps and alphad.app is at your own risk and we will
+          Your use of any dapps and alph.land is at your own risk and we will
           not be responsible to you for any losses you suffer as a result of
           your use.
         </p>
