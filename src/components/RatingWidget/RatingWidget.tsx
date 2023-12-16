@@ -23,6 +23,7 @@ const RatingWidget = (): ReactElement => {
   }
 
   useEffect(() => {
+    console.log(ratingData);
     const params = new URLSearchParams(window.location.search);
     const name = params.get("dappname");
     if (name) {

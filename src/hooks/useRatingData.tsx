@@ -20,7 +20,7 @@ const useRatingData = (dappName: string): ResponseData => {
     const fetchReviews = async (): Promise<any> => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}tokens/dapps/ratings/name/${dappName}`
+          `alphadappsapi.fresenius.ai/tokens/dapps/ratings/name/${dappName}`
         );
         const data = (await response.json()) as RatingWidgetData;
         setRatingData(data);
