@@ -38,7 +38,7 @@ const RatingWidget = (): ReactElement => {
     <div
       className={`${
         currentTheme === "dark" ? "bg-black" : "bg-white "
-      } flex flex-col justify-center items-center border-2 border-black rounded-lg cursor-pointer max-w-[260px] min-h-[176px] py-5 px-16 leading-none`}
+      } flex flex-col justify-center items-center border-2 border-black rounded-lg cursor-pointer py-5  leading-none`}
       onClick={handleClick}
     >
       {isLoading ? (
@@ -47,7 +47,7 @@ const RatingWidget = (): ReactElement => {
         <>
           <div>
             <a href={url}>
-              <h2 className="text-[24px] font-bold">{dappName}</h2>
+              <h2 className="text-[22px] font-bold">{dappName}</h2>
             </a>
           </div>
           <div className="mt-2">
