@@ -103,7 +103,12 @@ walph on Alphland would be `https://www.alph.land/walph`
 </a>
 ```
  -->
+## Donations
 
+Fuel our code with caffeine! If you'd like to sponsor a coffee for our project, you can donate to our ALPH wallet address below. Every sip powers our progress! 🚀☕
+```
+16uJvxtaSkuKEz3DEzCKHsemE4LWvnqZS1WrSAhoeL9Fr
+```
 ## Acknowledgments
 
 Special thanks to [Argentlabs](https://github.com/argentlabs/dappland). We're deeply grateful for their work, which laid the groundwork for this project.
@@ -121,9 +126,3 @@ For more information about our sponsors:
 </a>
 </div>
 
-## Donations
-
-Fuel our code with caffeine! If you'd like to sponsor a coffee for our project, you can donate to our ALPH wallet address below. Every sip powers our progress! 🚀☕
-```
-16uJvxtaSkuKEz3DEzCKHsemE4LWvnqZS1WrSAhoeL9Fr
-```
