@@ -173,7 +173,8 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
           Discover the best dapps on Alephium
         </h1>
         <h2 className="text-black dark:text-white text-[16px] leading-[20px] font-lighter">
-          Games, NFTs, DeFi, DAOs and more.
+          Sponsored by <a href="https://alephium.org/">Alephium</a> and{" "}
+          <a href="https://twitter.com/Blockflow_DAO">Blockflow Alliance DAO</a>
         </h2>
       </div>
     </>

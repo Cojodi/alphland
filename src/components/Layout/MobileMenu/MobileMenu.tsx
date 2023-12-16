@@ -173,7 +173,7 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
             variant="primary"
             className="w-full"
             withoutMobile
-            href="https://github.com/fugashu/Alphland#-add-your-dapp-to-Alphland"
+            href="https://github.com/cojodi/Alphland#-add-your-dapp-to-Alphland"
             target="_blank"
             rel="noopener noreferrer"
           >

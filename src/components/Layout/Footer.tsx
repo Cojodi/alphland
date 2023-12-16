@@ -5,6 +5,7 @@ import githubLogoLight from "../../assets/github-light.svg";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { toast } from "react-toastify";
 
 interface FooterProps {
   currentTheme?: string;
@@ -55,6 +56,20 @@ const Footer = ({ currentTheme }: FooterProps) => {
             <a className="inline-block mx-2">Privacy policy</a>
           </Link>
         </p>
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText(
+              "16uJvxtaSkuKEz3DEzCKHsemE4LWvnqZS1WrSAhoeL9Fr"
+            );
+            toast.success(
+              "Copied: 16uJvxtaSkuKEz3DEzCKHsemE4LWvnqZS1WrSAhoeL9Fr"
+            );
+          }}
+        >
+          <p className="text-center font-normal text-base leading-[16px] ">
+            Donations (ALPH): 16uJvxtaSkuKEz3DEzCKHsemE4LWvnqZS1WrSAhoeL9Fr
+          </p>
+        </button>
       </footer>
     </section>
   );

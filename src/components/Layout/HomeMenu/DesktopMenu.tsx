@@ -55,13 +55,20 @@ const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
         <h1 className="bg-black dark:bg-white text-white dark:text-black pl-4 pr-4 pt-1 pb-2 text-center text-[32px] font-bold leading-[38px] rounded-md mb-6">
           Discover the best dapps on Alephium
         </h1>
-        <h2 className="text-black dark:text-white text-[28px] leading-[34px] font-lighter">
-          Games, NFTs, DeFi, DAOs and more.
+        <h2 className="text-black dark:text-white text-[16px] leading-[20px] font-lighter">
+          Sponsored by{" "}
+          <a href="https://alephium.org/" target={"_blank"} rel="noreferrer">
+            Alephium
+          </a>{" "}
+          and{" "}
+          <a
+            href="https://twitter.com/Blockflow_DAO"
+            target={"_blank"}
+            rel="noreferrer"
+          >
+            Blockflow Alliance DAO
+          </a>
         </h2>
-        {/* <p className="text-center font-normal text-base leading-[16px] mt-16">
-          Built with ❤️ by{" "}
-          <a href="https://www.argent.xyz/?utm_source=Alphland">Argent</a>
-        </p> */}
       </div>
     </div>
   );
