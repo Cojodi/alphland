@@ -12,6 +12,7 @@ interface FooterProps {
 }
 
 const Footer = ({ currentTheme }: FooterProps) => {
+  const donationWalletAddr = "16uJvxtaSkuKEz3DEzCKHsemE4LWvnqZS1WrSAhoeL9Fr";
   return (
     <section>
       <footer className="w-full py-6 px-4 border-t border-border-grey dark:border-white/10 flex flex-col md:flex-row justify-between">
@@ -58,16 +59,13 @@ const Footer = ({ currentTheme }: FooterProps) => {
         </p>
         <button
           onClick={() => {
-            navigator.clipboard.writeText(
-              "16uJvxtaSkuKEz3DEzCKHsemE4LWvnqZS1WrSAhoeL9Fr"
-            );
-            toast.success(
-              "Copied: 16uJvxtaSkuKEz3DEzCKHsemE4LWvnqZS1WrSAhoeL9Fr"
-            );
+            navigator.clipboard.writeText(donationWalletAddr).then(() => {
+              toast.success(`Copied: ${donationWalletAddr}`);
+            });
           }}
         >
           <p className="text-center font-normal text-base leading-[16px] ">
-            Donations (ALPH): 16uJvxtaSkuKEz3DEzCKHsemE4LWvnqZS1WrSAhoeL9Fr
+            Donations (ALPH): {donationWalletAddr}
           </p>
         </button>
       </footer>
