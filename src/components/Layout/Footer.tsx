@@ -64,6 +64,16 @@ const Footer = ({ currentTheme }: FooterProps) => {
             });
           }}
         >
+          <a href="https://www.alph.land/alephium-bridge">
+            <div></div>
+            <iframe
+              src="https://www.alph.land/widgets/rating?dappname=alephium-bridge"
+              width="260"
+              height="176"
+              frameBorder="0"
+              title="Alphland Widget"
+            ></iframe>
+          </a>
           <p className="text-center font-normal text-base leading-[16px] ">
             Donations (ALPH): <br /> {donationWalletAddr}
           </p>

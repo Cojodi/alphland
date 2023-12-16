@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 
 interface RatingWidgetData {
   average_rating: number;
-  dappKey: string;
-  voteCount: number;
-  ratings: number;
+  dapp_key: string;
+  vote_count: number;
 }
 
 type ResponseData = {
@@ -20,7 +19,7 @@ const useRatingData = (dappName: string): ResponseData => {
     const fetchReviews = async (): Promise<any> => {
       try {
         const response = await fetch(
-          `alphadappsapi.fresenius.ai/tokens/dapps/ratings/name/${dappName}`
+          `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings/name/${dappName}`
         );
         const data = (await response.json()) as RatingWidgetData;
         setRatingData(data);

@@ -23,7 +23,6 @@ const RatingWidget = (): ReactElement => {
   }
 
   useEffect(() => {
-    console.log(ratingData);
     const params = new URLSearchParams(window.location.search);
     const name = params.get("dappname");
     if (name) {
@@ -48,7 +47,7 @@ const RatingWidget = (): ReactElement => {
         <>
           <div>
             <a href={url}>
-              <h2 className="text-[24px] font-bold">{ratingData?.dappKey}</h2>
+              <h2 className="text-[24px] font-bold">{ratingData?.dapp_key}</h2>
             </a>
           </div>
           <div className="mt-2">
