@@ -1,7 +1,7 @@
-import logo from "../../assets/alephium-logos/dark/Logo-Horizontal-Dark.svg";
 import starEmpty from "../../assets/icons/starEmpty.svg";
 import starFilled from "../../assets/icons/starFilled.svg";
 import logoLight from "../../assets/logo-alphland-light.svg";
+import logo from "../../assets/logo-alphland.svg";
 import { useDarkMode } from "../../hooks/useDarkMode";
 import useRatingData from "../../hooks/useRatingData";
 import Loading from "./Loading/Loading";
@@ -23,7 +23,6 @@ const RatingWidget = (): ReactElement => {
   }
 
   useEffect(() => {
-    console.log(ratingData);
     const params = new URLSearchParams(window.location.search);
     const name = params.get("dappname");
     if (name) {
@@ -48,7 +47,7 @@ const RatingWidget = (): ReactElement => {
         <>
           <div>
             <a href={url}>
-              <h2 className="text-[24px] font-bold">{ratingData?.dappKey}</h2>
+              <h2 className="text-[24px] font-bold">{dappName}</h2>
             </a>
           </div>
           <div className="mt-2">
