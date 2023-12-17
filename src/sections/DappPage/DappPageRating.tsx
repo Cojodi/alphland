@@ -126,7 +126,6 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
             setRatingModalOpen(false);
           }}
           onConfirm={() => {
-            console.log("test modal");
             setRatingModalOpen(false);
           }}
         />
@@ -158,12 +157,10 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
               onMouseLeave={() => setHoverIndex(null)}
               onClick={() => {
                 if (connectionStatus === "disconnected") {
-                  console.log("wallet disconnected, opening modal");
                   setRatingModalOpen(true);
                 } else {
                   setCurrentRating(val);
 
-                  console.log("wallet connected, claling rate");
                   rateDapp(val);
                 }
               }}
