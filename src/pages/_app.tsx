@@ -11,7 +11,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <ThemeProvider attribute="class">
       <AlephiumWalletProvider network="mainnet">
         <ToastContainer
-          position="top-right"
+          position="bottom-right"
           autoClose={5000}
           hideProgressBar={false}
           newestOnTop={false}
