@@ -77,7 +77,6 @@ const DappPageRating = ({ dappKey = "my_dapp" }: Props) => {
       rating_score: ratingValue,
       account_id: account?.address,
     };
-    console.log(bodyData);
 
     const handleErrors = (response: any) => {
       if (!response.ok) {
