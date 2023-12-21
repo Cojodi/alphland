@@ -67,15 +67,10 @@ For any questions either create an issue on this repo or find us on the Alephium
   <img src="https://img.shields.io/badge/Discord-6666FF?style=for-the-badge&logo=discord&logoColor=white">
 </a>
 
-<!-- 
-
-TODO 
 ## 📣 Share your dapp rating with the world
 
-Embed the Alphland rating widget
-
-<img src="https://dv3jj1unlp2jl.cloudfront.net/Alphland/widget-rating.svg" alt="Alphland rating widget" />
-
+Embed the Alphland rating widget in your application!
+![Widget Example](public/widget_example.png)
 #### Using the widget
 
 ```
@@ -96,13 +91,15 @@ Embed the Alphland rating widget
 
 walph on Alphland would be `https://www.alph.land/walph`
 
+[View example on CodeSandbox](https://codesandbox.io/p/sandbox/github/codesandbox-app/static-template/tree/master/?layout=%257B%2522sidebarPanel%2522%253A%2522EXPLORER%2522%252C%2522rootPanelGroup%2522%253A%257B%2522direction%2522%253A%2522horizontal%2522%252C%2522contentType%2522%253A%2522UNKNOWN%2522%252C%2522type%2522%253A%2522PANEL_GROUP%2522%252C%2522id%2522%253A%2522ROOT_LAYOUT%2522%252C%2522panels%2522%253A%255B%257B%2522type%2522%253A%2522PANEL_GROUP%2522%252C%2522contentType%2522%253A%2522UNKNOWN%2522%252C%2522direction%2522%253A%2522vertical%2522%252C%2522id%2522%253A%2522clq7stizt0006356r45i8d0a6%2522%252C%2522sizes%2522%253A%255B70%252C30%255D%252C%2522panels%2522%253A%255B%257B%2522type%2522%253A%2522PANEL_GROUP%2522%252C%2522contentType%2522%253A%2522EDITOR%2522%252C%2522direction%2522%253A%2522horizontal%2522%252C%2522id%2522%253A%2522EDITOR%2522%252C%2522panels%2522%253A%255B%257B%2522type%2522%253A%2522PANEL%2522%252C%2522contentType%2522%253A%2522EDITOR%2522%252C%2522id%2522%253A%2522clq7stizt0002356ri1lvafm2%2522%257D%255D%257D%252C%257B%2522type%2522%253A%2522PANEL_GROUP%2522%252C%2522contentType%2522%253A%2522SHELLS%2522%252C%2522direction%2522%253A%2522horizontal%2522%252C%2522id%2522%253A%2522SHELLS%2522%252C%2522panels%2522%253A%255B%257B%2522type%2522%253A%2522PANEL%2522%252C%2522contentType%2522%253A%2522SHELLS%2522%252C%2522id%2522%253A%2522clq7stizt0003356rkb1fwhde%2522%257D%255D%252C%2522sizes%2522%253A%255B100%255D%257D%255D%257D%252C%257B%2522type%2522%253A%2522PANEL_GROUP%2522%252C%2522contentType%2522%253A%2522DEVTOOLS%2522%252C%2522direction%2522%253A%2522vertical%2522%252C%2522id%2522%253A%2522DEVTOOLS%2522%252C%2522panels%2522%253A%255B%257B%2522type%2522%253A%2522PANEL%2522%252C%2522contentType%2522%253A%2522DEVTOOLS%2522%252C%2522id%2522%253A%2522clq7stizt0005356ref4immgf%2522%257D%255D%252C%2522sizes%2522%253A%255B100%255D%257D%255D%252C%2522sizes%2522%253A%255B50%252C50%255D%257D%252C%2522tabbedPanels%2522%253A%257B%2522clq7stizt0002356ri1lvafm2%2522%253A%257B%2522tabs%2522%253A%255B%257B%2522id%2522%253A%2522clq7stizt0001356r9drk3o3v%2522%252C%2522mode%2522%253A%2522permanent%2522%252C%2522type%2522%253A%2522FILE%2522%252C%2522filepath%2522%253A%2522%252Findex.html%2522%252C%2522state%2522%253A%2522IDLE%2522%252C%2522initialSelections%2522%253A%255B%257B%2522startLineNumber%2522%253A6%252C%2522startColumn%2522%253A60%252C%2522endLineNumber%2522%253A6%252C%2522endColumn%2522%253A60%257D%255D%257D%255D%252C%2522id%2522%253A%2522clq7stizt0002356ri1lvafm2%2522%252C%2522activeTabId%2522%253A%2522clq7stizt0001356r9drk3o3v%2522%257D%252C%2522clq7stizt0005356ref4immgf%2522%253A%257B%2522tabs%2522%253A%255B%257B%2522id%2522%253A%2522clq7stizt0004356rd4h3r8x9%2522%252C%2522mode%2522%253A%2522permanent%2522%252C%2522type%2522%253A%2522UNASSIGNED_PORT%2522%252C%2522port%2522%253A0%252C%2522path%2522%253A%2522%252F%2522%257D%255D%252C%2522id%2522%253A%2522clq7stizt0005356ref4immgf%2522%252C%2522activeTabId%2522%253A%2522clq7stizt0004356rd4h3r8x9%2522%257D%252C%2522clq7stizt0003356rkb1fwhde%2522%253A%257B%2522tabs%2522%253A%255B%255D%252C%2522id%2522%253A%2522clq7stizt0003356rkb1fwhde%2522%257D%257D%252C%2522showDevtools%2522%253Atrue%252C%2522showShells%2522%253Atrue%252C%2522showSidebar%2522%253Atrue%252C%2522sidebarPanelSize%2522%253A15%257D)
+
 ```
 <a href="https://www.alph.land/walph" style="display:inline-block;position:relative">
   <div style="position:absolute;top:0;right:0;bottom:0;left:0;"></div>
   <iframe src="https://www.alph.land/widgets/rating?dappname=walph" width="260" height="170" frameBorder="0" title="Alphland Widget"></iframe>
 </a>
 ```
- -->
+
 ## Donations
 
 Fuel our code with caffeine! If you'd like to sponsor a coffee for our project, you can donate to our ALPH wallet address below. Every sip powers our progress! 🚀☕
