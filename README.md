@@ -70,7 +70,9 @@ For any questions either create an issue on this repo or find us on the Alephium
 ## 📣 Share your dapp rating with the world
 
 Embed the Alphland rating widget in your application!
+
 ![Widget Example](public/widget_example.png)
+
 #### Using the widget
 
 ```
