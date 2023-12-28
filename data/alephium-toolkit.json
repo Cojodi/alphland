@@ -1,5 +1,5 @@
 {
-  "name": "Alephium Toolkit",
+  "name": "Alephium Toolkit - Multi-Sig GUI",
   "description": " A simple interface to easily create, transact and manage multi-signature wallets on Alephium.",
   "short_description": "Alephium Multi-sig GUI",
   "tags": ["Infrastructure"],
