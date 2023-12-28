@@ -64,7 +64,7 @@ const Footer = ({ currentTheme }: FooterProps) => {
             });
           }}
         >
-          <p className="text-center font-normal text-base leading-[16px] ">
+          <p className="text-center font-normal  text-xs text-base leading-[16px] ">
             Donations (ALPH): <br /> {donationWalletAddr}
           </p>
         </button>
