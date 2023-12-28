@@ -4,7 +4,7 @@ export const getRatingForDapp = async (name: string) => {
       `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings/name/${name}`
     ).then((res) => res.json());
   } catch (error) {
-    return 0;
+    return [];
   }
 };
 
@@ -22,37 +22,36 @@ export const getRatingsFromUser = async ({
 };
 
 export const getRatings = async () => {
+  let data;
   try {
-    const data = await fetch(
+    data = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings`
     ).then((res) => res.json());
+  } catch (error) {}
 
-    const ratings: Rating[] = data?.ratings || [];
+  const ratings: Rating[] = data?.ratings || [];
 
-    const ratingsMap = new Map();
+  const ratingsMap = new Map();
 
-    ratings.forEach((rating) => {
-      const key = Math.round(rating.average_rating);
-      if (!ratingsMap.get(key)) {
-        ratingsMap.set(key, []);
-      }
-      ratingsMap.set(key, [...ratingsMap.get(key), rating]);
-    });
-    const ratingEntries: {
-      [key: string]: Rating[];
-    } = Object.fromEntries(ratingsMap);
-    const dappsByRating: {
-      [key: string]: string[];
-    } = {};
+  ratings.forEach((rating) => {
+    const key = Math.round(rating.average_rating);
+    if (!ratingsMap.get(key)) {
+      ratingsMap.set(key, []);
+    }
+    ratingsMap.set(key, [...ratingsMap.get(key), rating]);
+  });
+  const ratingEntries: {
+    [key: string]: Rating[];
+  } = Object.fromEntries(ratingsMap);
+  const dappsByRating: {
+    [key: string]: string[];
+  } = {};
 
-    Object.keys(ratingEntries).forEach((key) => {
-      const dappKeys = ratingEntries[key].map((obj) => obj.dappKey);
-      dappsByRating[key] = dappKeys;
-    });
-    return dappsByRating;
-  } catch (error) {
-    return [];
-  }
+  Object.keys(ratingEntries).forEach((key) => {
+    const dappKeys = ratingEntries[key].map((obj) => obj.dappKey);
+    dappsByRating[key] = dappKeys;
+  });
+  return dappsByRating;
 };
 
 export const filterDappcardsByRating = ({
