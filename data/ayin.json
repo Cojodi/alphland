@@ -1,0 +1,47 @@
+{
+  "name": "AYIN",
+  "description": "Welcome to Ayin: Bringing liquidity to life on Alephium. Seamlessly swap Alephium native token pairs, earn, and explore our ecosystem. Enter app to explore the different options for trading, staking, utility functions and more.",
+  "short_description": "DEX",
+  "tags": ["DeFi", "Infrastructure"],
+  "contracts": [
+    {
+      "name": "AYIN token",
+      "address": "vT49PY8ksoUL6NcXiZ1t2wAmC7tTPRfFfER8n3UCLvXy"
+    },
+    {
+      "name": "DEX",
+      "address": "25ywM8iGxKpZWuGA5z6DXKGcZCXtPBmnbQyJEsjvjjWTy"
+    },
+    {
+      "name": "ALPH/USDT",
+      "address": "2A5R8KZQ3rhKYrW7bAS4JTjY9FCFLJg6HjQpqSFZBqACX"
+    }
+  ],
+  "audits": [{}],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://ayin.app",
+    "discord": "https://discord.gg/UwNbpht5rM",
+    "telegram": "https://t.me/ayintoken"
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "<Email address>",
+    "founded": "2022-05-24T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [
+    {
+      "address": "vT49PY8ksoUL6NcXiZ1t2wAmC7tTPRfFfER8n3UCLvXy",
+      "symbol": "AYIN"
+    }
+  ],
+  "media": {
+    "logoUrl": "/dapps/ayin/dapp-icon-ayin.jpg",
+    "bannerUrl": "/dapps/ayin/dapp-header-ayin.jpg",
+    "previewUrl": "/dapps/ayin/dapp-header-ayin.jpg",
+    "videoUrl": "",
+    "gallery": [{}]
+  }
+}
