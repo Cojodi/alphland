@@ -44,15 +44,10 @@ const SwiperContainer = styled.div`
 
 interface DappPageProps {
   dappInfo: DappInfo;
-  twitterPosts: TwitterData;
   nftData: NFTData | null;
 }
 
-const DappPage: NextPage<DappPageProps> = ({
-  dappInfo,
-  twitterPosts,
-  nftData,
-}) => {
+const DappPage: NextPage<DappPageProps> = ({ dappInfo, nftData }) => {
   const [showPrev, setShowPrev] = useState(false);
   const router = useRouter();
   const name = (router?.query?.name as string) || "";
@@ -148,7 +143,7 @@ const DappPage: NextPage<DappPageProps> = ({
           nftCollectionName={dappInfo?.nft?.collectionName}
         />
         <DappPageDetails dappInfo={dappInfo} />
-        <DappPageTwitter dappInfo={dappInfo} twitterPosts={twitterPosts} />
+        {/* <DappPageTwitter dappInfo={dappInfo} twitterPosts={twitterPosts} /> */}
       </div>
     </Layout>
   );
@@ -176,37 +171,10 @@ export const getStaticProps: GetStaticProps<DappPageProps> = async (
     //     ).then((res) => res.json())
     //   : null
     null;
-  const twitterName =
-    dappInfo.twitterName ||
-    (dappInfo.links?.twitter.length > 0 &&
-      dappInfo.links?.twitter.split("/").pop());
-
-  const twitterUserIdUrl = `https://api.twitter.com/2/users/by/username/${twitterName}`;
-
-  const twitterUserId =
-    twitterName &&
-    (await fetch(twitterUserIdUrl, {
-      headers: {
-        Authorization: `Bearer ${process.env.TWITTER_BEARER}`,
-      },
-    }).then((res) => res.json()));
-
-  const twitterUrl =
-    twitterUserId?.data?.id &&
-    `https://api.twitter.com/2/users/${twitterUserId.data.id}/tweets?max_results=5&tweet.fields=created_at,public_metrics&expansions=author_id&user.fields=profile_image_url,username,verified`;
-
-  const twitterPosts = !twitterUrl
-    ? []
-    : await fetch(twitterUrl, {
-        headers: {
-          Authorization: `Bearer ${process.env.TWITTER_BEARER}`,
-        },
-      }).then((res) => res.json());
 
   return {
     props: {
       dappInfo,
-      twitterPosts,
       nftData,
     },
     revalidate: 10,
