@@ -20,7 +20,6 @@
     }
   ],
   "verified": false,
-  // change to true if your contracts are verified on Alephium
   "dotw": false,
   //leave 'false'
   "links": {
