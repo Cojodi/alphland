@@ -19,6 +19,7 @@
       "address": "wagWo3ZoHmvSaeCh9puBCNCMHCSbdN9ZYeuFvgPsRVdA"
     }
   ],
+  "audits": [],
   "verified": false,
   "dotw": false,
   "links": {
@@ -38,9 +39,9 @@
     "founded": "2024-01-04T00:00:00.000Z",
     "anonymous": true
   },
-
+  "tokens": [],
   "media": {
-    "logoUrl": "/dapps/alphbet/alphbet_logo.png",
+    "logoUrl": "/dapps/alphbet/alphbet-logo.png",
     "bannerUrl": "/dapps/alphbet/alphbet-banner.png",
     "previewUrl": "/dapps/alphbet/alphbet-preview.png",
     "videoUrl": ""
