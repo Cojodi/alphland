@@ -1,0 +1,49 @@
+{
+  "name": "ALPH.bet",
+  "description": "Are you up for the challenge of outperforming the market? Test your skills by making predictions on the future price of ALPH.",
+  "short_description": "Are you up for the challenge of outperforming the market?",
+  "tags": [
+    "Games"
+  ],
+  "contracts": [
+    {
+      "name": "Predictalph",
+      "address": "25k4P23vEGax174AznJZQn9RFm4dDhwDvtHAdxjYTcYPr"
+    },
+    {
+      "name": "Round",
+      "address": "vp5sofanpD2zfuCjRih6eLp9sEtMrqSSTwuVxLCvCKBE"
+    },
+    {
+      "name": "Punter",
+      "address": "wagWo3ZoHmvSaeCh9puBCNCMHCSbdN9ZYeuFvgPsRVdA"
+    }
+  ],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://alph.bet",
+    "careers": "",
+    "twitter": "https://twitter.com/alphbet_",
+    "telegram": "https://t.me/alephiumbet",
+    "discord": "",
+    "github": "https://github.com/notrustverify/predictalph-contracts",
+    "youtube": "",
+    "medium": "https://medium.com/notrustverify",
+    "mirror": ""
+  },
+  "twitterName": "alphbet_",
+  "teamInfo": {
+    "contactEmail": "hello@notrustverify.ch",
+    "founded": "2024-01-04T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/alphbet/alphbet-logo.png",
+    "bannerUrl": "/dapps/alphbet/alphbet-banner.png",
+    "previewUrl": "/dapps/alphbet/alphbet-preview.png",
+    "videoUrl": ""
+  }
+}
