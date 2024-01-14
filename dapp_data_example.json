@@ -16,7 +16,9 @@
     "NFTs",
     "Social",
     "DAOs",
-    "Infrastructure"
+    "Infrastructure",
+    // if not live yet:
+    "ComingSoon"
   ],
   // Remove all that don't apply.
   "contracts": [

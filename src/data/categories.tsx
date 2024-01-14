@@ -19,6 +19,8 @@ import profileLight from "../assets/icons/profileLight.svg";
 import star from "../assets/icons/starFilled.svg";
 import swap from "../assets/icons/swap.svg";
 import swapLight from "../assets/icons/swapLight.svg";
+import time from "../assets/icons/time.svg";
+import timeLight from "../assets/icons/timeLight.svg";
 import verified from "../assets/icons/verified.svg";
 import verifiedLight from "../assets/icons/verifiedLight.svg";
 
@@ -36,6 +38,7 @@ export const categories = [
     iconDark: databaseLight,
   },
   { key: "daos", name: "DAOs", icon: contacts, iconDark: contactsLight },
+  { key: "soon", name: "ComingSoon", icon: time, iconDark: timeLight },
 ];
 
 export const reputation = [
