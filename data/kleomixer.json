@@ -1,0 +1,32 @@
+{
+  "name": "KleoMixer",
+  "description": "KleoMixer is a fully decentralised protocol for private transactions on #Alephium",
+  "short_description": "Crypto Mixer",
+  "tags": ["Soon", "Infrastructure"],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://kleomixer.com",
+    "careers": "",
+    "twitter": "https://twitter.com/KleoMixer",
+    "telegram": "https://t.me/AnnouncementKleoMixer",
+    "discord": "",
+    "github": "https://github.com/KleoMixer/",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "KleoMixer",
+  "teamInfo": {
+    "contactEmail": "contact@kleomixer.com",
+    "founded": "2023-12-20T00:00:00.000Z",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/kleomixer/kleomixer-icon.png",
+    "bannerUrl": "/dapps/kleomixer/kleomixer-banner.png",
+    "previewUrl": "/dapps/kleomixer/kleomixer-preview.png"
+  },
+  "audits": [],
+  "tokens": []
+}
