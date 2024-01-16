@@ -1,0 +1,36 @@
+{
+  "name": "AlphPad",
+  "description": "AlphPad is poised to redefine project launching within the Alephium ecosystem. This advanced launchpad platform combines ease of use with a comprehensive, secure, and efficient system, designed to benefit both project developers and investors.",
+  "short_description": "The Premier Launchpad on Alephium - Elevating Projects to New Heights!",
+  "tags": ["DeFi", "Infrastructure", "ComingSoon"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://alphpad.com/",
+    "careers": "mailto:admin@alphpad.com",
+    "twitter": "https://twitter.com/alphpad",
+    "telegram": "https://t.me/alphpad",
+    "discord": "https://discord.gg/RzZ7xtCS",
+    "github": "https://github.com/AlphPad",
+    "youtube": "",
+    "medium": "https://medium.com/@AlphPad",
+    "mirror": ""
+  },
+  "twitterName": "@AlphPad",
+  "teamInfo": {
+    "contactEmail": "admin@alphpad.com",
+    "founded": "2024-01-12T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/alphpad/alphpad-alphland-logo.png",
+    "bannerUrl": "/dapps/alphpad/alphpad-alphland-banner.png",
+    "previewUrl": "/dapps/alphpad/alphpad-alphland-preview.png",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
