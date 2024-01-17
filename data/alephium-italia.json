@@ -1,8 +1,7 @@
-{
   "name": "Alephium Italia",
   "description": "Alephium.it is an Italian community dedicated to Alephium blockchain technology. Made up of enthusiasts who love and believe in this fantastic project.",
   "short_description": "Italian community of Alephium",
-  "tags": ["Community", "Social"],
+  "tags": ["Social"],
  
   "links": {
     "website": "https://alephium.it",
@@ -18,13 +17,16 @@
   "twitterName": "Alephium_it",
   "teamInfo": {
     "contactEmail": "",
-    "founded": "2023-10-08T00:00:00.000Z",
+    "founded": "2023-10-25T00:00:00.000Z",
     "anonymous": true
   },
-  
+  "verified": false,
+  "dotw": false,
   "media": {
     "logoUrl": "/dapps/alephium-italia/dapp-icon-alephium-italia.png",
     "bannerUrl": "/dapps/alephium-italia/dapp-header-alephium-italia.png",
-    "previewUrl": "/dapps/alephium-italia/dapp-preview-alephium-italia.png",
-  }
+    "previewUrl": "/dapps/alephium-italia/dapp-preview-alephium-italia.png"
+  },
+  "audits": [],
+  "tokens": []
 }
