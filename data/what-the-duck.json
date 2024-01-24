@@ -1,0 +1,67 @@
+{
+  "name": "What The Duck",
+  "description": "A flock of 128 generative ducks that have migrated to the Alephium blockchain. The Nest is a custom rarity explorer where you have the opportunity to design your own custom duck with all available traits at your disposal and find out what the rarity would be. Quack Attack (beta) is the first game on Alephium blockchain and allows each holder to play as their duck in a growing interactive online multiplayer world. Visit The Duck Lounge where each duck is unique and has its own personality.",
+  "short_description": "A flock of 128 generative ducks that migrated to the Alephium blockchain",
+  "tags": ["Games", "NFTs", "Social"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://theducklounge.com",
+    "careers": "",
+    "twitter": "https://twitter.com/alph_ducks",
+    "telegram": "",
+    "discord": "https://discord.com/invite/T4jKfTKYEx",
+    "github": "https://github.com/the-duck-lounge",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@alph_ducks",
+  "teamInfo": {
+    "contactEmail": "reed@theducklounge.com",
+    "founded": "2023-12-08T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {
+    "collectionContract": "22W9Xqz3BZE9fsCEtgqsk6CTRHktF2tFYb5wc1RWWCa8X",
+    "collectionLink": "https://deadrare.io/collection/what-the-duck",
+    "collectionName": "What The Duck",
+    "collectionPreview": [
+      {
+        "image_url": "/dapps/what-the-duck/collection-nft-37.png",
+        "name": "Duck: 37"
+      },
+      {
+        "image_url": "/dapps/what-the-duck/collection-nft-14.png",
+        "name": "Duck: 14"
+      },
+      {
+        "image_url": "/dapps/what-the-duck/collection-nft-73.png",
+        "name": "Duck: 73"
+      },
+      {
+        "image_url": "/dapps/what-the-duck/collection-nft-02.png",
+        "name": "Duck: 2"
+      }
+    ]
+  },
+  "media": {
+    "logoUrl": "/dapps/what-the-duck/what-the-duck-logo.png",
+    "bannerUrl": "/dapps/what-the-duck/what-the-duck-banner.png",
+    "previewUrl": "/dapps/what-the-duck/what-the-duck-preview.png",
+    "videoUrl": "https://theducklounge.com/grass.mp4",
+    "gallery": [
+      {
+        "url": "/dapps/what-the-duck/nest.png",
+        "description": "The Nest"
+      },
+      {
+        "url": "/dapps/what-the-duck/game.png",
+        "description": "Quack Attack"
+      }
+    ]
+  }
+}
