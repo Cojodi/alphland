@@ -85,6 +85,11 @@ const DappPageHeader = ({
         <p className="mt-6 font-light md:text-[20px] md:leading-[26px]">
           {dappInfo.description}
         </p>
+        {dappInfo.group?.length > 0 && (
+          <p className="mt-6 font-light md:text-[20px] md:leading-[26px]">
+            Deployed on: {dappInfo.group}
+          </p>
+        )}
         <HeaderButtonsContainer className="flex mt-8">
           {
             <Link

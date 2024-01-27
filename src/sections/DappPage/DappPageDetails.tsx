@@ -118,13 +118,11 @@ const DappPageDetails = ({ dappInfo }: { dappInfo: DappInfo }) => {
       </div>
 
       <div className="divider bg-clay dark:bg-white/30"></div>
-
       <div className="details-box">
         <h3 className="font-bold text-[22px] leading-normal">Token info</h3>
         <p className="text-light-charcoal dark:text-clay font-medium text-xl leading-6 mt-8 lg:mt-10">
           Has a token?
         </p>
-
         <p className="font-bold text-xl leading-6 mt-2">
           {dappInfo.tokens.length > 0 ? "Yes" : "No"}
         </p>

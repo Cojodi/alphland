@@ -24,6 +24,7 @@ interface DappInfo {
   short_description: string;
   name: string;
   tags: string[];
+  group: string;
   contracts?: Contract[];
   goerliContracts?: Contract[];
   audits: Audit[];
