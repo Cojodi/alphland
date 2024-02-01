@@ -23,6 +23,8 @@ import time from "../assets/icons/time.svg";
 import timeLight from "../assets/icons/timeLight.svg";
 import verified from "../assets/icons/verified.svg";
 import verifiedLight from "../assets/icons/verifiedLight.svg";
+import wallet from "../assets/icons/wallet.svg";
+import walletLight from "../assets/icons/walletLight.svg";
 
 export const categories = [
   { key: "onramps", name: "Onramps", icon: card, iconDark: cardLight },
@@ -31,6 +33,8 @@ export const categories = [
   { key: "games", name: "Games", icon: gaming, iconDark: gamingLight },
   { key: "nfts", name: "NFTs", icon: gallery, iconDark: galleryLight },
   { key: "social", name: "Social", icon: heart, iconDark: heartLight },
+  { key: "wallets", name: "Wallets", icon: wallet, iconDark: walletLight },
+
   {
     key: "infrastructure",
     name: "Infrastructure",
