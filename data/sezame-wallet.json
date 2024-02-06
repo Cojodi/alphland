@@ -1,0 +1,61 @@
+{
+  "name": "Sezame Wallet",
+  "description": "Alph first mobile wallet. Fully open source, non custodial wallet and multi-asset. Its simple UI makes it ideal for everyday usage.",
+  "short_description": "A non custodial wallet for digital assets",
+  "tags": ["Wallets"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://sezame.app/",
+    "careers": "",
+    "twitter": "https://twitter.com/SesameWallet",
+    "telegram": "https://t.me/sesamewalletgroup",
+    "discord": "",
+    "github": "https://github.com/maze2-org/sezame-wallet",
+    "youtube": "",
+    "medium": "https://medium.com/@sezamewallet",
+    "mirror": ""
+  },
+  "twitterName": "SesameWallet",
+  "teamInfo": {
+    "contactEmail": "info@sezame.app",
+    "founded": "2021-11-24T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/sezame-wallet/sezame-logo.png",
+    "bannerUrl": "/dapps/sezame-wallet/sezame-banner.png",
+    "previewUrl": "/dapps/sezame-wallet/sezame-preview.png",
+    "videoUrl": "",
+    "gallery": [
+      {
+        "url": "https://sezame.app/wp-content/uploads/2022/05/1.jpeg",
+        "description": "Sign up to the Sezame Wallet"
+      },
+      {
+        "url": "https://sezame.app/wp-content/uploads/2022/05/2.jpeg",
+        "description": "Sezame Wallet welcome screen"
+      },
+      {
+        "url": "https://sezame.app/wp-content/uploads/2022/05/3.jpeg",
+        "description": "Sample wallet"
+      },
+      {
+        "url": "https://sezame.app/wp-content/uploads/2022/05/4.jpeg",
+        "description": "Asset details"
+      },
+      {
+        "url": "https://sezame.app/wp-content/uploads/2022/05/5.jpeg",
+        "description": "Wallet address sample"
+      },
+      {
+        "url": "https://sezame.app/wp-content/uploads/2022/05/6.jpeg",
+        "description": "Wallet setup"
+      }
+    ]
+  }
+}
