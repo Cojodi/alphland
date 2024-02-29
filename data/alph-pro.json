@@ -1,0 +1,54 @@
+{
+  "name": "Alph.Pro",
+  "description": "Track your portfolio performance & explore DeFi opportunities on Alephium",
+  "short_description": "Portfolio Tacking, DeFi Discovery, & On-chain Exploration",
+  "tags": ["DeFi", "NFTs", "Social", "Infrastructure"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://alph.pro",
+    "careers": "",
+    "twitter": "https://twitter.com/aiphpro",
+    "telegram": "",
+    "discord": "https://discord.gg/S28xhs7spJ",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "AIphPro",
+  "teamInfo": {
+    "contactEmail": "reed@alph.pro",
+    "founded": "2024-02-12T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {
+    "collectionContract": "22vxm543X8aEkqu31spuRGkaiNyN5hsmWaSP4o3c46tVd",
+    "collectionLink": "https://snacks.alph.pro/",
+    "collectionName": "Alephium Vending Machine",
+    "collectionPreview": [
+      {
+        "image_url": "/dapps/alph-pro/beer.svg",
+        "name": "Beer"
+      },
+      {
+        "image_url": "/dapps/alph-pro/taco.svg",
+        "name": "Taco"
+      },
+      {
+        "image_url": "/dapps/alph-pro/pizza.svg",
+        "name": "Pizza"
+      }
+    ]
+  },
+  "media": {
+    "logoUrl": "/dapps/alph-pro/logo-320x320.png",
+    "bannerUrl": "/dapps/alph-pro/banner-1920x400.png",
+    "previewUrl": "/dapps/alph-pro/preview-700x400.png",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
