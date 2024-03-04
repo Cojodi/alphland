@@ -1,0 +1,39 @@
+{
+  "name": "Squirrel",
+  "description": "Squirrel is a community coin on the Alephium Blockchain. SQRL is supposed to represent that classic east coast squirrel. That squirrel that works hard all year long to ensure it will survive the severe winter. That squirrel commited to adapting and learning through trial-and-error.",
+  "short_description": "Your Passive-Aggressive Backyard Squirrel",
+  "tags": ["DeFi", "NFTs", "DAOs", "Infrastructure"],
+  "group": "Group 0",
+  "contracts": [
+    {
+      "name": "Faucet",
+      "address": "28CpCaDdpMas96ahyQ6xzNxF1QydLD9Erxfp1DKghmPjd"
+    }
+  ],
+  "audits": [{}],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://www.alphsquirrel.com/",
+    "twitter": "https://twitter.com/SquirrelALPH"
+  },
+  "twitterName": "SquirrelALPH",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2024-02-24T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [
+    {
+      "address": "2A8RXH3bRZcSAVdVhu93vEUENxH1kizJbTcdVxmsAZwAF",
+      "symbol": "SQRL"
+    }
+  ],
+  "media": {
+    "logoUrl": "/dapps/squirrel/squirrel-logo.png",
+    "bannerUrl": "/dapps/squirrel/squirrel-banner.png",
+    "previewUrl": "/dapps/squirrel/squirrel-preview.png",
+    "videoUrl": "",
+    "gallery": [{}]
+  }
+}
