@@ -1,0 +1,93 @@
+
+  "name": "Gold Castle Club",
+  "description": "Gamified NFT project and the $GOLD token. The first collection Old Asia has already launched. Combine NFTs to become stronger, swear fealty, grow your kingdom and win the war. You will be rewarded in $GOLD. New collections of Gold Castle Club will integrate with the older collections",
+  "short_description": "Grow your kingdom on ALPH and win $GOLD",
+  "tags": ["Games", "NFTs", "Social"],
+  "group": "Group 0",
+  "contracts": [
+    {
+      "name": "$GOLD",
+      "address": "uVYr7bR2P4oG5ZZHN9dodEk1Fk2czxaD1eFoiv6REcas"
+    },
+    {
+      "name": "Old Asia NFT collection",
+      "address": "21ixd5J8qVjcAHkGsSsDTnjcgk85dZLSFvdtiCzYkuqBD"
+    },
+    {
+      "name": "The Main Fealty Contract",
+      "address": "23qvaoEvetNbiTfd27n3yojZwct5dosyM3wrr7F7tgauD"
+    },
+    {
+      "name": "The Fealty for $GOLD contract",
+      "address": "z4kj4x6rYn8rkshtGb4sUxWJaEwYMFYyCGyG4bxt8mKM"
+    },
+    {
+      "name": "The Marriage Contract",
+      "address": "yef3bGpQa2f9pAMeZwFGTskiFJmqVkoLmW27zGdAiSWs"
+    },
+    {
+      "name": "The Marriage Contract",
+      "address": "yef3bGpQa2f9pAMeZwFGTskiFJmqVkoLmW27zGdAiSWs"
+    },
+    {
+      "name": "The Anathema Contract",
+      "address": "xXf1w4For6qBzUXVWf6g4n2QxHMRz9nppo1gxz1bjdVh"
+    },
+    {
+      "name": "The Gold Castle Marketplace Contract",
+      "address": "unY1RSzgLf7jcAG4LnYqgcgZ7CHqfkwA1NF8FWfJtrh5"
+    }
+  ],
+  "audits": [],
+  "verified": true,
+  // change to true if your contracts are verified on Alephium
+  "dotw": false,
+  //leave 'false'
+  "links": {
+    "website": "http://goldcastle.club/",
+    "twitter": "https://twitter.com/GoldCastleClub",
+    "telegram": "https://t.me/goldcastleclub",
+    "discord": "https://discord.com/invite/N2mrGu2g",
+    "youtube": "https://www.youtube.com/@GoldCastleClub"
+  },
+  "twitterName": "GoldCastleClub",
+  "teamInfo": {
+    "contactEmail": "esse@fatemark.com",
+    // For Alphland to be able to contact you. Will not be published on Alphland.
+    "founded": "2024-01-11T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [
+    {
+      "address": "uVYr7bR2P4oG5ZZHN9dodEk1Fk2czxaD1eFoiv6REcas",
+      "symbol": "GOLD"
+    }
+  ],
+  "nft": {
+    "collectionContract": "21ixd5J8qVjcAHkGsSsDTnjcgk85dZLSFvdtiCzYkuqBD",
+    "collectionLink": "https://goldcastle.club/fealty/underlords",
+    "collectionName": "Old Asia",
+    "collectionPreview": [
+      {
+        "image_url": "/dapps/goldcastle/haman.webp",
+        "name": "Haman the Bureaucrat"
+      },
+      {
+        "image_url": "/dapps/goldcastle/astrom.webp",
+        "name": "Astrom the White Witch"
+      }
+    ]
+  },
+  "media": {
+    "logoUrl": "/dapps/goldcastle/goldcastle-logo.webp",
+    "bannerUrl": "/dapps/goldcastle/yourdappname-banner.webp",
+    "previewUrl": "/dapps/goldcastle/goldcastle-preview.webp",
+    "videoUrl": "https://www.youtube.com/embed/I-jNMgei73M?si=29gR8VxPr86fd8rH",
+    "gallery": [
+      {
+        "url": "https://xasdsxuik7lxfsh5ugx3at6of2bxjihsbk45linvxgjalpqquxoq.arweave.net/uCQ5XohX13LI_aGvsE_OLoN0oPIKudWhtbmSBb4Qpd0",
+        "description": "The Armored cat of Gold Castle Club"
+      }
+    ]
+  }
+}
