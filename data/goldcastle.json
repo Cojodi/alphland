@@ -1,4 +1,4 @@
-
+{
   "name": "Gold Castle Club",
   "description": "Gamified NFT project and the $GOLD token. The first collection Old Asia has already launched. Combine NFTs to become stronger, swear fealty, grow your kingdom and win the war. You will be rewarded in $GOLD. New collections of Gold Castle Club will integrate with the older collections",
   "short_description": "Grow your kingdom on ALPH and win $GOLD",
@@ -40,20 +40,21 @@
   ],
   "audits": [],
   "verified": true,
-  // change to true if your contracts are verified on Alephium
   "dotw": false,
-  //leave 'false'
   "links": {
     "website": "http://goldcastle.club/",
+    "careers": "",
     "twitter": "https://twitter.com/GoldCastleClub",
     "telegram": "https://t.me/goldcastleclub",
     "discord": "https://discord.com/invite/N2mrGu2g",
-    "youtube": "https://www.youtube.com/@GoldCastleClub"
+    "github": "",
+    "youtube": "https://www.youtube.com/@GoldCastleClub",
+    "medium": "",
+    "mirror": ""
   },
   "twitterName": "GoldCastleClub",
   "teamInfo": {
     "contactEmail": "esse@fatemark.com",
-    // For Alphland to be able to contact you. Will not be published on Alphland.
     "founded": "2024-01-11T00:00:00.000Z",
     "anonymous": true
   },
@@ -75,14 +76,30 @@
       {
         "image_url": "/dapps/goldcastle/astrom.webp",
         "name": "Astrom the White Witch"
+      },
+      {
+        "image_url": "/dapps/goldcastle/siva.webp",
+        "name": "Siva of Halicarnassus"
+      },
+      {
+        "image_url": "/dapps/goldcastle/amaterasu.webp",
+        "name": "Amaterasu Omikami"
+      },
+      {
+        "image_url": "/dapps/goldcastle/leelong.webp",
+        "name": "Lee Long the Biter"
+      },
+      {
+        "image_url": "/dapps/goldcastle/fuyuichirou.webp",
+        "name": "Fuyuichirou, 13 years old"
       }
     ]
   },
   "media": {
-    "logoUrl": "/dapps/goldcastle/goldcastle-logo.webp",
-    "bannerUrl": "/dapps/goldcastle/yourdappname-banner.webp",
-    "previewUrl": "/dapps/goldcastle/goldcastle-preview.webp",
-    "videoUrl": "https://www.youtube.com/embed/I-jNMgei73M?si=29gR8VxPr86fd8rH",
+    "logoUrl": "/dapps/goldcastle/gold-castle-logo.webp",
+    "bannerUrl": "/dapps/goldcastle/gold-castle-banner.webp",
+    "previewUrl": "/dapps/goldcastle/gold-castle-preview.webp",
+    "videoUrl": "",
     "gallery": [
       {
         "url": "https://xasdsxuik7lxfsh5ugx3at6of2bxjihsbk45linvxgjalpqquxoq.arweave.net/uCQ5XohX13LI_aGvsE_OLoN0oPIKudWhtbmSBb4Qpd0",
