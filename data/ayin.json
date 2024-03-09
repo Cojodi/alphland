@@ -3,6 +3,8 @@
   "description": "Welcome to Ayin: Bringing liquidity to life on Alephium. Seamlessly swap Alephium native token pairs, earn, and explore our ecosystem. Enter app to explore the different options for trading, staking, utility functions and more.",
   "short_description": "DEX",
   "tags": ["DeFi", "Infrastructure"],
+  "councils_choice": true,
+
   "contracts": [
     {
       "name": "AYIN token",

@@ -54,7 +54,7 @@ const CategoryPage = ({
   const router = useRouter();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [dappRatings, setDappRatings] = useState<{ [key: string]: string[] }>(
-    {},
+    {}
   );
   const selectedCategory = useCategoryStore((state) => state.selectedCategory);
   const changeCategory = useCategoryStore((state) => state.changeCategory);
@@ -171,7 +171,7 @@ const CategoryPage = ({
 };
 
 export const getStaticProps: GetStaticProps<{ dappCards: DappCard[] }> = async (
-  context,
+  context
 ) => {
   const category = context?.params?.category as string;
 
@@ -189,6 +189,7 @@ export const getStaticProps: GetStaticProps<{ dappCards: DappCard[] }> = async (
     annonymous: dapp.teamInfo.anonymous,
     audits: dapp.audits,
     verified: dapp.verified,
+    councils_choice: dapp.councils_choice,
   }));
 
   return {

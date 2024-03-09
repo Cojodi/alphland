@@ -42,6 +42,7 @@
   "verified": false,
   // change to true if your contracts are verified on Alephium
   "dotw": false,
+  "councils_choice": false,
   //leave 'false'
   "links": {
     "website": "<URL of the dapp's website. Leave empty if non-existent>",

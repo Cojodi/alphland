@@ -1,16 +1,16 @@
-import crossCircle from "../../assets/icons/crossCircle.svg"
-import crossCircleLight from "../../assets/icons/crossCircleLight.svg"
-import star from "../../assets/icons/starFilled.svg"
-import { categories, reputation, ratings } from "../../data/categories"
-import { checkIfCategoryExists, generateUrl } from "../../helpers/category"
-import { filterDappcardsByRating } from "../../helpers/rating"
-import { useCategoryStore } from "../../hooks/useCategoryStore"
-import { useDarkMode } from "../../hooks/useDarkMode"
-import Image from "next/image"
-import Link from "next/link"
-import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
-import styled from "styled-components"
+import crossCircle from "../../assets/icons/crossCircle.svg";
+import crossCircleLight from "../../assets/icons/crossCircleLight.svg";
+import star from "../../assets/icons/starFilled.svg";
+import { categories, reputation, ratings } from "../../data/categories";
+import { checkIfCategoryExists, generateUrl } from "../../helpers/category";
+import { filterDappcardsByRating } from "../../helpers/rating";
+import { useCategoryStore } from "../../hooks/useCategoryStore";
+import { useDarkMode } from "../../hooks/useDarkMode";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
 
 const CategoryContainer = styled.div`
   ul.hovered li {
@@ -26,13 +26,13 @@ const CategoryContainer = styled.div`
   ul li.with-blur:not(.active):not(:hover) {
     opacity: 0.6;
   }
-`
+`;
 
 interface CategoriesProps {
-  className?: string
-  dappCards: DappCard[]
-  isHome?: boolean
-  dappRatings: { [key: string]: string[] }
+  className?: string;
+  dappCards: DappCard[];
+  isHome?: boolean;
+  dappRatings: { [key: string]: string[] };
 }
 
 const Categories = ({
@@ -41,32 +41,39 @@ const Categories = ({
   dappRatings,
   isHome,
 }: CategoriesProps) => {
-  const router = useRouter()
-  const [hovered, setHovered] = useState(false)
+  const router = useRouter();
+  const [hovered, setHovered] = useState(false);
 
-  const { currentTheme } = useDarkMode()
+  const [firstRun, setFirstRun] = useState(true);
+  const { currentTheme } = useDarkMode();
 
-  const selectedCategory = useCategoryStore((state) => state.selectedCategory)
-  const changeCategory = useCategoryStore((state) => state.changeCategory)
-  const selectedSort = useCategoryStore((state) => state.selectedSort)
-  const selectedFilters = useCategoryStore((state) => state.selectedFilters)
-  const addFilter = useCategoryStore((state) => state.addFilter)
-  const setFilters = useCategoryStore((state) => state.setFilters)
-  const selectedRatings = useCategoryStore((state) => state.selectedRatings)
-  const addRating = useCategoryStore((state) => state.addRating)
-  const setRatings = useCategoryStore((state) => state.setRatings)
-  const setSelectedSort = useCategoryStore((state) => state.setSelectedSort)
+  const selectedCategory = useCategoryStore((state) => state.selectedCategory);
+  const changeCategory = useCategoryStore((state) => state.changeCategory);
+  const selectedSort = useCategoryStore((state) => state.selectedSort);
+  const selectedFilters = useCategoryStore((state) => state.selectedFilters);
+  const addFilter = useCategoryStore((state) => state.addFilter);
+  const setFilters = useCategoryStore((state) => state.setFilters);
+  const selectedRatings = useCategoryStore((state) => state.selectedRatings);
+  const addRating = useCategoryStore((state) => state.addRating);
+  const setRatings = useCategoryStore((state) => state.setRatings);
+  const setSelectedSort = useCategoryStore((state) => state.setSelectedSort);
 
   useEffect(() => {
     if (router.isReady) {
-      const filters = (router?.query?.filters as string)?.split(",") || []
-      const sortBy = router?.query?.sort as string
-      const category = (router?.query?.category as string) || "all"
-      const ratings = (router?.query?.ratings as string)?.split(",") || []
-      setFilters(filters)
-      setRatings(ratings)
-      setSelectedSort(sortBy && sortBy.length ? sortBy : null)
-      changeCategory(category)
+      let filters = (router?.query?.filters as string)?.split(",") || [];
+      const sortBy = router?.query?.sort as string;
+      const category = (router?.query?.category as string) || "all";
+      const ratings = (router?.query?.ratings as string)?.split(",") || [];
+
+      if (firstRun) {
+        filters = "councils_choice".split(",");
+        setFirstRun(false);
+      }
+
+      setFilters(filters);
+      setRatings(ratings);
+      setSelectedSort(sortBy && sortBy.length ? sortBy : null);
+      changeCategory(category);
     }
   }, [
     router.isReady,
@@ -74,12 +81,12 @@ const Categories = ({
     router?.query?.sort,
     router?.query?.category,
     router?.query?.ratings,
-  ])
+  ]);
 
   const renderCategoryCount = (
     category: string,
     isMainCategory?: boolean,
-    isRatingCategory?: boolean,
+    isRatingCategory?: boolean
   ) => {
     const dappCardsFilteredByRating = !isRatingCategory
       ? filterDappcardsByRating({
@@ -88,39 +95,39 @@ const Categories = ({
           selectedRatings,
           isMainCategory,
         })
-      : dappCards
+      : dappCards;
     const selectedCategoryName =
       selectedCategory !== "all"
         ? categories.find((cat) => cat.key === selectedCategory)?.name
-        : null
+        : null;
     const allFilters =
       selectedCategoryName && !isMainCategory
         ? [selectedCategoryName, category, ...selectedFilters]
-        : [category, ...selectedFilters]
+        : [category, ...selectedFilters];
     return dappCardsFilteredByRating.reduce((prevValue, currentValue) => {
       const filtersCount = allFilters.reduce((prevFiltersCount, nextFilter) => {
         const filterMatched = checkIfCategoryExists(
           currentValue,
           nextFilter,
-          dappRatings,
-        )
-        return filterMatched ? prevFiltersCount + 1 : prevFiltersCount
-      }, 0)
-      return filtersCount === allFilters.length ? prevValue + 1 : prevValue
-    }, 0)
-  }
+          dappRatings
+        );
+        return filterMatched ? prevFiltersCount + 1 : prevFiltersCount;
+      }, 0);
+      return filtersCount === allFilters.length ? prevValue + 1 : prevValue;
+    }, 0);
+  };
 
   const checkIfAnyCategoryIsActive = () =>
     [...categories, ...reputation, ...ratings].some(
-      (category) => category.key === selectedCategory,
-    )
+      (category) => category.key === selectedCategory
+    );
 
   const checkIfCategoryHasDapps = (
     category: Array<{ key: string; name: string; icon: any }>,
     isMainCategory?: boolean,
-    isRatingCategory?: boolean,
+    isRatingCategory?: boolean
   ) => {
-    let activeCategories = 0
+    let activeCategories = 0;
     category.forEach((item) => {
       if (
         renderCategoryCount(item.name, isMainCategory, isRatingCategory) > 0 &&
@@ -128,11 +135,11 @@ const Categories = ({
           (!selectedFilters.includes(item.key) &&
             !selectedRatings.includes(item.key)))
       ) {
-        activeCategories++
+        activeCategories++;
       }
-    })
-    return Boolean(activeCategories)
-  }
+    });
+    return Boolean(activeCategories);
+  };
 
   const getFilteredCategories = () => {
     return [...categories, ...reputation, ...ratings]
@@ -140,15 +147,15 @@ const Categories = ({
         (category) =>
           selectedFilters.includes(category.key) ||
           selectedRatings.includes(category.key) ||
-          category.key === selectedCategory,
+          category.key === selectedCategory
       )
       .map((category) => ({
         ...category,
         isRating: selectedRatings.includes(category.key),
-      }))
-  }
+      }));
+  };
 
-  const filteredCategories = getFilteredCategories()
+  const filteredCategories = getFilteredCategories();
 
   return (
     <CategoryContainer
@@ -172,20 +179,20 @@ const Categories = ({
                 tabIndex={0}
                 onClick={() => {
                   if (category.key === selectedCategory) {
-                    changeCategory("all")
+                    changeCategory("all");
                     router.push(
                       generateUrl({
                         selectedSort: selectedSort,
                         selectedFilters: selectedFilters,
                         selectedRatings: selectedRatings,
                         selectedCategory: "all",
-                      }),
-                    )
+                      })
+                    );
                   } else {
                     if (category.isRating) {
-                      addRating(category.key)
+                      addRating(category.key);
                     } else {
-                      addFilter(category.key)
+                      addFilter(category.key);
                     }
                   }
                 }}
@@ -300,7 +307,7 @@ const Categories = ({
                     </li>
                   </a>
                 </Link>
-              ),
+              )
           )}
       </ul>
       {checkIfCategoryHasDapps(reputation) ||
@@ -326,7 +333,7 @@ const Categories = ({
                   key={category.name}
                   tabIndex={0}
                   onClick={() => {
-                    addFilter(category.key)
+                    addFilter(category.key);
                   }}
                 >
                   <div className="flex items-center justify-between w-full py-4 px-4">
@@ -348,7 +355,7 @@ const Categories = ({
                     </p>
                   </div>
                 </li>
-              ),
+              )
           )}
         {ratings
           .filter((rating) => !selectedRatings.includes(rating.key))
@@ -362,7 +369,7 @@ const Categories = ({
                   key={category.name}
                   tabIndex={0}
                   onClick={() => {
-                    addRating(category.key)
+                    addRating(category.key);
                   }}
                 >
                   <div className="flex items-center justify-between w-full py-4 px-4">
@@ -382,11 +389,11 @@ const Categories = ({
                     </p>
                   </div>
                 </li>
-              ),
+              )
           )}
       </ul>
     </CategoryContainer>
-  )
-}
+  );
+};
 
-export default Categories
+export default Categories;

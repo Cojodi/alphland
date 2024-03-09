@@ -6,6 +6,8 @@
   "contracts": [],
   "verified": false,
   "dotw": false,
+  "councils_choice": true,
+
   "links": {
     "website": "https://alephium.github.io/alephium-toolkit/#/multisig/create",
     "careers": "",

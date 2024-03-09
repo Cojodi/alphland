@@ -34,6 +34,7 @@ interface DappInfo {
   tokens: Token[];
   media: Media;
   dotw: boolean;
+  councils_choice: boolean;
   twitterName: string;
   nft?: {
     collectionLink: string;
@@ -137,4 +138,5 @@ interface DappCard {
   annonymous: boolean;
   audits: Audit[];
   verified: boolean;
+  councils_choice: boolean;
 }

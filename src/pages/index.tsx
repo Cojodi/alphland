@@ -90,6 +90,9 @@ const Home = ({
         if (val === "verified" && dapp.verified) {
           acc = acc + 1;
         }
+        if (val === "councils_choice" && dapp.councils_choice) {
+          acc = acc + 1;
+        }
         return acc;
       }, 0) === selectedFilters.length
     );
@@ -168,6 +171,7 @@ export const getStaticProps = async () => {
     annonymous: dapp.teamInfo.anonymous,
     audits: dapp.audits,
     verified: dapp.verified,
+    councils_choice: dapp.councils_choice,
   }));
 
   return {

@@ -49,6 +49,13 @@ export const reputation = [
   { key: "doxxed", name: "Public team", icon: profile, iconDark: profileLight },
   { key: "audited", name: "Audited", icon: legal, iconDark: legalLight },
   {
+    key: "councils_choice",
+    name: "Councils Choice",
+    icon: legal,
+    iconDark: legalLight,
+  },
+
+  {
     key: "verified",
     name: "Verified contracts",
     icon: verified,

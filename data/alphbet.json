@@ -2,9 +2,9 @@
   "name": "ALPH.bet",
   "description": "Are you up for the challenge of outperforming the market? Test your skills by making predictions on the future price of ALPH.",
   "short_description": "Are you up for the challenge of outperforming the market?",
-  "tags": [
-    "Games"
-  ],
+  "tags": ["Games"],
+  "councils_choice": true,
+
   "contracts": [
     {
       "name": "Predictalph",

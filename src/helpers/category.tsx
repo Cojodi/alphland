@@ -18,6 +18,9 @@ export const filterCategoryDapps = ({
     if (category === "verified") {
       return dapp.verified;
     }
+    if (category === "councils_choice") {
+      return dapp.councils_choice;
+    }
     return dapp.categories.includes(category);
   });
 };
@@ -42,6 +45,9 @@ export const filterDapps = ({
           acc = acc + 1;
         }
         if (val === "verified" && dapp.verified) {
+          acc = acc + 1;
+        }
+        if (val === "councils_choice" && dapp.councils_choice) {
           acc = acc + 1;
         }
         if (dapp.categories.includes(val)) {
@@ -91,6 +97,7 @@ export const checkIfCategoryExists = (
     case "featured":
       return dappCard.featured;
     case "Public team":
+    case "Councils Choice":
     case "doxxed":
       return !dappCard.annonymous;
     case "Audited":

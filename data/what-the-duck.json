@@ -6,6 +6,8 @@
   "contracts": [],
   "audits": [],
   "verified": false,
+  "councils_choice": true,
+
   "dotw": false,
   "links": {
     "website": "https://theducklounge.com",

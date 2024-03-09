@@ -5,6 +5,8 @@
   "tags": ["Games", "Social"],
   "verified": false,
   "dotw": false,
+  "councils_choice": true,
+
   "links": {
     "website": "https://walph.io",
     "careers": "",

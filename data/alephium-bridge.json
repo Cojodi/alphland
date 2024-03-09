@@ -3,6 +3,7 @@
   "description": "The Alephium Bridge enables unlimited, decentralized cross-chain transfer of tokens",
   "short_description": "Unlimited, decentralized cross-chain transfer of tokens",
   "tags": ["Bridges"],
+  "councils_choice": true,
   "contracts": [
     {
       "name": "Token Bridge",
