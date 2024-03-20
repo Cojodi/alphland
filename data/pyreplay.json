@@ -1,0 +1,38 @@
+{
+  "name": "Pyreplay",
+  "description": "Pyreplay is the first Player vs. Player Gaming/Betting Platform on Alephium, created by Fugashu, the founder of Alphland and the Blockflow visualizer.",
+  "short_description": "Player vs. Player Gaming/Betting Platform",
+  "tags": ["Games", "Social", "ComingSoon"],
+  "group": "Group 0",
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+  "dotw": false,
+  "links": {
+    "website": "https://pyreplay.com/",
+    "careers": "",
+    "twitter": "https://twitter.com/fugashu_codes",
+    "telegram": "",
+    "discord": "https://discord.gg/BHUx8KqvSF",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@fugashu_codes",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2024-02-23T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/pyreplay/logo.png",
+    "bannerUrl": "/dapps/pyreplay/banner.png",
+    "previewUrl": "/dapps/pyreplay/preview.png",
+    "videoUrl": "",
+    "gallery": []
+  }
+}

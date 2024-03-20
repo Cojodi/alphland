@@ -5,10 +5,9 @@
   "tags": ["DeFi", "Infrastructure", "ComingSoon"],
   "contracts": [],
   "audits": [],
+  "councils_choice": true,
   "verified": false,
   "dotw": false,
-  "councils_choice": true,
-
   "links": {
     "website": "https://alphpad.com/",
     "careers": "mailto:admin@alphpad.com",

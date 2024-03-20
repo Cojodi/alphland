@@ -98,6 +98,7 @@ export const checkIfCategoryExists = (
       return dappCard.featured;
     case "Public team":
     case "Councils Choice":
+    case "councils_choice":
     case "doxxed":
       return !dappCard.annonymous;
     case "Audited":
