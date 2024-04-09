@@ -1,0 +1,33 @@
+{
+  "name": "TipALPH",
+  "description": "Enables Telegram users to tip $ALPH or any coin on Alephium. Create your wallet now and start tipping!",
+  "short_description": "Tipping bot for Alephium",
+  "tags": ["Onramps", "Social"],
+  "dotw": false,
+  "verified": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://t.me/tipALPHBot",
+    "careers": "",
+    "twitter": "",
+    "telegram": "https://t.me/tipALPHBot",
+    "discord": "",
+    "github": "https://github.com/notrustverify/tipALPH",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "hello@notrustverify.ch",
+    "founded": "2023-12-04T00:00:00.000Z",
+    "anonymous": true
+  },
+  "audits": [],
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/tipalph/TipALPH_logo_320x320.png",
+    "bannerUrl": "/dapps/tipalph/TipALPH_banner_1920x400.png",
+    "previewUrl": "/dapps/tipalph/TipALPH_preview_700x400.png"
+  }
+}
