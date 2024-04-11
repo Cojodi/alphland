@@ -1,0 +1,36 @@
+{
+  "name": "Ron's LP Tool",
+  "description": "A tool to help you track the value of your Alephium LP Tokens",
+  "short_description": "LP Token Calculator",
+  "tags": ["DeFi", "Infrastructure"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+  "dotw": false,
+
+  "links": {
+    "website": "https://rondex.xyz/lp-tool",
+    "careers": "",
+    "twitter": "https://twitter.com/ron_kda",
+    "telegram": "",
+    "discord": "",
+    "github": "https://github.com/wizard-ron17/rondex",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@ron_kda",
+  "teamInfo": {
+    "contactEmail": "rondex1717@gmail.com",
+    "founded": "2024-02-26T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/rons-lp-tool/rondex-320x320-square.png",
+    "bannerUrl": "/dapps/rons-lp-tool/lp-tool-banner.png",
+    "previewUrl": "/dapps/rons-lp-tool/lp-tool-preview.png"
+  }
+}
