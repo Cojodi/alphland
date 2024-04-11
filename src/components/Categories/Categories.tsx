@@ -60,16 +60,10 @@ const Categories = ({
 
   useEffect(() => {
     if (router.isReady) {
-      let filters = (router?.query?.filters as string)?.split(",") || [];
+      const filters = (router?.query?.filters as string)?.split(",") || [];
       const sortBy = router?.query?.sort as string;
       const category = (router?.query?.category as string) || "all";
       const ratings = (router?.query?.ratings as string)?.split(",") || [];
-
-      if (firstRun) {
-        filters = "councils_choice".split(",");
-        setFirstRun(false);
-      }
-
       setFilters(filters);
       setRatings(ratings);
       setSelectedSort(sortBy && sortBy.length ? sortBy : null);
@@ -82,7 +76,6 @@ const Categories = ({
     router?.query?.category,
     router?.query?.ratings,
   ]);
-
   const renderCategoryCount = (
     category: string,
     isMainCategory?: boolean,
