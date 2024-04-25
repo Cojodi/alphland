@@ -2,9 +2,14 @@
   "name": "AlphPad",
   "description": "AlphPad is poised to redefine project launching within the Alephium ecosystem. This advanced launchpad platform combines ease of use with a comprehensive, secure, and efficient system, designed to benefit both project developers and investors.",
   "short_description": "The Premier Launchpad on Alephium - Elevating Projects to New Heights!",
-  "tags": ["DeFi", "Infrastructure", "ComingSoon"],
+  "tags": ["DeFi", "Infrastructure"],
   "contracts": [],
-  "audits": [],
+  "audits": [
+    {
+      "name": "ralph-security-checklist",
+      "url": "https://github.com/alephium/ralph-security-checklist/blob/master/reports/AlphPad.md"
+    }
+  ],
   "councils_choice": true,
   "verified": false,
   "dotw": false,
@@ -25,7 +30,12 @@
     "founded": "2024-01-12T00:00:00.000Z",
     "anonymous": true
   },
-  "tokens": [],
+  "tokens": [
+    {
+      "address": "27HxXZJBTPjhHXwoF1Ue8sLMcSxYdxefoN2U6d8TKmZsm",
+      "symbol": "APAD"
+    }
+  ],
   "nft": {},
   "media": {
     "logoUrl": "/dapps/alphpad/alphpad-alphland-logo.png",
