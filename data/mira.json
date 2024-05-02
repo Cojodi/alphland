@@ -1,0 +1,42 @@
+{
+    "name": "Mira",
+    "description": "The first cat meme on Alephium",
+    "short_description": "The first cat meme on Alephium",
+    "tags": ["Meme", "Social", "NFTs"],
+    "contracts": [],
+    "audits": [],
+    "councils_choice": true,
+    "verified": false,
+    "dotw": false,
+    "links": {
+      "website": "https://miratoken.vip/",
+      "careers": "mailto:meow@miratoken.vip",
+      "twitter": "https://twitter.com/mira_alephium",
+      "telegram": "https://t.me/mira_alph",
+      "discord": "",
+      "github": "",
+      "youtube": "",
+      "medium": "",
+      "mirror": ""
+    },
+    "twitterName": "@mira_alephium",
+    "teamInfo": {
+      "contactEmail": "meow@mira.com",
+      "founded": "2024-03-01T00:00:00.000Z",
+      "anonymous": true
+    },
+    "tokens": [
+      {
+        "address": "26qo2GDM6sVTnn3HQeHehnvBP96QW5F5ViAyXSqDndFom",
+        "symbol": "MIRA"
+      }
+    ],
+    "nft": {},
+    "media": {
+      "logoUrl": "/dapps/mira/logo.png",
+      "bannerUrl": "/dapps/mira/banner.png",
+      "previewUrl": "/dapps/mira/preview.png",
+      "videoUrl": "",
+      "gallery": []
+    }
+  }
