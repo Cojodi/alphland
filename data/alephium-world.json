@@ -1,0 +1,34 @@
+{
+  "name": "Alephium.World",
+  "description": "Embark on your Alephium journey today. Access the tools, insights, and community support to unlock the full potential of your blockchain endeavors.",
+  "short_description": "Vizualize fullnodes all around the world!",
+  "tags": ["Infrastructure"],
+  "councils_choice": true,
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://alephium.world",
+    "careers": "",
+    "twitter": "",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "hello@notrustverify.ch",
+    "founded": "2024-05-30T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/alephium-world/alephiumworld-logo.png",
+    "bannerUrl": "/dapps/alephium-world/alephiumworld-banner.png",
+    "previewUrl": "/dapps/alephium-world/alephiumworld-preview.png"
+  }
+}
