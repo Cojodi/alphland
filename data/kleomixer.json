@@ -2,21 +2,27 @@
   "name": "KleoMixer",
   "description": "KleoMixer is a fully decentralised protocol for private transactions on #Alephium",
   "short_description": "Crypto Mixer",
-  "tags": ["ComingSoon", "Infrastructure"],
+  "tags": ["Infrastructure"],
+  "contracts": [
+    {
+      "name": "KleoMixer Token",
+      "address": "yweuj67dNGcVu81BEXfdSs2yTDJ2gJBQPwkDbgksCUyD"
+    },
+    {
+      "name": "ALPH/MIX",
+      "address": "xXzsxzdwx2vWvA5opvfnzjBCZRgHk1rP4sq4RjExZGNK"
+    }
+  ],
   "verified": false,
   "councils_choice": true,
-
   "dotw": false,
   "links": {
     "website": "https://kleomixer.com",
-    "careers": "",
+    "careers": "mailto:contact@kleomixer.com",
     "twitter": "https://twitter.com/KleoMixer",
     "telegram": "https://t.me/AnnouncementKleoMixer",
-    "discord": "",
     "github": "https://github.com/KleoMixer/",
-    "youtube": "",
-    "medium": "",
-    "mirror": ""
+    "youtube": "https://www.youtube.com/@KleoMixer"
   },
   "twitterName": "KleoMixer",
   "teamInfo": {
@@ -27,8 +33,14 @@
   "media": {
     "logoUrl": "/dapps/kleomixer/kleomixer-logo.png",
     "bannerUrl": "/dapps/kleomixer/kleomixer-banner.png",
-    "previewUrl": "/dapps/kleomixer/kleomixer-preview.png"
+    "previewUrl": "/dapps/kleomixer/kleomixer-preview.png",
+    "videoUrl": "https://www.youtube.com/watch?v=4Pj4-bLLDrs"
   },
   "audits": [],
-  "tokens": []
+  "tokens": [
+    {
+      "address": "yweuj67dNGcVu81BEXfdSs2yTDJ2gJBQPwkDbgksCUyD",
+      "symbol": "MIX"
+    }
+  ]
 }

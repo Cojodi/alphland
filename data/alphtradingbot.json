@@ -1,0 +1,37 @@
+{
+    "name": "ALPH Trading Bot",
+    "description": "The Alephium Trading Bot empowers traders to navigate the Alephium ecosystem efficiently. Whether you are a seasoned trader or a newcomer, this bot can enhance your trading experience.",
+    "short_description": "Your Gateway to Alephium Blockchain",
+    "tags": ["Bot", "Social", "Infrastructure", "NFTs"],
+    "contracts": [],
+    "audits": [],
+    "councils_choice": true,
+    "verified": false,
+    "dotw": false,
+    "links": {
+      "website": "https://alphtradingbot.com/",
+      "careers": "mailto:admin@alphtradingbot.com",
+      "twitter": "https://twitter.com/alphtradingbot",
+      "telegram": "https://t.me/AlphTradingBot_Channel",
+      "discord": "",
+      "github": "https://github.com/alphtradingbot",
+      "youtube": "https://www.youtube.com/@AlphTradingBot",
+      "medium": "",
+      "mirror": ""
+    },
+    "twitterName": "@alphtradingbot",
+    "teamInfo": {
+      "contactEmail": "admin@alphtradingbot.com",
+      "founded": "2024-02-10T00:00:00.000Z",
+      "anonymous": true
+    },
+    "tokens": [],
+    "nft": {},
+    "media": {
+      "logoUrl": "/dapps/alphtradingbot/logo.png",
+      "bannerUrl": "/dapps/alphtradingbot/banner.png",
+      "previewUrl": "/dapps/alphtradingbot/preview.png",
+      "videoUrl": "",
+      "gallery": []
+    }
+  }
