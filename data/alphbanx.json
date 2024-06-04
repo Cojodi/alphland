@@ -4,6 +4,7 @@
   "short_description": "A next-generation form of stable currency.",
   "tags": ["DeFi", "ComingSoon"],
   "contracts": [],
+  "councils_choice": true,
   "audits": [],
   "verified": false,
   "dotw": false,
