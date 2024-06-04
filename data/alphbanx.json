@@ -2,9 +2,7 @@
   "name": "AlphBanX",
   "description": "The AlphBanX Dollar (ABD) is a secure, overcollateralized stablecoin on the Alephium blockchain, pegged 1:1 to USD. It offers reliable payments, backed by ALPH collateral and a three-level stabilization system, ensuring consistent value and trust.",
   "short_description": "A next-generation form of stable currency.",
-  "tags": [
-    "Сoming soon"
-  ],
+  "tags": ["DeFi", "ComingSoon"],
   "contracts": [],
   "audits": [],
   "verified": false,
