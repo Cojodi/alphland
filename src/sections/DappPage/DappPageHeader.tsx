@@ -112,7 +112,7 @@ const DappPageHeader = ({
         {dappInfo.tags.length > 0 && (
           <div className="mt-16 xl:mt-0">
             <h2 className="text-[28px] leading-[34px] font-bold">Tags</h2>
-            <div className="flex mt-4">
+            <div className="flex mt-4 flex-wrap">
               {dappInfo.tags.map((tag) => (
                 <Tag key={tag} name={tag} />
               ))}

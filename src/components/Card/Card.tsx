@@ -1,26 +1,26 @@
-import truncate from "../../helpers/truncate"
-import Image, { StaticImageData } from "next/image"
-import Link from "next/link"
-import styled from "styled-components"
+import truncate from "../../helpers/truncate";
+import Image, { StaticImageData } from "next/image";
+import Link from "next/link";
+import styled from "styled-components";
 
 const CoverImage = styled.div`
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
   border-radius: 12px;
-`
+`;
 
 const CardContainer = styled.div`
   grid-template-columns: 64px auto auto;
-`
+`;
 
 interface CardProps {
-  image: string | StaticImageData
-  logo: string | StaticImageData
-  title: string
-  short_description: string
-  url: string
-  tags: string[]
+  image: string | StaticImageData;
+  logo: string | StaticImageData;
+  title: string;
+  short_description: string;
+  url: string;
+  tags: string[];
 }
 
 const Card = ({
@@ -75,7 +75,7 @@ const Card = ({
         </CardContainer>
       </a>
     </Link>
-  )
-}
+  );
+};
 
-export default Card
+export default Card;
