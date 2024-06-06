@@ -1,0 +1,38 @@
+{
+    "name": "ANS",
+    "description": "ANS aims to provide a pivotal solution designed to enhance accessibility within the Alephium DeFi ecosystem for users across all proficiency levels. ANS simplifies this process by replacing lengthy and intricate public addresses with concise, user-friendly names.",
+    "short_description": "The Alephium name service.",
+    "tags": ["Infrastructure", "Social", "Utility"],
+    "contracts": [],
+    "audits": [],
+    "councils_choice": true,
+    "verified": false,
+    "dotw": false,
+    "links": {
+      "website": "https://alephium.domains",
+      "careers": "",
+      "twitter": "https://twitter.com/AlphNameService",
+      "telegram": "https://t.me/AlephiumNameService",
+      "discord": "https://discord.gg/KWshE9Efw7",
+      "github": "",
+      "youtube": "",
+      "medium": "https://medium.com/@AlphPad",
+      "mirror": ""
+    },
+    "twitterName": "@AlphNameService",
+    "teamInfo": {
+      "contactEmail": "",
+      "founded": "2024-04-12T00:00:00.000Z",
+      "anonymous": true
+    },
+    "tokens": [],
+    "nft": {},
+    "media": {
+      "logoUrl": "/dapps/ans/ans-logo.png",
+      "bannerUrl": "/dapps/ans/ans-banner.png",
+      "previewUrl": "/dapps/ans/ans-preview.png",
+      "videoUrl": "",
+      "gallery": []
+    }
+  }
+  
