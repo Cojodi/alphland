@@ -14,7 +14,7 @@
     "twitter": "https://x.com/linx_labs",
     "telegram": "https://t.me/linx_wallet_chat",
     "discord": "https://discord.com/invite/g434BaWTFb",
-    "github": "",
+    "github": "https://github.com/ThinEdgeLabs/linx_otc",
     "youtube": "",
     "medium": "",
     "mirror": ""
@@ -22,7 +22,7 @@
   "twitterName": "linx_labs",
   "teamInfo": {
     "contactEmail": "",
-    "founded": "2024-02-12T00:00:00.000Z",
+    "founded": "2022-10-12T00:00:00.000Z",
     "anonymous": false
   },
   "tokens": [],
