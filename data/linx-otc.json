@@ -1,0 +1,37 @@
+{
+  "name": "LinxOTC",
+  "description": "LinxOTC facilitates secure over-the-counter trades without any escrow needed and P2P loans.",
+  "short_description": "Escrow-free OTC trades and secure peer-to-peer loans.",
+  "tags": ["DeFi"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://linxotc.com",
+    "careers": "",
+    "twitter": "https://x.com/linx_labs",
+    "telegram": "https://t.me/linx_wallet_chat",
+    "discord": "https://discord.com/invite/g434BaWTFb",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "linx_labs",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2024-02-12T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/linx-otc/linxotc-logo.png",
+    "bannerUrl": "/dapps/linx-otc/linxotc-banner.png",
+    "previewUrl": "/dapps/linx-otc/linxotc-preview.png",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
