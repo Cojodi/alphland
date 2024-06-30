@@ -1,0 +1,25 @@
+{
+  "name": "Alephium Decoder",
+  "description": "Alephium Decoder can dissect the raw data for contracts and transactions. It can also replay transaction instructions step by step at the VM level.",
+  "short_description": "Decode contracts, decode and replay transactions",
+  "tags": ["Infrastructure"],
+  "councils_choice": true,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://alephium-decoder.softfork.se",
+    "github": "https://github.com/h0ngcha0/alephium-decoder"
+  },
+  "teamInfo": {
+    "contactEmail": "hongchao@softfork.se",
+    "founded": "2023-11-25T00:00:00.000Z",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/alephium-decoder/alephium-decoder-logo.png",
+    "bannerUrl": "/dapps/alephium-decoder/alephium-decoder-banner.png",
+    "previewUrl": "/dapps/alephium-decoder/alephium-decoder-preview.png"
+  },
+  "audits": [],
+  "tokens": []
+}
