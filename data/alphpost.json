@@ -1,0 +1,38 @@
+{
+  "name": "AlphPost",
+  "description": "Social Network and task based marketplace on Alephium Chain.",
+  "short_description": "Social Network and task based marketplace.",
+  "tags": ["Social", "Infrastructure", "Marketplace", "Defi"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": true,
+
+  "links": {
+    "website": "https://alphpost.com/",
+    "careers": "",
+    "twitter": "https://x.com/alphpost",
+    "telegram": "https://t.me/alphpost",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@AlphPost",
+  "teamInfo": {
+    "contactEmail": "contact@alphpost.com",
+    "founded": "2024-04-30T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/alphpost/logo.png",
+    "bannerUrl": "/dapps/alphpost/banner.png",
+    "previewUrl": "/dapps/alphpost/preview.png",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
