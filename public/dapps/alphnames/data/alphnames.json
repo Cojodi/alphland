@@ -1,7 +1,7 @@
 {
-  "name": "Alephium ANS",
+  "name": "Alephium Name Service",
   "description": "",
-  "short_description": "ANS is a name system on Alephium",
+  "short_description": "Alephium Name Service is a name system on Alephium",
   "tags": ["Infrastructure", "NFTs"],
   "contracts": [],
   "audits": [],
