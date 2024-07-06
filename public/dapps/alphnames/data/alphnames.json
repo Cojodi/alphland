@@ -1,0 +1,55 @@
+{
+  "name": "Alephium ANS",
+  "description": "",
+  "short_description": "ANS is a name system on Alephium",
+  "tags": ["Infrastructure", "NFTs"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+  "dotw": false,
+  "links": {
+    "website": "https://alphnames.com/",
+    "careers": "",
+    "twitter": "https://x.com/AlephiumANS",
+    "telegram": "",
+    "discord": "https://discord.gg/sAb5Zjkzwq",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@AlephiumANS",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2024-07-04T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {
+    "collectionContract": "",
+    "collectionLink": "https://deadrare.io/collection/ans-names",
+    "collectionName": "ANS Names",
+    "collectionPreview": [
+      {
+        "image_url": "/dapps/alephium-ans/CHENG.png",
+        "name": "CHENG"
+      },
+    ]
+  },
+  "media": {
+    "logoUrl": "/dapps/alephium-ans/alephium-battle-icon.png",
+    "bannerUrl": "/dapps/alephium-ans/alephium-battle-header.png",
+    "previewUrl": "/dapps/alephium-ans/alephium-battle-preview.png",
+    "gallery": [
+      {
+        "url": "/dapps/alephium-battle/collection.png",
+        "description": "Collection"
+      },
+      {
+        "url": "/dapps/alephium-battle/page.png",
+        "description": "Gameplay"
+      }
+    ]
+  }
+}
