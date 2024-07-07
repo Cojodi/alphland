@@ -1,0 +1,58 @@
+{
+  "name": "Alephium Name Service",
+  "description": "The open source and zero revenue Name Service on Alephium. Buy your Name and link it to your wallet.",
+  "short_description": "Alephium Name Service is a name system on Alephium",
+  "tags": ["Infrastructure", "NFTs"],
+  "contracts": ["229YhAcdSWLX7UXQF3gXdHKo5NBkr1VgiuiwtJzjqTgwy"],
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+  "dotw": false,
+  "links": {
+    "website": "https://alphnames.com/",
+    "careers": "",
+    "twitter": "https://x.com/AlephiumANS",
+    "telegram": "",
+    "discord": "https://discord.gg/sAb5Zjkzwq",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@AlephiumANS",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2024-07-04T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [
+    {
+      "address": "wnLxfEARN6XpxRnB4cfFYNWdznEFrCL8TjemRSowfpYF",
+      "symbol": "ANS"
+    },
+    {
+      "address": "xNDsmvxCob6yi36MJAFtBpeyruyhSCvpPj62nWQ8VeJ3",
+      "symbol": "ANS Crops"
+    }
+  ],
+  "nft": {
+    "collectionContract": "229YhAcdSWLX7UXQF3gXdHKo5NBkr1VgiuiwtJzjqTgwy",
+    "collectionLink": "https://deadrare.io/collection/ans-names",
+    "collectionName": "ANS Names",
+    "collectionPreview": [
+      {
+        "image_url": "/dapps/alephium-name-service/ALEPHIUM.png",
+        "name": "Alephium"
+      },
+      {
+        "image_url": "/dapps/alephium-name-service/SPLINTER.png",
+        "name": "Splinter"
+      }
+    ]
+  },
+  "media": {
+    "logoUrl": "/dapps/alephium-name-service/icon.jpg",
+    "bannerUrl": "/dapps/alephium-name-service/header.jpg",
+    "previewUrl": "/dapps/alephium-name-service/preview.png"
+  }
+}

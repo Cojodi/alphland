@@ -1,0 +1,34 @@
+{
+  "name": "Candyswap",
+  "description": "The Orderbook DEX on the Alephium Blockchain",
+  "short_description": "The Orderbook DEX on the Alephium Blockchain",
+  "tags": ["DeFi"],
+  "tokens": [],
+  "contracts": [""],
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+  "dotw": false,
+  "links": {
+    "website": "https://candyswap.gg/",
+    "careers": "",
+    "twitter": "https://x.com/CandySwapALPH",
+    "telegram": "",
+    "discord": "https://discord.gg/nX3RFCNazK",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@CandySwapALPH",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2024-07-03T00:00:00.000Z",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/candyswap/icon.png",
+    "bannerUrl": "/dapps/candyswap/header.jpg",
+    "previewUrl": "/dapps/candyswap/preview.jpg"
+  }
+}
