@@ -3,6 +3,7 @@
   "description": "The Orderbook DEX on the Alephium Blockchain",
   "short_description": "The Orderbook DEX on the Alephium Blockchain",
   "tags": ["DeFi"],
+  "tokens": [],
   "contracts": [""],
   "audits": [],
   "verified": false,
