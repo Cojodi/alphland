@@ -17,13 +17,17 @@
   "twitterName": "AlphagaMarket",
   "teamInfo": {
     "contactEmail": "",
-    "founded": "2023-07-31T00:00:00.000Z",
+    "founded": "2023-12-20T00:00:00.000Z",
     "anonymous": true
   },
   "tokens": [
     {
       "address": "26Mirs33zojnVMRkqVDJtMZvVZcbAFVyxGojGw7UtWp2K",
       "symbol": "ALPHAGA"
+    },
+    {
+      "address": "23cXw23ZjRqKc7i185ZoH8vh9KT4XTumVRWpVLUecgLMd",
+      "symbol": "ALPHALPHAGA"
     }
   ],
   "media": {
