@@ -1,0 +1,51 @@
+{
+  "name": "Phoenix Finance",
+  "description": "Platform for degen finance",
+  "short_description": "DeFi Games",
+  "tags": ["DeFi"],
+  "contracts": [
+    {
+      "name": "HodlALPH",
+      "address": "2B22GruwbwKGNjSF363yMVApuoRjkU5WpwhNiUdkzFHH1"
+    },
+    {
+      "name": "PhoenixFactory",
+      "address": "25wU9bDva1NPBu4SWvZix51F7xyABNZjfr5XKykcyfAS3"
+    }
+  ],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://www.phoenixfi.app/",
+    "careers": "",
+    "twitter": "https://x.com/PhoenixErgo",
+    "telegram": "https://t.me/hodlCoinGame",
+    "discord": "",
+    "github": "https://github.com/PhoenixErgo",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "Phoenix_Finance",
+  "teamInfo": {
+    "contactEmail": "phoenixergo@protonmail.com",
+    "founded": "2023-07-04T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [
+    {
+      "address": "2B22GruwbwKGNjSF363yMVApuoRjkU5WpwhNiUdkzFHH1",
+      "symbol": "HALPH"
+    }
+  ],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/phoenix-finance/phoenix-logo.png",
+    "bannerUrl": "/dapps/phoenix-finance/phoenix-banner.png",
+    "previewUrl": "/dapps/phoenix-finance/phoenix-preview.png",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
