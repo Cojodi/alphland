@@ -54,8 +54,8 @@ export const Layout = ({
           property="og:title"
           content={
             title
-              ? `Discover ${title} on Alphland – The best dapps on Alephium`
-              : `Alphland | The best dapps on Alephium`
+              ? `Discover ${title} on Alphland – the best of Alephium's ecosystem`
+              : `Alphland | The best of Alephium's ecosystem`
           }
         />
         {description && <meta name="og:description" content={description} />}
@@ -70,8 +70,8 @@ export const Layout = ({
           property="twitter:title"
           content={
             title
-              ? `Discover ${title} on Alphland – The best dapps on Alephium`
-              : `Alphland | The best dapps on Alephium`
+              ? `Discover ${title} on Alphland – the best of Alephium's ecosystem`
+              : `Alphland | The best of Alephium's ecosystem`
           }
         />
 

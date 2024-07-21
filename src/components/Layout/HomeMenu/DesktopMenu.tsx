@@ -53,7 +53,7 @@ const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
           ></Image>
         </Link>
         <h1 className="bg-black dark:bg-white text-white dark:text-black pl-4 pr-4 pt-1 pb-2 text-center text-[32px] font-bold leading-[38px] rounded-md mb-6">
-          Discover the best dapps on Alephium
+          Discover the best of Alephium&apos;s ecosystem
         </h1>
         <h2 className="text-black dark:text-white text-[16px] leading-[20px] font-lighter">
           Proudly sponsored by{" "}
