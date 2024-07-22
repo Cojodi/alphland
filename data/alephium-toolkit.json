@@ -4,7 +4,7 @@
   "short_description": "Alephium Multi-sig GUI",
   "tags": ["Infrastructure"],
   "contracts": [],
-  "verified": false,
+  "verified": true,
   "dotw": false,
   "councils_choice": true,
 
