@@ -7,11 +7,15 @@
   "verified": true,
   "dotw": false,
   "links": {
-    "Desktop Wallet": "https://github.com/alephium/alephium-frontend/releases/latest",
-    "Mobile Wallet IOS": "https://apps.apple.com/us/app/alephium-wallet/id6469043072",
-    "Mobile Wallet Android": "https://play.google.com/store/apps/details?id=org.alephium.wallet",
-    "Chrome Browser Extension": "https://chrome.google.com/webstore/detail/alephium-extension-wallet/gdokollfhmnbfckbobkdbakhilldkhcj",
-    "Firefox Browser Extension": "https://addons.mozilla.org/en-US/firefox/addon/alephiumextensionwallet/"
+    "website": "https://alephium.org/#wallets",
+    "careers": "",
+    "twitter": "https://twitter.com/alephium",
+    "telegram": "https://t.me/alephiumgroup",
+    "discord": "https://alephium.org/discord",
+    "github": "https://github.com/alephium/alephium-frontend",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
   },
   "teamInfo": {
     "contactEmail": "info@alephium.org",
