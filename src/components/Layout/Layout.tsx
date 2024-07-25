@@ -37,15 +37,15 @@ export const Layout = ({
       <Head>
         <title>
           {title
-            ? `${title} on Alphland – The best dapps on Alephium`
-            : `Alphland | The best dapps on Alephium`}
+            ? `${title} on Alphland – The best of Alephium's ecosystem`
+            : `Alphland | The best of Alephium's ecosystem`}
         </title>
         <meta
           name="description"
           content={
             description
               ? `${description}`
-              : `Alphland | The best dapps on Alephium`
+              : `Alphland | The best of Alephium's ecosystem`
           }
         />
 
