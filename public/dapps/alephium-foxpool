@@ -1,0 +1,47 @@
+{
+  "name": "FoxPool",
+  "description": "FoxPool.io is the world's first comprehensive mining pool to upoort dual mining for ALPH miners",
+  "short_description": "<FoxPool is the best ALPH mining pool in the world>",
+  "tags": ["Mining", "Defi", "DAOs", "Infrastructure",],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "councils_choice": false,
+  "dotw": false,
+  "links": {
+    "website": "https://foxpool.io",
+    "careers": "",
+    "twitter": "https://x.com/FoxPool_BTC",
+    "telegram": "https://t.me/foxpool_fox2",
+    "discord": "https://discord.gg/2VwVzcRFBc",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@FoxPool_BTC",
+  "teamInfo": {
+    "contactEmail": "admin@foxpool.io",
+    "founded": "2023-06-01T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [
+    {
+      "address": "",
+      "symbol": "FOX2"
+    }
+  ],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/alephium-foxpool/foxpool-logo.png",
+    "bannerUrl": "/dapps/alephium-foxpool/foxpool-banner.png",
+    "previewUrl": "/dapps/alephium-foxpool/foxpool-preview.png",
+    "videoUrl": "",
+    "gallery": [
+      {
+        "url": "/dapps/alephium-foxppol/dualmining.png",
+        "description": "mining"
+      }
+    ]
+  }
+}
