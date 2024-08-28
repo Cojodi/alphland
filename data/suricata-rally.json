@@ -1,6 +1,6 @@
 {
   "name": "Suricata Rally",
-  "description": "Collect tokens on the Suricata Rally tap to earn game app and fullfill the Alephium ecosystem related tasks and achievements to walk your way through the evolvement of the cute Suricata Meerkat in order to learn about the many Alephium related apps, tools and projects with the aim of participating to a upcoming token airdrop which is prepared by the team to keep you rewarded by using the amasing Alephium ecosystem.",
+  "description": "Suricata Rally is the hottest new tap to earn game on Telegram and it's not just any game, it's your gateway to the Alephium blockchain and its ecosystem. Here is how it works. Tap to collect coins, buy boosts to skyrocket your balance and complete tasks to earn even more. But wait, there is more, the more you play the more you will be rewarded in the upcoming token launch. That's right, most of the supply will be distributed to the games players. Invite friends and family to join and watch your balance to soar even higher. Suricata Rally isn't just a game, it's a chance to be part of something bigger. Dive into Suricata Rally today and start tapping your way to earning tokens. Let's rally up and get tapping!",
   "short_description": "Suricata Rally is a new tap to earn game that will bring you closer to the Alephium blockchain and its ecosystem!",
   "tags": ["Onramps", "Games", "NFTs", "Social"],
   "contracts": [],
@@ -13,6 +13,7 @@
     "careers": "",
     "twitter": "https://x.com/suricata_rally",
     "telegram": "https://t.co/zpVFl2MQ8K",
+    "tiktok": "https://www.tiktok.com/@suricata.rally",
     "discord": "",
     "github": "",
     "youtube": "",
@@ -21,9 +22,9 @@
   },
   "twitterName": "suricata_rally",
   "teamInfo": {
-    "contactEmail": "suricata.bot@gmail.com",
+    "contactEmail": "suricatarally@gmail.com",
     "founded": "2024-08-26T00:00:00.000Z",
-    "anonymous": true
+    "anonymous": false
   },
   "tokens": [],
   "nft": {},
@@ -31,7 +32,16 @@
     "logoUrl": "/dapps/suricata-rally/suricata-rally-logo.jpg",
     "bannerUrl": "/dapps/suricata-rally/suricata-rally-banner.jpg",
     "previewUrl": "/dapps/suricata-rally/suricata-rally-preview.png",
-    "videoUrl": "https://suricata.bot/img/Suricata-boost-level2.mp4",
-    "gallery": []
+    "videoUrl": "https://suricata.bot/img/SuricataRally-boost-level2.mp4",
+    "gallery": [
+      {
+        "url": "/dapps/alephium-battle/collection.png",
+        "description": "Collection"
+      },
+      {
+        "url": "/dapps/alephium-battle/page.png",
+        "description": "Gameplay"
+      }
+    ]
   }
 }
