@@ -21,7 +21,7 @@
   "teamInfo": {
     "contactEmail": "",
     "founded": "",
-    "anonymous": true,
+    "anonymous": true
   },
   "media": {
     "logoUrl": "/dapps/houdini-swap/iconHS.png",
