@@ -1,0 +1,37 @@
+{
+  "name": "Suricata Rally",
+  "description": "Collect tokens on the Suricata Rally tap to earn game app and fullfill the Alephium ecosystem related tasks and achievements to walk your way through the evolvement of the cute Suricata Meerkat in order to learn about the many Alephium related apps, tools and projects with the aim of participating to a upcoming token airdrop which is prepared by the team to keep you rewarded by using the amasing Alephium ecosystem.",
+  "short_description": "Suricata Rally is a new tap to earn game that will bring you closer to the Alephium blockchain and its ecosystem!",
+  "tags": ["Onramps", "Games", "NFTs", "Social"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://suricata.bot/",
+    "careers": "",
+    "twitter": "https://x.com/suricata_rally",
+    "telegram": "https://t.co/zpVFl2MQ8K",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "suricata_rally",
+  "teamInfo": {
+    "contactEmail": "suricata.bot@gmail.com",
+    "founded": "2024-08-26T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/suricata-rally/suricata-rally-logo.jpg",
+    "bannerUrl": "/dapps/suricata-rally/suricata-rally-banner.jpg",
+    "previewUrl": "/dapps/suricata-rally/suricata-rally-preview.png",
+    "videoUrl": "https://suricata.bot/img/Suricata-boost-level2.mp4",
+    "gallery": []
+  }
+}
