@@ -33,15 +33,6 @@
     "bannerUrl": "/dapps/suricata-rally/suricata-rally-banner.jpg",
     "previewUrl": "/dapps/suricata-rally/suricata-rally-preview.png",
     "videoUrl": "https://suricata.bot/img/SuricataRally-boost-level2.mp4",
-    "gallery": [
-      {
-        "url": "/dapps/alephium-battle/collection.png",
-        "description": "Collection"
-      },
-      {
-        "url": "/dapps/alephium-battle/page.png",
-        "description": "Gameplay"
-      }
-    ]
+    "gallery": []
   }
 }
