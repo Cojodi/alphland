@@ -1,0 +1,33 @@
+
+{
+  "name": "Houdini Swap",
+  "description": "Houdini Swap is the leading compliant, non-custodial, cross-chain liquidity aggregator with a unique set of privacy features",
+  "short_description": "Transact Freely",
+  "tags": ["Bridges", "Infrastructure"],
+  "councils_choice": false,
+  "verified": true,
+  "dotw": false,
+  "links": {
+    "website": "https://houdiniswap.com/",
+    "careers": "",
+    "twitter": "https://x.com/HoudiniSwap",
+    "telegram": "https://t.me/houdiniswap",
+    "discord": "",
+    "github": "https://docs.houdiniswap.com/houdini-swap",
+    "youtube": "",
+    "medium": "https://houdiniswap.medium.com/",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/houdini-swap/iconHS.png",
+    "bannerUrl": "/dapps/houdini-swap/bannerHS.png",
+    "previewUrl": "/dapps/houdini-swap/previewHS.png"
+  },
+  "audits": [],
+  "tokens": []
+}
