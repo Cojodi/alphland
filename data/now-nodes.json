@@ -1,0 +1,28 @@
+{
+  "name": "NOWNodes",
+  "description": "NOWNodes is a blockchain infrastructure that provides access to Full Nodes and Block Explorers via API. It provides access to over 100 popular blockchain networks including ALPH, BTC, ETH, DOGE, and BSC, which practically means almost every single coin and token from TOP100 CoinMarketCap.",
+  "short_description": "Instant access to 100+ RPC nodes for all your Web3 development needs. Get an API key and start building!",
+  "tags": ["Infrastructure"],
+  "councils_choice": true,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://nownodes.io/",
+    "telegram": "https://t.me/nownodes",
+    "discord": "https://discord.com/invite/2bdaPmG2R3",
+    "github": "https://github.com/NOWNodes",
+    "twitter": "https://x.com/NowNodes"
+  },
+  "teamInfo": {
+    "contactEmail": "sales@nownodes.io",
+    "founded": "",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/now-nodes/iconNN.png",
+    "bannerUrl": "/dapps/now-nodes/headerNN.png",
+    "previewUrl": "/dapps/now-nodes/previewNN.png"
+  },
+  "audits": [],
+  "tokens": []
+}
