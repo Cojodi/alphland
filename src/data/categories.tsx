@@ -14,6 +14,8 @@ import heart from "../assets/icons/heart.svg";
 import heartLight from "../assets/icons/heartLight.svg";
 import legal from "../assets/icons/legal.svg";
 import legalLight from "../assets/icons/legalLight.svg";
+import lock from "../assets/icons/lock.svg";
+import lockLight from "../assets/icons/lockLight.svg";
 import profile from "../assets/icons/profile.svg";
 import profileLight from "../assets/icons/profileLight.svg";
 import star from "../assets/icons/starFilled.svg";
@@ -34,6 +36,7 @@ export const categories = [
   { key: "nfts", name: "NFTs", icon: gallery, iconDark: galleryLight },
   { key: "social", name: "Social", icon: heart, iconDark: heartLight },
   { key: "wallets", name: "Wallets", icon: wallet, iconDark: walletLight },
+  { key: "security", name: "Security", icon: lock, iconDark: lockLight },
 
   {
     key: "infrastructure",
