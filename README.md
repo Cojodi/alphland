@@ -1,6 +1,6 @@
 <div align="center">
     <img src="src/assets/logo-alphland-light.svg" alt="Alphland logo" width=400 />
-    <h4>The home for all dapps in the Alephium ecosystem</h4>
+    <h4>The home for all projects in the Alephium ecosystem</h4>
 
 </div>
 
@@ -23,9 +23,9 @@ the Alephium Wallet Browser Extension for Chrome or Firefox:
     </a>
 </div>
 
-## ✅ Add your dapp to Alphland
+## ✅ Add your project to Alphland
 
-If you are building a dapp on Alephium and want to showcase it in Alphland, you just need to submit a PR to this
+If you are building on Alephium and want to showcase it in Alphland, you just need to submit a PR to this
 repository.
 
 Steps:
@@ -35,11 +35,11 @@ Steps:
    Alphland Figma template</a> to help you.
 2. Please optimise your images using tinypng.com – JPGs are best for photos and PNGs for graphics. Or you can convert to
    WebP.
-3. Fork this repo and create a new folder with your dapp name under `/public/dapps/`
+3. Fork this repo and create a new folder with your project name under `/public/dapps/`
 4. Add your optimised images to the folder
 5. Copy [`dapp_data_example.json`](https://github.com/Cojodi/alphland/blob/develop/dapp_data_example.json), rename it
-   with your dapp's name in lowercase and move it to `/data`
-6. Fill out the fields in the json file with your dapp's data
+   with your project's name in lowercase and move it to `/data`
+6. Fill out the fields in the json file with your project's data
 7. Ensure the json points to your images, i.e.
 
 ```
@@ -51,7 +51,7 @@ Steps:
   }
 ```
 
-8. Rename ```env.example``` to ```env.local```, ```npm run build``` and check if your dApp is displayed correctly.
+8. Rename ```env.example``` to ```env.local```, ```npm run build``` and check if your project is displayed correctly.
 9. Create the PR if above steps succeeded.
 
 And that's it! 🚀
@@ -67,7 +67,7 @@ For any questions either create an issue on this repo or find us on the Alephium
   <img src="https://img.shields.io/badge/Discord-6666FF?style=for-the-badge&logo=discord&logoColor=white">
 </a>
 
-## 📣 Share your dapp rating with the world
+## 📣 Share your project rating with the world
 
 Embed the Alphland rating widget in your application!
 
@@ -83,7 +83,7 @@ Embed the Alphland rating widget in your application!
 ```
 
 1. Copy and paste the snippet above
-2. In `<a href="…">` change `your_dapp_name` to exactly the same as the name of your dapp as shown in your Alphland url.
+2. In `<a href="…">` change `your_dapp_name` to exactly the same as the name of your project as shown in your Alphland url.
 3. Also change `your_dapp_name` in the `<iframe src="…">`
 4. (Optional) you can also set the theme to `theme=light` or `theme=dark` 😎 (default uses the device settings).  
    Just add the `theme` param to the url after your dappname.
