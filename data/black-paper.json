@@ -1,0 +1,45 @@
+{
+    "name": "Black Paper",
+    "description": "We help web3 builders in their smart contract security and provide a all-in-one solution for keeping their projects safe.",
+    "short_description": "Smart Contract Audit",
+    "tags": [
+      "Security"
+    ],
+    "group": "",
+    "contracts": [
+    ],
+    "audits": [
+    ],
+    "verified": false,
+    "dotw": false,
+    "councils_choice": false,
+    "links": {
+      "website": "https://www.black-paper.xyz/",
+      "careers": "mailto:apply@black-paper.xyz",
+      "twitter": "",
+      "telegram": "",
+      "discord": "",
+      "github": "",
+      "youtube": "",
+      "medium": "",
+      "mirror": ""
+    },
+    "twitterName": "",
+    "teamInfo": {
+      "contactEmail": "contact@black-paper.xyz",
+      "founded": "2022-05-24T00:00:00.000Z",
+      "anonymous": true
+    },
+    "tokens": [
+    ],
+    "nft": {
+    },
+    "media": {
+      "logoUrl": "/dapps/black-paper/black-paper-logo.png",
+      "bannerUrl": "/dapps/black-paper/black-paper-banner.png",
+      "previewUrl": "/dapps/black-paper/black-paper-preview.png",
+      "videoUrl": "",
+      "gallery": [
+      ]
+    }
+  }
