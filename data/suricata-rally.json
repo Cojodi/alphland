@@ -27,7 +27,21 @@
     "anonymous": false
   },
   "tokens": [],
-  "nft": {},
+  "nft": {
+    "collectionContract": "26Mirs33zojnVMRkqVDJtMZvVZcbAFVyxGojGw7UtWp2K",
+    "collectionLink": "https://alphaga.app/collections/d07ae0d7da7cc282c6f7dec7e1984586147c0d61183936088ca736632ac80500",
+    "collectionName": "Suricata Rally Mascot Booster Collection",
+    "collectionPreview": [
+      {
+        "image_url": "/dapps/suricata-rally/suricata-booster-nft-collection-Hunter.png",
+        "name": "Hunter - Acacia Grove Booster NFT"
+      },
+      {
+        "image_url": "/dapps/suricata-rally/suricata-booster-nft-collection-Trooper.png",
+        "name": "Trooper - Grassland Plains Booster NFT"
+      }
+    ]
+  },
   "media": {
     "logoUrl": "/dapps/suricata-rally/suricata-rally-logo.jpg",
     "bannerUrl": "/dapps/suricata-rally/suricata-rally-banner.jpg",
