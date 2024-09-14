@@ -27,36 +27,46 @@
     "anonymous": false
   },
   "tokens": [],
-  "nft": {
-    "collectionContract": "26Mirs33zojnVMRkqVDJtMZvVZcbAFVyxGojGw7UtWp2K",
-    "collectionLink": "https://alphaga.app/collections/c859d5ec5d6bca3a642fa75a5b4218d31366629fbd1961750d17a65e866e4a00",
-    "collectionName": "Suricata Rally Mascot Booster Collection",
-    "collectionPreview": [
-      {
-        "image_url": "/dapps/suricata-rally/suricata-booster-nft-collection-Hunter.png",
-        "name": "Hunter - Acacia Grove Booster NFT"
-      },
-      {
-        "image_url": "/dapps/suricata-rally/suricata-booster-nft-collection-Trooper.png",
-        "name": "Trooper - Grassland Plains Booster NFT"
-      }
-    ]
-  },
-  {
-    "collectionContract": "26Mirs33zojnVMRkqVDJtMZvVZcbAFVyxGojGw7UtWp2K",
-    "collectionLink": "https://alphaga.app/collections/d07ae0d7da7cc282c6f7dec7e1984586147c0d61183936088ca736632ac80500",
-    "collectionName": "Suricata Rally Mascot Static Collection",
-    "collectionPreview": [
-      {
-        "image_url": "/dapps/suricata-rally/suricata-static-nft-collection-Explorer",
-        "name": "Explorer - Riverbank Refuge Static NFT"
-      },
-      {
-        "image_url": "/dapps/suricata-rally/suricata-static-nft-collection-Atronaut",
-        "name": "Astronaut - Moonlit Mirage Static NFT"
-      }
-    ]
-  }
+  "nft": [
+    {
+      "collectionContract": "26Mirs33zojnVMRkqVDJtMZvVZcbAFVyxGojGw7UtWp2K",
+      "collectionLink": "https://alphaga.app/collections/c859d5ec5d6bca3a642fa75a5b4218d31366629fbd1961750d17a65e866e4a00",
+      "collectionName": "Suricata Rally Mascot Booster Collection",
+      "collectionPreview": [
+        {
+          "image_url": "/dapps/suricata-rally/suricata-booster-nft-collection-Hunter.png",
+          "name": "Hunter - Acacia Grove Booster NFT"
+        },
+        {
+          "image_url": "/dapps/suricata-rally/suricata-booster-nft-collection-Trooper.png",
+          "name": "Trooper - Grassland Plains Booster NFT"
+        }
+      ]
+    },
+    {
+      "collectionContract": "26Mirs33zojnVMRkqVDJtMZvVZcbAFVyxGojGw7UtWp2K",
+      "collectionLink": "https://alphaga.app/collections/d07ae0d7da7cc282c6f7dec7e1984586147c0d61183936088ca736632ac80500",
+      "collectionName": "Suricata Rally Mascot Static Collection",
+      "collectionPreview": [
+        {
+          "image_url": "/dapps/suricata-rally/suricata-static-nft-collection-Caveman",
+          "name": "Caveman - Sunrise Savanna Static NFT"
+        },
+        {
+          "image_url": "/dapps/suricata-rally/suricata-static-nft-collection-Steampunk",
+          "name": "Steampunk - Termite Tower Static NFT"
+        },
+        {
+          "image_url": "/dapps/suricata-rally/suricata-static-nft-collection-Explorer",
+          "name": "Explorer - Riverbank Refuge Static NFT"
+        },
+        {
+          "image_url": "/dapps/suricata-rally/suricata-static-nft-collection-Atronaut",
+          "name": "Astronaut - Moonlit Mirage Static NFT"
+        }
+      ]
+    }
+  ],
   "media": {
     "logoUrl": "/dapps/suricata-rally/suricata-rally-avatar.png",
     "bannerUrl": "/dapps/suricata-rally/suricata-rally-banner.png",
