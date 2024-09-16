@@ -19,6 +19,7 @@
     "Infrastructure",
     "Wallets",
     "Security",
+    "Hashrate", // anything pool, mining, PoW etc. related
     // if not live yet:
     "ComingSoon"
   ],

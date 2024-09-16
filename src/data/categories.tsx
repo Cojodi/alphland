@@ -10,6 +10,8 @@ import gallery from "../assets/icons/gallery.svg";
 import galleryLight from "../assets/icons/galleryLight.svg";
 import gaming from "../assets/icons/gaming.svg";
 import gamingLight from "../assets/icons/gamingLight.svg";
+import hashrate from "../assets/icons/hashrate.svg";
+import hashrateLight from "../assets/icons/hashrateLight.svg";
 import heart from "../assets/icons/heart.svg";
 import heartLight from "../assets/icons/heartLight.svg";
 import legal from "../assets/icons/legal.svg";
@@ -37,7 +39,12 @@ export const categories = [
   { key: "social", name: "Social", icon: heart, iconDark: heartLight },
   { key: "wallets", name: "Wallets", icon: wallet, iconDark: walletLight },
   { key: "security", name: "Security", icon: lock, iconDark: lockLight },
-
+  {
+    key: "hashrate",
+    name: "Hashrate",
+    icon: hashrate,
+    iconDark: hashrateLight,
+  },
   {
     key: "infrastructure",
     name: "Infrastructure",
