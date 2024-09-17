@@ -21,6 +21,8 @@ import lockLight from "../assets/icons/lockLight.svg";
 import profile from "../assets/icons/profile.svg";
 import profileLight from "../assets/icons/profileLight.svg";
 import star from "../assets/icons/starFilled.svg";
+import stats from "../assets/icons/stats.svg";
+import statsLight from "../assets/icons/statsLight.svg";
 import swap from "../assets/icons/swap.svg";
 import swapLight from "../assets/icons/swapLight.svg";
 import time from "../assets/icons/time.svg";
@@ -39,6 +41,7 @@ export const categories = [
   { key: "social", name: "Social", icon: heart, iconDark: heartLight },
   { key: "wallets", name: "Wallets", icon: wallet, iconDark: walletLight },
   { key: "security", name: "Security", icon: lock, iconDark: lockLight },
+  { key: "stats", name: "Stats", icon: stats, iconDark: statsLight },
   {
     key: "hashrate",
     name: "Hashrate",
