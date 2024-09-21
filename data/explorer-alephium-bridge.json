@@ -1,0 +1,34 @@
+{
+  "name": "Alephium Bridge Explorer",
+  "description": "Explore real-time movement of information and value around the Alephium bridge.",
+  "short_description": "Explore real-time movement of information and value around the Alephium bridge.",
+  "tags": ["Stats"],
+  "councils_choice": true,
+  "contracts": [],
+  "verified": true,
+  "dotw": false,
+  "links": {
+    "website": "https://explorer.bridge.alephium.org/",
+    "careers": "",
+    "twitter": "https://twitter.com/alephium",
+    "telegram": "https://t.me/alephiumgroup",
+    "discord": "https://discord.gg/3y8HvQ97s4",
+    "github": "https://github.com/alephium/wormhole-fork",
+    "youtube": "https://www.youtube.com/@alephium",
+    "medium": "https://medium.com/@alephium",
+    "mirror": ""
+  },
+  "twitterName": "alephium",
+  "teamInfo": {
+    "contactEmail": "info@alephium.org",
+    "founded": "2023-11-09T00:00:00.000Z",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/explorer-alephium-bridge/dapp-icon-alephium-bridge.png",
+    "bannerUrl": "/dapps/explorer-alephium-bridge/dapp-header-alephium-bridge.png",
+    "previewUrl": "/dapps/explorer-alephium-bridge/dapp-preview-alephium-bridge.png"
+  },
+  "audits": [],
+  "tokens": []
+}

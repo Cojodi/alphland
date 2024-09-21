@@ -1,0 +1,38 @@
+{
+  "name": "Tin.network",
+  "description": "Your one stop for #Defi. Easily track and visualize all your Assets, Liabilities and NFTs in one simple interface.",
+  "short_description": "Easily track and visualize all your Assets.",
+  "tags": ["Stats", "DeFi"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+
+  "dotw": false,
+  "links": {
+    "website": "https://tin.network",
+    "careers": "",
+    "twitter": "https://x.com/tinnetwork_defi",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@tinnetwork_defi",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2021-03-01T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/tinnetwork/logo.png",
+    "bannerUrl": "/dapps/tinnetwork/banner.png",
+    "previewUrl": "/dapps/tinnetwork/banner.png",
+    "videoUrl": "",
+    "gallery": []
+  }
+}

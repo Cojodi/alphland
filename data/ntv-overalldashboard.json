@@ -1,0 +1,38 @@
+{
+  "name": "No Trust Verify dashboard",
+  "description": "Explore detailled stats about Alephium network.",
+  "short_description": "Explore detailled stats about Alephium network.",
+  "tags": ["Stats"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+
+  "dotw": false,
+  "links": {
+    "website": "https://dashboard.notrustverify.ch/d/MggjRL1Vz/overall-stats?orgId=1",
+    "careers": "",
+    "twitter": "https://x.com/notrustverif",
+    "telegram": "",
+    "discord": "",
+    "github": "https://github.com/NoTrustVerify/",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@notrustverif",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2020-10-30T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/ntv-overalldashboard/logo.png",
+    "bannerUrl": "/dapps/ntv-overalldashboard/banner.png",
+    "previewUrl": "/dapps/ntv-overalldashboard/banner.png",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
