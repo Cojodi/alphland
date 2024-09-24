@@ -18,6 +18,9 @@
     "DAOs",
     "Infrastructure",
     "Wallets",
+    "Security",
+    "Hashrate", // anything pool, mining, PoW etc. related
+    "Stats",
     // if not live yet:
     "ComingSoon"
   ],

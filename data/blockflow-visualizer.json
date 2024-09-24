@@ -2,7 +2,7 @@
   "name": "Blockflow Visualizer",
   "description": "This app visualizes Blockflow, Alephiums sharding algorithm in 3D and exposes a websocket stream for other developers.",
   "short_description": "Blockflow 3D visualizer & public block stream websocket",
-  "tags": ["Tooling", "Social"],
+  "tags": ["Tooling", "Stats"],
   "contracts": [],
   "audits": [],
   "verified": false,

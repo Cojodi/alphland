@@ -10,13 +10,19 @@ import gallery from "../assets/icons/gallery.svg";
 import galleryLight from "../assets/icons/galleryLight.svg";
 import gaming from "../assets/icons/gaming.svg";
 import gamingLight from "../assets/icons/gamingLight.svg";
+import hashrate from "../assets/icons/hashrate.svg";
+import hashrateLight from "../assets/icons/hashrateLight.svg";
 import heart from "../assets/icons/heart.svg";
 import heartLight from "../assets/icons/heartLight.svg";
 import legal from "../assets/icons/legal.svg";
 import legalLight from "../assets/icons/legalLight.svg";
+import lock from "../assets/icons/lock.svg";
+import lockLight from "../assets/icons/lockLight.svg";
 import profile from "../assets/icons/profile.svg";
 import profileLight from "../assets/icons/profileLight.svg";
 import star from "../assets/icons/starFilled.svg";
+import stats from "../assets/icons/stats.svg";
+import statsLight from "../assets/icons/statsLight.svg";
 import swap from "../assets/icons/swap.svg";
 import swapLight from "../assets/icons/swapLight.svg";
 import time from "../assets/icons/time.svg";
@@ -34,7 +40,14 @@ export const categories = [
   { key: "nfts", name: "NFTs", icon: gallery, iconDark: galleryLight },
   { key: "social", name: "Social", icon: heart, iconDark: heartLight },
   { key: "wallets", name: "Wallets", icon: wallet, iconDark: walletLight },
-
+  { key: "security", name: "Security", icon: lock, iconDark: lockLight },
+  { key: "stats", name: "Stats", icon: stats, iconDark: statsLight },
+  {
+    key: "hashrate",
+    name: "Hashrate",
+    icon: hashrate,
+    iconDark: hashrateLight,
+  },
   {
     key: "infrastructure",
     name: "Infrastructure",
