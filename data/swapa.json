@@ -1,0 +1,40 @@
+{
+  "name": "Swapa",
+  "description": "Swapa aims to create a veDEX with deep liquidity. Our liquidity providers can expect high returns. All emissions will go to the liquidity providers and all fees go to voters.",
+  "short_description": "SWAPA is the first veDEX on alephium",
+  "tags": ["DeFi"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://swapa.exchange/",
+    "careers": "",
+    "twitter": "https://x.com/alphswaps",
+    "telegram": "https://t.me/swapadex",
+    "discord": "https://discord.com/invite/6zEezaNyND",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2024-09-20T00:00:00.000Z",
+    "anonymous": false
+  },
+  "twitterName": "@alphswaps",
+  "tokens": [
+    {
+      "address": "24kbPruFzLeqsKGBW12LzKhDqk2CzrfQ7zx1d4wTuyAis ",
+      "symbol": "Swapa"
+    }
+  ],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/swapa/swapa.png",
+    "bannerUrl": "/dapps/swapa/swapa-banner.png",
+    "previewUrl": "/dapps/swapa/swapa-preview.png"
+  }
+}
