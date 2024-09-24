@@ -2,7 +2,7 @@
   "name": "DOH",
   "description": "DOH.Money",
   "short_description": "DeFi. Nodes.",
-  "tags": ["DeFi"],
+  "tags": ["DeFi","Infrastructure", "ComingSoon", "Stats"],
   "tokens": [],
   "contracts": [""],
   "audits": [],
