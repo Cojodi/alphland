@@ -1,6 +1,6 @@
 {
-  "name": "Alephium Explorer",
-  "description": "This Dashboard leverages onchain data to showcase $ALPH development and usage on Ethereum",
+  "name": "wrapped Alephium on Ethereum",
+  "description": "Show wrapped ALPH",
   "short_description": "Explore detailled stats about Alephium network on Ethereum side.",
   "tags": ["Stats"],
   "contracts": [],
@@ -9,7 +9,7 @@
   "councils_choice": true,
   "dotw": false,
   "links": {
-    "website": "https://bridge.alephium.org",
+    "website": "https://etherscan.io/token/0x590f820444fa3638e022776752c5eef34e2f89a6#cards",
     "careers": "",
     "twitter": "https://twitter.com/alephium",
     "telegram": "https://t.me/alephiumgroup",
@@ -28,9 +28,9 @@
   "tokens": [],
   "nft": {},
   "media": {
-    "logoUrl": "/dapps/alephium-explorer/logo.svg",
-    "bannerUrl": "/dapps/alephium-explorer/banner.png",
-    "previewUrl": "/dapps/alephium-explorer/banner.png",
+    "logoUrl": "/dapps/alephium-etherscan/logo.svg",
+    "bannerUrl": "/dapps/alephium-etherscan/banner.png",
+    "previewUrl": "/dapps/alephium-etherscan/banner.png",
     "videoUrl": "",
     "gallery": []
   }

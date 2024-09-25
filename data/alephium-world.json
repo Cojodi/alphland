@@ -2,7 +2,7 @@
   "name": "Alephium.World",
   "description": "Embark on your Alephium journey today. Access the tools, insights, and community support to unlock the full potential of your blockchain endeavors.",
   "short_description": "Vizualize fullnodes all around the world!",
-  "tags": ["Infrastructure"],
+  "tags": ["Infrastructure", "Stats"],
   "councils_choice": true,
   "contracts": [],
   "audits": [],
@@ -19,7 +19,7 @@
     "medium": "",
     "mirror": ""
   },
-  "twitterName": "",
+  "twitterName": "@notrustverif",
   "teamInfo": {
     "contactEmail": "hello@notrustverify.ch",
     "founded": "2024-05-30T00:00:00.000Z",
