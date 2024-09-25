@@ -1,8 +1,8 @@
 {
   "name": "Pyreplay",
-  "description": "Pyreplay is the first Player vs. Player Gaming/Betting Platform on Alephium, created by Fugashu, the founder of Alphland and the Blockflow visualizer.",
+  "description": "Pyreplay is the first Player vs. Player Arcade Hall on Alephium, created by Fugashu, the founder of Alphland and the Blockflow visualizer.",
   "short_description": "Player vs. Player Gaming/Betting Platform",
-  "tags": ["Games", "Social", "ComingSoon"],
+  "tags": ["Games", "Social"],
   "group": "Group 0",
   "contracts": [],
   "audits": [],
