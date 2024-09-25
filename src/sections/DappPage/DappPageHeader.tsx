@@ -73,7 +73,7 @@ const DappPageHeader = ({
             )}
           </div>
           <a
-            href="https://discord.gg/T4PDFHxm6T"
+            href="https://x.com/fugashu_codes"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center font-semibold text-[15px] leading-[20px] text-lightgrey ml-4"
