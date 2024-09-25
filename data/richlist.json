@@ -1,0 +1,38 @@
+{
+  "name": "Alephium Richlist",
+  "description": "Explore real-time insights into the Alephium ecosystem with detailed metrics and statistics on address distribution and network activity.",
+  "short_description": "Explore real-time insights into the Alephium ecosystem.",
+  "tags": ["Stats"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+
+  "dotw": false,
+  "links": {
+    "website": "https://richlist.alephium.world/",
+    "careers": "",
+    "twitter": "",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2022-10-30T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/alephium-richlist/alephiumrichlist-logo.png",
+    "bannerUrl": "/dapps/alephium-richlist/alephiumrichlist-banner.png",
+    "previewUrl": "/dapps/alephium-richlist/alephiumrichlist-banner.png",
+    "videoUrl": "",
+    "gallery": []
+  }
+}

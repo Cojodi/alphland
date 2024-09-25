@@ -1,0 +1,38 @@
+{
+  "name": "No Trust Verify Dune dashboard",
+  "description": "This Dashboard leverages onchain data to showcase $ALPH development and usage on Ethereum",
+  "short_description": "Explore detailled stats about Alephium network on Ethereum side.",
+  "tags": ["Stats"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+
+  "dotw": false,
+  "links": {
+    "website": "https://dune.com/kov0x/alephium-alphbridge",
+    "careers": "",
+    "twitter": "https://x.com/notrustverif",
+    "telegram": "",
+    "discord": "",
+    "github": "https://github.com/NoTrustVerify/",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@notrustverif",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2024-08-01T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/ntv-overalldashboard/logo.png",
+    "bannerUrl": "/dapps/ntv-dune/banner.png",
+    "previewUrl": "/dapps/ntv-dune/banner.png",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
