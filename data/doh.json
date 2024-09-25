@@ -2,8 +2,13 @@
   "name": "DOH",
   "description": "DOH.Money",
   "short_description": "DeFi. Nodes.",
-  "tags": ["DeFi","Infrastructure", "ComingSoon", "Stats"],
-  "tokens": [],
+  "tags": ["DeFi", "Infrastructure", "ComingSoon", "Stats"],
+  "tokens": [
+    {
+      "address": "27HxXZJBTPjhHXwoF1Ue8sLMcSxYdxefoN2U6d8TKmZsm",
+      "symbol": "APAD"
+    }
+  ],
   "contracts": [""],
   "audits": [],
   "verified": false,
