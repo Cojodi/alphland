@@ -1,0 +1,37 @@
+{
+  "name": "FxWallet",
+  "description": "FxWallet is a fully decentralized multi-cryptocurrency blockchain wallet. It is a mobile wallet. Currently supporting 50+ public chains, it also offers the ability to custom add Ethereum-based public chains and tokens. User-friendly for beginners, it features an NFT management DApp browser, supports asset staking, and prioritizes network security. ",
+  "short_description": "FxWallet is a fully decentralized multi-cryptocurrency blockchain wallet.",
+  "tags": ["Wallets"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://www.fxwallet.com",
+    "careers": "",
+    "twitter": "https://x.com/FxWallet",
+    "telegram": "",
+    "discord": "https://discord.gg/VybWKHEFvR",
+    "github": "https://github.com/fxwalletOfficial",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "FxWallet",
+  "teamInfo": {
+    "contactEmail": "support@fxwallet.com",
+    "founded": "2021-07-21T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/fxwallet/fxwallet-logo.png",
+    "bannerUrl": "/dapps/fxwallet/fxwallet-banner.png",
+    "previewUrl": "/dapps/fxwallet/fxwallet-preview.png",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
