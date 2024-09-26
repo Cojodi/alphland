@@ -1,0 +1,31 @@
+{
+  "name": "Grumpy Fortunes",
+  "description": "Grumpy is a meme token launched on the Alephium blockchain in May. With a fair launch, Grumpy introduced a series of unique Video NFTs that captured attention. But the innovation didn't stop there—Grumpy also developed 'The First AI-Powered Oracle on Alephium' through its exciting new dApp, Grumpy Fortunes. This interactive platform offers users a fun and creative way to get AI-driven price predictions for the future value of Alephium, blending technology and entertainment.",
+  "short_description": "The First AI Powered Oracle on Alephium",
+  "tags": ["DeFi", "NFT", "Games"],
+  "group": "",
+  "contract": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://grumpyfortunes.xyz/",
+    "twitter": "https://x.com/GrumpyAlph",
+    "discord": "https://discord.gg/FZnuFqWSSc",
+    "github": "https://github.com/GrumpyAlph"
+  },
+  "twitterName": "GrumpyAlph",
+  "teamInfo": {
+    "contactEmail": "grumpyAlph@proton.me",
+    "founded": "2024-05-06T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/grumpy-fortunes/logo.webp",
+    "bannerUrl": "/dapps/grumpy-fortunes/banner.webp",
+    "previewUrl": "/dapps/grumpy-fortunes/preview.webp"
+  },
+  "gallery": []
+}
