@@ -1,0 +1,71 @@
+{
+  "name": "OneKey Wallet",
+  "description": "OneKey is a open source project of a decentralized wallet that allows users to self-custody their own digital assets. ",
+  "short_description": "Open source crypto wallet. Trusted by millions.",
+  "tags": ["Wallets"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": true,
+
+  "links": {
+    "website": "https://onekey.so/",
+    "careers": "",
+    "twitter": "https://twitter.com/OneKeyHQ",
+    "telegram": "",
+    "discord": "",
+    "github": "https://github.com/OneKeyHQ/app-monorepo",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "OneKey",
+  "teamInfo": {
+    "contactEmail": "dev@onekey.so",
+    "founded": "2019-01-01T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/onekey-wallet/logo.png",
+    "bannerUrl": "/dapps/onekey-wallet/banner.png",
+    "previewUrl": "/dapps/onekey-wallet/preview.png",
+    "videoUrl": "",
+    "gallery": [
+      {
+        "url": "/dapps/onekey-wallet/screenshot-1.png",
+        "description": "OneKey Wallet"
+      },
+      {
+        "url": "/dapps/onekey-wallet/screenshot-2.png",
+        "description": "OneKey Wallet Supported Chains"
+      },
+      {
+        "url": "/dapps/onekey-wallet/screenshot-3.png",
+        "description": "OneKey Wallet Features"
+      },
+      {
+        "url": "/dapps/onekey-wallet/screenshot-4.png",
+        "description": "OneKey Wallet Features"
+      },
+      {
+        "url": "/dapps/onekey-wallet/screenshot-5.png",
+        "description": "OneKey Wallet Support Hardware Wallet"
+      },
+      {
+        "url": "/dapps/onekey-wallet/screenshot-6.png",
+        "description": "Wallet Wallet Features"
+      },
+      {
+        "url": "/dapps/onekey-wallet/screenshot-7.png",
+        "description": "Wallet Wallet Features"
+      },
+      {
+        "url": "/dapps/onekey-wallet/screenshot-8.png",
+        "description": "Wallet Wallet Features"
+      }
+    ]
+  }
+}
