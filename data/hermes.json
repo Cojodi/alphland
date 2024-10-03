@@ -1,0 +1,38 @@
+{
+  "name": "Hermes",
+  "description": "Hermes is a fun dApp that lets you generate and mint unique crypto-themed compliments or punchlines, then send them to your friends for a laugh. Customize each punchline, turn it into an NFT, and share crypto humor on the Alephium blockchain!",
+  "short_description": "Generate, mint, and share crypto-themed punchlines as NFTs!",
+  "tags": ["Games", "NFTs", "Social"],
+
+  "group": "Group 0",
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+  "dotw": false,
+  "links": {
+    "website": "https://www.hermesonchain.com/",
+    "careers": "",
+    "twitter": "https://x.com/Hermes_alph",
+    "telegram": "",
+    "discord": "",
+    "github": "https://github.com/captainralph42/HERMES",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "Hermes_alph",
+  "teamInfo": {
+    "contactEmail": "hermes.alph@gmail.com",
+    "founded": "2024-09-09T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": "",
+  "media": {
+    "logoUrl": "/dapps/hermes/hermes_logo.jpg",
+    "bannerUrl": "/dapps/hermes/hermes_banner.jpg",
+    "previewUrl": "/dapps/hermes/hermes_preview.jpg",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
