@@ -1,0 +1,68 @@
+{
+  "name": "Alephium Battle",
+  "description": "Alephium Battle is revolutionizing the NFT space with unique battle cards. Our platform offers collectors and gamers an engaging experience by enabling them to buy, sell, and compete in digital battles and tournaments.",
+  "short_description": "Alephium Battle is NFT card game",
+  "tags": ["Games", "NFTs", "Social"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+  "dotw": false,
+  "links": {
+    "website": "https://alephium-battle.com/",
+    "careers": "",
+    "twitter": "https://x.com/AlephiumBattle",
+    "telegram": "",
+    "discord": "https://discord.gg/YGW9BJZYmB",
+    "github": "",
+    "youtube": "https://www.youtube.com/@alephiumbattle",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@AlephiumBattle",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2023-03-19T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {
+    "collectionContract": "z3yXjzFqeyoNPQskimf1Va5yMFjkGijeUa7Ux2auE8LF",
+    "collectionLink": "https://deadrare.io/collection/alephium-battle",
+    "collectionName": "Alephium Battle",
+    "collectionPreview": [
+      {
+        "image_url": "/dapps/alephium-battle/204-SHADOWFIRE WARRIOR.png",
+        "name": "204-SHADOWFIRE WARRIOR"
+      },
+      {
+        "image_url": "/dapps/alephium-battle/219-ARCANIC THUNDER.png",
+        "name": "219-ARCANIC THUNDER"
+      },
+      {
+        "image_url": "/dapps/alephium-battle/60-ZEPHYR.png",
+        "name": "60-ZEPHYR"
+      },
+      {
+        "image_url": "/dapps/alephium-battle/239-PURPLE HAZE.png",
+        "name": "239-PURPLE HAZE"
+      }
+    ]
+  },
+  "media": {
+    "logoUrl": "/dapps/alephium-battle/alephium-battle-icon.png",
+    "bannerUrl": "/dapps/alephium-battle/alephium-battle-header.png",
+    "previewUrl": "/dapps/alephium-battle/alephium-battle-preview.png",
+    "videoUrl": "https://res.cloudinary.com/dsvjonjtu/video/upload/f_auto,q_auto/v1711651482/Card_Game_Opener_2_2_1_c6rx3k.webm",
+    "gallery": [
+      {
+        "url": "/dapps/alephium-battle/collection.png",
+        "description": "Collection"
+      },
+      {
+        "url": "/dapps/alephium-battle/page.png",
+        "description": "Gameplay"
+      }
+    ]
+  }
+}

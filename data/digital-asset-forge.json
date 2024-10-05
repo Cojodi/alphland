@@ -1,0 +1,33 @@
+{
+  "name": "Digital Asset Forge",
+  "description": "Digital Asset Forge is a collection of tools to make creating tokens easier.  Currently Token List has been deployed.  This tool makes it easy for the user to list their tokens and create a PR on the Alephium token list.",
+  "short_description": "The Alephium Fair Launch Foundry",
+  "tags": ["DeFi", "Infrastructure", "Token Creation"],
+  "group": "",
+  "contract": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://digitalassetforge.io/",
+    "twitter": "https://x.com/AlephiumForge",
+    "discord": "https://discord.gg/7yXVDbVVEU",
+    "github": "https://github.com/DigitalAssetForge",
+    "youtube": "https://www.youtube.com/@DigitalAssetForge/videos",
+    "medium": "https://medium.com/@digitalassetforge"    
+  },
+  "twitterName": "AlephiumForge",
+  "teamInfo": {
+    "contactEmail": "digitalassetforge@proton.me",
+    "founded": "2024-07-15T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/digital-asset-forge/logo.webp",
+    "bannerUrl": "/dapps/digital-asset-forge/banner.webp",
+    "previewUrl": "/dapps/digital-asset-forge/preview.webp"
+  },
+  "gallery": []
+}

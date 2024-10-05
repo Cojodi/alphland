@@ -1,0 +1,37 @@
+{
+  "name": "wrapped Alephium on Ethereum",
+  "description": "Show wrapped ALPH",
+  "short_description": "Explore detailled stats about Alephium network on Ethereum side.",
+  "tags": ["Stats"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+  "dotw": false,
+  "links": {
+    "website": "https://etherscan.io/token/0x590f820444fa3638e022776752c5eef34e2f89a6#cards",
+    "careers": "",
+    "twitter": "https://twitter.com/alephium",
+    "telegram": "https://t.me/alephiumgroup",
+    "discord": "https://discord.gg/3y8HvQ97s4",
+    "github": "https://github.com/alephium/wormhole-fork",
+    "youtube": "https://www.youtube.com/@alephium",
+    "medium": "https://medium.com/@alephium",
+    "mirror": ""
+  },
+  "twitterName": "alephium",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2024-08-01T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/alephium-etherscan/logo.svg",
+    "bannerUrl": "/dapps/alephium-etherscan/banner.png",
+    "previewUrl": "/dapps/alephium-etherscan/banner.png",
+    "videoUrl": "",
+    "gallery": []
+  }
+}

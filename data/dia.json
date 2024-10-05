@@ -1,0 +1,32 @@
+{
+  "name": "DIA Oracle",
+  "description": "DIA is an open-source, cross-chain oracle provider that sources granular market data from diverse exchanges, including CEXs and DEXs. Its data sourcing is thorough, enabling unparalleled transparency and customizability for resilient price feeds for 20,000+ assets. Its versatile data processing and delivery ensures adaptability and reliability for any decentralized application.",
+  "short_description": "Cross-chain oracles for Web3",
+  "tags": ["Infrastructure"],
+  "councils_choice": true,
+  "verified": true,
+  "dotw": false,
+  "links": {
+    "website": "https://www.diadata.org/",
+    "careers": "",
+    "twitter": "https://twitter.com/DIAdata_org",
+    "telegram": "https://t.me/diadata_org",
+    "discord": "https://discord.com/invite/RjHBcZ9mEH",
+    "github": "https://github.com/diadata-org/",
+    "youtube": "",
+    "medium": "https://www.diadata.org/blog/post/dia-price-oracles-alephium-mainnet/",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "info@diadata.org",
+    "founded": "",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/DIA/DIA-icon.png",
+    "bannerUrl": "/dapps/DIA/DIA-header.png",
+    "previewUrl": "/dapps/DIA/DIA-preview.png"
+  },
+  "audits": [],
+  "tokens": []
+}

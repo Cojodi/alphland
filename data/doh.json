@@ -1,0 +1,39 @@
+{
+  "name": "DOH",
+  "description": "DOH.Money",
+  "short_description": "DeFi. Nodes.",
+  "tags": ["DeFi", "Infrastructure", "ComingSoon", "Stats"],
+  "tokens": [
+    {
+      "address": "24e7wScJTd8vLzMdtvUCWtat4M4WUQtWGUTLsxWuiFjvP",
+      "symbol": "DOH"
+    }
+  ],
+  "contracts": [""],
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+  "dotw": false,
+  "links": {
+    "website": "https://doh.money",
+    "careers": "",
+    "twitter": "https://x.com/doh_alph",
+    "telegram": "https://t.me/doh_money",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@doh_alph",
+  "teamInfo": {
+    "contactEmail": "info@doh.money",
+    "founded": "2024-08-09T00:00:00.000Z",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/doh/doh-logo.png",
+    "bannerUrl": "/dapps/doh/doh-banner.png",
+    "previewUrl": "/dapps/doh/doh-preview.png"
+  }
+}

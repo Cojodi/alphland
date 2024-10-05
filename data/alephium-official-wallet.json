@@ -1,0 +1,32 @@
+{
+  "name": "Alephium Official Wallets",
+  "description": "Stay in control of Alephium assets and connect to dApps of the Alephium ecosystem. Designed with simplicity and usability in mind, even complex actions are easy to perform. The Alephium wallets are fully self-custodial, only you have access to your seeds and private keys.",
+  "short_description": "The Alephium wallets are your keys to the Alephium ecosystem",
+  "tags": ["Wallets"],
+  "councils_choice": true,
+  "verified": true,
+  "dotw": false,
+  "links": {
+    "website": "https://alephium.org/#wallets",
+    "careers": "",
+    "twitter": "https://twitter.com/alephium",
+    "telegram": "https://t.me/alephiumgroup",
+    "discord": "https://alephium.org/discord",
+    "github": "https://github.com/alephium/alephium-frontend",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "info@alephium.org",
+    "founded": "2021-09-01T00:00:00.000Z",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/alephium-official-wallets/Icon.png",
+    "bannerUrl": "/dapps/alephium-official-wallets/Banner.png",
+    "previewUrl": "/dapps/alephium-official-wallets/Preview.png"
+  },
+  "audits": [],
+  "tokens": []
+}

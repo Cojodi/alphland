@@ -1,0 +1,32 @@
+{
+  "name": "Zelcore Wallet",
+  "description": "Zelcore makes it effortless to find, manage, trade, and truly own your digital assets and information. Experience the ultimate control and convenience with our all-in-one platform.",
+  "short_description": "Zelcore – the ultimate wallet for Web3",
+  "tags": ["Wallets"],
+  "councils_choice": false,
+  "verified": true,
+  "dotw": false,
+  "links": {
+    "website": "https://zelcore.io",
+    "careers": "",
+    "twitter": "https://x.com/zelcore_io",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "https://www.youtube.com/channel/UCSlYE41UUtcjSD0_Z43pTpw",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/zelcore/IconZ.png",
+    "bannerUrl": "/dapps/zelcore/BannerZ.png",
+    "previewUrl": "/dapps/zelcore/PreviewZ.png"
+  },
+  "audits": [],
+  "tokens": []
+}

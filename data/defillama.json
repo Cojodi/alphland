@@ -1,0 +1,38 @@
+{
+  "name": "DefiLlama",
+  "description": "DefiLlama is the largest TVL aggregator for DeFi (Decentralized Finance). Our data is fully open-source and maintained by a team of passionate individuals and contributors from hundreds of protocols.",
+  "short_description": "Open and transparent DeFi analytics.",
+  "tags": ["Stats"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+
+  "dotw": false,
+  "links": {
+    "website": "https://defillama.com/chain/Alephium?staking=true",
+    "careers": "",
+    "twitter": "https://x.com/DefiLlama",
+    "telegram": "",
+    "discord": "",
+    "github": "https://github.com/DefiLlama/",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@DefiLlama",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2020-10-30T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/defillama/defillama-logo.png",
+    "bannerUrl": "/dapps/defillama/defillama-banner.png",
+    "previewUrl": "/dapps/defillama/defillama-banner.png",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
