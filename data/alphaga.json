@@ -2,9 +2,20 @@
   "name": "ALPHAGA",
   "description": "Alphaga is a decentralized NFT marketplace on #Alephium blockchain $ALPH 🚀",
   "short_description": "Decentralized NFT Marketplace",
-  "tags": ["DeFi", "NFTs", "ComingSoon"],
+  "tags": ["DeFi", "NFTs"],
   "councils_choice": true,
-  "contracts": [],
+  "contracts": [    {
+    "name": "Alphaga token",
+    "address": "26Mirs33zojnVMRkqVDJtMZvVZcbAFVyxGojGw7UtWp2K"
+  },
+  {
+    "name": "ALPH/ALPHAGA",
+    "address": "23cXw23ZjRqKc7i185ZoH8vh9KT4XTumVRWpVLUecgLMd"
+  },
+  {
+    "name": "ALPH",
+    "address": "23cXw23ZjRqKc7i185ZoH8vh9KT4XTumVRWpVLUecgLMd"
+  }],
   "audits": [{}],
   "verified": false,
   "dotw": false,
@@ -24,10 +35,6 @@
     {
       "address": "26Mirs33zojnVMRkqVDJtMZvVZcbAFVyxGojGw7UtWp2K",
       "symbol": "ALPHAGA"
-    },
-    {
-      "address": "23cXw23ZjRqKc7i185ZoH8vh9KT4XTumVRWpVLUecgLMd",
-      "symbol": "ALPHALPHAGA"
     }
   ],
   "media": {
