@@ -18,7 +18,8 @@
     "github": "",
     "youtube": "https://www.youtube.com/c/PixelPlexInc",
     "medium": "",
-    "mirror": ""
+    "mirror": "",
+    "linkedin": "https://www.linkedin.com/company/pixelplex-inc/"
   },
   "twitterName": "pixelplexinc",
   "teamInfo": {
@@ -30,7 +31,7 @@
   "nft": {},
   "media": {
     "logoUrl": "/dapps/pixelplex/logo.jpg",
-    "bannerUrl": "/dapps/pixelplex/header.jpg",
+    "bannerUrl": "/dapps/pixelplex/banner.jpg",
     "previewUrl": "/dapps/pixelplex/preview.jpg",
     "videoUrl": "",
     "gallery": []
