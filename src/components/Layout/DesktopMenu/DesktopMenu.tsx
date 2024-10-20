@@ -21,7 +21,7 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
   const setRatings = useCategoryStore((state) => state.setRatings);
   return (
     <div className="hidden lg:block bg-white dark:bg-light-black">
-      <AnnouncementBar>The best Alephium Dapps.</AnnouncementBar>
+      <AnnouncementBar>The best Projects on Alephium.</AnnouncementBar>
       <div className="relative w-full flex justify-between items-center pr-6 border-t border-b border-border-grey dark:border-white/10">
         <div className="absolute w-full h-full flex justify-center items-center">
           <Link href="/">
