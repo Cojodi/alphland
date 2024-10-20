@@ -1,6 +1,8 @@
+import featuredDappImage from "../../public/dapps/deadrare/dapp-header-deadrare.png";
 import FilterButton from "../components/Button/FilterButton";
 import Card from "../components/Card/Card";
 import Categories from "../components/Categories/Categories";
+import DappOfTheMonth from "../components/FeaturedCard/DappOfTheMonth";
 import FilterMenu from "../components/FilterMenu/FilterMenu";
 import Layout from "../components/Layout";
 import Select from "../components/Select/Select";
@@ -116,8 +118,14 @@ const Home = ({
             dappRatings={ratings}
           />
           <div className="cards">
+            <DappOfTheMonth
+              name="Deadrare"
+              image={featuredDappImage}
+              url="/deadrare"
+              className="featured"
+            />
             <h3 className="lg:hidden font-semibold text-xl leading-none mb-5">
-              All dapps
+              All projects
             </h3>
             <div className="lg:block flex w-full">
               <FilterButton
