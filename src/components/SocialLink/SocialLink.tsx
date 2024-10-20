@@ -1,5 +1,6 @@
 import DiscordIcon from "../../assets/icons/socials/icon-discord.icon.svg";
 import GithubIcon from "../../assets/icons/socials/icon-github.icon.svg";
+import LinkedinIcon from "../../assets/icons/socials/icon-linkedin.icon.svg";
 import MediumIcon from "../../assets/icons/socials/icon-medium.icon.svg";
 import MirrorIcon from "../../assets/icons/socials/icon-mirror.icon.svg";
 import TelegramIcon from "../../assets/icons/socials/icon-telegram.icon.svg";
@@ -31,6 +32,7 @@ const icons: {
   twitter: <TwitterIcon />,
   youtube: <YoutubeIcon />,
   telegram: <TelegramIcon />,
+  linkedin: <LinkedinIcon />,
 };
 
 const SocialLink = ({ name, link }: SocialLinkProps) => {

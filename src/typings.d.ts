@@ -78,6 +78,7 @@ interface Links {
   youtube: string;
   medium: string;
   careers: string;
+  linkedin: string;
 }
 
 interface Media {

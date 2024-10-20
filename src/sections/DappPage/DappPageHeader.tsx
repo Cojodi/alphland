@@ -22,6 +22,7 @@ const HeaderButtonsContainer = styled.div`
 
 const linkOrder = [
   "twitter",
+  "linkedin",
   "telegram",
   "medium",
   "discord",
