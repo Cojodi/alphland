@@ -1,0 +1,39 @@
+{
+  "name": "Hallborn",
+  "description": "Halborn is an award-winning, elite cybersecurity for emerging technologies. Security never ends. Halborn serves as a third-party partner to continuously assess an organization’s most vital assets, drive maximum value and provide world-class cybersecurity consulting and execution every step of the way — far beyond smart contracts.",
+  "short_description": "ENABLING THE NEXT DIGITAL TRANSFORMATION FOR FINANCIAL SERVICES",
+  "tags": ["Security"],
+  "group": "",
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://halborn.com/",
+    "careers": "",
+    "twitter": "https://twitter.com/HalbornSecurity",
+    "telegram": "",
+    "discord": "",
+    "github": "https://github.com/HalbornSecurity",
+    "youtube": "https://www.youtube.com/c/Halborn",
+    "medium": "",
+    "mirror": "",
+    "linkedin": "https://www.linkedin.com/company/halborn"
+  },
+  "twitterName": "HalbornSecurity",
+  "teamInfo": {
+    "contactEmail": "halborn@protonmail.com",
+    "founded": "2020-06-01T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/halborn/logo.jpg",
+    "bannerUrl": "/dapps/halborn/header.jpg",
+    "previewUrl": "/dapps/halborn/preview.jpg",
+    "videoUrl": "",
+    "gallery": []
+  }
+}

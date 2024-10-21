@@ -1,0 +1,39 @@
+{
+  "name": "PixelPlex",
+  "description": "PixelPlex is a custom software development company with over 16 years of expertise. With a team of more than 130 certified professionals, they deliver solutions and consulting services in blockchain, artificial intelligence, machine learning, and emerging domains including Web3 and metaverse. Their extensive portfolio of over 450 successful projects spans industries such as fintech, healthcare, retail, and supply chain.",
+  "short_description": "Client-focused, Results-driven",
+  "tags": ["Security"],
+  "group": "",
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://pixelplex.io/",
+    "careers": "",
+    "twitter": "https://twitter.com/pixelplexinc",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "https://www.youtube.com/c/PixelPlexInc",
+    "medium": "",
+    "mirror": "",
+    "linkedin": "https://www.linkedin.com/company/pixelplex-inc/"
+  },
+  "twitterName": "pixelplexinc",
+  "teamInfo": {
+    "contactEmail": "info@pixelplex.io",
+    "founded": "2018-08-01T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/pixelplex/logo.jpg",
+    "bannerUrl": "/dapps/pixelplex/banner.jpg",
+    "previewUrl": "/dapps/pixelplex/preview.jpg",
+    "videoUrl": "",
+    "gallery": []
+  }
+}

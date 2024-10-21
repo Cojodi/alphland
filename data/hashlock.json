@@ -1,0 +1,39 @@
+{
+  "name": "Hashlock",
+  "description": "Hashlock was born with the vision of conducting the most comprehensive blockchain security research possible and applying it with our clients to boost safe innovation. The founders and team quickly learned that this learning process will never end. Hashlock aims to influence blockchain innovation, regulation and usage to best reflect web3s original core values.",
+  "short_description": "We are on a mission to ensure that all stakeholders in blockchain innovation can utilise web3 securely.",
+  "tags": ["Security"],
+  "group": "",
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://hashlock.com/",
+    "careers": "",
+    "twitter": "https://twitter.com/hashlock_",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "https://medium.com/@hashlock_",
+    "mirror": "",
+    "linkedin": "https://www.linkedin.com/company/hashlock"
+  },
+  "twitterName": "hashlock_",
+  "teamInfo": {
+    "contactEmail": "info@hashlock.com.au",
+    "founded": "202-06-01T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/hashlock/logo.jpg",
+    "bannerUrl": "/dapps/hashlock/header.jpg",
+    "previewUrl": "/dapps/hashlock/preview.jpg",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
