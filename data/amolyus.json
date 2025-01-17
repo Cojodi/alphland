@@ -2,7 +2,7 @@
   "name": "Amolyus",
   "description": "Set to be at the forefront of new blockchain technologies, creating innovative, artistic products with novel mechanics and concepts.",
   "short_description": "Community Driven Digital Assets",
-  "tags": ["DeFi", "NFTs", "Games", "DAO", "Infrastructure"],
+  "tags": ["DeFi", "NFTs", "Games", "DAOs", "Infrastructure"],
   "group": "Group 0",
   "contracts": [
     {

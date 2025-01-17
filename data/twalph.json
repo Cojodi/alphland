@@ -2,7 +2,7 @@
   "name": "TWAlph",
   "description": "Claim testnet $ALPH directly to your wallet via web or Telegram.",
   "short_description": "Claim testnet $ALPH directly to your wallet via web or Telegram.",
-  "tags": ["Bot"],
+  "tags": ["Infrastructure"],
   "contracts": [],
   "audits": [],
   "verified": false,

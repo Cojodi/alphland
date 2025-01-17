@@ -2,7 +2,7 @@
   "name": "Digital Asset Forge",
   "description": "Digital Asset Forge is a collection of tools to make creating tokens easier.  Currently two features have been deployed. Token List Automation and Airdrop Manager.  Token List Automation makes it easy for the user to list their tokens on Alephium's official list and create a PR on the Alephium token list.  Airdrop Manager is the first full featured Airdrop tool.  It provides multiple methods to include addresses in an airdrop.  Addresses can be manually added, added using a CSV file, or add addresses of NFT holders or token holders using the contract address or contract id of the NFT collection or token.",
   "short_description": "The Alephium Fair Launch Foundry",
-  "tags": ["DeFi", "Infrastructure", "Token Creation"],
+  "tags": ["DeFi", "Infrastructure"],
   "group": "",
   "contract": [],
   "audits": [],

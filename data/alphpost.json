@@ -2,7 +2,7 @@
   "name": "AlphPost",
   "description": "Social Network and task based marketplace on Alephium Chain.",
   "short_description": "Social Network and task based marketplace.",
-  "tags": ["Social", "Infrastructure", "Marketplace", "Defi"],
+  "tags": ["Social", "Infrastructure", "DeFi"],
   "contracts": [],
   "audits": [],
   "verified": false,
