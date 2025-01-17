@@ -2,7 +2,7 @@
   "name": "ALPH Trading Bot",
   "description": "The Alephium Trading Bot empowers traders to navigate the Alephium ecosystem efficiently. Whether you are a seasoned trader or a newcomer, this bot can enhance your trading experience.",
   "short_description": "Your Gateway to Alephium Blockchain",
-  "tags": ["Bot", "Social", "Infrastructure", "NFTs"],
+  "tags": ["Social", "Infrastructure", "NFTs"],
   "contracts": [],
   "audits": [],
   "councils_choice": true,
