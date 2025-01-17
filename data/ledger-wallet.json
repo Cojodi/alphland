@@ -28,9 +28,9 @@
   "tokens": [],
   "nft": {},
   "media": {
-    "logoUrl": "/dapps/ledger-wallet/logo.webp",
-    "bannerUrl": "/dapps/ledger-wallet/banner.webp",
-    "previewUrl": "/dapps/ledger-wallet/preview.webp",
+    "logoUrl": "/dapps/ledger-wallet/ledger-wallet-logo.webp",
+    "bannerUrl": "/dapps/ledger-wallet/ledger-wallet-banner.webp",
+    "previewUrl": "/dapps/ledger-wallet/ledger-wallet-preview.webp",
     "videoUrl": "",
     "gallery": []
   }
