@@ -2,7 +2,7 @@
   "name": "Alephcrowd",
   "description": "AlephCrowd is a decentralized crowdfunding platform built on Alephium blockchain, designed to empower creators and investors alike. With transparent funding, progressive fund releases, and a secure environment, AlephCrowd ensures trust and efficiency.",
   "short_description": "Crowdfunding, scalability, staking",
-  "tags": ["Wallets", "DeFi", "DAOs", "ComingSoon"],
+  "tags": ["DeFi", "DAOs", "ComingSoon"],
   "contracts": [],
   "verified": false,
   "dotw": false,
