@@ -1,0 +1,42 @@
+{
+  "name": "$exy Pixels",
+  "description": "$EXY PIXELS is a social experiment and game for the Alephium Community in which users paint a picture on the same canvas pixel by pixel. It's purpose is to make the act of burning tokens fun. Users burn $EXY to mint pixels and claim their territory on the canvas. It draws inspiration from the iconic r/place experiment, where communities collaborated pixel by pixel to create art.",
+  "short_description": "Burn to Play",
+  "tags": ["Games"],
+  "group": "0",
+
+  "contracts": [
+    {
+      "name": "PixelFactory",
+      "address": "<Address of Mainnet contract 1>"
+    }
+  ],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": true,
+
+  "links": {
+    "website": "https://pixels.sexy-pepe.xyz",
+    "twitter": "https://x.com/sexypepealph",
+    "telegram": "https://t.me/sexypepealph"
+  },
+  "twitterName": "sexypepealph",
+  "teamInfo": {
+    "contactEmail": "sexypepealph@gmail.com",
+
+    "founded": "2024-12-06T00:00:00.000Z",
+    "anonymous": "true"
+  },
+  "tokens": [
+    {
+      "address": "26ZZNScke9xJyVcZAktVGvwRwRd8ArVtpXK2hqpEK6UsR",
+      "symbol": "EXY"
+    }
+  ],
+  "media": {
+    "logoUrl": "/dapps/sexy-pixels/sexy-pixels-logo.webp",
+    "bannerUrl": "/dapps/sexy-pixels/sexy-pixels-banner.webp",
+    "previewUrl": "/dapps/sexy-pixels/sexy-pixels-preview.webp",
+    "videoUrl": "https://files.catbox.moe/r34zoy.mp4"
+  }
+}
