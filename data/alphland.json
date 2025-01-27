@@ -1,0 +1,37 @@
+{
+  "name": "Alphland",
+  "description": "Alphland is a dApp and project aggregator on the Alephium blockchain",
+  "short_description": "Project/dApp aggregator for Alephium",
+  "tags": ["Infrastructure"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+  "dotw": false,
+  "links": {
+    "website": "https://alph.land/",
+    "careers": "",
+    "twitter": "https://twitter.com/fugashu_codes",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@fugashu_codes",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2023-12-23T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/alphland/alphland-logo.webp",
+    "bannerUrl": "/dapps/alphland/alphland-banner.webp",
+    "previewUrl": "/dapps/alphland/alphland-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
