@@ -1,0 +1,49 @@
+{
+  "name": "Hacken",
+  "description": "Hacken, a trusted blockchain security auditor, is dedicated to making Web3 safer. We’re a vertically-integrated company, delivering high-quality solutions at every level of blockchain security covering Smart Contract Audits, Blockchain Protocol Audits, dApp Audits, Penetration Testing, CCSS Audits, Tokenomics Audits and more. By contributing to EEA EthTrust Security Levels Specification and promoting transparent Web3, we continue raising the bar for blockchain security.",
+  "short_description": "WE MAKE WEB3 A SAFER PLACE",
+  "tags": ["Security"],
+  "group": "",
+  "contracts": [],
+  "audits": [
+    {
+      "name": "Hacken Public Audits Page",
+      "url": "https://audits.hacken.io/"
+    }
+  ],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://hacken.io/",
+    "careers": "https://hacken.peopleforce.io/careers/",
+    "twitter": "https://x.com/hackenclub",
+    "telegram": "https://t.me/hackenai",
+    "discord": "https://discord.gg/hacken",
+    "github": "https://github.com/hknio",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": "https://www.linkedin.com/company/hacken"
+  },
+  "twitterName": "HackenClub",
+  "teamInfo": {
+    "contactEmail": "marketing@hacken.io",
+    "founded": "2017-01-01T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [
+    {
+      "address": "0x73E2A6320314883ff8Cc08b53F1460a5f4c47f2c",
+      "symbol": "HAI"
+    }
+  ],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/hacken/hacken-logo.webp",
+    "bannerUrl": "/dapps/hacken/hacken-banner.webp",
+    "previewUrl": "/dapps/hacken/hacken-preview.webp",
+    "videoUrl": "https://x.com/hackenclub/status/1871579631209664637",
+    "gallery": []
+  }
+}
