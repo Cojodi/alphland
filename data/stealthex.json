@@ -1,0 +1,32 @@
+{
+  "name": "StealthEX",
+  "description": "StealthEX is a non-custodial instant crypto exchange supporting over 700 assets, enabling secure and anonymous swaps without registration or limits.",
+  "short_description": "Non-custodial crypto exchange with 700+ assets.",
+  "tags": ["Bridges"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://stealthex.io",
+    "careers": "",
+    "twitter": "https://twitter.com/StealthEX_io",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/stealthex/stealthex-logo.webp",
+    "bannerUrl": "/dapps/stealthex/stealthex-banner.webp",
+    "previewUrl": "/dapps/stealthex/stealthex-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}
