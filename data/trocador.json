@@ -1,0 +1,32 @@
+{
+  "name": "Trocador",
+  "description": "Trocador is a privacy-focused crypto exchange aggregator offering anonymous, account-free swaps at competitive rates.",
+  "short_description": "Privacy-focused crypto exchange aggregator.",
+  "tags": ["Bridges"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://trocador.app",
+    "careers": "",
+    "twitter": "https://twitter.com/TrocadorApp",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/trocador/trocador-logo.webp",
+    "bannerUrl": "/dapps/trocador/trocador-banner.webp",
+    "previewUrl": "/dapps/trocador/trocador-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}

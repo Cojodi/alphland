@@ -1,0 +1,32 @@
+{
+  "name": "Godex",
+  "description": "Godex is an online crypto exchange that enables fast, secure, and anonymous swaps of over 300 coins without requiring registration or personal data.",
+  "short_description": "Anonymous crypto swap service for 300+ coins.",
+  "tags": ["Bridges"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://godex.io",
+    "careers": "",
+    "twitter": "https://twitter.com/godex_io",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/godex/godex-logo.webp",
+    "bannerUrl": "/dapps/godex/godex-banner.webp",
+    "previewUrl": "/dapps/godex/godex-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}

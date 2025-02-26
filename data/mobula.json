@@ -1,0 +1,37 @@
+{
+  "name": "Mobula",
+  "description": "Mobula is the premier indexer crypto website, offering comprehensive blockchain data, analytics, and indexing services. Our data is fully open-source and maintained by a dedicated team of experts.",
+  "short_description": "Comprehensive crypto indexing and analytics.",
+  "tags": ["Stats", "Infrastructure"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "councils_choice": false,
+  "dotw": false,
+  "links": {
+    "website": "https://mobula.io",
+    "careers": "",
+    "twitter": "https://x.com/mobulaio",
+    "telegram": "",
+    "discord": "",
+    "github": "https://github.com/MobulaFi/mobula-ui",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@mobulaio",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/mobula/mobula-logo.webp",
+    "bannerUrl": "/dapps/mobula/mobula-banner.webp",
+    "previewUrl": "/dapps/mobula/mobula-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}

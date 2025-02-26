@@ -1,0 +1,32 @@
+{
+  "name": "ChangeNOW",
+  "description": "ChangeNOW is an instant crypto exchange that supports over 900 coins, enabling fast and secure swaps without any registration or limits.",
+  "short_description": "Instant, account-free crypto exchange for 900+ coins.",
+  "tags": ["Bridges"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://changenow.io",
+    "careers": "",
+    "twitter": "https://twitter.com/ChangeNOW_io",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/changenow/changenow-logo.webp",
+    "bannerUrl": "/dapps/changenow/changenow-banner.webp",
+    "previewUrl": "/dapps/changenow/changenow-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}

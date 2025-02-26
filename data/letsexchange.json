@@ -1,0 +1,32 @@
+{
+  "name": "LetsExchange",
+  "description": "LetsExchange is an instant multi-currency exchange service that requires no registration, offering fast swaps across thousands of cryptocurrencies.",
+  "short_description": "Instant, registration-free crypto exchange.",
+  "tags": ["Bridges"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://letsexchange.io",
+    "careers": "",
+    "twitter": "https://twitter.com/letsexchange_io",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/letsexchange/letsexchange-logo.webp",
+    "bannerUrl": "/dapps/letsexchange/letsexchange-banner.webp",
+    "previewUrl": "/dapps/letsexchange/letsexchange-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}
