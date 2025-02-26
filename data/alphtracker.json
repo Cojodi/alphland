@@ -1,0 +1,40 @@
+{
+  "name": "ALPH Tracker",
+  "description": "A dashboard that tracks $ALPH investor groups over time, helping users analyze trends and movements in the ecosystem.",
+  "short_description": "$ALPH investor tracker",
+  "tags": [
+    "Infrastructure",
+    "Stats"
+  ],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": true,
+  //leave 'false'
+  "links": {
+    "website": "https://alphtracker.verify.diy",
+    "careers": "",
+    "twitter": "",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "tonics.anpassen0k@icloud.com",
+    "founded": "2025-02-24T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/alphtracker/alphtracker-logo.webp",
+    "bannerUrl": "/dapps/alphtracker/alphtracker-banner.webp",
+    "previewUrl": "/dapps/alphtracker/alphtracker-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
