@@ -1,0 +1,32 @@
+{
+  "name": "SimpleSwap",
+  "description": "SimpleSwap is a non-custodial cryptocurrency exchange that enables instant swaps of over 1,500 cryptocurrencies without registration.",
+  "short_description": "Instant, registration-free crypto exchange with 1500+ coins.",
+  "tags": ["Bridges"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://simpleswap.io",
+    "careers": "",
+    "twitter": "https://twitter.com/SimpleSwap_io",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/simpleswap/simpleswap-logo.webp",
+    "bannerUrl": "/dapps/simpleswap/simpleswap-banner.webp",
+    "previewUrl": "/dapps/simpleswap/simpleswap-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}

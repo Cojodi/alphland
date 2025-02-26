@@ -1,0 +1,32 @@
+{
+  "name": "SwapSpace",
+  "description": "SwapSpace is a crypto exchange aggregator that connects 38 swap services and over 2,200 coins, providing fast and optimal swaps without any registration or KYC.",
+  "short_description": "Exchange aggregator for 38 services and 2,200+ coins.",
+  "tags": ["Bridges"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://swapspace.co",
+    "careers": "",
+    "twitter": "https://twitter.com/SwapSpaceCo",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/swapspace/swapspace-logo.webp",
+    "bannerUrl": "/dapps/swapspace/swapspace-banner.webp",
+    "previewUrl": "/dapps/swapspace/swapspace-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}
