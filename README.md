@@ -52,7 +52,7 @@ Steps:
   }
 ```
 
-8. Rename ```env.example``` to ```env.local```, ```npm run build``` and check if your project is displayed correctly.
+8. Copy ```.env.example``` to ```.env.local```, ```npm run build``` and check if your project is displayed correctly.
 9. Create the PR if above steps succeeded.
 
 And that's it! 🚀
