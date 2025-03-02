@@ -1,0 +1,32 @@
+{
+  "name": "Transfi",
+  "description": "TransFi enables crypto purchases using region-specific payment methods like mobile apps and QR codes, maximizing accessibility and conversion in high-growth regions.",
+  "short_description": "Localized fiat-to-crypto onramp for emerging markets.",
+  "tags": ["Onramps"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://www.transfi.com/",
+    "careers": "",
+    "twitter": "https://x.com/getTransFi",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/transfi/transfi-logo.webp",
+    "bannerUrl": "/dapps/transfi/transfi-banner.webp",
+    "previewUrl": "/dapps/transfi/transfi-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}
