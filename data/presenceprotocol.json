@@ -1,0 +1,37 @@
+{
+  "name": "Presence Protocol",
+  "description": "Presence Protocol is built on the foundation of POAP, designed to leverage the power of the Alephium blockchain to provide verifiable proof of event attendance, known as a Presence.",
+  "short_description": "Proof You Were There. Powered by Alephium.",
+  "tags": ["NFTs", "Social"],
+  "group": "Group 0",
+  "audits": [],
+  "verified": false,
+  "councils_choice": true,
+  "dotw": false,
+  "links": {
+    "website": "https://presenceprotocol.com/",
+    "careers": "",
+    "twitter": "https://x.com/presenceproto",
+    "telegram": "",
+    "discord": "",
+    "github": "https://github.com/Presence-Protocol",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "presenceproto",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2025-01-01T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": "",
+  "media": {
+    "logoUrl": "/dapps/presenceprotocol/presenceprotocol-logo.webp",
+    "bannerUrl": "/dapps/presenceprotocol/presenceprotocol-banner.webp",
+    "previewUrl": "/dapps/presenceprotocol/presenceprotocol-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
