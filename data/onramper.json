@@ -1,0 +1,32 @@
+{
+  "name": "Onramper",
+  "description": "Onramper connects users to multiple fiat-to-crypto onramps through a single integration, offering seamless access to crypto purchases across 190+ countries.",
+  "short_description": "Aggregated fiat-to-crypto onramp with 130+ payment methods.",
+  "tags": ["Onramps"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://www.onramper.com/",
+    "careers": "https://www.linkedin.com/company/onramper/",
+    "twitter": "https://x.com/GetOnramper",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": "https://onramper.com/blog"
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/onramper/onramper-logo.webp",
+    "bannerUrl": "/dapps/onramper/onramper-banner.webp",
+    "previewUrl": "/dapps/onramper/onramper-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}

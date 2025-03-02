@@ -1,0 +1,32 @@
+{
+  "name": "Banxa",
+  "description": "Banxa provides a fully compliant fiat-to-crypto on/off-ramp with support for bank transfers, cards, and local payment options, ensuring high conversion rates and low friction.",
+  "short_description": "Global fiat-to-crypto gateway with local payment methods.",
+  "tags": ["Onramps"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://banxa.com/",
+    "careers": "",
+    "twitter": "https://x.com/BanxaOfficial",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/banxa/banxa-logo.webp",
+    "bannerUrl": "/dapps/banxa/banxa-banner.webp",
+    "previewUrl": "/dapps/banxa/banxa-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}

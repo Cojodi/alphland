@@ -1,0 +1,32 @@
+{
+  "name": "GateConnect",
+  "description": "Gate Connect offers a seamless fiat-crypto conversion experience with Visa/Mastercard support, competitive rates, and quick purchases in 20+ fiat currencies.",
+  "short_description": "Gate.io’s fast, low-fee fiat-to-crypto onramp.",
+  "tags": ["Onramps"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://gate.lt/connect/",
+    "careers": "",
+    "twitter": "",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/gateconnect/gateconnect-logo.webp",
+    "bannerUrl": "/dapps/gateconnect/gateconnect-banner.webp",
+    "previewUrl": "/dapps/gateconnect/gateconnect-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}

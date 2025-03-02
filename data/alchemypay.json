@@ -1,0 +1,32 @@
+{
+  "name": "Alchemypay",
+  "description": "Alchemy Pay bridges fiat and crypto with support for 170+ countries, enabling purchases via cards, mobile wallets, and local bank transfers, especially in developing regions.",
+  "short_description": "Fiat-crypto gateway with strong emerging markets focus.",
+  "tags": ["Onramps"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://alchemypay.org/",
+    "careers": "https://www.linkedin.com/company/alchemypay",
+    "twitter": "https://x.com/AlchemyPay",
+    "telegram": "https://t.me/alchemy_official",
+    "discord": "https://discord.gg/alchemypay",
+    "github": "",
+    "youtube": "https://www.youtube.com/@AlchemyPay",
+    "medium": "https://alchemypay.medium.com/",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/alchemypay/alchemypay-logo.webp",
+    "bannerUrl": "/dapps/alchemypay/alchemypay-banner.webp",
+    "previewUrl": "/dapps/alchemypay/alchemypay-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}
