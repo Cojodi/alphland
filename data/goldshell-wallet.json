@@ -1,0 +1,37 @@
+{
+  "name": "Goldshell Wallet",
+  "description": "Air-gapped, open-source, and ultra-secure with QR transactions, fingerprint unlock, and light-triggered protection—your crypto, your control.",
+  "short_description": "Your Bedrock of Crypto",
+  "tags": ["Wallets"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://wallet.goldshell.com/",
+    "careers": "",
+    "twitter": "https://twitter.com/goldshellminer",
+    "telegram": "https://t.me/goldshell_miner",
+    "discord": "https://discord.gg/goldshellminer",
+    "github": "https://github.com/goldshellminer",
+    "youtube": "https://www.youtube.com/@goldshellminer_official",
+    "medium": "",
+    "mirror": "https://www.goldshell.com"
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2017-01-10T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/goldshell-wallet/goldshell-wallet-logo.webp",
+    "bannerUrl": "/dapps/goldshell-wallet/goldshell-wallet-banner.webp",
+    "previewUrl": "/dapps/goldshell-wallet/goldshell-wallet-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
