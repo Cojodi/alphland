@@ -60,7 +60,7 @@ And that's it! 🚀
 Someone from the Alphland team will review the PR and contact you if they need to clarify anything.
 
 ## Maintainers
-This repo is maintained by [Fugashu](https://github.com/Fugashu) and [msMatix](https://github.com/msMatix).
+This repo is maintained by [Fugashu](https://github.com/Fugashu) and [baby](https://github.com/xbabyx).
 
 For any questions either create an issue on this repo or find us on the Alephium Discord:
 
