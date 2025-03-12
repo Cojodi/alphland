@@ -1,5 +1,5 @@
 {
-  "name": "Flux Node",
+  "name": "Flux",
   "description": "Flux is a decentralized Web3 cloud infrastructure comprised of user-operated, scalable and globally distributed computational nodes.",
   "short_description": "Host your Alephium Full Node on the Flux Cloud!",
   "tags": ["Infrastructure"],
@@ -19,7 +19,7 @@
   },
   "teamInfo": {
     "contactEmail": "info@runonflux.io",
-    "founded": "",
+    "founded": "2018-01-24T00:00:00.000Z",
     "anonymous": false
   },
   "media": {
@@ -27,6 +27,11 @@
     "bannerUrl": "/dapps/fluxnode/fluxnode-banner.webp",
     "previewUrl": "/dapps/fluxnode/fluxnode-preview.webp"
   },
-  "audits": [],
+  "audits": [
+    {
+      "name": "Reviewed by iosiro",
+      "url": "https://www.iosiro.com/audits/flux-token-smart-contract-audit"
+    }
+  ],
   "tokens": []
 }
