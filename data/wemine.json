@@ -26,12 +26,7 @@
     "founded": "2025-03",
     "anonymous": true
   },
-  "tokens": [
-    {
-      "address": "",
-      "symbol": ""
-    }
-  ],
+  "tokens": [],
   "media": {
     "logoUrl": "/dapps/wemine/wemine-logo.webp",
     "bannerUrl": "/dapps/wemine/wemine-banner.webp",
