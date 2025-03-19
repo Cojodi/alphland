@@ -66,9 +66,9 @@
     ]
   },
   "media": {
-    "logoUrl": "https://github.com/CKPROXIMA/Proxima/blob/develop/public/dapps/ProximaUniverse/logo.webp.webp",
-    "bannerUrl": "https://github.com/CKPROXIMA/Proxima/blob/develop/public/dapps/ProximaUniverse/banner.webp.webp",
-    "previewUrl": "https://github.com/CKPROXIMA/Proxima/blob/develop/public/dapps/ProximaUniverse/preview.webp.webp",
+    "logoUrl": "/dapps/ProximaUniverse/logo.webp.webp",
+    "bannerUrl": "/dapps/ProximaUniverse/banner.webp.webp",
+    "previewUrl": "/dapps/ProximaUniverse/preview.webp.webp",
     "videoUrl": "",
     "gallery": [
       {
