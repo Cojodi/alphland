@@ -66,9 +66,9 @@
     ]
   },
   "media": {
-    "logoUrl": "/dapps/proximauniverse/logo.webp.webp",
-    "bannerUrl": "/dapps/proximauniverse/banner.webp.webp",
-    "previewUrl": "/dapps/proximauniverse/preview.webp.webp",
+    "logoUrl": "/dapps/proximauniverse/proximauniverse-logo.webp",
+    "bannerUrl": "/dapps/proximauniverse/proximauniverse-banner.webp",
+    "previewUrl": "/dapps/proximauniverse/proximauniverse-preview.webp",
     "videoUrl": "",
     "gallery": [
       {
