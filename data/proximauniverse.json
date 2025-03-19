@@ -1,29 +1,12 @@
 {
-  // ATTENTION, PLEASE READ
-  // Before submitting the PR, please run the app locally or and visit your dApp if everything is displayed correctly.
-  // Rename ```env.example``` to ```env.local```
-  // Run 'npm run build' to make sure the SSG works.
-  // Please delete this and all other comments <3
-
   "name": "Proxima Universe",
   "description": "NFT sci-fi shooter. The Tellurian, The Celestial, The Machina take on the evil Satoshi Empire. Building on MultiVAC and Alephium",
   "short_description": "Play To Own",
-  "tags": [
-    "Bridges",
-    "DeFi",
-    "Games",
-    "NFTs",
-    "Social",
-    // if not live yet:
-    "ComingSoon"
-  ],
+  "tags": ["Bridges", "DeFi", "Games", "NFTs", "Social", "ComingSoon"],
   "group": "",
-  // Remove all that don't apply.
   "verified": false,
-  // change to true if your contracts are verified on Alephium
   "dotw": false,
   "councils_choice": false,
-  //leave 'false'
   "links": {
     "website": "https://linktr.ee/ProximaUniverse",
     "careers": "",
@@ -32,38 +15,15 @@
     "discord": "https://discord.gg/GwjcGKCzz5",
     "github": "https://github.com/CKPROXIMA?tab=repositories",
     "youtube": "",
-    "medium": "<https://medium.com/@ProximaUniverse",
+    "medium": "https://medium.com/@ProximaUniverse",
     "mirror": "",
     "linkedin": ""
   },
   "twitterName": "ProximaUniverse",
   "teamInfo": {
     "contactEmail": "Team@proximathegame.com",
-    // For Alphland to be able to contact you. Will not be published on Alphland.
     "founded": "2022-02-28T00:00:00.000Z",
     "anonymous": true
-    // If at least one of the founders has a public profile with their real name linked to the project, set this to true.
-  },
-  "tokens": [
-    {
-      "address": "",
-      "symbol": "PROX"
-    }
-  ],
-  "nft": {
-    "collectionContract": "",
-    "collectionLink": "",
-    "collectionName": "",
-    "collectionPreview": [
-      {
-        "image_url": "",
-        "name": ""
-      },
-      {
-        "image_url": "",
-        "name": ""
-      }
-    ]
   },
   "media": {
     "logoUrl": "/dapps/proximauniverse/proximauniverse-logo.webp",
