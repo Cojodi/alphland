@@ -1,0 +1,48 @@
+{
+  "name": "Cyberscope",
+  "description": "Cyberscope provides smart contract audit and cybersecurity services, helping projects secure their blockchain infrastructure. By enhancing trust and transparency, Cyberscope contributes to a safer and more reliable web3 ecosystem.",
+  "short_description": "Smart Contract Audits",
+  "tags": ["Security"],
+  "contracts": [],
+  "audits": [
+    {
+      "name": "Cyberscope Audit",
+      "url": "https://www.cyberscope.io/audits/coinscope"
+    }
+  ],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://www.cyberscope.io",
+    "careers": "https://careers.smartrecruiters.com/Coinscope",
+    "twitter": "https://x.com/cyberscope_io",
+    "telegram": "",
+    "discord": "",
+    "github": "https://github.com/cyberscope-io",
+    "youtube": "https://www.youtube.com/@Cyberscope_io",
+    "medium": "https://cyberscope.medium.com",
+    "mirror": "",
+    "linkedin": "https://www.linkedin.com/company/cyberscopeio"
+  },
+  "twitterName": "cyberscope_io",
+  "teamInfo": {
+    "contactEmail": "contact@cyberscope.io",
+    "founded": "2021-05-20T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {
+    "collectionContract": "",
+    "collectionLink": "",
+    "collectionName": "",
+    "collectionPreview": []
+  },
+  "media": {
+    "logoUrl": "/dapps/cyberscope/cyberscope-logo.webp",
+    "bannerUrl": "/dapps/cyberscope/cyberscope-banner.webp",
+    "previewUrl": "/dapps/cyberscope/cyberscope-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
