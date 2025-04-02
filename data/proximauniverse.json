@@ -1,0 +1,40 @@
+{
+  "name": "Proxima Universe",
+  "description": "NFT sci-fi shooter. The Tellurian, The Celestial, The Machina take on the evil Satoshi Empire. Building on MultiVAC and Alephium",
+  "short_description": "Play To Own",
+  "tags": ["Bridges", "DeFi", "Games", "NFTs", "Social", "ComingSoon"],
+  "group": "",
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://linktr.ee/ProximaUniverse",
+    "careers": "",
+    "twitter": "https://x.com/ProximaUniverse",
+    "telegram": "https://t.me/Proxima_Univers",
+    "discord": "https://discord.gg/GwjcGKCzz5",
+    "github": "https://github.com/CKPROXIMA?tab=repositories",
+    "youtube": "",
+    "medium": "https://medium.com/@ProximaUniverse",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "ProximaUniverse",
+  "teamInfo": {
+    "contactEmail": "Team@proximathegame.com",
+    "founded": "2022-02-28T00:00:00.000Z",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/proximauniverse/proximauniverse-logo.webp",
+    "bannerUrl": "/dapps/proximauniverse/proximauniverse-banner.webp",
+    "previewUrl": "/dapps/proximauniverse/proximauniverse-preview.webp",
+    "videoUrl": "",
+    "gallery": [
+      {
+        "url": "",
+        "description": ""
+      }
+    ]
+  }
+}
