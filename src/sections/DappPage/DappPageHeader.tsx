@@ -60,7 +60,7 @@ const DappPageHeader = ({
               {dappInfo.name}
             </h1>
             {dappInfo.links?.website && (
-              <Link href={dappInfo.links.website + "?utm_source=Alphland"}>
+              <Link href={dappInfo.links.website + ""}>
                 <a
                   className="block text-xl leading-[26px] font-semibold text-orange mt-4"
                   target="_blank"
@@ -93,10 +93,7 @@ const DappPageHeader = ({
         )}
         <HeaderButtonsContainer className="flex mt-8">
           {
-            <Link
-              href={dappInfo.links?.website + "?utm_source=Alphland" || "/"}
-              passHref
-            >
+            <Link href={dappInfo.links?.website + "" || "/"} passHref>
               <Button
                 variant="primary"
                 className="mr-3 visit-button"
