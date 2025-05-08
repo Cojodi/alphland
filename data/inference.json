@@ -1,0 +1,39 @@
+{
+  "name": "Inference",
+  "description": "Inference (https://inference.ag) delivers thorough and high quality smart contract audits to ensure the integrity and security of your blockchain applications. With deep expertise in Alephium, Tezos and EVM based ecosystems, we conduct comprehensive assessments ranging from simple token contracts to complex systems such as DEXs, AMMs, bridge protocols, and routing aggregators. Our detailed reports provide actionable insights to help you secure your code, minimize risk, and build trust with your users. Whether you are launching a new project or scaling an existing one, our tailored approach strengthens the safety and performance of your decentralized platform.",
+  "short_description": "Security assessments for the decentralised world.",
+  "tags": ["Security"],
+  "group": "",
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": true,
+  "links": {
+    "website": "https://inference.ag/",
+    "careers": "https://linkedin.com/company/inference-ag",
+    "twitter": "https://x.com/inference_ag",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": "https://linkedin.com/company/inference-ag"
+  },
+  "twitterName": "inference_ag",
+  "teamInfo": {
+    "contactEmail": "contact@inference.ag",
+    "founded": "2021-10-04T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/inference/inference-logo.webp",
+    "bannerUrl": "/dapps/inference/inference-banner.webp",
+    "previewUrl": "/dapps/inference/inference-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
