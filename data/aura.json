@@ -1,0 +1,31 @@
+{
+  "name": "Aura",
+  "description": "Aura is your gateway to decentralized prediction markets built on Alephium, empowering users to predict future events across diverse categories, including real-world occurrences and crypto market movements. Aura leverages a robust, transparent, and scalable system designed to reward accurate predictions, incentivize market creation, and encourage active community governance.",
+  "short_description": "Predict on Alephium",
+  "tags": ["DeFi", "ComingSoon"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://auradocs.gitbook.io/",
+    "twitter": "https://x.com/AuraMarkets",
+    "telegram": "https://t.me/AuraMarkets"
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "hayden@aurabets.io",
+    "founded": "2025-01-01T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/aura/logo.webp",
+    "bannerUrl": "/dapps/aura/banner.webp",
+    "previewUrl": "/dapps/aura/preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
