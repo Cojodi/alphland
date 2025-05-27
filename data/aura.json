@@ -9,9 +9,17 @@
   "dotw": false,
   "councils_choice": false,
   "links": {
-    "website": "https://auradocs.gitbook.io/",
+    "website": "https://testnet.aurabets.io/",
+    "careers": "",
     "twitter": "https://x.com/AuraMarkets",
-    "telegram": "https://t.me/AuraMarkets"
+    "telegram": "https://t.me/AuraMarkets",
+    "discord": "",
+    "docs": "https://auradocs.gitbook.io/",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
   },
   "twitterName": "",
   "teamInfo": {
