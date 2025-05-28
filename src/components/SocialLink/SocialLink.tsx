@@ -1,4 +1,5 @@
 import DiscordIcon from "../../assets/icons/socials/icon-discord.icon.svg";
+import DocsIcon from "../../assets/icons/socials/icon-docs.icon.svg";
 import GithubIcon from "../../assets/icons/socials/icon-github.icon.svg";
 import LinkedinIcon from "../../assets/icons/socials/icon-linkedin.icon.svg";
 import MediumIcon from "../../assets/icons/socials/icon-medium.icon.svg";
@@ -26,6 +27,7 @@ const icons: {
   [key in keyof Partial<Links>]: any;
 } = {
   discord: <DiscordIcon />,
+  docs: <DocsIcon />,
   github: <GithubIcon />,
   mirror: <MirrorIcon />,
   medium: <MediumIcon />,

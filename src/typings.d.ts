@@ -79,6 +79,7 @@ interface Links {
   medium: string;
   careers: string;
   linkedin: string;
+  docs: string;
 }
 
 interface Media {

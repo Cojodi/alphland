@@ -26,6 +26,7 @@ const linkOrder = [
   "telegram",
   "medium",
   "discord",
+  "docs",
   "github",
   "youtube",
   "mirror",

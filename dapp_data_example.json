@@ -53,6 +53,7 @@
     "twitter": "<URL of the dapp's Twitter account>. Leave empty if non-existent",
     "telegram": "<URL of the dapp's Telegram>. Leave empty if non-existent",
     "discord": "<URL of the dapp's Discord invite>. Leave empty if non-existent",
+    "docs": "<URL of the dapp's documentation. Leave empty if non-existent>",
     "github": "<URL of the dapp's Github>. Leave empty if non-existent",
     "youtube": "<URL of the dapp's Youtube channel>. Leave empty if non-existent",
     "medium": "<URL of the dapp's Medium>. Leave empty if non-existent",
