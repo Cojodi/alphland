@@ -1,0 +1,35 @@
+{
+  "name": "Nimbus",
+  "description": "A tool for tracking and managing all your crypto assets, NFTs, and DeFi positions in one unified Web3 portfolio",
+  "short_description": "A unified Web3 portfolio for Alephium",
+  "tags": [
+    "Infrastructure",
+    "Stats"
+  ],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": true,
+  "links": {
+    "website": "https://app.getnimbus.io/",
+    "twitter": "https://x.com/get_nimbus",
+    "discord": "https://discord.com/invite/u5b9dTrSTr",
+    "telegram": "https://t.me/getnimbus",
+    "github": "https://github.com/getnimbus",
+    "linkedin": "https://www.linkedin.com/company/getnimbus"
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "thanhle@getnimbus.io",
+    "founded": "2024-02-01T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/nimbus/nimbus-logo.webp",
+    "bannerUrl": "/dapps/nimbus/nimbus-banner.webp",
+    "previewUrl": "/dapps/nimbus/nimbus-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}

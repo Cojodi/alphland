@@ -1,0 +1,36 @@
+{
+  "name": "Alphaday",
+  "description": "Alphaday is a powerful crypto workflow aggregator that pulls in news, on-chain data, social media, web3 services and much more into one customizable UI.",
+  "short_description": "All-in-one crypto workflow dashboard",
+  "tags": [
+    "Infrastructure",
+    "Stats"
+  ],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": true,
+  "links": {
+    "website": "https://app.alphaday.com/b/alephium/",
+    "twitter": "https://x.com/AlphadayHQ",
+    "discord": "https://discord.com/invite/8KSmPyT5k8",
+    "github": "https://github.com/AlphadayHQ",
+    "youtube": "https://www.youtube.com/watch?v=ThCd_W3rK_8",
+    "medium": "https://blog.alphaday.com/",
+    "linkedin": "https://www.linkedin.com/company/alphaday"
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2021-01-01T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/alphaday/alphaday-logo.webp",
+    "bannerUrl": "/dapps/alphaday/alphaday-banner.webp",
+    "previewUrl": "/dapps/alphaday/alphaday-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}

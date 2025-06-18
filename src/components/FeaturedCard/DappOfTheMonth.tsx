@@ -43,7 +43,7 @@ const FeaturedCard = ({
           </h2>
         </div>
 
-        <div className="w-full rounded-xl">
+        <div className="w-full rounded-xl overflow-hidden">
           <Image src={image} alt={name} layout="responsive" />
         </div>
       </StyledCard>

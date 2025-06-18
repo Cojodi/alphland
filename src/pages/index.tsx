@@ -1,4 +1,4 @@
-import featuredDappImage from "../../public/dapps/alphbanx/alphbanx-banner.webp";
+import featuredDappImage from "../../public/dapps/elexium/elexium-banner.webp";
 import FilterButton from "../components/Button/FilterButton";
 import Card from "../components/Card/Card";
 import Categories from "../components/Categories/Categories";
@@ -119,9 +119,9 @@ const Home = ({
           />
           <div className="cards">
             <DappOfTheMonth
-              name="Alphbanx"
+              name="Elexium Finance"
               image={featuredDappImage}
-              url="/alphbanx"
+              url="/elexium"
               className="featured"
             />
             <h3 className="lg:hidden font-semibold text-xl leading-none mb-5">

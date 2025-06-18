@@ -1,0 +1,37 @@
+{
+  "name": "Tangem Wallet",
+  "description": "Slim as a bank card, secure as a bank vault. Store, buy, earn, transfer and swap thousands of coins and tokens.",
+  "short_description": "Your Secure Crypto & Hardware Wallet",
+  "tags": ["Wallets"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://tangem.com",
+    "careers": "https://www.linkedin.com/company/tangem",
+    "twitter": "https://x.com/Tangem",
+    "telegram": "https://t.me/+GD8JTzWMYMZmNWRi",
+    "discord": "https://discord.com/invite/sFGdnMtsnG",
+    "github": "https://github.com/Tangem",
+    "youtube": "https://youtube.com/@tangem_official",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2017-01-01T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/tangem-wallet/tangem-wallet-logo.webp",
+    "bannerUrl": "/dapps/tangem-wallet/tangem-wallet-banner.webp",
+    "previewUrl": "/dapps/tangem-wallet/tangem-wallet-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
