@@ -1,0 +1,35 @@
+{
+  "name": "Linx swap",
+  "description": "Frontend implementation of a DEX aggregator for the Alephium blockchain. This interface connects to the Linx Labs API to provide optimal token swaps across multiple DEXs.",
+  "short_description": "No BS. Just smooth swaps.",
+  "tags": ["DeFi"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://swap.notrustverify.ch/",
+    "careers": "",
+    "twitter": "https://x.com/notrustverif",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2024-06-18T00:00:00.000Z",
+    "anonymous": false
+  },
+  "twitterName": "@notrustverif",
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/swap/swap-logo.webp",
+    "bannerUrl": "/dapps/swap/swap-banner.webp",
+    "previewUrl": "/dapps/swap/swap-preview.webp"
+  }
+}
