@@ -1,0 +1,37 @@
+{
+  "name": "HenryCoder",
+  "description": "HenryCoder opens the door to Alephium for EVM developers, providing an AI service specifically trained for translation to Ralph. With Henry's help you can save more than 80% of work and cost when moving your EVM project to Alephium. HenryCoder is your number one assistant in moving from EVM based chain to Alephium.",
+  "short_description": "Your number one assistant in moving from EVM to Alephium.",
+  "tags": ["Utility", "Infrastructure"],
+  "contracts": [],
+  "councils_choice": true,
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://henrycoder.com",
+    "careers": "",
+    "twitter": "https://twitter.com/henry_the_coder",
+    "telegram": "",
+    "discord": "",
+    "github": "https://github.com/BlockchainCollab/HenryCoder",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "Henry Coder",
+  "teamInfo": {
+    "contactEmail": "info@blockchain-collab.com",
+    "founded": "2025-04-20T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/henrycoder/henrycoder-logo.webp",
+    "bannerUrl": "/dapps/henrycoder/henrycoder-banner.webp",
+    "previewUrl": "/dapps/henrycoder/henrycoder-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
