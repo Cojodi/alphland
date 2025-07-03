@@ -12,12 +12,7 @@
     "twitter": "https://x.com/linx_labs",
     "telegram": "https://t.me/linx_wallet_chat",
     "discord": "https://discord.com/invite/g434BaWTFb",
-    "docs": "https://docs.linxlabs.org/linx-wallet",
-    "github": "<URL of the dapp's Github>. Leave empty if non-existent",
-    "youtube": "<URL of the dapp's Youtube channel>. Leave empty if non-existent",
-    "medium": "<URL of the dapp's Medium>. Leave empty if non-existent",
-    "mirror": "<URL of the dapp's Mirror page>. Leave empty if non-existent",
-    "linkedin": "<URL of the dapp's LinkedIn page>. Leave empty if non-existent"
+    "docs": "https://docs.linxlabs.org/linx-wallet"
   },
   "twitterName": "linx_labs",
   "teamInfo": {
