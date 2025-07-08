@@ -1,0 +1,60 @@
+{
+  "name": "Suricata Rally",
+  "description": "Suricata Rally is the hottest new tap to earn game on Telegram and it's not just any game, it's your gateway to the Alephium blockchain and its ecosystem. Here is how it works. Tap to collect coins, buy boosts to skyrocket your balance and complete tasks to earn even more. But wait, there is more, the more you play the more you will be rewarded in the upcoming token launch. That's right, most of the supply will be distributed to the games players. Invite friends and family to join and watch your balance to soar even higher. Suricata Rally isn't just a game, it's a chance to be part of something bigger. Dive into Suricata Rally today and start tapping your way to earning tokens. Let's rally up and get tapping!",
+  "short_description": "Suricata Rally is a new tap to earn game that will bring you closer to the Alephium blockchain and its ecosystem!",
+  "tags": ["Onramps", "Games", "NFTs", "Social"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://suricata.bot/",
+    "careers": "",
+    "twitter": "https://x.com/SuricataRally",
+    "telegram": "https://t.co/zpVFl2MQ8K",
+    "tiktok": "https://www.tiktok.com/@suricata.rally",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "https://medium.com/@suricatarally",
+    "mirror": ""
+  },
+  "twitterName": "suricata_rally",
+  "teamInfo": {
+    "contactEmail": "suricatarally@gmail.com",
+    "founded": "2024-08-26T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {
+      "collectionContract": "26Mirs33zojnVMRkqVDJtMZvVZcbAFVyxGojGw7UtWp2K",
+      "collectionLink": "https://alphaga.app/collections/c859d5ec5d6bca3a642fa75a5b4218d31366629fbd1961750d17a65e866e4a00",
+      "collectionName": "Suricata Rally Mascot Booster Collection",
+      "collectionPreview": [
+        {
+          "image_url": "/dapps/suricata-rally/suricata-booster-nft-collection-Caveman.png",
+          "name": "Hunter - Acacia Grove Booster NFT"
+        },
+        {
+          "image_url": "/dapps/suricata-rally/suricata-booster-nft-collection-Jinn.png",
+          "name": "Jinn - Desert Dunes Booster NFT"
+        },
+        {
+          "image_url": "/dapps/suricata-rally/suricata-booster-nft-collection-Hunter.png",
+          "name": "Hunter - Acacia Grove Booster NFT"
+        },
+        {
+          "image_url": "/dapps/suricata-rally/suricata-booster-nft-collection-Trooper.png",
+          "name": "Trooper - Grassland Plains Booster NFT"
+        }
+      ]
+    },
+  "media": {
+    "logoUrl": "/dapps/suricata-rally/suricata-rally-avatar.png",
+    "bannerUrl": "/dapps/suricata-rally/suricata-rally-banner.png",
+    "previewUrl": "/dapps/suricata-rally/suricata-rally-preview.png",
+    "videoUrl": "https://suricata.bot/img/SuricataRally-boost-level2.mp4",
+    "gallery": []
+  }
+}
