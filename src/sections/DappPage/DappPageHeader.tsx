@@ -120,7 +120,7 @@ const DappPageHeader = ({
         )}
         <div className="mt-12">
           <h2 className="text-[28px] leading-[34px] font-bold">Links</h2>
-          <div className="flex mt-4">
+          <div className="flex mt-4 flex-wrap">
             {handleLinksOrder().map((link) => (
               <SocialLink key={link.name} name={link.name} link={link.link} />
             ))}
