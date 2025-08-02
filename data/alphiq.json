@@ -1,0 +1,39 @@
+{
+  "name": "AlphIQ",
+  "description": "Unified platform for blockchain analytics, quests, and learning empowering users to explore, engage, and educate through real time insights and gamified onchain experiences.",
+  "short_description": "AlphIQ: Making sense of Alephium so you can spend less time staring at charts.",
+  "tags": ["Quests", "Analytics", "Education", "Social", "Stats", "Games"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://alphiq.xyz",
+    "careers": "",
+    "twitter": "https://x.com/Alph_IQ",
+    "telegram": "",
+    "discord": "",
+    "docs": "",
+    "github": "https://github.com/pranshurastogi/AlphIQ",
+    "youtube": "",
+    "medium": "https://medium.com/@alphiq",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "Alph_IQ",
+  "teamInfo": {
+    "contactEmail": "alphiqteam@gmail.com",
+    "founded": "2025-06-10T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/alphiq/alphiq-logo.webp",
+    "bannerUrl": "/dapps/alphiq/alphiq-banner.webp",
+    "previewUrl": "/dapps/alphiq/alphiq-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
