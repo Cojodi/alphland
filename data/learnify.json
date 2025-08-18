@@ -1,0 +1,39 @@
+{
+  "name": "Learnify",
+  "description": "Learnify is an education platform that rewards you for learning.",
+  "short_description": "Learn and Earn",
+  "tags": ["Social", "Games"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://learnify.xyz",
+    "careers": "",
+    "twitter": "https://x.com/LearnifyXYZ",
+    "telegram": "",
+    "discord": "https://discord.gg/VcxJyZ4yYU",
+    "docs": "https://whitepaper.learnify.xyz/",
+    "github": "",
+    "youtube": "",
+    "medium": "https://learnify.medium.com/",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "LearnifyXYZ",
+  "teamInfo": {
+    "contactEmail": "contact@learnify.xyz",
+    "founded": "2021-01-01T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/learnify/learnify-logo.webp",
+    "bannerUrl": "/dapps/learnify/learnify-banner.webp",
+    "previewUrl": "/dapps/learnify/learnify-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
