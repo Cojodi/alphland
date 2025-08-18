@@ -5,7 +5,7 @@
   "tags": ["Security"],
   "group": "",
   "contracts": [],
-  "audits": [],
+  "audits": [{}],
   "verified": false,
   "dotw": false,
   "councils_choice": true,
