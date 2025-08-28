@@ -1,0 +1,24 @@
+{
+  "name": "GuardPay",
+  "description": "GuardPay is a batch payment tool that allows users to send $ALPH to multiple addresses in a single transaction. This tool is perfect for businesses, developers, and anyone who needs to make mass payments quickly and efficiently. With GuardPay, you can save time and money by reducing the number of transactions you need to make.",
+  "short_description": "Send Your $ALPH in Batch",
+  "tags": ["DeFi", "Tools"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://guardpay-alephium.vercel.app/"
+  },
+  "teamInfo": {
+    "contactEmail": "yy@alephium.org",
+    "founded": "2025-08-15T00:00:00.000Z",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/guardpay/guardpay-logo.webp",
+    "bannerUrl": "/dapps/guardpay/guardpay-banner.webp",
+    "previewUrl": "/dapps/guardpay/guardpay-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}
