@@ -1,0 +1,37 @@
+{
+  "name": "ANTPOOL",
+  "description": "Established in 2014, we are one of the largest PoW mining pools committed to serving global customers.",
+  "short_description": "Technology brings infinite possibilities to the blockchain world",
+  "tags": ["Hashrate"],
+  "contracts": [],
+  "councils_choice": false,
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://www.antpool.com/home",
+    "careers": "",
+    "twitter": "https://x.com/AntPoolofficial",
+    "telegram": "https://t.me/AntPoolOffical",
+    "discord": "",
+    "github": "",
+    "youtube": "https://www.youtube.com/@antpooltech",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "@WeMineFi",
+  "teamInfo": {
+    "contactEmail": "support@antpool.com",
+    "founded": "2014-01",
+    "anonymous": true
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/antpool/antpool-logo.webp",
+    "bannerUrl": "/dapps/antpool/antpool-banner.webp",
+    "previewUrl": "/dapps/antpool/antpool-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
