@@ -1,0 +1,37 @@
+{
+  "name": "Wooly Pooly",
+  "description": "WoolyPooly stands out as an exceptionally lucrative pool, concentrating on diminishing commission fees for both PPLNS and SOLO reward structures.",
+  "short_description": "Mine ALPH With Low Fees",
+  "tags": ["Hashrate"],
+  "contracts": [],
+  "councils_choice": false,
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://woolypooly.com/en/coin/alph",
+    "careers": "",
+    "twitter": "",
+    "telegram": "https://woolypooly.com/telegram",
+    "discord": "https://woolypooly.com/discord",
+    "github": "",
+    "youtube": "",
+    "medium": "https://woolypooly.medium.com/",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2023-01",
+    "anonymous": true
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/woolypooly/woolypooly-logo.webp",
+    "bannerUrl": "/dapps/woolypooly/woolypooly-banner.webp",
+    "previewUrl": "/dapps/woolypooly/woolypooly-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
