@@ -1,0 +1,37 @@
+{
+  "name": "K1Pool",
+  "description": "K1Pool.com aims to make access to the mining easier for miners, providing a friendly interface that allows to choose algorithms or coins easier and in more efficient and with organized way.",
+  "short_description": "Easy to join, easy to get started",
+  "tags": ["Hashrate"],
+  "contracts": [],
+  "councils_choice": false,
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://k1pool.com/",
+    "careers": "",
+    "twitter": "https://twitter.com/K1Pool",
+    "telegram": "https://t.me/k1pool",
+    "discord": "https://discord.com/invite/gSdJXFk",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "@K1Pool",
+  "teamInfo": {
+    "contactEmail": "contact@k1pool.com",
+    "founded": "2020-01",
+    "anonymous": true
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/k1pool/k1pool-logo.webp",
+    "bannerUrl": "/dapps/k1pool/k1pool-banner.webp",
+    "previewUrl": "/dapps/k1pool/k1pool-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
