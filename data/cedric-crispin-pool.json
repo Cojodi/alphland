@@ -1,0 +1,37 @@
+{
+  "name": "Cedric Crispin Pool",
+  "description": "Cedric Crispin Pool is a multi-chain mining pool that supports several blockchains, including Alephium, with secure infrastructure, transparent stats, and reliable payouts.",
+  "short_description": "Mining pool for Alephium, offering secure infrastructure and transparent stats",
+  "tags": ["Hashrate"],
+  "contracts": [],
+  "councils_choice": false,
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://alephium.cedric-crispin.com/",
+    "careers": "",
+    "twitter": "https://twitter.com/Cedric_Crispin",
+    "telegram": "",
+    "discord": "https://discord.gg/8sTGZf3Kpm",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "@Cedric_Crispin",
+  "teamInfo": {
+    "contactEmail": "webmaster@cedric-crispin.com",
+    "founded": "2022-01",
+    "anonymous": true
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/cedric-crispin-pool/cedric-crispin-pool-logo.webp",
+    "bannerUrl": "/dapps/cedric-crispin-pool/cedric-crispin-pool-banner.webp",
+    "previewUrl": "/dapps/cedric-crispin-pool/cedric-crispin-pool-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
