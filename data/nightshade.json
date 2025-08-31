@@ -1,5 +1,5 @@
 {
-  "name": "Candyswap",
+  "name": "Nightshade",
   "description": "The Orderbook DEX on the Alephium Blockchain",
   "short_description": "The Orderbook DEX on the Alephium Blockchain",
   "tags": ["DeFi"],
@@ -10,9 +10,9 @@
   "councils_choice": true,
   "dotw": false,
   "links": {
-    "website": "https://candyswap.gg/",
+    "website": "https://nightshade.finance/",
     "careers": "",
-    "twitter": "https://x.com/CandySwapALPH",
+    "twitter": "https://x.com/nightshadealph",
     "telegram": "",
     "discord": "https://discord.gg/nX3RFCNazK",
     "github": "",
@@ -20,15 +20,15 @@
     "medium": "",
     "mirror": ""
   },
-  "twitterName": "@CandySwapALPH",
+  "twitterName": "@NightshadeALPH",
   "teamInfo": {
     "contactEmail": "",
     "founded": "2024-07-03T00:00:00.000Z",
     "anonymous": true
   },
   "media": {
-    "logoUrl": "/dapps/candyswap/candyswap-logo.webp",
-    "bannerUrl": "/dapps/candyswap/candyswap-banner.webp",
-    "previewUrl": "/dapps/candyswap/candyswap-preview.webp"
+    "logoUrl": "/dapps/nightshade/nightshade-logo.webp",
+    "bannerUrl": "/dapps/nightshade/nightshade-banner.webp",
+    "previewUrl": "/dapps/nightshade/nightshade-preview.webp"
   }
 }
