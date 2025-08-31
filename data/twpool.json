@@ -1,0 +1,37 @@
+{
+  "name": "TW Pool",
+  "description": "TWPool is an altcoin mining pool that provides a platform for miners to connect and mine various alternative cryptocurrencies.",
+  "short_description": "TW Altcoin Pool",
+  "tags": ["Hashrate"],
+  "contracts": [],
+  "councils_choice": false,
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://tw-pool.com/stats/alephium",
+    "careers": "",
+    "twitter": "",
+    "telegram": "",
+    "discord": "https://discord.gg/UT65Tctm9t",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2024-01",
+    "anonymous": true
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/twpool/twpool-logo.webp",
+    "bannerUrl": "/dapps/twpool/twpool-banner.webp",
+    "previewUrl": "/dapps/twpool/twpool-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
