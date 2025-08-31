@@ -1,0 +1,37 @@
+{
+  "name": "F2Pool",
+  "description": "Proudly securing Bitcoin and other PoW blockchains since 2013. 1,300,000 BTC mined and counting…",
+  "short_description": "Join the world’s leading mining pool to secure a decentralized future",
+  "tags": ["Hashrate"],
+  "contracts": [],
+  "councils_choice": false,
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://www.f2pool.com/",
+    "careers": "",
+    "twitter": "https://x.com/f2pool_official",
+    "telegram": "https://t.me/f2poolreal",
+    "discord": "https://discord.com/invite/A4CfrUUxY6",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "@f2pool_official",
+  "teamInfo": {
+    "contactEmail": "support@f2pool.com",
+    "founded": "2013-01",
+    "anonymous": true
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/f2pool/f2pool-logo.webp",
+    "bannerUrl": "/dapps/f2pool/f2pool-banner.webp",
+    "previewUrl": "/dapps/f2pool/f2pool-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
