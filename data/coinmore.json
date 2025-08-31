@@ -1,0 +1,37 @@
+{
+  "name": "CoinMore",
+  "description": "enefit from high performance, enhanced security, and energy efficiency. Access detailed mining statistics and easily export CSV data for your tax reporting needs. Join us and start mining Alephium today for maximum profitability.",
+  "short_description": "Experience the power of Alephium's sharded blockchain technology with CoinMore.io",
+  "tags": ["Hashrate"],
+  "contracts": [],
+  "councils_choice": false,
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://coinmore.io/coin/alephium/",
+    "careers": "",
+    "twitter": "",
+    "telegram": "https://t.me/+6sr8NMwbG_hiYWFi",
+    "discord": "https://discord.com/invite/FSXWEUGmEK",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2024-01",
+    "anonymous": true
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/coinmore/coinmore-logo.webp",
+    "bannerUrl": "/dapps/coinmore/coinmore-banner.webp",
+    "previewUrl": "/dapps/coinmore/coinmore-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
