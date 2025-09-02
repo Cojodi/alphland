@@ -1,0 +1,37 @@
+{
+  "name": "Dappnode",
+  "description": "Run decentralized networks like Ethereum and Bitcoin and earn rewards.",
+  "short_description": "Zero hassle, it just works",
+  "tags": ["Infrastructure"],
+  "contracts": [],
+  "councils_choice": false,
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://dappnode.com/",
+    "careers": "",
+    "twitter": "https://x.com/dappnode",
+    "telegram": "",
+    "discord": "https://discord.gg/dappnode",
+    "github": "https://github.com/dappnode",
+    "youtube": "",
+    "medium": "https://medium.com/dappnode",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "@dappnode",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2018-01",
+    "anonymous": true
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/dappnode/dappnode-logo.webp",
+    "bannerUrl": "/dapps/dappnode/dappnode-banner.webp",
+    "previewUrl": "/dapps/dappnode/dappnode-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
