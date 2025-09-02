@@ -1,0 +1,37 @@
+{
+  "name": "NiceHash",
+  "description": "NiceHash is the world’s leading hashrate marketplace, connecting sellers (miners) with buyers of hashrate. Our platform offers a comprehensive toolkit for miners at every scale, streamlining operations and maximizing efficiency. Everything you need in one place. Based and regulated in Switzerland.",
+  "short_description": "The world’s largest hashrate marketplace, connecting buyers and miners",
+  "tags": ["Hashrate", "Infrastructure"],
+  "contracts": [],
+  "councils_choice": false,
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://nicehash.com",
+    "careers": "https://www.linkedin.com/company/nicehash",
+    "twitter": "https://www.twitter.com/NiceHashMining",
+    "telegram": "https://t.me/NiceHash_Mining",
+    "discord": "https://discord.gg/nicehash",
+    "github": "https://github.com/nicehash",
+    "youtube": "https://www.youtube.com/c/NiceHash_Official",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "@NiceHashMining",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2014-03",
+    "anonymous": true
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/nicehash/nicehash-logo.webp",
+    "bannerUrl": "/dapps/nicehash/nicehash-banner.webp",
+    "previewUrl": "/dapps/nicehash/nicehash-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
