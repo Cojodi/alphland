@@ -1,0 +1,37 @@
+{
+  "name": "PrimeVault",
+  "description": "The new age financial stack: wallet, liquidity and market connectivity infrastructure on blockchain rails",
+  "short_description": "Powerful infrastructure to build onchain",
+  "tags": ["Wallets", "Infrastructure"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://www.primevault.com/",
+    "careers": "https://www.linkedin.com/company/primevault",
+    "twitter": "https://x.com/primevaultHQ",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@primevaultHQ",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2022-01-10T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/primevault/primevault-logo.webp",
+    "bannerUrl": "/dapps/primevault/primevault-banner.webp",
+    "previewUrl": "/dapps/primevault/primevault-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
