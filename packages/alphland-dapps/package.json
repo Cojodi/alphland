@@ -1,0 +1,32 @@
+{
+  "name": "@alphland/dapps",
+  "version": "1.0.0",
+  "description": "List of dApps on the Alephium blockchain from Alphland",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "alephium",
+    "alphland",
+    "dapps",
+    "blockchain",
+    "defi"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xbabyx/alphland.git",
+    "directory": "packages/alphland-dapps"
+  },
+  "author": "Alphland",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

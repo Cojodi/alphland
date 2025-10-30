@@ -1,0 +1,75 @@
+name: Publish NPM Package
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'data/**'
+      - 'packages/alphland-dapps/**'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Check if package version changed
+        id: version-check
+        run: |
+          cd packages/alphland-dapps
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+          # Try to get the published version from npm
+          PUBLISHED_VERSION=$(npm view @alphland/dapps version 2>/dev/null || echo "0.0.0")
+          echo "published_version=$PUBLISHED_VERSION" >> $GITHUB_OUTPUT
+
+          if [ "$CURRENT_VERSION" != "$PUBLISHED_VERSION" ]; then
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+            echo "Version changed: $PUBLISHED_VERSION -> $CURRENT_VERSION"
+          else
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+            echo "Version unchanged: $CURRENT_VERSION"
+          fi
+
+      - name: Build package
+        if: steps.version-check.outputs.should_publish == 'true'
+        run: |
+          cd packages/alphland-dapps
+          npm run build
+
+      - name: Publish to NPM
+        if: steps.version-check.outputs.should_publish == 'true'
+        run: |
+          cd packages/alphland-dapps
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create Git Tag
+        if: steps.version-check.outputs.should_publish == 'true'
+        run: |
+          VERSION=${{ steps.version-check.outputs.current_version }}
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v$VERSION" -m "Release v$VERSION"
+          git push origin "v$VERSION"
+
+      - name: Skip publish (version unchanged)
+        if: steps.version-check.outputs.should_publish == 'false'
+        run: |
+          echo "⏭️ Skipping publish - version ${{ steps.version-check.outputs.current_version }} already published"
