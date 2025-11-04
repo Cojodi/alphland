@@ -42,14 +42,11 @@ const Categories = ({
   className,
   dappCards,
   dappRatings,
-  isHome,
   searchQuery = "",
   onSearchChange,
 }: CategoriesProps) => {
   const router = useRouter();
   const [hovered, setHovered] = useState(false);
-
-  const [firstRun, setFirstRun] = useState(true);
   const { currentTheme } = useDarkMode();
 
   const selectedCategory = useCategoryStore((state) => state.selectedCategory);
@@ -185,8 +182,8 @@ const Categories = ({
           </h3>
           <ul
             className={`hidden lg:block ${hovered ? "hovered" : ""}`}
-            onMouseOver={(e) => !hovered && setHovered(true)}
-            onMouseLeave={(e) => hovered && setHovered(false)}
+            onMouseOver={() => !hovered && setHovered(true)}
+            onMouseLeave={() => hovered && setHovered(false)}
           >
             {filteredCategories.map((category) => (
               <li
@@ -218,7 +215,7 @@ const Categories = ({
                   <div className="flex items-center">
                     {category.isRating ? (
                       <div className="flex items-center gap-1.5">
-                        {[...Array(parseInt(category.name))].map((val, i) => (
+                        {[...Array(parseInt(category.name))].map((_, i) => (
                           <Image
                             src={
                               currentTheme === "dark"
@@ -273,8 +270,8 @@ const Categories = ({
         className={`flex overflow-x-scroll lg:flex-col lg:overflow-auto pb-2 lg:pb-0 ${
           hovered ? "hovered" : ""
         }`}
-        onMouseOver={(e) => !hovered && setHovered(true)}
-        onMouseLeave={(e) => hovered && setHovered(false)}
+        onMouseOver={() => !hovered && setHovered(true)}
+        onMouseLeave={() => hovered && setHovered(false)}
       >
         {categories
           .filter((category) => category.key !== selectedCategory)
@@ -335,8 +332,8 @@ const Categories = ({
       ) : null}
       <ul
         className={`hidden lg:block pb-5 ${hovered ? "hovered" : ""}`}
-        onMouseOver={(e) => !hovered && setHovered(true)}
-        onMouseLeave={(e) => hovered && setHovered(false)}
+        onMouseOver={() => !hovered && setHovered(true)}
+        onMouseLeave={() => hovered && setHovered(false)}
       >
         {reputation
           .filter((rep) => !selectedFilters.includes(rep.key))
@@ -377,7 +374,7 @@ const Categories = ({
         {ratings
           .filter((rating) => !selectedRatings.includes(rating.key))
           .map(
-            (category, i) =>
+            (category) =>
               renderCategoryCount(category.name, false, true) > 0 && (
                 <li
                   className={`flex flex-col items-center justify-center bg-white dark:bg-white/10 shadow-box-image-shadow rounded-lg mr-2 min-w-[108px] cursor-pointer lg:flex-row lg:mb-2 lg:justify-start ${
@@ -392,7 +389,7 @@ const Categories = ({
                   <div className="flex items-center justify-between w-full py-4 px-4">
                     <div className="flex items-center">
                       <div className="flex items-center gap-1.5">
-                        {[...Array(parseInt(category.name))].map((val, i) => (
+                        {[...Array(parseInt(category.name))].map((_, i) => (
                           <Image
                             src={star}
                             alt={`${category.name}-star`}

@@ -16,11 +16,7 @@ import {
   filterDapps,
   generateUrl,
 } from "../../helpers/category";
-import {
-  filterDappcardsByRating,
-  getRatings,
-  getRatingsFromUser,
-} from "../../helpers/rating";
+import { filterDappcardsByRating, getRatings } from "../../helpers/rating";
 import sortByAttribute from "../../helpers/sort";
 import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { GetStaticPaths, GetStaticProps } from "next";
