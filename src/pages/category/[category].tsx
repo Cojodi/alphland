@@ -53,6 +53,7 @@ const CategoryPage = ({
 }) => {
   const router = useRouter();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [dappRatings, setDappRatings] = useState<{ [key: string]: string[] }>(
     {}
   );
@@ -95,9 +96,23 @@ const CategoryPage = ({
 
   const categoryDapps = filterCategoryDapps({ dappCards, category });
 
+  // Filter by search query
+  const searchFilteredDapps = categoryDapps.filter((dapp) => {
+    if (searchQuery === "") return true;
+    return (
+      dapp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      dapp.short_description
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      dapp.tags?.some((tag) =>
+        tag.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  });
+
   // Check if all filters apply to a category
   const filteredDapps = filterDapps({
-    dappCards: categoryDapps,
+    dappCards: searchFilteredDapps,
     filters: selectedFilters,
   });
 
@@ -126,6 +141,8 @@ const CategoryPage = ({
             className="categories"
             dappCards={dappCards}
             dappRatings={dappRatings}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
           />
           <div className="cards">
             <h1 className="lg:hidden font-semibold text-xl leading-none mb-5 mt-8">

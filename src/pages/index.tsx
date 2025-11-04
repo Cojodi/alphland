@@ -40,6 +40,7 @@ const Home = ({
 }) => {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [ratings, setRatings] = useState<{ [key: string]: string[] }>({});
+  const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
   const selectedFilters = useCategoryStore((state) => state.selectedFilters);
   const selectedRatings = useCategoryStore((state) => state.selectedRatings);
@@ -78,7 +79,19 @@ const Home = ({
   }, [selectedFilters, selectedSort, selectedCategory, selectedRatings]);
 
   const filteredDapps = dappCards.filter((dapp) => {
-    return (
+    // Filter by search query
+    const matchesSearch =
+      searchQuery === "" ||
+      dapp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      dapp.short_description
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      dapp.tags?.some((tag) =>
+        tag.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+    // Filter by selected filters
+    const matchesFilters =
       selectedFilters.reduce((acc, val) => {
         if (val === "dotw" && dapp.featured) {
           acc = acc + 1;
@@ -96,8 +109,9 @@ const Home = ({
           acc = acc + 1;
         }
         return acc;
-      }, 0) === selectedFilters.length
-    );
+      }, 0) === selectedFilters.length;
+
+    return matchesSearch && matchesFilters;
   });
   const dappsByRating = filterDappcardsByRating({
     dappCards: filteredDapps,
@@ -116,6 +130,8 @@ const Home = ({
             className="categories lg:max-w-[340px]"
             dappCards={dappCards}
             dappRatings={ratings}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
           />
           <div className="cards">
             <DappOfTheMonth

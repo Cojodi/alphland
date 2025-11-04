@@ -6,6 +6,7 @@ import { checkIfCategoryExists, generateUrl } from "../../helpers/category";
 import { filterDappcardsByRating } from "../../helpers/rating";
 import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { useDarkMode } from "../../hooks/useDarkMode";
+import SearchBar from "../SearchBar/SearchBar";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -33,6 +34,8 @@ interface CategoriesProps {
   dappCards: DappCard[];
   isHome?: boolean;
   dappRatings: { [key: string]: string[] };
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
 }
 
 const Categories = ({
@@ -40,6 +43,8 @@ const Categories = ({
   dappCards,
   dappRatings,
   isHome,
+  searchQuery = "",
+  onSearchChange,
 }: CategoriesProps) => {
   const router = useRouter();
   const [hovered, setHovered] = useState(false);
@@ -154,6 +159,25 @@ const Categories = ({
     <CategoryContainer
       className={["mb-4", className ? className : ""].join(" ")}
     >
+      {/* Search Bar and Total Count */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-xl leading-none lg:text-[22px] lg:font-bold">
+            All Projects
+          </h3>
+          <div className="text-sm font-semibold text-light-charcoal dark:text-clay">
+            {dappCards.length} dApps
+          </div>
+        </div>
+        {onSearchChange && (
+          <SearchBar
+            value={searchQuery}
+            onChange={onSearchChange}
+            placeholder="Search dApps..."
+          />
+        )}
+      </div>
+
       {filteredCategories.length > 0 && (
         <>
           <h3 className="hidden lg:block font-semibold text-xl leading-none pt-8 pb-4 lg:text-[22px] lg:font-bold">
