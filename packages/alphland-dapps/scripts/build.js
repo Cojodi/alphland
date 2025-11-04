@@ -7,6 +7,32 @@ const dataDir = path.join(rootDir, "data");
 const distDir = path.join(__dirname, "../dist");
 const srcDir = path.join(__dirname, "../src");
 
+// GitHub repository configuration
+const GITHUB_REPO =
+  "https://raw.githubusercontent.com/xbabyx/alphland/develop/public";
+
+/**
+ * Convert relative media path to absolute GitHub URL
+ * @param {string} relativePath - Relative path starting with /dapps/
+ * @returns {string} - Absolute GitHub URL
+ */
+function convertToAbsoluteUrl(relativePath) {
+  if (!relativePath || typeof relativePath !== "string") {
+    return relativePath;
+  }
+
+  // If already an absolute URL, return as is
+  if (
+    relativePath.startsWith("http://") ||
+    relativePath.startsWith("https://")
+  ) {
+    return relativePath;
+  }
+
+  // Convert relative path to absolute GitHub URL
+  return `${GITHUB_REPO}${relativePath}`;
+}
+
 // Ensure dist directory exists
 if (!fs.existsSync(distDir)) {
   fs.mkdirSync(distDir, { recursive: true });
@@ -66,10 +92,15 @@ filenames
         );
 
         // Filter valid gallery items (must have url and description)
-        const validGallery = (parsedContent.media?.gallery || []).filter(
-          (item) =>
-            item && typeof item === "object" && item.url && item.description
-        );
+        const validGallery = (parsedContent.media?.gallery || [])
+          .filter(
+            (item) =>
+              item && typeof item === "object" && item.url && item.description
+          )
+          .map((item) => ({
+            ...item,
+            url: convertToAbsoluteUrl(item.url),
+          }));
 
         // Handle NFT - only include if it's a valid object with required properties
         const nft = parsedContent.nft;
@@ -80,6 +111,19 @@ filenames
           nft.collectionLink &&
           nft.collectionContract &&
           nft.collectionName;
+
+        // Convert NFT preview image URLs to absolute URLs
+        const convertedNft = hasValidNft
+          ? {
+              ...nft,
+              collectionPreview: (nft.collectionPreview || []).map(
+                (preview) => ({
+                  ...preview,
+                  image_url: convertToAbsoluteUrl(preview.image_url),
+                })
+              ),
+            }
+          : null;
 
         // Build dapp object - exclude nft, contract, and gallery from spread
         const {
@@ -107,6 +151,14 @@ filenames
           media: {
             ...defaultMedia,
             ...parsedContent.media,
+            logoUrl: convertToAbsoluteUrl(parsedContent.media?.logoUrl || ""),
+            bannerUrl: convertToAbsoluteUrl(
+              parsedContent.media?.bannerUrl || ""
+            ),
+            previewUrl: convertToAbsoluteUrl(
+              parsedContent.media?.previewUrl || ""
+            ),
+            videoUrl: convertToAbsoluteUrl(parsedContent.media?.videoUrl),
             gallery: validGallery,
           },
           teamInfo: {
@@ -117,8 +169,8 @@ filenames
         };
 
         // Only include nft if it's valid
-        if (hasValidNft) {
-          dapp.nft = nft;
+        if (hasValidNft && convertedNft) {
+          dapp.nft = convertedNft;
         }
 
         // Remove unknown properties that might cause type errors
@@ -154,10 +206,9 @@ export { dapps } from './dapps';
 fs.writeFileSync(path.join(distDir, "index.d.ts"), indexDtsContent);
 
 // Create index.js
-const indexContent = fs.readFileSync(path.join(srcDir, "index.ts"), "utf8");
-const indexJsContent = indexContent
-  .replace(/from '\.\/types';/, "from './types.js';")
-  .replace(/from '\.\/dapps';/, "from './dapps.js';");
+// Only export dapps, not types (types are in .d.ts files only)
+const indexJsContent = `export { dapps } from './dapps.js';
+`;
 fs.writeFileSync(path.join(distDir, "index.js"), indexJsContent);
 
 // Create dapps.js
