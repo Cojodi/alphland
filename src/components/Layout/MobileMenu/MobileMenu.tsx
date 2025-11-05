@@ -48,12 +48,7 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
       name: "Home",
       href: "/",
       icon: currentTheme === "dark" ? homeDark : home,
-    } /*
-    {
-      name: "About",
-      href: "/about/",
-      icon: currentTheme === "dark" ? infoDark : info,
-    },*/,
+    },
   ];
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -89,6 +84,7 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
   const setFilters = useCategoryStore((state) => state.setFilters);
   const changeCategory = useCategoryStore((state) => state.changeCategory);
   const setSort = useCategoryStore((state) => state.setSelectedSort);
+  const setRatings = useCategoryStore((state) => state.setRatings);
 
   return (
     <MenuContainer
@@ -143,7 +139,9 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
                   onClick={() => {
                     setFilters([]);
                     setSort(null);
+                    setRatings([]);
                     changeCategory("all");
+                    setIsMobileMenuOpen(false);
                   }}
                 >
                   <Image src={item.icon} alt={item.name} />

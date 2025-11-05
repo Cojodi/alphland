@@ -1,7 +1,10 @@
+import home from "../../../assets/icons/home.svg";
+import homeDark from "../../../assets/icons/home_dark.svg";
 import moon from "../../../assets/icons/moon.svg";
 import sun from "../../../assets/icons/sun.svg";
 import logoLight from "../../../assets/logo-alphland-light.svg";
 import logo from "../../../assets/logo-alphland.svg";
+import { useCategoryStore } from "../../../hooks/useCategoryStore";
 import Button from "../../Button/Button";
 import ConnectWallet from "../../Button/ConnectWallet";
 import Image from "next/image";
@@ -45,7 +48,43 @@ type NavbarItem = {
 };
 
 const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
-  const navbarItems: NavbarItem[] = [];
+  const navbarItems: NavbarItem[] = [
+    {
+      name: "Explore dApps",
+      href: "/",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+    {
+      name: "Bounties",
+      href: "/bounty",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+    {
+      name: "Resources",
+      href: "/resources",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+    {
+      name: "Forum",
+      href: "/forum",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+    {
+      name: "Agenda",
+      href: "/agenda",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+    {
+      name: "Ecosystem Map",
+      href: "/ecosystem-map",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+  ];
+
+  const setFilters = useCategoryStore((state) => state.setFilters);
+  const changeCategory = useCategoryStore((state) => state.changeCategory);
+  const setSort = useCategoryStore((state) => state.setSelectedSort);
+  const setRatings = useCategoryStore((state) => state.setRatings);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isNavbarScrolled, setIsNavbarScrolled] = useState(false);
@@ -126,7 +165,18 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
             {navbarItems.map((item) => (
               <li key={item.name}>
                 <Link href={item.href}>
-                  <a className="flex items-center py-3 px-6 bg-white dark:bg-light-black uppercase font-medium font-base">
+                  <a
+                    className="flex items-center py-3 px-6 bg-white dark:bg-light-black uppercase font-medium font-base"
+                    onClick={() => {
+                      if (item.href === "/") {
+                        setFilters([]);
+                        setSort(null);
+                        setRatings([]);
+                        changeCategory("all");
+                      }
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
                     <Image src={item.icon} alt={item.name} />
                     <p>{item.name}</p>
                   </a>
