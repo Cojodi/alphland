@@ -21,6 +21,7 @@ const HeaderButtonsContainer = styled.div`
 `;
 
 const linkOrder = [
+  "website",
   "twitter",
   "linkedin",
   "telegram",
@@ -56,24 +57,9 @@ const DappPageHeader = ({
     <section className="flex px-4 flex-col xl:grid xl:gap-x-16 xl:grid-cols-dapp-header">
       <div>
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-[28px] leading-[34px] font-bold">
-              {dappInfo.name}
-            </h1>
-            {dappInfo.links?.website && (
-              <Link href={dappInfo.links.website + ""}>
-                <a
-                  className="block text-xl leading-[26px] font-semibold text-orange mt-4"
-                  target="_blank"
-                >
-                  {new URL(dappInfo.links.website).hostname}
-                  <sup className="ml-2">
-                    <Image src={expandIcon} alt="expand icon" />
-                  </sup>
-                </a>
-              </Link>
-            )}
-          </div>
+          <h1 className="text-[28px] leading-[34px] font-bold">
+            {dappInfo.name}
+          </h1>
           <a
             href="https://x.com/fugashu_codes"
             target="_blank"
