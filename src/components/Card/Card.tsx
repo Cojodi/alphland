@@ -19,6 +19,14 @@ const Card = ({
   tags,
   url,
 }: CardProps) => {
+  // Check if "Spotlight" is in the tags
+  const hasSpotlight = tags.includes("Spotlight");
+  // Get the badge text - show "Spotlight" if it exists, otherwise show first tag
+  const badgeText = hasSpotlight ? "Spotlight" : tags[0];
+  // Get remaining tags (excluding the badge tag)
+  const remainingTags = hasSpotlight
+    ? tags.filter((tag) => tag !== "Spotlight")
+    : tags.slice(1);
   return (
     <Link href={url || "/"}>
       <a className="block w-full cursor-pointer group">
@@ -41,7 +49,7 @@ const Card = ({
             {tags.length > 0 && (
               <div className="absolute top-4 right-4 z-10">
                 <span className="inline-block bg-white/95 dark:bg-white text-light-black dark:text-light-black text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm">
-                  {tags[0]}
+                  {badgeText}
                 </span>
               </div>
             )}
@@ -74,9 +82,9 @@ const Card = ({
             </p>
 
             {/* Tags */}
-            {tags.length > 1 && (
+            {remainingTags.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {tags.slice(1, 4).map((tag, index) => (
+                {remainingTags.slice(0, 3).map((tag, index) => (
                   <span
                     key={index}
                     className="inline-block text-xs font-medium text-light-charcoal dark:text-white bg-smoked-white dark:bg-tooltip-dark px-3 py-1 rounded-full"
@@ -84,9 +92,9 @@ const Card = ({
                     {tag}
                   </span>
                 ))}
-                {tags.length > 4 && (
+                {remainingTags.length > 3 && (
                   <span className="inline-block text-xs font-medium text-light-charcoal dark:text-white px-2 py-1">
-                    +{tags.length - 4}
+                    +{remainingTags.length - 3}
                   </span>
                 )}
               </div>

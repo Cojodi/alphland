@@ -39,7 +39,7 @@ const FeaturedCard = ({
       >
         <div className="flex flex-col lg:flex-col-reverse lg:absolute lg:top-8 lg:left-8 lg:z-[1]">
           <h2 className="font-semibold text-xl leading-none mb-2 lg:bg-black lg:py-2 lg:px-4 lg:font-bold lg:text-[28px] lg:text-white lg:max-w-max">
-            Featured Project: {name}
+            Spotlight: {name}
           </h2>
         </div>
 

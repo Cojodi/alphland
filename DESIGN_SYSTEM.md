@@ -305,7 +305,7 @@ All style configurations are in the following files:
 ### Tag/Badge Styles
 ```tsx
 <span className="bg-orange text-white px-4 py-1 rounded-full text-sm font-medium">
-  Featured
+  Spotlight
 </span>
 
 <span className="bg-smoked-white dark:bg-light-black px-3 py-1 rounded text-sm dark:text-white">
