@@ -155,6 +155,8 @@ const Home = ({
                   options={[
                     { label: "A-Z", value: "A-Z" },
                     { label: "Z-A", value: "Z-A" },
+                    { label: "Newest", value: "Newest" },
+                    { label: "Oldest", value: "Oldest" },
                   ]}
                   onChange={(sortBy) => setSelectedSort(sortBy)}
                 />
@@ -196,6 +198,7 @@ export const getStaticProps = async () => {
     audits: dapp.audits,
     verified: dapp.verified,
     councils_choice: dapp.councils_choice,
+    founded: dapp.teamInfo.founded,
   }));
 
   return {

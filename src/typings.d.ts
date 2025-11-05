@@ -141,4 +141,5 @@ interface DappCard {
   audits: Audit[];
   verified: boolean;
   councils_choice: boolean;
+  founded?: string;
 }
