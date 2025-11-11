@@ -1,0 +1,119 @@
+"use client";
+
+import { Edit, Share2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+
+interface ProfileHeaderProps {
+  username: string;
+  fullName: string;
+  avatarUrl?: string;
+  socials?: {
+    twitter?: string;
+    linkedin?: string;
+    github?: string;
+    website?: string;
+  };
+}
+
+export function ProfileHeader({
+  username,
+  fullName,
+  avatarUrl,
+  socials = {},
+}: ProfileHeaderProps) {
+  return (
+    <div className="bg-gradient-to-r from-orange/10 to-accessible-green/10 dark:from-orange/5 dark:to-accessible-green/5 pt-12 pb-8">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-6 mb-6">
+          {/* Avatar */}
+          <div className="relative">
+            <div className="w-24 h-24 rounded-full bg-white dark:bg-hero-dark border-4 border-orange/20 shadow-lg overflow-hidden">
+              {avatarUrl ? (
+                <Image
+                  src={avatarUrl}
+                  alt={fullName}
+                  width={96}
+                  height={96}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange to-accessible-green text-white text-3xl font-bold">
+                  {fullName[0]}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* User Info */}
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-black dark:text-white mb-1">
+              {fullName}
+            </h1>
+            <p className="text-light-charcoal dark:text-lightgrey text-lg">
+              @{username}
+            </p>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <Link href="/profile/edit">
+              <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-orange text-white rounded-lg font-medium hover:bg-orange/90 transition-colors w-full sm:w-auto">
+                <Edit size={18} />
+                Edit Profile
+              </button>
+            </Link>
+            <button className="flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-orange text-orange rounded-lg font-medium hover:bg-orange/5 transition-colors w-full sm:w-auto">
+              <Share2 size={18} />
+              Share
+            </button>
+          </div>
+        </div>
+
+        {/* Social Links */}
+        <div className="flex gap-4 pt-4 border-t border-border-grey dark:border-dark-charcoal">
+          {socials.twitter && (
+            <a
+              href={socials.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors"
+            >
+              𝕏
+            </a>
+          )}
+          {socials.linkedin && (
+            <a
+              href={socials.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors"
+            >
+              in
+            </a>
+          )}
+          {socials.github && (
+            <a
+              href={socials.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors"
+            >
+              gh
+            </a>
+          )}
+          {socials.website && (
+            <a
+              href={socials.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors"
+            >
+              🌐
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
