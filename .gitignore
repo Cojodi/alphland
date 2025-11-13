@@ -18,7 +18,7 @@
 
 # production
 /build
-
+/sql
 # misc
 .DS_Store
 *.pem
@@ -44,3 +44,7 @@ next-env.d.ts
 .env.development
 .env.production
 *.md
+
+# wrangler
+/.wrangler/
+*.toml
