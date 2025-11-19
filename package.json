@@ -10,7 +10,13 @@
     "format": "prettier --loglevel warn --write \"**/*.{ts,tsx,css,md,json,yml,js,svg}\"",
     "posttest": "npm run format",
     "prepare": "husky install",
-    "precommit-hook": "lint-staged"
+    "precommit-hook": "lint-staged",
+    "worker:dev": "wrangler dev",
+    "worker:deploy": "wrangler deploy",
+    "db:migrate": "wrangler d1 execute alphland-bounty --file=./migrations/001_initial_schema.sql",
+    "db:migrate:local": "wrangler d1 execute alphland-bounty --local --file=./migrations/001_initial_schema.sql",
+    "db:console": "wrangler d1 execute alphland-bounty --command",
+    "db:console:local": "wrangler d1 execute alphland-bounty --local --command"
   },
   "dependencies": {
     "@alephium/web3": "^0.22.0",
@@ -42,6 +48,7 @@
     "zustand": "^4.1.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251119.0",
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
     "@svgr/webpack": "^6.3.1",
