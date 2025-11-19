@@ -2,6 +2,11 @@
  * Cloudflare Worker for Alphland API
  * This worker handles API requests and connects to D1 database
  */
+import {
+  handleSubmissionsAPI,
+  handleCommentsAPI,
+  handleSponsorsAPI,
+} from "./handlers";
 
 export interface Env {
   DB: D1Database;
@@ -12,11 +17,7 @@ export interface Env {
 }
 
 export default {
-  async fetch(
-    request: Request,
-    env: Env,
-    ctx: ExecutionContext
-  ): Promise<Response> {
+  async fetch(request: Request, env: Env, _ctx: any): Promise<Response> {
     const url = new URL(request.url);
 
     // CORS headers for development
@@ -59,6 +60,21 @@ export default {
       // User profile endpoints
       if (url.pathname.startsWith("/api/users")) {
         return handleUsersAPI(request, env, url);
+      }
+
+      // Submission endpoints
+      if (url.pathname.startsWith("/api/submissions")) {
+        return handleSubmissionsAPI(request, env, url);
+      }
+
+      // Comments endpoints
+      if (url.pathname.startsWith("/api/comments")) {
+        return handleCommentsAPI(request, env, url);
+      }
+
+      // Sponsors endpoints
+      if (url.pathname.startsWith("/api/sponsors")) {
+        return handleSponsorsAPI(request, env, url);
       }
 
       // Default 404
@@ -200,20 +216,90 @@ async function handleUsersAPI(
   if (request.method === "GET" && pathname.match(/^\/api\/users\/[^/]+$/)) {
     const id = pathname.split("/").pop();
 
-    const user = await env.DB.prepare(
-      `
-      SELECT * FROM user_profiles WHERE user_id = ?
-    `
+    let user = await env.DB.prepare(
+      `SELECT * FROM user_profiles WHERE user_id = ?`
     )
       .bind(id)
       .first();
 
+    // If user profile doesn't exist, create it
     if (!user) {
-      return new Response(JSON.stringify({ error: "User not found" }), {
-        status: 404,
-        headers: corsHeaders,
-      });
+      const profileId = crypto.randomUUID();
+      const now = Math.floor(Date.now() / 1000);
+
+      await env.DB.prepare(
+        `INSERT INTO user_profiles (id, user_id, created_at, updated_at)
+         VALUES (?, ?, ?, ?)`
+      )
+        .bind(profileId, id, now, now)
+        .run();
+
+      user = await env.DB.prepare(
+        `SELECT * FROM user_profiles WHERE user_id = ?`
+      )
+        .bind(id)
+        .first();
     }
+
+    return new Response(JSON.stringify({ user }), {
+      headers: corsHeaders,
+    });
+  }
+
+  // PUT /api/users/:id - Update user profile
+  if (request.method === "PUT" && pathname.match(/^\/api\/users\/[^/]+$/)) {
+    const id = pathname.split("/").pop();
+    const body = (await request.json()) as any;
+    const now = Math.floor(Date.now() / 1000);
+
+    // Check if username is taken (if provided and changed)
+    if (body.username) {
+      const existing = await env.DB.prepare(
+        `SELECT id FROM user_profiles WHERE username = ? AND user_id != ?`
+      )
+        .bind(body.username, id)
+        .first();
+
+      if (existing) {
+        return new Response(
+          JSON.stringify({ error: "Username already taken" }),
+          {
+            status: 400,
+            headers: corsHeaders,
+          }
+        );
+      }
+    }
+
+    // Update profile
+    await env.DB.prepare(
+      `UPDATE user_profiles
+       SET username = COALESCE(?, username),
+           bio = COALESCE(?, bio),
+           wallet_address = COALESCE(?, wallet_address),
+           github_username = COALESCE(?, github_username),
+           twitter_username = COALESCE(?, twitter_username),
+           discord_username = COALESCE(?, discord_username),
+           updated_at = ?
+       WHERE user_id = ?`
+    )
+      .bind(
+        body.username || null,
+        body.bio || null,
+        body.wallet_address || null,
+        body.github_username || null,
+        body.twitter_username || null,
+        body.discord_username || null,
+        now,
+        id
+      )
+      .run();
+
+    const user = await env.DB.prepare(
+      `SELECT * FROM user_profiles WHERE user_id = ?`
+    )
+      .bind(id)
+      .first();
 
     return new Response(JSON.stringify({ user }), {
       headers: corsHeaders,

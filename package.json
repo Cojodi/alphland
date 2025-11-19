@@ -13,8 +13,8 @@
     "precommit-hook": "lint-staged",
     "worker:dev": "wrangler dev",
     "worker:deploy": "wrangler deploy",
-    "db:migrate": "wrangler d1 execute alphland-bounty --file=./migrations/001_initial_schema.sql",
-    "db:migrate:local": "wrangler d1 execute alphland-bounty --local --file=./migrations/001_initial_schema.sql",
+    "db:migrate": "wrangler d1 execute alphland-bounty --file=./migrations/001_initial_schema_fixed.sql",
+    "db:migrate:local": "wrangler d1 execute alphland-bounty --local --file=./migrations/001_initial_schema_fixed.sql",
     "db:console": "wrangler d1 execute alphland-bounty --command",
     "db:console:local": "wrangler d1 execute alphland-bounty --local --command"
   },
