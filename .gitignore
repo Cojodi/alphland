@@ -48,3 +48,5 @@ next-env.d.ts
 # wrangler
 /.wrangler/
 *.toml
+
+.claude

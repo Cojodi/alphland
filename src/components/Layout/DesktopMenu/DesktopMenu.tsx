@@ -73,9 +73,7 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
             variant="primary"
             className="h-min"
             style={{ padding: "13px 24px", lineHeight: "normal" }}
-            href="https://github.com/cojodi/alphland#-add-your-dapp-to-Alphland"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/admin"
           >
             Add your Dapp
           </Button>

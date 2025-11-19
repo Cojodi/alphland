@@ -204,9 +204,7 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
               variant="primary"
               className="w-full"
               withoutMobile
-              href="https://github.com/cojodi/Alphland#-add-your-dapp-to-Alphland"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/admin"
             >
               Add your Dapp
             </Button>

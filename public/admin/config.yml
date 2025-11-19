@@ -1,0 +1,226 @@
+backend:
+  name: github
+  repo: cojodi/alphland # Replace with your GitHub repo (owner/repo-name)
+  branch: develop # The branch to save to
+  base_url: https://api.netlify.com # For Netlify's OAuth
+  auth_endpoint: auth
+
+# Editorial workflow: creates PRs instead of direct commits
+publish_mode: editorial_workflow
+
+# Media files will be stored in the public/dapps folder
+media_folder: "public/dapps"
+public_folder: "/dapps"
+
+collections:
+  - name: "dapps"
+    label: "dApps"
+    label_singular: "dApp"
+    folder: "data"
+    create: true
+    slug: "{{slug}}"
+    extension: "json"
+    format: "json"
+    editor:
+      preview: false
+    fields:
+      - { label: "Name", name: "name", widget: "string", required: true }
+      - {
+          label: "Description",
+          name: "description",
+          widget: "text",
+          required: true,
+          hint: "Full description of your dApp (2-3 sentences)"
+        }
+      - {
+          label: "Short Description",
+          name: "short_description",
+          widget: "string",
+          required: true,
+          hint: "Brief tagline (max 60 characters)"
+        }
+      - {
+          label: "Tags",
+          name: "tags",
+          widget: "select",
+          multiple: true,
+          required: true,
+          options: [
+            "DeFi",
+            "NFT",
+            "Gaming",
+            "Infrastructure",
+            "Wallets",
+            "Bridges",
+            "Onramps",
+            "DEX",
+            "Lending",
+            "Staking",
+            "Analytics",
+            "Tools",
+            "DAO",
+            "Social",
+            "Marketplace"
+          ]
+        }
+      - {
+          label: "Verified",
+          name: "verified",
+          widget: "boolean",
+          default: false,
+          required: false,
+          hint: "Leave as false - will be reviewed by admins"
+        }
+      - {
+          label: "DOTW (dApp of the Week)",
+          name: "dotw",
+          widget: "boolean",
+          default: false,
+          required: false,
+          hint: "Leave as false - assigned by admins"
+        }
+      - {
+          label: "Council's Choice",
+          name: "councils_choice",
+          widget: "boolean",
+          default: false,
+          required: false,
+          hint: "Leave as false - assigned by admins"
+        }
+
+      # Links Section
+      - label: "Links"
+        name: "links"
+        widget: "object"
+        fields:
+          - { label: "Website", name: "website", widget: "string", required: true }
+          - { label: "Careers Page", name: "careers", widget: "string", required: false, hint: "URL or mailto:email" }
+          - { label: "Twitter", name: "twitter", widget: "string", required: false }
+          - { label: "Telegram", name: "telegram", widget: "string", required: false }
+          - { label: "Discord", name: "discord", widget: "string", required: false }
+          - { label: "Documentation", name: "docs", widget: "string", required: false }
+          - { label: "GitHub", name: "github", widget: "string", required: false }
+          - { label: "YouTube", name: "youtube", widget: "string", required: false }
+          - { label: "Medium", name: "medium", widget: "string", required: false }
+          - { label: "Mirror", name: "mirror", widget: "string", required: false }
+          - { label: "LinkedIn", name: "linkedin", widget: "string", required: false }
+
+      - {
+          label: "Twitter Username",
+          name: "twitterName",
+          widget: "string",
+          required: false,
+          hint: "Without @ symbol"
+        }
+
+      # Team Info Section
+      - label: "Team Information"
+        name: "teamInfo"
+        widget: "object"
+        fields:
+          - { label: "Contact Email", name: "contactEmail", widget: "string", required: false }
+          - {
+              label: "Founded Date",
+              name: "founded",
+              widget: "datetime",
+              required: false,
+              format: "YYYY-MM-DDTHH:mm:ss.SSSZ"
+            }
+          - { label: "Anonymous Team", name: "anonymous", widget: "boolean", default: false }
+
+      # Media Section
+      - label: "Media"
+        name: "media"
+        widget: "object"
+        collapsed: false
+        fields:
+          - {
+              label: "Logo",
+              name: "logoUrl",
+              widget: "image",
+              required: true,
+              hint: "Square logo (recommended: 512x512px, WebP format)",
+              media_folder: "/public/dapps/{{slug}}",
+              public_folder: "/dapps/{{slug}}",
+              default: "/dapps/{{slug}}/logo.webp"
+            }
+          - {
+              label: "Banner",
+              name: "bannerUrl",
+              widget: "image",
+              required: true,
+              hint: "Wide banner (recommended: 1200x400px, WebP format)",
+              media_folder: "/public/dapps/{{slug}}",
+              public_folder: "/dapps/{{slug}}",
+              default: "/dapps/{{slug}}/banner.webp"
+            }
+          - {
+              label: "Preview Image",
+              name: "previewUrl",
+              widget: "image",
+              required: true,
+              hint: "Screenshot or preview (recommended: 1200x800px, WebP format)",
+              media_folder: "/public/dapps/{{slug}}",
+              public_folder: "/dapps/{{slug}}",
+              default: "/dapps/{{slug}}/preview.webp"
+            }
+          - {
+              label: "Video URL",
+              name: "videoUrl",
+              widget: "string",
+              required: false,
+              hint: "YouTube or Vimeo URL"
+            }
+          - {
+              label: "Gallery",
+              name: "gallery",
+              widget: "list",
+              required: false,
+              field: { label: "Image", name: "image", widget: "image" }
+            }
+
+      # Optional Advanced Fields
+      - {
+          label: "Smart Contracts",
+          name: "contracts",
+          widget: "list",
+          required: false,
+          default: [],
+          collapsed: true,
+          fields:
+            - { label: "Contract Address", name: "address", widget: "string" }
+            - { label: "Contract Name", name: "name", widget: "string" }
+        }
+      - {
+          label: "Audits",
+          name: "audits",
+          widget: "list",
+          required: false,
+          default: [],
+          collapsed: true,
+          fields:
+            - { label: "Auditor", name: "auditor", widget: "string" }
+            - { label: "Report URL", name: "url", widget: "string" }
+            - { label: "Date", name: "date", widget: "datetime" }
+        }
+      - {
+          label: "Tokens",
+          name: "tokens",
+          widget: "list",
+          required: false,
+          default: [],
+          collapsed: true,
+          fields:
+            - { label: "Token Name", name: "name", widget: "string" }
+            - { label: "Token Symbol", name: "symbol", widget: "string" }
+            - { label: "Token ID", name: "id", widget: "string" }
+        }
+      - label: "NFT Collection"
+        name: "nft"
+        widget: "object"
+        required: false
+        default: {}
+        collapsed: true
+        fields:
+          - { label: "Collection Name", name: "name", widget: "string", required: false }
+          - { label: "Collection URL", name: "url", widget: "string", required: false }
