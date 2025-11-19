@@ -104,288 +104,297 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
 
       {/* Logo */}
       <div className="px-4 md:mx-[10vw] xl:mx-[15vw] 2xl:mx-[20vw] -mt-[40px] mb-6 xl:-mt-[80px] max-w-[1200px]">
-        <div className="relative max-w-[80px] min-h-[80px] xl:min-h-[160px] xl:max-w-[160px]">
-          <Image
-            src={dappInfo.media.logoUrl}
-            alt="icon"
-            layout="fill"
-            className="rounded-full"
-          />
-        </div>
+        {dappInfo.links?.website ? (
+          <Link href={dappInfo.links.website} passHref>
+            <a className="relative max-w-[80px] min-h-[80px] xl:min-h-[160px] xl:max-w-[160px] block">
+              <Image
+                src={dappInfo.media.logoUrl}
+                alt="icon"
+                layout="fill"
+                className="rounded-full"
+              />
+            </a>
+          </Link>
+        ) : (
+          <div className="relative max-w-[80px] min-h-[80px] xl:min-h-[160px] xl:max-w-[160px]">
+            <Image
+              src={dappInfo.media.logoUrl}
+              alt="icon"
+              layout="fill"
+              className="rounded-full"
+            />
+          </div>
+        )}
       </div>
 
-      <div className="min-h-screen bg-white dark:bg-hero-dark">
-        {/* Header */}
-        <header className="border-b border-border-grey dark:border-white/10">
+      {/* <div className="min-h-screen bg-white dark:bg-hero-dark"> */}
+      {/* Header */}
+      {/* <header className="border-b border-border-grey dark:border-white/10">
           <div className="max-w-7xl mx-auto px-4 py-6"></div>
-        </header>
+        </header> */}
 
-        <main className="max-w-7xl mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main Content */}
-            <div className="lg:col-span-2 space-y-12">
-              {/* Hero Section */}
-              <section>
-                <p className="text-lg dark:text-white/90 mb-6 leading-relaxed">
-                  {dappInfo.description}
-                </p>
-                {dappInfo.links?.website && (
-                  <Link href={dappInfo.links.website} passHref>
-                    <Button
-                      variant="primary"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Launch Dapp
-                    </Button>
-                  </Link>
-                )}
-              </section>
+      <main className="max-w-7xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-12">
+            {/* Hero Section */}
+            <section>
+              <p className="text-lg dark:text-white/90 mb-6 leading-relaxed">
+                {dappInfo.description}
+              </p>
+              {dappInfo.links?.website && (
+                <Link href={dappInfo.links.website} passHref>
+                  <Button
+                    variant="primary"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Launch Dapp
+                  </Button>
+                </Link>
+              )}
+            </section>
 
-              {/* Project Information */}
-              <section>
-                <h2 className="text-2xl font-bold mb-6 dark:text-white">
-                  Project Information
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="p-4 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5">
-                    <p className="text-sm text-light-charcoal dark:text-clay mb-1">
-                      Founded
-                    </p>
-                    <p className="font-semibold dark:text-white">
-                      {dappInfo.teamInfo.founded
-                        ? new Date(
-                            dappInfo.teamInfo.founded
-                          ).toLocaleDateString("en-US", {
+            {/* Project Information */}
+            <section>
+              <h2 className="text-2xl font-bold mb-6 dark:text-white">
+                Project Information
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="p-4 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5">
+                  <p className="text-sm text-light-charcoal dark:text-clay mb-1">
+                    Founded
+                  </p>
+                  <p className="font-semibold dark:text-white">
+                    {dappInfo.teamInfo.founded
+                      ? new Date(dappInfo.teamInfo.founded).toLocaleDateString(
+                          "en-US",
+                          {
                             month: "long",
                             year: "numeric",
-                          })
-                        : "Unknown"}
-                    </p>
-                  </div>
-                  <div className="p-4 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5">
-                    <p className="text-sm text-light-charcoal dark:text-clay mb-1">
-                      Team
-                    </p>
-                    <p className="font-semibold text-accessible-green dark:text-accessible-green">
-                      {dappInfo.teamInfo.anonymous ? "Anonymous" : "Public"}
-                    </p>
-                  </div>
-                  <div className="p-4 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5">
-                    <p className="text-sm text-light-charcoal dark:text-clay mb-1">
-                      Audit
-                    </p>
-                    <p className="font-semibold dark:text-white">
-                      {dappInfo.audits && dappInfo.audits.length > 0 ? (
-                        <span className="text-accessible-green">
-                          Yes ({dappInfo.audits[0].name})
-                        </span>
-                      ) : (
-                        "No"
-                      )}
-                    </p>
-                  </div>
-                  <div className="p-4 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5">
-                    <p className="text-sm text-light-charcoal dark:text-clay mb-1">
-                      Token
-                    </p>
-                    <p className="font-semibold dark:text-white">
-                      {dappInfo.tokens && dappInfo.tokens.length > 0
-                        ? dappInfo.tokens[0].symbol
-                        : "No Token"}
-                    </p>
-                  </div>
-                  <div className="p-4 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5">
-                    <p className="text-sm text-light-charcoal dark:text-clay mb-1">
-                      Verified
-                    </p>
-                    <p className="font-semibold dark:text-white">
-                      {dappInfo.verified ? (
-                        <span className="text-accessible-green">Yes</span>
-                      ) : (
-                        "No"
-                      )}
-                    </p>
-                  </div>
-                  <div className="p-4 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5">
-                    <p className="text-sm text-light-charcoal dark:text-clay mb-1">
-                      Smart Contract
-                    </p>
-                    <p className="font-semibold dark:text-white">
-                      {dappInfo.contracts && dappInfo.contracts.length > 0 ? (
-                        <span className="text-accessible-green">Verified</span>
-                      ) : (
-                        "N/A"
-                      )}
-                    </p>
-                  </div>
+                          }
+                        )
+                      : "Unknown"}
+                  </p>
                 </div>
-              </section>
+                <div className="p-4 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5">
+                  <p className="text-sm text-light-charcoal dark:text-clay mb-1">
+                    Team
+                  </p>
+                  <p className="font-semibold text-accessible-green dark:text-accessible-green">
+                    {dappInfo.teamInfo.anonymous ? "Anonymous" : "Public"}
+                  </p>
+                </div>
+                <div className="p-4 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5">
+                  <p className="text-sm text-light-charcoal dark:text-clay mb-1">
+                    Audit
+                  </p>
+                  <p className="font-semibold dark:text-white">
+                    {dappInfo.audits && dappInfo.audits.length > 0 ? (
+                      <span className="text-accessible-green">
+                        Yes ({dappInfo.audits[0].name})
+                      </span>
+                    ) : (
+                      "No"
+                    )}
+                  </p>
+                </div>
+                <div className="p-4 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5">
+                  <p className="text-sm text-light-charcoal dark:text-clay mb-1">
+                    Token
+                  </p>
+                  <p className="font-semibold dark:text-white">
+                    {dappInfo.tokens && dappInfo.tokens.length > 0
+                      ? dappInfo.tokens[0].symbol
+                      : "No Token"}
+                  </p>
+                </div>
+                <div className="p-4 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5">
+                  <p className="text-sm text-light-charcoal dark:text-clay mb-1">
+                    Verified
+                  </p>
+                  <p className="font-semibold dark:text-white">
+                    {dappInfo.verified ? (
+                      <span className="text-accessible-green">Yes</span>
+                    ) : (
+                      "No"
+                    )}
+                  </p>
+                </div>
+                <div className="p-4 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5">
+                  <p className="text-sm text-light-charcoal dark:text-clay mb-1">
+                    Smart Contract
+                  </p>
+                  <p className="font-semibold dark:text-white">
+                    {dappInfo.contracts && dappInfo.contracts.length > 0 ? (
+                      <span className="text-accessible-green">Verified</span>
+                    ) : (
+                      "N/A"
+                    )}
+                  </p>
+                </div>
+              </div>
+            </section>
 
-              {/* Resources & Tutorials */}
-              {dappInfo.media?.videoUrl && (
-                <section>
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold dark:text-white">
-                      Resources & Tutorials
-                    </h2>
-                    <Link href={`/resources/${name}`}>
-                      <a className="text-orange text-sm font-semibold hover:opacity-80 flex items-center gap-2">
-                        View All
-                        <Image
-                          src={expandIcon}
-                          alt="expand"
-                          width={12}
-                          height={12}
-                        />
-                      </a>
-                    </Link>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="border border-border-grey dark:border-white/10 rounded-lg overflow-hidden bg-white dark:bg-white/5">
-                      <div className="relative bg-gradient-to-br from-teal-900 to-slate-900 aspect-video flex items-center justify-center">
-                        <div className="absolute top-3 left-3 bg-orange text-white px-2 py-1 rounded text-xs font-semibold">
-                          Video
-                        </div>
-                        <video
-                          src={dappInfo.media.videoUrl}
-                          className="w-full h-full object-cover"
-                          controls
-                        />
-                      </div>
-                      <div className="p-4">
-                        <h3 className="font-semibold mb-2 dark:text-white">
-                          How to start with {dappInfo.name}
-                        </h3>
-                        <p className="text-sm text-light-charcoal dark:text-lightgrey">
-                          Complete beginner&apos;s guide to get started with{" "}
-                          {dappInfo.name}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-              )}
-
-              {/* Active Bounties */}
-              <section id="bounties">
+            {/* Resources & Tutorials */}
+            {dappInfo.media?.videoUrl && (
+              <section>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold dark:text-white">
-                    Active Bounties
+                    Resources & Tutorials
                   </h2>
+                  <Link href={`/resources/${name}`}>
+                    <a className="text-orange text-sm font-semibold hover:opacity-80 flex items-center gap-2">
+                      View All
+                      <Image
+                        src={expandIcon}
+                        alt="expand"
+                        width={12}
+                        height={12}
+                      />
+                    </a>
+                  </Link>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {sampleBounties.map((bounty) => (
-                    <Link key={bounty.id} href={`/bounty/${name}/${bounty.id}`}>
-                      <a className="block p-6 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow">
-                        <div className="flex items-start justify-between mb-4">
-                          <h3 className="font-semibold dark:text-white flex-1">
-                            {bounty.title}
-                          </h3>
-                          <span
-                            className={`px-2 py-1 rounded text-xs font-semibold whitespace-nowrap ml-2 ${
-                              bounty.status === "Active"
-                                ? "bg-accessible-green/20 text-accessible-green"
-                                : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
-                            }`}
-                          >
-                            {bounty.status}
-                          </span>
-                        </div>
-                        <p className="text-sm text-light-charcoal dark:text-lightgrey mb-6">
-                          {bounty.description}
-                        </p>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-accessible-green font-semibold">
-                            {bounty.reward}
-                          </span>
-                          <span className="text-light-charcoal dark:text-clay text-xs">
-                            {bounty.dueDate}
-                          </span>
-                        </div>
-                      </a>
-                    </Link>
-                  ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="border border-border-grey dark:border-white/10 rounded-lg overflow-hidden bg-white dark:bg-white/5">
+                    <div className="relative bg-gradient-to-br from-teal-900 to-slate-900 aspect-video flex items-center justify-center">
+                      <div className="absolute top-3 left-3 bg-orange text-white px-2 py-1 rounded text-xs font-semibold">
+                        Video
+                      </div>
+                      <video
+                        src={dappInfo.media.videoUrl}
+                        className="w-full h-full object-cover"
+                        controls
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold mb-2 dark:text-white">
+                        How to start with {dappInfo.name}
+                      </h3>
+                      <p className="text-sm text-light-charcoal dark:text-lightgrey">
+                        Complete beginner&apos;s guide to get started with{" "}
+                        {dappInfo.name}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </section>
+            )}
 
-              {/* Gallery */}
-              {dappInfo.media?.gallery && dappInfo.media.gallery.length > 0 && (
-                <section>
-                  <h2 className="text-2xl font-bold mb-6 dark:text-white">
-                    Gallery
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {dappInfo.media.gallery.map((image, i) => (
-                      <div
-                        key={i}
-                        className="rounded-lg h-64 bg-no-repeat bg-center bg-cover shadow-box-image-shadow"
-                        style={{ backgroundImage: `url(${image.url})` }}
-                      />
-                    ))}
-                  </div>
-                </section>
-              )}
-            </div>
-
-            {/* Sidebar */}
-            <aside className="space-y-8">
-              {/* Tags */}
-              {dappInfo.tags.length > 0 && (
-                <div>
-                  <h3 className="font-semibold text-lg mb-4 dark:text-white">
-                    Tags
-                  </h3>
-                  <div className="flex gap-2 flex-wrap">
-                    {dappInfo.tags.map((tag) => (
-                      <Tag key={tag} name={tag} />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Report */}
-              <div>
-                <a
-                  href="https://x.com/fugashu_codes"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center text-sm text-lightgrey hover:text-orange transition-colors"
-                >
-                  <Image
-                    src={flagIcon}
-                    alt="flag icon"
-                    width={16}
-                    height={16}
-                  />
-                  <span className="ml-2">Report</span>
-                </a>
+            {/* Active Bounties */}
+            <section id="bounties">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold dark:text-white">
+                  Active Bounties
+                </h2>
               </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {sampleBounties.map((bounty) => (
+                  <Link key={bounty.id} href={`/bounty/${name}/${bounty.id}`}>
+                    <a className="block p-6 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow">
+                      <div className="flex items-start justify-between mb-4">
+                        <h3 className="font-semibold dark:text-white flex-1">
+                          {bounty.title}
+                        </h3>
+                        <span
+                          className={`px-2 py-1 rounded text-xs font-semibold whitespace-nowrap ml-2 ${
+                            bounty.status === "Active"
+                              ? "bg-accessible-green/20 text-accessible-green"
+                              : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
+                          }`}
+                        >
+                          {bounty.status}
+                        </span>
+                      </div>
+                      <p className="text-sm text-light-charcoal dark:text-lightgrey mb-6">
+                        {bounty.description}
+                      </p>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-accessible-green font-semibold">
+                          {bounty.reward}
+                        </span>
+                        <span className="text-light-charcoal dark:text-clay text-xs">
+                          {bounty.dueDate}
+                        </span>
+                      </div>
+                    </a>
+                  </Link>
+                ))}
+              </div>
+            </section>
 
-              {/* Links */}
-              <div>
-                <h3 className="font-semibold text-lg mb-4 dark:text-white">
-                  Links
-                </h3>
-                <div className="flex gap-4 flex-wrap">
-                  {handleLinksOrder().map((link) => (
-                    <SocialLink
-                      key={link.name}
-                      name={link.name}
-                      link={link.link}
+            {/* Gallery */}
+            {dappInfo.media?.gallery && dappInfo.media.gallery.length > 0 && (
+              <section>
+                <h2 className="text-2xl font-bold mb-6 dark:text-white">
+                  Gallery
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {dappInfo.media.gallery.map((image, i) => (
+                    <div
+                      key={i}
+                      className="rounded-lg h-64 bg-no-repeat bg-center bg-cover shadow-box-image-shadow"
+                      style={{ backgroundImage: `url(${image.url})` }}
                     />
                   ))}
                 </div>
-              </div>
+              </section>
+            )}
+          </div>
 
-              {/* Rating */}
-              {/* <div>
+          {/* Sidebar */}
+          <aside className="space-y-8">
+            {/* Tags */}
+            {dappInfo.tags.length > 0 && (
+              <div>
+                <h3 className="font-semibold text-lg mb-4 dark:text-white">
+                  Tags
+                </h3>
+                <div className="flex gap-2 flex-wrap">
+                  {dappInfo.tags.map((tag) => (
+                    <Tag key={tag} name={tag} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Report */}
+            <div>
+              <a
+                href="https://x.com/fugashu_codes"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center text-sm text-lightgrey hover:text-orange transition-colors"
+              >
+                <Image src={flagIcon} alt="flag icon" width={16} height={16} />
+                <span className="ml-2">Report</span>
+              </a>
+            </div>
+
+            {/* Links */}
+            <div>
+              <h3 className="font-semibold text-lg mb-4 dark:text-white">
+                Links
+              </h3>
+              <div className="flex gap-4 flex-wrap">
+                {handleLinksOrder().map((link) => (
+                  <SocialLink
+                    key={link.name}
+                    name={link.name}
+                    link={link.link}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Rating */}
+            {/* <div>
                 <DappPageRating dappKey={name} />
               </div> */}
-            </aside>
-          </div>
-        </main>
-      </div>
+          </aside>
+        </div>
+      </main>
+      {/* </div> */}
     </Layout>
   );
 };
