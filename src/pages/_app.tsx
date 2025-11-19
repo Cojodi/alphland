@@ -3,10 +3,29 @@ import { AlephiumWalletProvider } from "@alephium/web3-react";
 import { ThemeProvider } from "next-themes";
 import type { AppProps } from "next/app";
 import Script from "next/script";
+import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
+  // Suppress ethereum property redefinition errors from browser extensions
+  useEffect(() => {
+    const handleError = (event: ErrorEvent) => {
+      if (
+        event.message.includes("Cannot redefine property: ethereum") ||
+        event.message.includes("defineProperty")
+      ) {
+        event.preventDefault();
+        console.warn(
+          "Suppressed ethereum property redefinition error from browser extension. This app uses Alephium, not Ethereum."
+        );
+        return true;
+      }
+    };
+
+    window.addEventListener("error", handleError);
+    return () => window.removeEventListener("error", handleError);
+  }, []);
   return (
     <ThemeProvider attribute="class">
       <AlephiumWalletProvider network="mainnet">

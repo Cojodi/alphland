@@ -28,7 +28,9 @@ the Alephium Wallet Browser Extension for Chrome or Firefox:
 If you are building on Alephium and want to showcase it in Alphland, you just need to submit a PR to this
 repository.
 
-### IMPORTANT: PLEASE 
+> **Windows Users**: See [WINDOWS_SETUP.md](WINDOWS_SETUP.md) for setup instructions to ensure Git hooks work properly.
+
+### IMPORTANT: PLEASE
 
 Steps:
 
@@ -102,13 +104,6 @@ walph on Alphland would be `https://www.alph.land/walph`
   <iframe src="https://www.alph.land/widgets/rating?dappname=walph" width="260" height="170" frameBorder="0" title="Alphland Widget"></iframe>
 </a>
 ```
-
-## Donations
-
-Fuel our code with caffeine! If you'd like to sponsor a coffee for our project, you can donate to our ALPH wallet address below. Every sip powers our progress! 🚀☕
-```
-16uJvxtaSkuKEz3DEzCKHsemE4LWvnqZS1WrSAhoeL9Fr
-```
 ## Acknowledgments
 
 Special thanks to [Argentlabs](https://github.com/argentlabs/dappland). We're deeply grateful for their work, which laid the groundwork for this project.
@@ -125,5 +120,3 @@ For more information about our sponsors:
     <img src="src/assets/blockflow-alliance-dao.jpg" alt="Blockflow Alliance DAO" title="Blockflow Alliance DAO" style="width: 100px;">
 </a>
 </div>
-
-test

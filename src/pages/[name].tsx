@@ -1,6 +1,7 @@
 import arrow from "../assets/icons/arrowLeft.svg";
 import expandIcon from "../assets/icons/expand.svg";
 import flagIcon from "../assets/icons/flag.svg";
+import { AnnouncementBar } from "../components/AnnouncementBar";
 import Button from "../components/Button/Button";
 import Layout from "../components/Layout";
 import SocialLink from "../components/SocialLink/SocialLink";
@@ -106,6 +107,20 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
                 <span className="ml-2">Back to search results</span>
               </button>
             )}
+
+            <AnnouncementBar>
+              <span className="text-black dark:text-white">
+                {dappInfo.name} is currently offering bounties for community
+                contributions.{" "}
+                <a
+                  href="#bounties"
+                  className="text-orange hover:underline font-semibold"
+                >
+                  View active bounties
+                </a>
+              </span>
+            </AnnouncementBar>
+
             <div className="flex items-center gap-4 mb-2">
               <div className="w-16 h-16 relative rounded-full overflow-hidden flex-shrink-0">
                 <Image
@@ -291,7 +306,7 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
               )}
 
               {/* Active Bounties */}
-              <section>
+              <section id="bounties">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold dark:text-white">
                     Active Bounties
