@@ -94,68 +94,30 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
       description={dappInfo.short_description}
       image={dappInfo.media.previewUrl}
     >
+      {/* Banner */}
+      <div
+        className="relative mt-[56px] lg:mt-0 max-h-[380px] min-h-[104px] sm:min-h-[240px] lg:min-h-[420px] w-full overflow-hidden bg-no-repeat bg-cover bg-center"
+        style={{
+          backgroundImage: `url(${dappInfo.media.bannerUrl})`,
+        }}
+      ></div>
+
+      {/* Logo */}
+      <div className="px-4 md:mx-[10vw] xl:mx-[15vw] 2xl:mx-[20vw] -mt-[40px] mb-6 xl:-mt-[80px] max-w-[1200px]">
+        <div className="relative max-w-[80px] min-h-[80px] xl:min-h-[160px] xl:max-w-[160px]">
+          <Image
+            src={dappInfo.media.logoUrl}
+            alt="icon"
+            layout="fill"
+            className="rounded-full"
+          />
+        </div>
+      </div>
+
       <div className="min-h-screen bg-white dark:bg-hero-dark">
         {/* Header */}
         <header className="border-b border-border-grey dark:border-white/10">
-          <div className="max-w-7xl mx-auto px-4 py-6">
-            {showPrev && (
-              <button
-                onClick={() => Router.back()}
-                className="text-orange text-base font-semibold mb-4 flex items-center hover:opacity-80"
-              >
-                <Image src={arrow} alt="arrow" width={20} height={20} />
-                <span className="ml-2">Back to search results</span>
-              </button>
-            )}
-
-            <AnnouncementBar>
-              <span className="text-black dark:text-white">
-                {dappInfo.name} is currently offering bounties for community
-                contributions.{" "}
-                <a
-                  href="#bounties"
-                  className="text-orange hover:underline font-semibold"
-                >
-                  View active bounties
-                </a>
-              </span>
-            </AnnouncementBar>
-
-            <div className="flex items-center gap-4 mb-2">
-              <div className="w-16 h-16 relative rounded-full overflow-hidden flex-shrink-0">
-                <Image
-                  src={dappInfo.media.logoUrl}
-                  alt={dappInfo.name}
-                  layout="fill"
-                  objectFit="cover"
-                />
-              </div>
-              <div className="flex-1">
-                <h1 className="text-3xl font-bold dark:text-white">
-                  {dappInfo.name}
-                </h1>
-                {dappInfo.links?.website && (
-                  <a
-                    href={dappInfo.links.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-light-charcoal dark:text-lightgrey hover:text-orange transition-colors"
-                  >
-                    {new URL(dappInfo.links.website).hostname}
-                  </a>
-                )}
-              </div>
-              <a
-                href="https://x.com/fugashu_codes"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center text-sm text-lightgrey hover:text-orange transition-colors"
-              >
-                <Image src={flagIcon} alt="flag icon" width={16} height={16} />
-                <span className="ml-2">Report</span>
-              </a>
-            </div>
-          </div>
+          <div className="max-w-7xl mx-auto px-4 py-6"></div>
         </header>
 
         <main className="max-w-7xl mx-auto px-4 py-12">
@@ -381,6 +343,24 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
                   </div>
                 </div>
               )}
+
+              {/* Report */}
+              <div>
+                <a
+                  href="https://x.com/fugashu_codes"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center text-sm text-lightgrey hover:text-orange transition-colors"
+                >
+                  <Image
+                    src={flagIcon}
+                    alt="flag icon"
+                    width={16}
+                    height={16}
+                  />
+                  <span className="ml-2">Report</span>
+                </a>
+              </div>
 
               {/* Links */}
               <div>
