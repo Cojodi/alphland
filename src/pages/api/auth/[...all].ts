@@ -12,12 +12,7 @@
  * - GET  /api/auth/verify-email
  */
 import { auth } from "@/lib/auth";
+import { toNextJsHandler } from "better-auth/next-js";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  // Better Auth handles all authentication routes
-  return auth.handler(req, res);
-}
+export default toNextJsHandler(auth);

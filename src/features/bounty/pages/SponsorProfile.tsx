@@ -1,5 +1,6 @@
 import Layout from "@/components/Layout";
 import { Globe, CircleDollarSign, BarChart3 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -92,10 +93,11 @@ export default function SponsorProfile({
           <div className="absolute inset-0 bg-orange/5"></div>
           {sponsor.logo_url && (
             <div className="absolute inset-0 flex items-center justify-center opacity-10">
-              <img
+              <Image
                 src={sponsor.logo_url}
                 alt={sponsor.name}
-                className="max-h-full object-contain"
+                layout="fill"
+                objectFit="contain"
               />
             </div>
           )}
@@ -108,9 +110,11 @@ export default function SponsorProfile({
               {/* Avatar */}
               <div className="w-40 h-40 border-4 border-white dark:border-hero-dark rounded-lg bg-white dark:bg-hero-dark shadow-box-image-shadow flex-shrink-0 flex items-center justify-center overflow-hidden">
                 {sponsor.logo_url ? (
-                  <img
+                  <Image
                     src={sponsor.logo_url}
                     alt={sponsor.name}
+                    width={160}
+                    height={160}
                     className="w-full h-full object-cover"
                   />
                 ) : (

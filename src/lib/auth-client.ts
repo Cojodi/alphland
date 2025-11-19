@@ -11,8 +11,7 @@ export const authClient = createAuthClient({
 /**
  * Auth hooks for React components
  */
-export const { useSession, signIn, signUp, signOut, useActiveOrganization } =
-  authClient;
+export const { useSession, signIn, signUp, signOut } = authClient;
 
 /**
  * Helper functions for authentication
@@ -22,7 +21,7 @@ export const { useSession, signIn, signUp, signOut, useActiveOrganization } =
 export async function signUpWithEmail(
   email: string,
   password: string,
-  name?: string
+  name: string = ""
 ) {
   try {
     const result = await authClient.signUp.email({
@@ -116,7 +115,7 @@ export async function resetPassword(token: string, newPassword: string) {
 export async function verifyEmail(token: string) {
   try {
     await authClient.verifyEmail({
-      token,
+      query: { token },
     });
     return { success: true };
   } catch (error) {

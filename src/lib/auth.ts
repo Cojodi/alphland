@@ -3,26 +3,23 @@
  * Supports: Email/Password login and Google OAuth
  */
 import { betterAuth } from "better-auth";
-import { D1Dialect } from "better-auth/adapters/d1";
 
 // Note: This configuration will be used in Cloudflare Workers environment
 // D1 binding will be available via env.DB
 
 export const auth = betterAuth({
-  // Database configuration for Cloudflare D1
+  // Database configuration
+  // Database will be configured at runtime with D1 binding
   database: {
-    dialect: new D1Dialect({
-      // D1 binding will be injected from Cloudflare Workers context
-      // This is just type definition, actual binding happens at runtime
-    }),
-    type: "sqlite", // D1 uses SQLite
+    provider: "sqlite",
+    url: process.env.DATABASE_URL || "file:./dev.db",
   },
 
   // Email/Password authentication
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true, // Users must verify email before login
-    sendResetPassword: async ({ user, url }) => {
+    sendResetPassword: async ({ user, url }: { user: any; url: string }) => {
       // TODO: Implement email sending (e.g., via Resend, SendGrid, etc.)
       console.log(`Password reset URL for ${user.email}: ${url}`);
       // Example with Resend:
@@ -33,7 +30,13 @@ export const auth = betterAuth({
       //   html: `Click here to reset: ${url}`
       // });
     },
-    sendVerificationEmail: async ({ user, url }) => {
+    sendVerificationEmail: async ({
+      user,
+      url,
+    }: {
+      user: any;
+      url: string;
+    }) => {
       // TODO: Implement email verification sending
       console.log(`Verification URL for ${user.email}: ${url}`);
       // Example with Resend:
@@ -82,11 +85,11 @@ export const auth = betterAuth({
 
   // Callback URLs after successful authentication
   callbacks: {
-    async onSignIn(user) {
+    async onSignIn(user: any) {
       console.log("User signed in:", user.email);
       // You can add custom logic here, e.g., create user_profile
     },
-    async onSignUp(user) {
+    async onSignUp(user: any) {
       console.log("New user signed up:", user.email);
       // TODO: Create user_profile entry in database
       // This is where you'd insert into user_profiles table
@@ -98,4 +101,3 @@ export const auth = betterAuth({
  * Type definitions for Better Auth
  */
 export type AuthSession = typeof auth.$Infer.Session;
-export type AuthUser = typeof auth.$Infer.User;

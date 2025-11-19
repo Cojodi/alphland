@@ -2,6 +2,7 @@
 
 import Layout from "@/components/Layout";
 import { X } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 
 interface FormData {
@@ -137,9 +138,11 @@ export default function EditProfile() {
                   </label>
                   <div className="flex items-center gap-4">
                     <div className="w-20 h-20 rounded-full bg-smoked-white dark:bg-light-black flex items-center justify-center overflow-hidden flex-shrink-0">
-                      <img
+                      <Image
                         src="/user-avatar.jpg"
                         alt="Profile"
+                        width={80}
+                        height={80}
                         className="w-full h-full object-cover"
                       />
                     </div>

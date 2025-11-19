@@ -2,6 +2,7 @@
 
 import Layout from "@/components/Layout";
 import { Upload, X, Check } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState, useCallback } from "react";
 
@@ -286,9 +287,11 @@ export default function CreateSponsorProfile() {
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {photoFiles.map((photo, index) => (
                           <div key={index} className="relative group">
-                            <img
+                            <Image
                               src={photo.preview}
                               alt={`Preview ${index + 1}`}
+                              width={200}
+                              height={112}
                               className="w-full h-28 object-cover rounded-lg border border-border-grey dark:border-dark-charcoal shadow-sm"
                             />
                             <button
