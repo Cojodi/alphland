@@ -45,9 +45,34 @@ interface MobileMenuProps {
 const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
   const navbarItems = [
     {
-      name: "Home",
+      name: "Explore dApps",
       href: "/",
       icon: currentTheme === "dark" ? homeDark : home,
+    },
+    {
+      name: "Bounties",
+      href: "/bounties",
+      icon: null,
+    },
+    {
+      name: "Resources",
+      href: "/resources",
+      icon: null,
+    },
+    {
+      name: "Forum",
+      href: "/forum",
+      icon: null,
+    },
+    {
+      name: "Agenda",
+      href: "/agenda",
+      icon: null,
+    },
+    {
+      name: "Ecosystem Map",
+      href: "/ecosystem-map",
+      icon: null,
     },
   ];
 
@@ -135,17 +160,19 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
             <li key={item.name}>
               <Link href={item.href}>
                 <a
-                  className="flex items-center py-3 px-6 bg-white dark:bg-light-black uppercase font-medium font-base"
+                  className="flex items-center py-3 px-6 bg-white dark:bg-light-black font-medium font-base"
                   onClick={() => {
-                    setFilters([]);
-                    setSort(null);
-                    setRatings([]);
-                    changeCategory("all");
+                    if (item.href === "/") {
+                      setFilters([]);
+                      setSort(null);
+                      setRatings([]);
+                      changeCategory("all");
+                    }
                     setIsMobileMenuOpen(false);
                   }}
                 >
-                  <Image src={item.icon} alt={item.name} />
-                  <p>{item.name}</p>
+                  {item.icon && <Image src={item.icon} alt={item.name} />}
+                  <p className={item.icon ? "" : "ml-0"}>{item.name}</p>
                 </a>
               </Link>
             </li>

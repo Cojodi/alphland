@@ -1,9 +1,6 @@
 import moon from "../../../assets/icons/moon.svg";
 import sun from "../../../assets/icons/sun.svg";
-import logoLightLottie from "../../../assets/logo-alphland-light.svg";
-import logoDarkLottie from "../../../assets/logo-alphland.svg";
 import { useCategoryStore } from "../../../hooks/useCategoryStore";
-import { AnnouncementBar } from "../../AnnouncementBar";
 import Button from "../../Button/Button";
 import ConnectWallet from "../../Button/ConnectWallet";
 import Image from "next/image";
@@ -21,26 +18,7 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
   const setRatings = useCategoryStore((state) => state.setRatings);
   return (
     <div className="hidden lg:block bg-white dark:bg-light-black">
-      <AnnouncementBar>The best Projects on Alephium.</AnnouncementBar>
       <div className="relative w-full flex justify-between items-center pr-6 border-t border-b border-border-grey dark:border-white/10">
-        <div className="absolute w-full h-full flex justify-center items-center">
-          <Link href="/">
-            <div
-              onClick={() => {
-                setFilters([]);
-                setSort(null);
-                setRatings([]);
-                changeCategory("all");
-              }}
-            >
-              <Image
-                src={currentTheme === "dark" ? logoLightLottie : logoDarkLottie}
-                width={200}
-                alt={"Alphland logo"}
-              />
-            </div>
-          </Link>
-        </div>
         <div className="flex z-[2]">
           <button
             type="button"
@@ -55,7 +33,7 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
           </button>
           <Link href="/">
             <a
-              className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10"
+              className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10 hover:bg-smoked-white dark:hover:bg-white/5 transition-colors"
               onClick={() => {
                 setFilters([]);
                 setSort(null);
@@ -63,7 +41,32 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
                 changeCategory("all");
               }}
             >
-              HOME
+              Explore dApps
+            </a>
+          </Link>
+          <Link href="/bounties">
+            <a className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10 hover:bg-smoked-white dark:hover:bg-white/5 transition-colors">
+              Bounties
+            </a>
+          </Link>
+          <Link href="/resources">
+            <a className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10 hover:bg-smoked-white dark:hover:bg-white/5 transition-colors">
+              Resources
+            </a>
+          </Link>
+          <Link href="/forum">
+            <a className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10 hover:bg-smoked-white dark:hover:bg-white/5 transition-colors">
+              Forum
+            </a>
+          </Link>
+          <Link href="/agenda">
+            <a className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10 hover:bg-smoked-white dark:hover:bg-white/5 transition-colors">
+              Agenda
+            </a>
+          </Link>
+          <Link href="/ecosystem-map">
+            <a className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10 hover:bg-smoked-white dark:hover:bg-white/5 transition-colors">
+              Ecosystem Map
             </a>
           </Link>
         </div>
