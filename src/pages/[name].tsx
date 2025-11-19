@@ -379,9 +379,9 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
               </div>
 
               {/* Rating */}
-              <div>
+              {/* <div>
                 <DappPageRating dappKey={name} />
-              </div>
+              </div> */}
             </aside>
           </div>
         </main>
