@@ -4,8 +4,10 @@ import logoLight from "../../../assets/logo-alphland-light.svg";
 import logo from "../../../assets/logo-alphland.svg";
 import { useCategoryStore } from "../../../hooks/useCategoryStore";
 // import ConnectWallet from "../../Button/ConnectWallet";
+import AuthButton from "../../Button/AuthButton";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
@@ -40,9 +42,15 @@ interface MobileMenuProps {
 }
 
 const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
+  const router = useRouter();
   const [isNavbarScrolled, setIsNavbarScrolled] = useState(false);
 
   const nav = useRef<HTMLDivElement>(null);
+
+  // Check if current page is bounty, sponsor, or user profile related
+  const isBountyPage =
+    router.pathname.startsWith("/bounty") ||
+    router.pathname.startsWith("/auth");
 
   const handleScroll = () => {
     const position = window.pageYOffset;
@@ -109,6 +117,11 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
             )}
           </button>
           {/* <ConnectWallet /> */}
+          {isBountyPage && (
+            <div className="scale-75">
+              <AuthButton />
+            </div>
+          )}
         </div>
       </div>
     </MenuContainer>

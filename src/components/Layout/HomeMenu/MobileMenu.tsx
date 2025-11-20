@@ -5,10 +5,12 @@ import sun from "../../../assets/icons/sun.svg";
 import logoLight from "../../../assets/logo-alphland-light.svg";
 import logo from "../../../assets/logo-alphland.svg";
 import { useCategoryStore } from "../../../hooks/useCategoryStore";
-import Button from "../../Button/Button";
 // import ConnectWallet from "../../Button/ConnectWallet";
+import AuthButton from "../../Button/AuthButton";
+import Button from "../../Button/Button";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
@@ -48,6 +50,7 @@ type NavbarItem = {
 };
 
 const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
+  const router = useRouter();
   const navbarItems: NavbarItem[] = [
     {
       name: "Explore dApps",
@@ -85,6 +88,11 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
   const changeCategory = useCategoryStore((state) => state.changeCategory);
   const setSort = useCategoryStore((state) => state.setSelectedSort);
   const setRatings = useCategoryStore((state) => state.setRatings);
+
+  // Check if current page is bounty, sponsor, or user profile related
+  const isBountyPage =
+    router.pathname.startsWith("/bounty") ||
+    router.pathname.startsWith("/auth");
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isNavbarScrolled, setIsNavbarScrolled] = useState(false);
@@ -200,14 +208,18 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
             </li>
           </ul>
           <div className="mx-7">
-            <Button
-              variant="primary"
-              className="w-full"
-              withoutMobile
-              href="/admin"
-            >
-              Add your Dapp
-            </Button>
+            {isBountyPage ? (
+              <AuthButton />
+            ) : (
+              <Button
+                variant="primary"
+                className="w-full"
+                withoutMobile
+                href="/admin"
+              >
+                Add your Dapp
+              </Button>
+            )}
           </div>
           {/* <div className="mx-7 mt-4">
             <ConnectWallet />

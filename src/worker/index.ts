@@ -2,6 +2,7 @@
  * Cloudflare Worker for Alphland API
  * This worker handles API requests and connects to D1 database
  */
+import { createAuth } from "./auth";
 import {
   handleSubmissionsAPI,
   handleCommentsAPI,
@@ -18,6 +19,9 @@ export interface Env {
   BETTER_AUTH_SECRET: string;
   BETTER_AUTH_URL: string;
 }
+
+// Cache auth instance per request
+let authInstance: any = null;
 
 export default {
   async fetch(request: Request, env: Env, _ctx: any): Promise<Response> {
@@ -37,6 +41,21 @@ export default {
 
     // Route handling
     try {
+      // Initialize auth if handling auth routes
+      if (url.pathname.startsWith("/api/auth/")) {
+        if (!authInstance) {
+          authInstance = createAuth(env.DB, {
+            GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
+            GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
+            BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
+            BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+          });
+        }
+
+        // Handle auth endpoints using better-auth
+        return await authInstance.api.handler(request);
+      }
+
       // Health check endpoint
       if (url.pathname === "/health") {
         return new Response(

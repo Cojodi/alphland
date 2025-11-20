@@ -1,18 +1,27 @@
 /**
  * Better Auth API routes handler
- * Handles all authentication endpoints:
- * - POST /api/auth/sign-up/email
- * - POST /api/auth/sign-in/email
- * - GET  /api/auth/sign-in/google
- * - GET  /api/auth/callback/google
- * - POST /api/auth/sign-out
- * - GET  /api/auth/session
- * - POST /api/auth/forget-password
- * - POST /api/auth/reset-password
- * - GET  /api/auth/verify-email
+ * Handles all authentication endpoints via better-auth
  */
 import { auth } from "@/lib/auth";
-import { toNextJsHandler } from "better-auth/next-js";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default toNextJsHandler(auth);
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  try {
+    // Pass the request to better-auth's API handler
+    const response = await auth.api.handler(req, res);
+    return response;
+  } catch (error) {
+    console.error("Better Auth API error:", error);
+
+    // Return a proper error response
+    if (!res.headersSent) {
+      return res.status(500).json({
+        error: "Authentication service error",
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  }
+}

@@ -3,10 +3,12 @@ import sun from "../../../assets/icons/sun.svg";
 import logoLight from "../../../assets/logo-alphland-light.svg";
 import logoDark from "../../../assets/logo-alphland.svg";
 import { useCategoryStore } from "../../../hooks/useCategoryStore";
-import Button from "../../Button/Button";
 // import ConnectWallet from "../../Button/ConnectWallet";
+import AuthButton from "../../Button/AuthButton";
+import Button from "../../Button/Button";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 
 interface DesktopMenuProps {
@@ -15,10 +17,16 @@ interface DesktopMenuProps {
 }
 
 const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
+  const router = useRouter();
   const setFilters = useCategoryStore((state) => state.setFilters);
   const changeCategory = useCategoryStore((state) => state.changeCategory);
   const setSort = useCategoryStore((state) => state.setSelectedSort);
   const setRatings = useCategoryStore((state) => state.setRatings);
+
+  // Check if current page is bounty, sponsor, or user profile related
+  const isBountyPage =
+    router.pathname.startsWith("/bounty") ||
+    router.pathname.startsWith("/auth");
 
   return (
     <div className="hidden lg:block bg-white dark:bg-hero-dark ">
@@ -76,16 +84,20 @@ const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
         </div>
         <div className="flex gap-2.5 z-[2]">
           {/* <ConnectWallet /> */}
-          <Button
-            variant="primary"
-            className="h-min"
-            style={{ padding: "13px 24px", lineHeight: "normal" }}
-            href="https://github.com/cojodi/Alphland#-add-your-dapp-to-Alphland"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Add your Dapp
-          </Button>
+          {isBountyPage ? (
+            <AuthButton />
+          ) : (
+            <Button
+              variant="primary"
+              className="h-min"
+              style={{ padding: "13px 24px", lineHeight: "normal" }}
+              href="https://github.com/cojodi/Alphland#-add-your-dapp-to-Alphland"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Add your Dapp
+            </Button>
+          )}
         </div>
       </div>
       <div className="relative flex flex-col justify-center items-center pb-[86px]">
