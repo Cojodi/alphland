@@ -8,6 +8,9 @@ import {
   handleSponsorsAPI,
 } from "./handlers";
 
+// Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
+type D1Database = any;
+
 export interface Env {
   DB: D1Database;
   GOOGLE_CLIENT_ID: string;

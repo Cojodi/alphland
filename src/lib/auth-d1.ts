@@ -4,6 +4,9 @@
  */
 import { betterAuth } from "better-auth";
 
+// Import D1Database type from Cloudflare Workers types
+type D1Database = any; // Fallback for when @cloudflare/workers-types is not available
+
 /**
  * Create auth instance with D1 database binding
  * This should be called in your Cloudflare Worker with the D1 binding

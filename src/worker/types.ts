@@ -2,6 +2,9 @@
  * Type definitions for Cloudflare Worker environment
  */
 
+// Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
+type D1Database = any;
+
 export interface Env {
   // D1 Database binding
   DB: D1Database;

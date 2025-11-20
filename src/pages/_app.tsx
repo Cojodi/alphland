@@ -13,11 +13,13 @@ function MyApp({ Component, pageProps }: AppProps) {
     const handleError = (event: ErrorEvent) => {
       if (
         event.message.includes("Cannot redefine property: ethereum") ||
-        event.message.includes("defineProperty")
+        event.message.includes("defineProperty") ||
+        event.message.includes("The mark 'beforeRender' does not exist")
       ) {
         event.preventDefault();
         console.warn(
-          "Suppressed ethereum property redefinition error from browser extension. This app uses Alephium, not Ethereum."
+          "Suppressed error from browser extension or performance monitoring:",
+          event.message
         );
         return true;
       }
@@ -25,6 +27,28 @@ function MyApp({ Component, pageProps }: AppProps) {
 
     window.addEventListener("error", handleError);
     return () => window.removeEventListener("error", handleError);
+  }, []);
+
+  // Fix for Next.js performance mark error
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.performance) {
+      const originalMeasure = window.performance.measure.bind(
+        window.performance
+      );
+      window.performance.measure = function (
+        measureName: string,
+        startOrMeasureOptions?: string | PerformanceMeasureOptions,
+        endMark?: string
+      ): PerformanceMeasure {
+        try {
+          return originalMeasure(measureName, startOrMeasureOptions, endMark);
+        } catch (error) {
+          // Silently ignore performance mark errors
+          console.debug("Performance measure error suppressed:", error);
+          return {} as PerformanceMeasure;
+        }
+      };
+    }
   }, []);
 
   // Initialize Netlify Identity for CMS authentication
