@@ -4,7 +4,7 @@ import logoLight from "../../../assets/logo-alphland-light.svg";
 import logoDark from "../../../assets/logo-alphland.svg";
 import { useCategoryStore } from "../../../hooks/useCategoryStore";
 import Button from "../../Button/Button";
-import ConnectWallet from "../../Button/ConnectWallet";
+// import ConnectWallet from "../../Button/ConnectWallet";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -75,7 +75,7 @@ const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
           </Link>
         </div>
         <div className="flex gap-2.5 z-[2]">
-          <ConnectWallet />
+          {/* <ConnectWallet /> */}
           <Button
             variant="primary"
             className="h-min"

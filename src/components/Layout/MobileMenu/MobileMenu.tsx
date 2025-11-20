@@ -3,7 +3,7 @@ import sun from "../../../assets/icons/sun.svg";
 import logoLight from "../../../assets/logo-alphland-light.svg";
 import logo from "../../../assets/logo-alphland.svg";
 import { useCategoryStore } from "../../../hooks/useCategoryStore";
-import ConnectWallet from "../../Button/ConnectWallet";
+// import ConnectWallet from "../../Button/ConnectWallet";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
@@ -108,7 +108,7 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
               <Image src={moon} alt="moon icon" />
             )}
           </button>
-          <ConnectWallet />
+          {/* <ConnectWallet /> */}
         </div>
       </div>
     </MenuContainer>

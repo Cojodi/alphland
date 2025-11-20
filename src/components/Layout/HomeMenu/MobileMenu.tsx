@@ -6,7 +6,7 @@ import logoLight from "../../../assets/logo-alphland-light.svg";
 import logo from "../../../assets/logo-alphland.svg";
 import { useCategoryStore } from "../../../hooks/useCategoryStore";
 import Button from "../../Button/Button";
-import ConnectWallet from "../../Button/ConnectWallet";
+// import ConnectWallet from "../../Button/ConnectWallet";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
@@ -209,9 +209,9 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
               Add your Dapp
             </Button>
           </div>
-          <div className="mx-7 mt-4">
+          {/* <div className="mx-7 mt-4">
             <ConnectWallet />
-          </div>
+          </div> */}
         </div>
       </MenuContainer>
       <div

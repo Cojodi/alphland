@@ -4,7 +4,7 @@ import logoLight from "../../../assets/logo-alphland-light.svg";
 import logo from "../../../assets/logo-alphland.svg";
 import { useCategoryStore } from "../../../hooks/useCategoryStore";
 import Button from "../../Button/Button";
-import ConnectWallet from "../../Button/ConnectWallet";
+// import ConnectWallet from "../../Button/ConnectWallet";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -54,7 +54,7 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
               <Image src={moon} alt="moon icon" />
             )}
           </button>
-          <ConnectWallet />
+          {/* <ConnectWallet /> */}
           <Button
             variant="primary"
             className="h-min"
