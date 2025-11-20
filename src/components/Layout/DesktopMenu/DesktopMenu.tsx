@@ -1,5 +1,7 @@
 import moon from "../../../assets/icons/moon.svg";
 import sun from "../../../assets/icons/sun.svg";
+import logoLight from "../../../assets/logo-alphland-light.svg";
+import logo from "../../../assets/logo-alphland.svg";
 import { useCategoryStore } from "../../../hooks/useCategoryStore";
 import Button from "../../Button/Button";
 import ConnectWallet from "../../Button/ConnectWallet";
@@ -18,11 +20,32 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
   const setRatings = useCategoryStore((state) => state.setRatings);
   return (
     <div className="hidden lg:block bg-white dark:bg-light-black">
-      <div className="relative w-full flex justify-between items-center pr-6 border-t border-b border-border-grey dark:border-white/10">
-        <div className="flex z-[2]">
+      <div className="relative w-full flex justify-between items-center px-6 py-4 border-t border-b border-border-grey dark:border-white/10">
+        <div className="flex items-center gap-6 z-[2]">
+          <Link href="/">
+            <a
+              className="flex items-center hover:opacity-80 transition-opacity"
+              onClick={() => {
+                setFilters([]);
+                setSort(null);
+                setRatings([]);
+                changeCategory("all");
+              }}
+            >
+              <Image
+                src={currentTheme === "dark" ? logoLight : logo}
+                alt="Alphland logo"
+                width={133}
+                height={40}
+                style={{ height: "auto" }}
+              />
+            </a>
+          </Link>
+        </div>
+        <div className="flex gap-3.5 z-[2] items-center">
           <button
             type="button"
-            className="p-6 flex justify-center items-center border-r border-border-grey dark:border-white/10"
+            className="p-2 flex justify-center items-center hover:bg-smoked-white dark:hover:bg-white/5 transition-colors rounded"
             onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
           >
             {currentTheme === "dark" ? (
@@ -31,46 +54,6 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
               <Image src={moon} alt="moon icon" />
             )}
           </button>
-          <Link href="/">
-            <a
-              className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10 hover:bg-smoked-white dark:hover:bg-white/5 transition-colors"
-              onClick={() => {
-                setFilters([]);
-                setSort(null);
-                setRatings([]);
-                changeCategory("all");
-              }}
-            >
-              Explore dApps
-            </a>
-          </Link>
-          <Link href="/bounties">
-            <a className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10 hover:bg-smoked-white dark:hover:bg-white/5 transition-colors">
-              Bounties
-            </a>
-          </Link>
-          <Link href="/resources">
-            <a className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10 hover:bg-smoked-white dark:hover:bg-white/5 transition-colors">
-              Resources
-            </a>
-          </Link>
-          <Link href="/forum">
-            <a className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10 hover:bg-smoked-white dark:hover:bg-white/5 transition-colors">
-              Forum
-            </a>
-          </Link>
-          <Link href="/agenda">
-            <a className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10 hover:bg-smoked-white dark:hover:bg-white/5 transition-colors">
-              Agenda
-            </a>
-          </Link>
-          <Link href="/ecosystem-map">
-            <a className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10 hover:bg-smoked-white dark:hover:bg-white/5 transition-colors">
-              Ecosystem Map
-            </a>
-          </Link>
-        </div>
-        <div className="flex gap-3.5 z-[2]">
           <ConnectWallet />
           <Button
             variant="primary"
