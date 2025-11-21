@@ -1,7 +1,8 @@
 import Button from "./Button";
 import { useSession, signOutUser } from "@/lib/auth-client";
+import Image from "next/image";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 /**
  * AuthButton - Handles login/logout display in the header
@@ -13,6 +14,23 @@ import React from "react";
 const AuthButton = () => {
   const router = useRouter();
   const { data: session, isPending } = useSession();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleAuth = () => {
     if (session?.user) {
@@ -26,11 +44,17 @@ const AuthButton = () => {
 
   const handleLogout = async () => {
     try {
+      setIsDropdownOpen(false);
       await signOutUser();
       // signOutUser already handles redirect to home
     } catch (error) {
       console.error("Failed to logout:", error);
     }
+  };
+
+  const handleProfileClick = () => {
+    setIsDropdownOpen(false);
+    router.push("/bounty/profile/edit");
   };
 
   if (isPending) {
@@ -48,18 +72,54 @@ const AuthButton = () => {
 
   if (session?.user) {
     return (
-      <div className="flex gap-2 items-center">
-        <span className="text-sm text-black dark:text-white hidden lg:inline">
-          {session.user.name || session.user.email}
-        </span>
-        <Button
-          variant="secondary"
-          className="h-min"
-          style={{ padding: "13px 24px", lineHeight: "normal" }}
-          onClick={handleLogout}
+      <div className="relative" ref={dropdownRef}>
+        <button
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          className="flex items-center gap-2 p-1 rounded-full hover:bg-smoked-white dark:hover:bg-white/5 transition-colors"
         >
-          Logout
-        </Button>
+          {session.user.image ? (
+            <Image
+              src={session.user.image}
+              alt={session.user.name || "Profile"}
+              width={40}
+              height={40}
+              className="rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-orange flex items-center justify-center text-white font-semibold">
+              {(session.user.name || session.user.email || "U")
+                .charAt(0)
+                .toUpperCase()}
+            </div>
+          )}
+        </button>
+
+        {isDropdownOpen && (
+          <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal rounded-lg shadow-lg z-50">
+            <div className="p-3 border-b border-border-grey dark:border-dark-charcoal">
+              <p className="text-sm font-semibold text-black dark:text-white truncate">
+                {session.user.name || "User"}
+              </p>
+              <p className="text-xs text-light-charcoal dark:text-lightgrey truncate">
+                {session.user.email}
+              </p>
+            </div>
+            <div className="py-1">
+              <button
+                onClick={handleProfileClick}
+                className="w-full text-left px-4 py-2 text-sm text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
+              >
+                Edit Profile
+              </button>
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

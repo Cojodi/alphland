@@ -1,71 +1,353 @@
 "use client";
 
 import Layout from "@/components/Layout";
-import { X } from "lucide-react";
+import Modal from "@/components/Modal/Modal";
+import { useSession } from "@/lib/auth-client";
+import { X, Plus, Upload } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+
+// Country list for location dropdown
+const COUNTRIES = [
+  "Afghanistan",
+  "Albania",
+  "Algeria",
+  "Andorra",
+  "Angola",
+  "Argentina",
+  "Armenia",
+  "Australia",
+  "Austria",
+  "Azerbaijan",
+  "Bahamas",
+  "Bahrain",
+  "Bangladesh",
+  "Barbados",
+  "Belarus",
+  "Belgium",
+  "Belize",
+  "Benin",
+  "Bhutan",
+  "Bolivia",
+  "Bosnia and Herzegovina",
+  "Botswana",
+  "Brazil",
+  "Brunei",
+  "Bulgaria",
+  "Burkina Faso",
+  "Burundi",
+  "Cambodia",
+  "Cameroon",
+  "Canada",
+  "Cape Verde",
+  "Central African Republic",
+  "Chad",
+  "Chile",
+  "China",
+  "Colombia",
+  "Comoros",
+  "Congo",
+  "Costa Rica",
+  "Croatia",
+  "Cuba",
+  "Cyprus",
+  "Czech Republic",
+  "Denmark",
+  "Djibouti",
+  "Dominica",
+  "Dominican Republic",
+  "Ecuador",
+  "Egypt",
+  "El Salvador",
+  "Equatorial Guinea",
+  "Eritrea",
+  "Estonia",
+  "Ethiopia",
+  "Fiji",
+  "Finland",
+  "France",
+  "Gabon",
+  "Gambia",
+  "Georgia",
+  "Germany",
+  "Ghana",
+  "Greece",
+  "Grenada",
+  "Guatemala",
+  "Guinea",
+  "Guinea-Bissau",
+  "Guyana",
+  "Haiti",
+  "Honduras",
+  "Hungary",
+  "Iceland",
+  "India",
+  "Indonesia",
+  "Iran",
+  "Iraq",
+  "Ireland",
+  "Israel",
+  "Italy",
+  "Jamaica",
+  "Japan",
+  "Jordan",
+  "Kazakhstan",
+  "Kenya",
+  "Kiribati",
+  "North Korea",
+  "South Korea",
+  "Kuwait",
+  "Kyrgyzstan",
+  "Laos",
+  "Latvia",
+  "Lebanon",
+  "Lesotho",
+  "Liberia",
+  "Libya",
+  "Liechtenstein",
+  "Lithuania",
+  "Luxembourg",
+  "Madagascar",
+  "Malawi",
+  "Malaysia",
+  "Maldives",
+  "Mali",
+  "Malta",
+  "Marshall Islands",
+  "Mauritania",
+  "Mauritius",
+  "Mexico",
+  "Micronesia",
+  "Moldova",
+  "Monaco",
+  "Mongolia",
+  "Montenegro",
+  "Morocco",
+  "Mozambique",
+  "Myanmar",
+  "Namibia",
+  "Nauru",
+  "Nepal",
+  "Netherlands",
+  "New Zealand",
+  "Nicaragua",
+  "Niger",
+  "Nigeria",
+  "Norway",
+  "Oman",
+  "Pakistan",
+  "Palau",
+  "Panama",
+  "Papua New Guinea",
+  "Paraguay",
+  "Peru",
+  "Philippines",
+  "Poland",
+  "Portugal",
+  "Qatar",
+  "Romania",
+  "Russia",
+  "Rwanda",
+  "Saint Kitts and Nevis",
+  "Saint Lucia",
+  "Saint Vincent and the Grenadines",
+  "Samoa",
+  "San Marino",
+  "Sao Tome and Principe",
+  "Saudi Arabia",
+  "Senegal",
+  "Serbia",
+  "Seychelles",
+  "Sierra Leone",
+  "Singapore",
+  "Slovakia",
+  "Slovenia",
+  "Solomon Islands",
+  "Somalia",
+  "South Africa",
+  "South Sudan",
+  "Spain",
+  "Sri Lanka",
+  "Sudan",
+  "Suriname",
+  "Sweden",
+  "Switzerland",
+  "Syria",
+  "Taiwan",
+  "Tajikistan",
+  "Tanzania",
+  "Thailand",
+  "Timor-Leste",
+  "Togo",
+  "Tonga",
+  "Trinidad and Tobago",
+  "Tunisia",
+  "Turkey",
+  "Turkmenistan",
+  "Tuvalu",
+  "Uganda",
+  "Ukraine",
+  "United Arab Emirates",
+  "United Kingdom",
+  "United States",
+  "Uruguay",
+  "Uzbekistan",
+  "Vanuatu",
+  "Vatican City",
+  "Venezuela",
+  "Vietnam",
+  "Yemen",
+  "Zambia",
+  "Zimbabwe",
+];
+
+const WEB3_INTERESTS = [
+  "DeFi",
+  "NFTs",
+  "DAOs",
+  "Gaming",
+  "Infrastructure",
+  "Security",
+  "Layer 2",
+  "Privacy",
+  "Social",
+  "Identity",
+  "Metaverse",
+  "AI & Blockchain",
+  "RWA",
+  "Other",
+];
+
+const SKILL_OPTIONS = [
+  "Frontend",
+  "Backend",
+  "Full-stack",
+  "Smart Contracts",
+  "Solidity",
+  "Rust",
+  "Move",
+  "JavaScript",
+  "TypeScript",
+  "Python",
+  "Go",
+  "C++",
+  "React",
+  "Vue",
+  "Angular",
+  "Node.js",
+  "GraphQL",
+  "MongoDB",
+  "PostgreSQL",
+  "Redis",
+  "AWS",
+  "Docker",
+  "Kubernetes",
+  "UI/UX Design",
+  "Product Management",
+  "Marketing",
+  "Community Management",
+  "Technical Writing",
+  "Security Auditing",
+  "Data Analysis",
+  "Machine Learning",
+  "DevOps",
+  "Blockchain",
+];
+
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  skills: string[];
+  subSkills: string[];
+  link: string;
+}
 
 interface FormData {
   profilePicture: File | null;
+  profilePicturePreview: string | null;
   username: string;
   firstName: string;
   lastName: string;
   bio: string;
+  alphWalletAddress: string;
   socials: {
-    youtube: string;
+    discord: string;
     twitter: string;
     github: string;
     linkedin: string;
     telegram: string;
     website: string;
   };
-  web3Interests: string;
-  communities: string[];
-  workExperience: string;
+  web3Interests: string[];
   location: string;
   web3Familiarity: string;
   workPreference: string;
   currentEmployer: string;
+  projects: Project[];
   skills: string[];
   keepPrivate: boolean;
 }
 
 export default function EditProfile() {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  const [newSkillInput, setNewSkillInput] = useState("");
+  const [locationSearch, setLocationSearch] = useState("");
+  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [newProject, setNewProject] = useState<Omit<Project, "id">>({
+    title: "",
+    description: "",
+    skills: [],
+    subSkills: [],
+    link: "",
+  });
+  const [projectSkillInput, setProjectSkillInput] = useState("");
+  const [projectSubSkillInput, setProjectSubSkillInput] = useState("");
+
   const [formData, setFormData] = useState<FormData>({
     profilePicture: null,
-    username: "yy",
-    firstName: "Yuanying",
-    lastName: "Li",
-    bio: "A full-stack dev who loves hackathons.",
+    profilePicturePreview: null,
+    username: "",
+    firstName: "",
+    lastName: "",
+    bio: "",
+    alphWalletAddress: "",
     socials: {
-      youtube: "yardize_yankee",
-      twitter: "x.com/",
-      github: "github.com/",
-      linkedin: "linkedin.com/",
-      telegram: "t.me/",
-      website: "https://takashidesign.com",
+      discord: "",
+      twitter: "",
+      github: "",
+      linkedin: "",
+      telegram: "",
+      website: "",
     },
-    web3Interests: "",
-    communities: ["Superhuman Germany"],
-    workExperience: "2 to 5 Years",
-    location: "Germany",
-    web3Familiarity: "Contributing regularly",
-    workPreference: "Freelance",
-    currentEmployer: "J_Navi",
-    skills: [
-      "Frontend",
-      "React",
-      "Backend",
-      "Javascript",
-      "Python",
-      "C++",
-      "Solidity",
-      "Rust",
-      "MongoDB",
-      "Blockchain",
-    ],
-    keepPrivate: true,
+    web3Interests: [],
+    location: "",
+    web3Familiarity: "",
+    workPreference: "",
+    currentEmployer: "",
+    projects: [],
+    skills: [],
+    keepPrivate: false,
   });
+
+  // Initialize form data from session if available
+  useEffect(() => {
+    if (session?.user) {
+      const nameParts = (session.user.name || "").split(" ");
+      setFormData((prev) => ({
+        ...prev,
+        firstName: nameParts[0] || "",
+        lastName: nameParts.slice(1).join(" ") || "",
+        profilePicturePreview: session.user.image || null,
+      }));
+    }
+  }, [session]);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -92,6 +374,55 @@ export default function EditProfile() {
     }));
   };
 
+  const handleProfilePictureClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleProfilePictureChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size must be less than 5MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setFormData((prev) => ({
+          ...prev,
+          profilePicture: file,
+          profilePicturePreview: event.target?.result as string,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size must be less than 5MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setFormData((prev) => ({
+          ...prev,
+          profilePicture: file,
+          profilePicturePreview: event.target?.result as string,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
   const removeSkill = (skill: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -99,11 +430,170 @@ export default function EditProfile() {
     }));
   };
 
-  const removeCommunity = (community: string) => {
+  const addSkill = (skill: string) => {
+    const trimmedSkill = skill.trim();
+    if (trimmedSkill && !formData.skills.includes(trimmedSkill)) {
+      setFormData((prev) => ({
+        ...prev,
+        skills: [...prev.skills, trimmedSkill],
+      }));
+    }
+    setNewSkillInput("");
+  };
+
+  const handleSkillKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addSkill(newSkillInput);
+    }
+  };
+
+  const toggleWeb3Interest = (interest: string) => {
     setFormData((prev) => ({
       ...prev,
-      communities: prev.communities.filter((c) => c !== community),
+      web3Interests: prev.web3Interests.includes(interest)
+        ? prev.web3Interests.filter((i) => i !== interest)
+        : [...prev.web3Interests, interest],
     }));
+  };
+
+  const handleLocationSelect = (country: string) => {
+    setFormData((prev) => ({ ...prev, location: country }));
+    setLocationSearch(country);
+    setShowLocationDropdown(false);
+  };
+
+  const filteredCountries = COUNTRIES.filter((country) =>
+    country.toLowerCase().includes(locationSearch.toLowerCase())
+  );
+
+  // Project modal functions
+  const openProjectModal = () => {
+    setNewProject({
+      title: "",
+      description: "",
+      skills: [],
+      subSkills: [],
+      link: "",
+    });
+    setProjectSkillInput("");
+    setProjectSubSkillInput("");
+    setIsProjectModalOpen(true);
+  };
+
+  const addProjectSkill = (skill: string) => {
+    const trimmedSkill = skill.trim();
+    if (trimmedSkill && !newProject.skills.includes(trimmedSkill)) {
+      setNewProject((prev) => ({
+        ...prev,
+        skills: [...prev.skills, trimmedSkill],
+      }));
+    }
+    setProjectSkillInput("");
+  };
+
+  const removeProjectSkill = (skill: string) => {
+    setNewProject((prev) => ({
+      ...prev,
+      skills: prev.skills.filter((s) => s !== skill),
+    }));
+  };
+
+  const addProjectSubSkill = (skill: string) => {
+    const trimmedSkill = skill.trim();
+    if (trimmedSkill && !newProject.subSkills.includes(trimmedSkill)) {
+      setNewProject((prev) => ({
+        ...prev,
+        subSkills: [...prev.subSkills, trimmedSkill],
+      }));
+    }
+    setProjectSubSkillInput("");
+  };
+
+  const removeProjectSubSkill = (skill: string) => {
+    setNewProject((prev) => ({
+      ...prev,
+      subSkills: prev.subSkills.filter((s) => s !== skill),
+    }));
+  };
+
+  const handleAddProject = () => {
+    if (
+      !newProject.title ||
+      !newProject.description ||
+      !newProject.link ||
+      newProject.skills.length === 0 ||
+      newProject.subSkills.length === 0
+    ) {
+      alert("Please fill in all required fields");
+      return;
+    }
+    const project: Project = {
+      ...newProject,
+      id: Date.now().toString(),
+    };
+    setFormData((prev) => ({
+      ...prev,
+      projects: [...prev.projects, project],
+    }));
+    setIsProjectModalOpen(false);
+  };
+
+  const removeProject = (id: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      projects: prev.projects.filter((p) => p.id !== id),
+    }));
+  };
+
+  const bioCharactersLeft = 150 - formData.bio.length;
+  const projectDescCharactersLeft = 180 - newProject.description.length;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate required fields
+    if (
+      !formData.username ||
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.alphWalletAddress ||
+      !formData.socials.github
+    ) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    if (formData.skills.length === 0) {
+      alert("Please add at least one skill");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // TODO: Save profile data to API
+      // const response = await fetch('/api/profile', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(formData),
+      // });
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Redirect to user profile page
+      router.push(`/bounty/profile/${formData.username}`);
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      alert("Failed to update profile. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    router.back();
   };
 
   return (
@@ -122,7 +612,7 @@ export default function EditProfile() {
             </p>
           </div>
 
-          <form className="space-y-8">
+          <form className="space-y-8" onSubmit={handleSubmit}>
             {/* Personal Information Section */}
             <section className="bg-white dark:bg-hero-dark rounded-lg p-6 sm:p-8 border border-border-grey dark:border-dark-charcoal">
               <h2 className="text-xl font-bold text-black dark:text-white mb-6 flex items-center gap-2">
@@ -138,15 +628,33 @@ export default function EditProfile() {
                   </label>
                   <div className="flex items-center gap-4">
                     <div className="w-20 h-20 rounded-full bg-smoked-white dark:bg-light-black flex items-center justify-center overflow-hidden flex-shrink-0">
-                      <Image
-                        src="/user-avatar.jpg"
-                        alt="Profile"
-                        width={80}
-                        height={80}
-                        className="w-full h-full object-cover"
-                      />
+                      {formData.profilePicturePreview ? (
+                        <Image
+                          src={formData.profilePicturePreview}
+                          alt="Profile"
+                          width={80}
+                          height={80}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                          <Upload className="w-8 h-8 text-gray-400" />
+                        </div>
+                      )}
                     </div>
-                    <div className="flex-1 border-2 border-dashed border-border-grey dark:border-dark-charcoal rounded-lg p-4 text-center cursor-pointer hover:border-orange transition-colors">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleProfilePictureChange}
+                      accept="image/*"
+                      className="hidden"
+                    />
+                    <div
+                      onClick={handleProfilePictureClick}
+                      onDrop={handleDrop}
+                      onDragOver={handleDragOver}
+                      className="flex-1 border-2 border-dashed border-border-grey dark:border-dark-charcoal rounded-lg p-4 text-center cursor-pointer hover:border-orange transition-colors"
+                    >
                       <p className="text-sm font-medium text-black dark:text-white">
                         Choose or drag and drop media
                       </p>
@@ -160,7 +668,7 @@ export default function EditProfile() {
                 {/* Username */}
                 <div>
                   <label className="block text-sm font-semibold text-black dark:text-white mb-2">
-                    Username *
+                    Username <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -168,6 +676,7 @@ export default function EditProfile() {
                     value={formData.username}
                     onChange={handleInputChange}
                     placeholder="Enter your username"
+                    required
                     className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
                   />
                 </div>
@@ -176,7 +685,7 @@ export default function EditProfile() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-black dark:text-white mb-2">
-                      First Name *
+                      First Name <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -184,12 +693,13 @@ export default function EditProfile() {
                       value={formData.firstName}
                       onChange={handleInputChange}
                       placeholder="Enter your first name"
+                      required
                       className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-black dark:text-white mb-2">
-                      Last Name *
+                      Last Name <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -197,6 +707,7 @@ export default function EditProfile() {
                       value={formData.lastName}
                       onChange={handleInputChange}
                       placeholder="Enter your last name"
+                      required
                       className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
                     />
                   </div>
@@ -213,13 +724,352 @@ export default function EditProfile() {
                     onChange={handleInputChange}
                     placeholder="Tell us about yourself"
                     rows={3}
+                    maxLength={150}
                     className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-orange"
                   />
                   <p className="text-xs text-light-charcoal dark:text-lightgrey mt-1">
-                    150 characters left
+                    {bioCharactersLeft} characters left
                   </p>
                 </div>
+
+                {/* Alph Wallet Address */}
+                <div>
+                  <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                    Alph Wallet Address <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="alphWalletAddress"
+                    value={formData.alphWalletAddress}
+                    onChange={handleInputChange}
+                    placeholder="Enter your Alephium wallet address"
+                    required
+                    className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange font-mono text-sm"
+                  />
+                </div>
               </div>
+            </section>
+
+            {/* Socials Section */}
+            <section className="bg-white dark:bg-hero-dark rounded-lg p-6 sm:p-8 border border-border-grey dark:border-dark-charcoal">
+              <h2 className="text-xl font-bold text-black dark:text-white mb-6 flex items-center gap-2">
+                <span className="w-1 h-6 bg-blue-500 rounded-full"></span>
+                Socials
+              </h2>
+
+              <div className="space-y-4">
+                {/* Discord */}
+                <div>
+                  <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                    Discord
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.socials.discord}
+                    onChange={(e) =>
+                      handleSocialChange("discord", e.target.value)
+                    }
+                    placeholder="username#1234"
+                    className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                  />
+                </div>
+
+                {/* Twitter */}
+                <div>
+                  <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                    Twitter
+                  </label>
+                  <div className="flex">
+                    <span className="inline-flex items-center px-3 bg-gray-100 dark:bg-gray-800 border border-r-0 border-border-grey dark:border-dark-charcoal rounded-l-lg text-light-charcoal dark:text-lightgrey text-sm">
+                      x.com/
+                    </span>
+                    <input
+                      type="text"
+                      value={formData.socials.twitter}
+                      onChange={(e) =>
+                        handleSocialChange("twitter", e.target.value)
+                      }
+                      placeholder="username"
+                      className="flex-1 px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                    />
+                  </div>
+                </div>
+
+                {/* GitHub */}
+                <div>
+                  <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                    GitHub <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex">
+                    <span className="inline-flex items-center px-3 bg-gray-100 dark:bg-gray-800 border border-r-0 border-border-grey dark:border-dark-charcoal rounded-l-lg text-light-charcoal dark:text-lightgrey text-sm">
+                      github.com/
+                    </span>
+                    <input
+                      type="text"
+                      value={formData.socials.github}
+                      onChange={(e) =>
+                        handleSocialChange("github", e.target.value)
+                      }
+                      placeholder="username"
+                      required
+                      className="flex-1 px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                    />
+                  </div>
+                </div>
+
+                {/* LinkedIn */}
+                <div>
+                  <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                    LinkedIn
+                  </label>
+                  <div className="flex">
+                    <span className="inline-flex items-center px-3 bg-gray-100 dark:bg-gray-800 border border-r-0 border-border-grey dark:border-dark-charcoal rounded-l-lg text-light-charcoal dark:text-lightgrey text-sm">
+                      linkedin.com/in/
+                    </span>
+                    <input
+                      type="text"
+                      value={formData.socials.linkedin}
+                      onChange={(e) =>
+                        handleSocialChange("linkedin", e.target.value)
+                      }
+                      placeholder="username"
+                      className="flex-1 px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                    />
+                  </div>
+                </div>
+
+                {/* Telegram */}
+                <div>
+                  <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                    Telegram
+                  </label>
+                  <div className="flex">
+                    <span className="inline-flex items-center px-3 bg-gray-100 dark:bg-gray-800 border border-r-0 border-border-grey dark:border-dark-charcoal rounded-l-lg text-light-charcoal dark:text-lightgrey text-sm">
+                      t.me/
+                    </span>
+                    <input
+                      type="text"
+                      value={formData.socials.telegram}
+                      onChange={(e) =>
+                        handleSocialChange("telegram", e.target.value)
+                      }
+                      placeholder="username"
+                      className="flex-1 px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                    />
+                  </div>
+                </div>
+
+                {/* Website */}
+                <div>
+                  <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                    Website
+                  </label>
+                  <div className="flex">
+                    <span className="inline-flex items-center px-3 bg-gray-100 dark:bg-gray-800 border border-r-0 border-border-grey dark:border-dark-charcoal rounded-l-lg text-light-charcoal dark:text-lightgrey text-sm">
+                      https://
+                    </span>
+                    <input
+                      type="text"
+                      value={formData.socials.website}
+                      onChange={(e) =>
+                        handleSocialChange("website", e.target.value)
+                      }
+                      placeholder="yourwebsite.com"
+                      className="flex-1 px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Work Section */}
+            <section className="bg-white dark:bg-hero-dark rounded-lg p-6 sm:p-8 border border-border-grey dark:border-dark-charcoal">
+              <h2 className="text-xl font-bold text-black dark:text-white mb-6 flex items-center gap-2">
+                <span className="w-1 h-6 bg-purple-500 rounded-full"></span>
+                Work
+              </h2>
+
+              <div className="space-y-6">
+                {/* Web3 Interests */}
+                <div>
+                  <label className="block text-sm font-semibold text-black dark:text-white mb-3">
+                    What areas of Web3 are you most interested in?
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {WEB3_INTERESTS.map((interest) => (
+                      <button
+                        key={interest}
+                        type="button"
+                        onClick={() => toggleWeb3Interest(interest)}
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                          formData.web3Interests.includes(interest)
+                            ? "bg-orange text-white"
+                            : "bg-smoked-white dark:bg-light-black text-black dark:text-white border border-border-grey dark:border-dark-charcoal hover:border-orange"
+                        }`}
+                      >
+                        {interest}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Location */}
+                <div className="relative">
+                  <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    value={locationSearch}
+                    onChange={(e) => {
+                      setLocationSearch(e.target.value);
+                      setShowLocationDropdown(true);
+                    }}
+                    onFocus={() => setShowLocationDropdown(true)}
+                    placeholder="Select your country"
+                    className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                  />
+                  {showLocationDropdown && filteredCountries.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal rounded-lg shadow-lg">
+                      {filteredCountries.slice(0, 10).map((country) => (
+                        <button
+                          key={country}
+                          type="button"
+                          onClick={() => handleLocationSelect(country)}
+                          className="w-full px-4 py-2 text-left text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
+                        >
+                          {country}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Web3 Familiarity */}
+                <div>
+                  <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                    How familiar are you with Web3?
+                  </label>
+                  <select
+                    name="web3Familiarity"
+                    value={formData.web3Familiarity}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                  >
+                    <option value="">Select...</option>
+                    <option value="new_to_crypto">New to crypto</option>
+                    <option value="occasionally_contributing">
+                      Occasionally contributing
+                    </option>
+                    <option value="contributing_regularly">
+                      Contributing regularly
+                    </option>
+                  </select>
+                </div>
+
+                {/* Work Preference */}
+                <div>
+                  <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                    Work Preference
+                  </label>
+                  <select
+                    name="workPreference"
+                    value={formData.workPreference}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                  >
+                    <option value="">Select...</option>
+                    <option value="not_looking">Not looking for work</option>
+                    <option value="freelance">Freelance</option>
+                    <option value="fulltime">Fulltime</option>
+                    <option value="internship">Internship</option>
+                  </select>
+                </div>
+
+                {/* Current Employer */}
+                <div>
+                  <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                    Current Employer
+                  </label>
+                  <input
+                    type="text"
+                    name="currentEmployer"
+                    value={formData.currentEmployer}
+                    onChange={handleInputChange}
+                    placeholder="Company name"
+                    className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Proof of Work Section */}
+            <section className="bg-white dark:bg-hero-dark rounded-lg p-6 sm:p-8 border border-border-grey dark:border-dark-charcoal">
+              <h2 className="text-xl font-bold text-black dark:text-white mb-6 flex items-center gap-2">
+                <span className="w-1 h-6 bg-yellow-500 rounded-full"></span>
+                Proof of Work
+              </h2>
+
+              <p className="text-sm text-light-charcoal dark:text-lightgrey mb-4">
+                Add projects you&apos;ve worked on to showcase your experience
+              </p>
+
+              {/* Existing Projects */}
+              {formData.projects.length > 0 && (
+                <div className="space-y-4 mb-6">
+                  {formData.projects.map((project) => (
+                    <div
+                      key={project.id}
+                      className="p-4 bg-smoked-white dark:bg-light-black rounded-lg border border-border-grey dark:border-dark-charcoal"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-semibold text-black dark:text-white">
+                            {project.title}
+                          </h3>
+                          <p className="text-sm text-light-charcoal dark:text-lightgrey mt-1">
+                            {project.description}
+                          </p>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {project.skills.map((skill) => (
+                              <span
+                                key={skill}
+                                className="px-2 py-1 bg-orange/10 text-orange rounded text-xs"
+                              >
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                          <a
+                            href={project.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-orange hover:underline mt-2 inline-block"
+                          >
+                            {project.link}
+                          </a>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeProject(project.id)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={openProjectModal}
+                className="flex items-center gap-2 px-4 py-2 border border-dashed border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white hover:border-orange transition-colors"
+              >
+                <Plus className="w-5 h-5" />
+                Add Project
+              </button>
             </section>
 
             {/* Skills Section */}
@@ -231,33 +1081,60 @@ export default function EditProfile() {
 
               <div>
                 <label className="block text-sm font-semibold text-black dark:text-white mb-3">
-                  Skills Needed *
+                  Skills Needed <span className="text-red-500">*</span>
                 </label>
                 <p className="text-xs text-light-charcoal dark:text-lightgrey mb-4">
                   We will send notifications about new listings for your
-                  selected skills
+                  selected skills. Type any skill and press Enter to add.
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  {formData.skills.map((skill) => (
-                    <div
-                      key={skill}
-                      className="inline-flex items-center gap-2 bg-accessible-green/10 dark:bg-accessible-green/20 text-accessible-green px-3 py-1.5 rounded-full text-sm font-medium"
-                    >
-                      {skill}
+
+                {/* Skill suggestions */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {SKILL_OPTIONS.filter(
+                    (skill) => !formData.skills.includes(skill)
+                  )
+                    .slice(0, 10)
+                    .map((skill) => (
                       <button
+                        key={skill}
                         type="button"
-                        onClick={() => removeSkill(skill)}
-                        className="hover:text-accessible-green/70 transition-colors"
+                        onClick={() => addSkill(skill)}
+                        className="px-3 py-1.5 bg-smoked-white dark:bg-light-black text-black dark:text-white border border-border-grey dark:border-dark-charcoal rounded-full text-sm hover:border-orange transition-colors"
                       >
-                        <X className="w-4 h-4" />
+                        + {skill}
                       </button>
-                    </div>
-                  ))}
+                    ))}
                 </div>
+
+                {/* Selected skills */}
+                {formData.skills.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {formData.skills.map((skill) => (
+                      <div
+                        key={skill}
+                        className="inline-flex items-center gap-2 bg-accessible-green/10 dark:bg-accessible-green/20 text-accessible-green px-3 py-1.5 rounded-full text-sm font-medium"
+                      >
+                        {skill}
+                        <button
+                          type="button"
+                          onClick={() => removeSkill(skill)}
+                          className="hover:text-accessible-green/70 transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Custom skill input */}
                 <input
                   type="text"
-                  placeholder="Add more skills"
-                  className="mt-4 w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                  value={newSkillInput}
+                  onChange={(e) => setNewSkillInput(e.target.value)}
+                  onKeyDown={handleSkillKeyDown}
+                  placeholder="Type a skill and press Enter to add"
+                  className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
                 />
               </div>
             </section>
@@ -284,12 +1161,14 @@ export default function EditProfile() {
               <div className="flex gap-3 pt-4">
                 <button
                   type="submit"
-                  className="bg-accessible-green hover:bg-accessible-green/90 text-white font-semibold px-8 py-2 rounded-lg transition-colors"
+                  disabled={isSubmitting}
+                  className="bg-accessible-green hover:bg-accessible-green/90 text-white font-semibold px-8 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Update Profile
+                  {isSubmitting ? "Updating..." : "Update Profile"}
                 </button>
                 <button
                   type="button"
+                  onClick={handleCancel}
                   className="border border-border-grey dark:border-dark-charcoal text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black px-8 py-2 rounded-lg bg-transparent transition-colors"
                 >
                   Cancel
@@ -299,6 +1178,158 @@ export default function EditProfile() {
           </form>
         </main>
       </div>
+
+      {/* Add Project Modal */}
+      <Modal
+        isOpen={isProjectModalOpen}
+        onClose={() => setIsProjectModalOpen(false)}
+      >
+        <div className="p-6">
+          <h3 className="text-xl font-bold text-black mb-6">Add Project</h3>
+
+          <div className="space-y-4">
+            {/* Project Title */}
+            <div>
+              <label className="block text-sm font-semibold text-black mb-2">
+                Project Title <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={newProject.title}
+                onChange={(e) =>
+                  setNewProject((prev) => ({ ...prev, title: e.target.value }))
+                }
+                placeholder="Project Title"
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-semibold text-black mb-2">
+                Description <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                value={newProject.description}
+                onChange={(e) =>
+                  setNewProject((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
+                placeholder="Project Description"
+                rows={4}
+                maxLength={180}
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-black resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <p className="text-xs text-gray-500 mt-1 text-right">
+                {projectDescCharactersLeft} characters left
+              </p>
+            </div>
+
+            {/* Skills */}
+            <div>
+              <label className="block text-sm font-semibold text-black mb-2">
+                Skills <span className="text-red-500">*</span>
+              </label>
+              {newProject.skills.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {newProject.skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                    >
+                      {skill}
+                      <button
+                        type="button"
+                        onClick={() => removeProjectSkill(skill)}
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <input
+                type="text"
+                value={projectSkillInput}
+                onChange={(e) => setProjectSkillInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addProjectSkill(projectSkillInput);
+                  }
+                }}
+                placeholder="Select..."
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* Sub Skills */}
+            <div>
+              <label className="block text-sm font-semibold text-black mb-2">
+                Sub Skills <span className="text-red-500">*</span>
+              </label>
+              {newProject.subSkills.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {newProject.subSkills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm"
+                    >
+                      {skill}
+                      <button
+                        type="button"
+                        onClick={() => removeProjectSubSkill(skill)}
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <input
+                type="text"
+                value={projectSubSkillInput}
+                onChange={(e) => setProjectSubSkillInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addProjectSubSkill(projectSubSkillInput);
+                  }
+                }}
+                placeholder="Select..."
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* Link */}
+            <div>
+              <label className="block text-sm font-semibold text-black mb-2">
+                Link <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="url"
+                value={newProject.link}
+                onChange={(e) =>
+                  setNewProject((prev) => ({ ...prev, link: e.target.value }))
+                }
+                placeholder="https://example.com"
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* Add Project Button */}
+            <button
+              type="button"
+              onClick={handleAddProject}
+              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
+            >
+              Add Project
+            </button>
+          </div>
+        </div>
+      </Modal>
     </Layout>
   );
 }
