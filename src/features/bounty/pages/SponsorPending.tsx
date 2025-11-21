@@ -110,24 +110,13 @@ export default function SponsorPending() {
 
           {/* Contact Info */}
           <p className="text-sm text-light-charcoal dark:text-lightgrey mb-6">
-            Have questions? Contact us on{" "}
+            Have questions? Contact us via{" "}
             <a
-              href="https://t.me/alphland"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="mailto:baby@alephium.org"
               className="text-orange hover:underline"
             >
-              Telegram
+              baby@alephium.org{" "}
             </a>{" "}
-            or{" "}
-            <a
-              href="https://x.com/alphland"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-orange hover:underline"
-            >
-              X (Twitter)
-            </a>
           </p>
 
           {/* Back Button */}

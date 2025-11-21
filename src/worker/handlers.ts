@@ -341,7 +341,7 @@ export async function handleSponsorsAPI(
     });
   }
 
-  // POST /api/sponsors - Create sponsor
+  // POST /api/sponsors - Create sponsor application
   if (request.method === "POST" && pathname === "/api/sponsors") {
     const body = (await request.json()) as any;
     const id = crypto.randomUUID();
@@ -349,22 +349,30 @@ export async function handleSponsorsAPI(
 
     await env.DB.prepare(
       `INSERT INTO sponsors (
-        id, user_id, name, description, logo_url, website,
-        twitter, discord, telegram, wallet_address,
-        created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        id, user_id, name, username, description, entity_name, industry,
+        logo_url, website, twitter, discord, telegram, wallet_address,
+        contact_first_name, contact_last_name, contact_username, contact_telegram,
+        status, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`
     )
       .bind(
         id,
         body.user_id,
         body.name,
+        body.username || null,
         body.description || null,
+        body.entity_name || null,
+        body.industry || null,
         body.logo_url || null,
         body.website || null,
         body.twitter || null,
         body.discord || null,
         body.telegram || null,
         body.wallet_address || null,
+        body.contact_first_name || null,
+        body.contact_last_name || null,
+        body.contact_username || null,
+        body.contact_telegram || null,
         now,
         now
       )
@@ -418,6 +426,102 @@ export async function handleSponsorsAPI(
       .first();
 
     return new Response(JSON.stringify({ sponsor }), {
+      headers: corsHeaders,
+    });
+  }
+
+  // PUT /api/sponsors/:id/approve - Approve sponsor
+  if (
+    request.method === "PUT" &&
+    pathname.match(/^\/api\/sponsors\/[^/]+\/approve$/)
+  ) {
+    const id = pathname.split("/").slice(-2)[0];
+    const now = Math.floor(Date.now() / 1000);
+
+    await env.DB.prepare(
+      `UPDATE sponsors
+       SET status = 'approved',
+           approved_at = ?,
+           rejected_at = NULL,
+           rejection_reason = NULL,
+           updated_at = ?
+       WHERE id = ?`
+    )
+      .bind(now, now, id)
+      .run();
+
+    const sponsor = await env.DB.prepare(`SELECT * FROM sponsors WHERE id = ?`)
+      .bind(id)
+      .first();
+
+    if (!sponsor) {
+      return new Response(JSON.stringify({ error: "Sponsor not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    return new Response(JSON.stringify({ sponsor }), {
+      headers: corsHeaders,
+    });
+  }
+
+  // PUT /api/sponsors/:id/reject - Reject sponsor
+  if (
+    request.method === "PUT" &&
+    pathname.match(/^\/api\/sponsors\/[^/]+\/reject$/)
+  ) {
+    const id = pathname.split("/").slice(-2)[0];
+    const body = (await request.json()) as any;
+    const now = Math.floor(Date.now() / 1000);
+
+    await env.DB.prepare(
+      `UPDATE sponsors
+       SET status = 'rejected',
+           rejected_at = ?,
+           rejection_reason = ?,
+           approved_at = NULL,
+           updated_at = ?
+       WHERE id = ?`
+    )
+      .bind(now, body.reason || null, now, id)
+      .run();
+
+    const sponsor = await env.DB.prepare(`SELECT * FROM sponsors WHERE id = ?`)
+      .bind(id)
+      .first();
+
+    if (!sponsor) {
+      return new Response(JSON.stringify({ error: "Sponsor not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    return new Response(JSON.stringify({ sponsor }), {
+      headers: corsHeaders,
+    });
+  }
+
+  // GET /api/sponsors - List all sponsors (for admin)
+  if (request.method === "GET" && pathname === "/api/sponsors") {
+    const status = url.searchParams.get("status");
+
+    let query = `SELECT * FROM sponsors`;
+    const params: string[] = [];
+
+    if (status) {
+      query += ` WHERE status = ?`;
+      params.push(status);
+    }
+
+    query += ` ORDER BY created_at DESC`;
+
+    const stmt = env.DB.prepare(query);
+    const { results } =
+      params.length > 0 ? await stmt.bind(...params).all() : await stmt.all();
+
+    return new Response(JSON.stringify({ sponsors: results }), {
       headers: corsHeaders,
     });
   }

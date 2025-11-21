@@ -122,17 +122,28 @@ export interface Sponsor {
   id: string;
   user_id: string;
   name: string;
+  username?: string;
   description: string | null;
+  entity_name?: string;
+  industry?: string;
   logo_url: string | null;
   website: string | null;
   twitter: string | null;
   discord: string | null;
   telegram: string | null;
   wallet_address: string | null;
+  contact_first_name?: string;
+  contact_last_name?: string;
+  contact_username?: string;
+  contact_telegram?: string;
   total_bounties_count: number;
   total_projects_count: number;
   total_reward_amount: number;
+  status: "pending" | "approved" | "rejected";
   is_verified: boolean;
+  approved_at?: string;
+  rejected_at?: string;
+  rejection_reason?: string;
   created_at: string;
   updated_at: string;
 }
@@ -333,6 +344,30 @@ class ApiClient {
     sponsorId: string
   ): Promise<{ submissions: BountySubmission[] }> {
     return this.request(`/api/submissions/sponsor/${sponsorId}`);
+  }
+
+  // Admin: List all sponsors
+  async getSponsors(status?: string): Promise<{ sponsors: Sponsor[] }> {
+    const url = status ? `/api/sponsors?status=${status}` : "/api/sponsors";
+    return this.request(url);
+  }
+
+  // Admin: Approve sponsor
+  async approveSponsor(id: string): Promise<{ sponsor: Sponsor }> {
+    return this.request(`/api/sponsors/${id}/approve`, {
+      method: "PUT",
+    });
+  }
+
+  // Admin: Reject sponsor
+  async rejectSponsor(
+    id: string,
+    reason?: string
+  ): Promise<{ sponsor: Sponsor }> {
+    return this.request(`/api/sponsors/${id}/reject`, {
+      method: "PUT",
+      body: JSON.stringify({ reason }),
+    });
   }
 }
 

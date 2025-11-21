@@ -122,27 +122,37 @@ export default function CreateSponsorProfile() {
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      if (!agreed) return;
+      if (!agreed || !session?.user?.id) return;
       setLoading(true);
 
       try {
-        // TODO: Implement API call to create sponsor application
-        // The sponsor will be created with status = 'pending'
-        // Admin will approve and set User.is_sponsor = true
-        const submitData = new FormData();
-        Object.entries(formData).forEach(([key, value]) => {
-          submitData.append(key, value);
+        // Create sponsor application via API
+        const response = await fetch("/api/sponsors", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: session.user.id,
+            name: formData.company_name,
+            username: formData.company_username,
+            description: formData.company_bio,
+            entity_name: formData.entity_name,
+            industry: formData.industry,
+            website: formData.company_url,
+            twitter: formData.company_twitter,
+            contact_first_name: formData.first_name,
+            contact_last_name: formData.last_name,
+            contact_username: formData.username,
+            contact_telegram: formData.telegram,
+            // TODO: Handle logo upload separately with file storage
+            logo_url: logoFile?.preview || null,
+          }),
         });
-        if (logoFile) {
-          submitData.append("logo", logoFile.file);
+
+        if (!response.ok) {
+          throw new Error("Failed to submit sponsor application");
         }
 
-        console.log("Submitting sponsor application:", formData);
-
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Redirect to pending page or dashboard
+        // Redirect to pending page
         router.push("/bounty/sponsor/pending");
       } catch (error) {
         console.error("Error submitting sponsor application:", error);
@@ -150,7 +160,7 @@ export default function CreateSponsorProfile() {
         setLoading(false);
       }
     },
-    [formData, logoFile, agreed, router]
+    [formData, logoFile, agreed, router, session?.user?.id]
   );
 
   const bioCharactersLeft = MAX_BIO_LENGTH - formData.company_bio.length;

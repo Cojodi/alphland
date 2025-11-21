@@ -67,8 +67,7 @@ export function createAuth(db: D1Database, env: AuthEnv) {
       expiresIn: 60 * 60 * 24 * 7, // 7 days
       updateAge: 60 * 60 * 24,
       cookieCache: {
-        enabled: true,
-        maxAge: 5 * 60,
+        enabled: false, // Disabled: session data exceeds cookie size limit
       },
     },
 
