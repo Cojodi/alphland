@@ -27,7 +27,11 @@ const nextConfig = {
     return config;
   },
   images: {
-    domains: ["pbs.twimg.com", "mintsquare.sfo3.cdn.digitaloceanspaces.com"], // to load images
+    domains: [
+      "pbs.twimg.com",
+      "mintsquare.sfo3.cdn.digitaloceanspaces.com",
+      "lh3.googleusercontent.com", // Google profile pictures
+    ],
   },
   experimental: {
     scrollRestoration: true,

@@ -8,6 +8,7 @@ interface ProfileHeaderProps {
   username: string;
   fullName: string;
   avatarUrl?: string;
+  isOwnProfile?: boolean;
   socials?: {
     twitter?: string;
     linkedin?: string;
@@ -20,6 +21,7 @@ export function ProfileHeader({
   username,
   fullName,
   avatarUrl,
+  isOwnProfile = false,
   socials = {},
 }: ProfileHeaderProps) {
   return (
@@ -57,13 +59,21 @@ export function ProfileHeader({
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-            <Link href="/profile/edit">
-              <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-orange text-white rounded-lg font-medium hover:bg-orange/90 transition-colors w-full sm:w-auto">
-                <Edit size={18} />
-                Edit Profile
-              </button>
-            </Link>
-            <button className="flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-orange text-orange rounded-lg font-medium hover:bg-orange/5 transition-colors w-full sm:w-auto">
+            {isOwnProfile && (
+              <Link href="/bounty/profile/edit">
+                <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-orange text-white rounded-lg font-medium hover:bg-orange/90 transition-colors w-full sm:w-auto">
+                  <Edit size={18} />
+                  Edit Profile
+                </button>
+              </Link>
+            )}
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+                alert("Profile link copied!");
+              }}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-orange text-orange rounded-lg font-medium hover:bg-orange/5 transition-colors w-full sm:w-auto"
+            >
               <Share2 size={18} />
               Share
             </button>

@@ -259,12 +259,114 @@ async function handleUsersAPI(
 
   const pathname = url.pathname;
 
-  // GET /api/users/:id - Get user profile
+  // GET /api/users/username/:username - Get user profile by username
+  if (
+    request.method === "GET" &&
+    pathname.match(/^\/api\/users\/username\/[^/]+$/)
+  ) {
+    const username = pathname.split("/").pop();
+
+    // Join with user table to get email, name, image
+    const user = await env.DB.prepare(
+      `SELECT
+        up.*,
+        u.email,
+        u.name,
+        u.image
+       FROM user_profiles up
+       JOIN user u ON up.user_id = u.id
+       WHERE up.username = ?`
+    )
+      .bind(username)
+      .first();
+
+    if (!user) {
+      return new Response(JSON.stringify({ error: "User not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    return new Response(JSON.stringify({ user }), {
+      headers: corsHeaders,
+    });
+  }
+
+  // GET /api/users/me - Get current user's profile (requires auth)
+  if (request.method === "GET" && pathname === "/api/users/me") {
+    // Get session from cookie
+    const auth = createAuth(env.DB, {
+      GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
+      BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
+      BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+      APP_URL: env.APP_URL,
+    });
+
+    const session = await auth.api.getSession({ headers: request.headers });
+
+    if (!session?.user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
+
+    const userId = session.user.id;
+
+    // Get or create user profile
+    let profile = await env.DB.prepare(
+      `SELECT * FROM user_profiles WHERE user_id = ?`
+    )
+      .bind(userId)
+      .first();
+
+    if (!profile) {
+      const profileId = crypto.randomUUID();
+      const now = Math.floor(Date.now() / 1000);
+
+      await env.DB.prepare(
+        `INSERT INTO user_profiles (id, user_id, created_at, updated_at)
+         VALUES (?, ?, ?, ?)`
+      )
+        .bind(profileId, userId, now, now)
+        .run();
+
+      profile = await env.DB.prepare(
+        `SELECT * FROM user_profiles WHERE user_id = ?`
+      )
+        .bind(userId)
+        .first();
+    }
+
+    return new Response(
+      JSON.stringify({
+        user: {
+          ...profile,
+          email: session.user.email,
+          name: session.user.name,
+          image: session.user.image,
+        },
+      }),
+      {
+        headers: corsHeaders,
+      }
+    );
+  }
+
+  // GET /api/users/:id - Get user profile by user_id
   if (request.method === "GET" && pathname.match(/^\/api\/users\/[^/]+$/)) {
     const id = pathname.split("/").pop();
 
     let user = await env.DB.prepare(
-      `SELECT * FROM user_profiles WHERE user_id = ?`
+      `SELECT
+        up.*,
+        u.email,
+        u.name,
+        u.image
+       FROM user_profiles up
+       JOIN user u ON up.user_id = u.id
+       WHERE up.user_id = ?`
     )
       .bind(id)
       .first();
@@ -282,7 +384,14 @@ async function handleUsersAPI(
         .run();
 
       user = await env.DB.prepare(
-        `SELECT * FROM user_profiles WHERE user_id = ?`
+        `SELECT
+          up.*,
+          u.email,
+          u.name,
+          u.image
+         FROM user_profiles up
+         JOIN user u ON up.user_id = u.id
+         WHERE up.user_id = ?`
       )
         .bind(id)
         .first();
@@ -318,7 +427,7 @@ async function handleUsersAPI(
       }
     }
 
-    // Update profile
+    // Update profile with all fields
     await env.DB.prepare(
       `UPDATE user_profiles
        SET username = COALESCE(?, username),
@@ -327,6 +436,16 @@ async function handleUsersAPI(
            github_username = COALESCE(?, github_username),
            twitter_username = COALESCE(?, twitter_username),
            discord_username = COALESCE(?, discord_username),
+           linkedin_username = COALESCE(?, linkedin_username),
+           telegram_username = COALESCE(?, telegram_username),
+           website = COALESCE(?, website),
+           location = COALESCE(?, location),
+           work_preference = COALESCE(?, work_preference),
+           current_employer = COALESCE(?, current_employer),
+           web3_familiarity = COALESCE(?, web3_familiarity),
+           skills = COALESCE(?, skills),
+           web3_interests = COALESCE(?, web3_interests),
+           projects = COALESCE(?, projects),
            updated_at = ?
        WHERE user_id = ?`
     )
@@ -337,6 +456,16 @@ async function handleUsersAPI(
         body.github_username || null,
         body.twitter_username || null,
         body.discord_username || null,
+        body.linkedin_username || null,
+        body.telegram_username || null,
+        body.website || null,
+        body.location || null,
+        body.work_preference || null,
+        body.current_employer || null,
+        body.web3_familiarity || null,
+        body.skills ? JSON.stringify(body.skills) : null,
+        body.web3_interests ? JSON.stringify(body.web3_interests) : null,
+        body.projects ? JSON.stringify(body.projects) : null,
         now,
         id
       )

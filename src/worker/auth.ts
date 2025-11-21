@@ -19,6 +19,9 @@ import { betterAuth } from "better-auth";
 import { Kysely } from "kysely";
 import { D1Dialect } from "kysely-d1";
 
+// Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
+type D1Database = any;
+
 export interface AuthEnv {
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;

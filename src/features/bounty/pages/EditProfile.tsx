@@ -336,17 +336,69 @@ export default function EditProfile() {
     keepPrivate: false,
   });
 
-  // Initialize form data from session if available
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load existing profile data
   useEffect(() => {
-    if (session?.user) {
-      const nameParts = (session.user.name || "").split(" ");
-      setFormData((prev) => ({
-        ...prev,
-        firstName: nameParts[0] || "",
-        lastName: nameParts.slice(1).join(" ") || "",
-        profilePicturePreview: session.user.image || null,
-      }));
-    }
+    const loadProfile = async () => {
+      if (!session?.user) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/users/me");
+        if (response.ok) {
+          const data = await response.json();
+          const profile = data.user;
+
+          // Parse JSON fields
+          const skills = profile.skills ? JSON.parse(profile.skills) : [];
+          const web3Interests = profile.web3_interests
+            ? JSON.parse(profile.web3_interests)
+            : [];
+          const projects = profile.projects ? JSON.parse(profile.projects) : [];
+
+          // Split name into first and last
+          const nameParts = (profile.name || "").split(" ");
+
+          setFormData((prev) => ({
+            ...prev,
+            username: profile.username || "",
+            firstName: nameParts[0] || "",
+            lastName: nameParts.slice(1).join(" ") || "",
+            bio: profile.bio || "",
+            alphWalletAddress: profile.wallet_address || "",
+            profilePicturePreview: profile.image || null,
+            socials: {
+              discord: profile.discord_username || "",
+              twitter: profile.twitter_username || "",
+              github: profile.github_username || "",
+              linkedin: profile.linkedin_username || "",
+              telegram: profile.telegram_username || "",
+              website: profile.website || "",
+            },
+            location: profile.location || "",
+            web3Familiarity: profile.web3_familiarity || "",
+            workPreference: profile.work_preference || "",
+            currentEmployer: profile.current_employer || "",
+            skills,
+            web3Interests,
+            projects,
+          }));
+
+          if (profile.location) {
+            setLocationSearch(profile.location);
+          }
+        }
+      } catch (error) {
+        console.error("Error loading profile:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProfile();
   }, [session]);
 
   const handleInputChange = (
@@ -552,6 +604,12 @@ export default function EditProfile() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!session?.user) {
+      alert("Please log in to update your profile");
+      router.push("/auth/login");
+      return;
+    }
+
     // Validate required fields
     if (
       !formData.username ||
@@ -572,21 +630,44 @@ export default function EditProfile() {
     setIsSubmitting(true);
 
     try {
-      // TODO: Save profile data to API
-      // const response = await fetch('/api/profile', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData),
-      // });
+      const response = await fetch(`/api/users/${session.user.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          username: formData.username,
+          bio: formData.bio,
+          wallet_address: formData.alphWalletAddress,
+          github_username: formData.socials.github,
+          twitter_username: formData.socials.twitter,
+          discord_username: formData.socials.discord,
+          linkedin_username: formData.socials.linkedin,
+          telegram_username: formData.socials.telegram,
+          website: formData.socials.website,
+          location: formData.location,
+          work_preference: formData.workPreference,
+          current_employer: formData.currentEmployer,
+          web3_familiarity: formData.web3Familiarity,
+          skills: formData.skills,
+          web3_interests: formData.web3Interests,
+          projects: formData.projects,
+        }),
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to update profile");
+      }
 
       // Redirect to user profile page
       router.push(`/bounty/profile/${formData.username}`);
     } catch (error) {
       console.error("Failed to update profile:", error);
-      alert("Failed to update profile. Please try again.");
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to update profile. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -595,6 +676,51 @@ export default function EditProfile() {
   const handleCancel = () => {
     router.back();
   };
+
+  // Redirect if not logged in
+  if (!session?.user && !isLoading) {
+    return (
+      <Layout
+        title="Edit Profile - Alphland"
+        description="Update your profile information"
+      >
+        <div className="min-h-screen bg-smoked-white dark:bg-light-black flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-black dark:text-white mb-2">
+              Please log in
+            </h1>
+            <p className="text-light-charcoal dark:text-lightgrey mb-4">
+              You need to be logged in to edit your profile.
+            </p>
+            <button
+              onClick={() => router.push("/auth/login")}
+              className="px-4 py-2 bg-orange text-white rounded-lg hover:bg-orange/90 transition-colors"
+            >
+              Log In
+            </button>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Layout
+        title="Edit Profile - Alphland"
+        description="Update your profile information"
+      >
+        <div className="min-h-screen bg-smoked-white dark:bg-light-black flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange mx-auto mb-4"></div>
+            <p className="text-light-charcoal dark:text-lightgrey">
+              Loading profile...
+            </p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout
