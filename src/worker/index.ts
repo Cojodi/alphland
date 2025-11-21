@@ -427,25 +427,32 @@ async function handleUsersAPI(
       }
     }
 
-    // Update profile with all fields
+    // Update profile image in user table if provided
+    if (body.image) {
+      await env.DB.prepare(`UPDATE user SET image = ? WHERE id = ?`)
+        .bind(body.image, id)
+        .run();
+    }
+
+    // Update profile with all fields (allow clearing fields with empty strings)
     await env.DB.prepare(
       `UPDATE user_profiles
-       SET username = COALESCE(?, username),
-           bio = COALESCE(?, bio),
-           wallet_address = COALESCE(?, wallet_address),
-           github_username = COALESCE(?, github_username),
-           twitter_username = COALESCE(?, twitter_username),
-           discord_username = COALESCE(?, discord_username),
-           linkedin_username = COALESCE(?, linkedin_username),
-           telegram_username = COALESCE(?, telegram_username),
-           website = COALESCE(?, website),
-           location = COALESCE(?, location),
-           work_preference = COALESCE(?, work_preference),
-           current_employer = COALESCE(?, current_employer),
-           web3_familiarity = COALESCE(?, web3_familiarity),
-           skills = COALESCE(?, skills),
-           web3_interests = COALESCE(?, web3_interests),
-           projects = COALESCE(?, projects),
+       SET username = ?,
+           bio = ?,
+           wallet_address = ?,
+           github_username = ?,
+           twitter_username = ?,
+           discord_username = ?,
+           linkedin_username = ?,
+           telegram_username = ?,
+           website = ?,
+           location = ?,
+           work_preference = ?,
+           current_employer = ?,
+           web3_familiarity = ?,
+           skills = ?,
+           web3_interests = ?,
+           projects = ?,
            updated_at = ?
        WHERE user_id = ?`
     )
@@ -471,8 +478,11 @@ async function handleUsersAPI(
       )
       .run();
 
+    // Get updated user with image from user table
     const user = await env.DB.prepare(
-      `SELECT * FROM user_profiles WHERE user_id = ?`
+      `SELECT up.*, u.image FROM user_profiles up
+       JOIN user u ON up.user_id = u.id
+       WHERE up.user_id = ?`
     )
       .bind(id)
       .first();

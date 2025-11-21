@@ -615,8 +615,7 @@ export default function EditProfile() {
       !formData.username ||
       !formData.firstName ||
       !formData.lastName ||
-      !formData.alphWalletAddress ||
-      !formData.socials.github
+      !formData.alphWalletAddress
     ) {
       alert("Please fill in all required fields");
       return;
@@ -630,28 +629,36 @@ export default function EditProfile() {
     setIsSubmitting(true);
 
     try {
+      // Prepare request body with optional image
+      const requestBody: Record<string, unknown> = {
+        username: formData.username,
+        bio: formData.bio,
+        wallet_address: formData.alphWalletAddress,
+        github_username: formData.socials.github,
+        twitter_username: formData.socials.twitter,
+        discord_username: formData.socials.discord,
+        linkedin_username: formData.socials.linkedin,
+        telegram_username: formData.socials.telegram,
+        website: formData.socials.website,
+        location: formData.location,
+        work_preference: formData.workPreference,
+        current_employer: formData.currentEmployer,
+        web3_familiarity: formData.web3Familiarity,
+        skills: formData.skills,
+        web3_interests: formData.web3Interests,
+        projects: formData.projects,
+      };
+
+      // Include image if a new one was uploaded (base64 data URL)
+      if (formData.profilePicture && formData.profilePicturePreview) {
+        requestBody.image = formData.profilePicturePreview;
+      }
+
       const response = await fetch(`/api/users/${session.user.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({
-          username: formData.username,
-          bio: formData.bio,
-          wallet_address: formData.alphWalletAddress,
-          github_username: formData.socials.github,
-          twitter_username: formData.socials.twitter,
-          discord_username: formData.socials.discord,
-          linkedin_username: formData.socials.linkedin,
-          telegram_username: formData.socials.telegram,
-          website: formData.socials.website,
-          location: formData.location,
-          work_preference: formData.workPreference,
-          current_employer: formData.currentEmployer,
-          web3_familiarity: formData.web3Familiarity,
-          skills: formData.skills,
-          web3_interests: formData.web3Interests,
-          projects: formData.projects,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -924,7 +931,7 @@ export default function EditProfile() {
                 {/* GitHub */}
                 <div>
                   <label className="block text-sm font-semibold text-black dark:text-white mb-2">
-                    GitHub <span className="text-red-500">*</span>
+                    GitHub
                   </label>
                   <div className="flex">
                     <span className="inline-flex items-center px-3 bg-gray-100 dark:bg-gray-800 border border-r-0 border-border-grey dark:border-dark-charcoal rounded-l-lg text-light-charcoal dark:text-lightgrey text-sm">
@@ -937,7 +944,6 @@ export default function EditProfile() {
                         handleSocialChange("github", e.target.value)
                       }
                       placeholder="username"
-                      required
                       className="flex-1 px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
                     />
                   </div>

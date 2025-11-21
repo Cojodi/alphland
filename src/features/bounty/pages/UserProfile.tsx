@@ -152,14 +152,21 @@ export default function UserProfile() {
 
   // Build socials object
   const socials: Record<string, string> = {};
-  if (userData.twitter_username) {
-    socials.twitter = `https://x.com/${userData.twitter_username}`;
-  }
   if (userData.github_username) {
     socials.github = `https://github.com/${userData.github_username}`;
   }
+  if (userData.twitter_username) {
+    socials.twitter = `https://x.com/${userData.twitter_username}`;
+  }
   if (userData.linkedin_username) {
     socials.linkedin = `https://linkedin.com/in/${userData.linkedin_username}`;
+  }
+  if (userData.telegram_username) {
+    socials.telegram = `https://t.me/${userData.telegram_username}`;
+  }
+  if (userData.discord_username) {
+    // Discord doesn't have profile URLs, so we just show the username
+    socials.discord = `https://discord.com/users/${userData.discord_username}`;
   }
   if (userData.website) {
     socials.website = userData.website.startsWith("http")

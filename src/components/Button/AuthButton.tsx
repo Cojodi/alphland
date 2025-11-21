@@ -4,6 +4,11 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useState, useRef, useEffect } from "react";
 
+interface UserProfile {
+  username: string | null;
+  image: string | null;
+}
+
 /**
  * AuthButton - Handles login/logout display in the header
  *
@@ -16,6 +21,7 @@ const AuthButton = () => {
   const { data: session, isPending } = useSession();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -31,6 +37,31 @@ const AuthButton = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Fetch user profile to get latest image and username
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!session?.user) {
+        setUserProfile(null);
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/users/me");
+        if (response.ok) {
+          const data = await response.json();
+          setUserProfile({
+            username: data.user?.username || null,
+            image: data.user?.image || null,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, [session?.user]);
 
   const handleAuth = () => {
     if (session?.user) {
@@ -52,7 +83,14 @@ const AuthButton = () => {
     }
   };
 
-  const handleProfileClick = () => {
+  const handleViewProfile = () => {
+    setIsDropdownOpen(false);
+    if (userProfile?.username) {
+      router.push(`/bounty/profile/${userProfile.username}`);
+    }
+  };
+
+  const handleEditProfile = () => {
     setIsDropdownOpen(false);
     router.push("/bounty/profile/edit");
   };
@@ -71,53 +109,59 @@ const AuthButton = () => {
   }
 
   if (session?.user) {
+    // Use profile image if available, fallback to session image
+    const displayImage = userProfile?.image || session.user.image;
+    const displayName = userProfile?.username || session.user.name || "User";
+
     return (
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="flex items-center gap-2 p-1 rounded-full hover:bg-smoked-white dark:hover:bg-white/5 transition-colors"
+          className="flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-smoked-white dark:hover:bg-white/5 transition-colors"
         >
-          {session.user.image ? (
+          {displayImage ? (
             <Image
-              src={session.user.image}
-              alt={session.user.name || "Profile"}
+              src={displayImage}
+              alt={displayName}
               width={40}
               height={40}
               className="rounded-full object-cover"
+              unoptimized={displayImage.startsWith("data:")}
             />
           ) : (
             <div className="w-10 h-10 rounded-full bg-orange flex items-center justify-center text-white font-semibold">
-              {(session.user.name || session.user.email || "U")
+              {(displayName || session.user.email || "U")
                 .charAt(0)
                 .toUpperCase()}
             </div>
           )}
+          <span className="text-sm font-medium text-black dark:text-white">
+            {displayName}
+          </span>
         </button>
 
         {isDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal rounded-lg shadow-lg z-50">
-            <div className="p-3 border-b border-border-grey dark:border-dark-charcoal">
-              <p className="text-sm font-semibold text-black dark:text-white truncate">
-                {session.user.name || "User"}
-              </p>
-              <p className="text-xs text-light-charcoal dark:text-lightgrey truncate">
-                {session.user.email}
-              </p>
-            </div>
-            <div className="py-1">
+          <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal rounded-lg shadow-lg z-50 py-1">
+            {userProfile?.username && (
               <button
-                onClick={handleProfileClick}
+                onClick={handleViewProfile}
                 className="w-full text-left px-4 py-2 text-sm text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
               >
-                Edit Profile
+                Profile
               </button>
-              <button
-                onClick={handleLogout}
-                className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
-              >
-                Logout
-              </button>
-            </div>
+            )}
+            <button
+              onClick={handleEditProfile}
+              className="w-full text-left px-4 py-2 text-sm text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
+            >
+              Edit Profile
+            </button>
+            <button
+              onClick={handleLogout}
+              className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
+            >
+              Logout
+            </button>
           </div>
         )}
       </div>

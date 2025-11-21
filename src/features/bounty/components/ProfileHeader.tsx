@@ -1,6 +1,11 @@
 "use client";
 
-import { Edit, Share2 } from "lucide-react";
+import DiscordIcon from "@/assets/icons/socials/icon-discord.icon.svg";
+import GithubIcon from "@/assets/icons/socials/icon-github.icon.svg";
+import LinkedinIcon from "@/assets/icons/socials/icon-linkedin.icon.svg";
+import TelegramIcon from "@/assets/icons/socials/icon-telegram.icon.svg";
+import TwitterIcon from "@/assets/icons/socials/icon-twitter.icon.svg";
+import { Edit, Share2, Globe } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -14,6 +19,8 @@ interface ProfileHeaderProps {
     linkedin?: string;
     github?: string;
     website?: string;
+    telegram?: string;
+    discord?: string;
   };
 }
 
@@ -38,6 +45,7 @@ export function ProfileHeader({
                   width={96}
                   height={96}
                   className="w-full h-full object-cover"
+                  unoptimized={avatarUrl.startsWith("data:")}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange to-accessible-green text-white text-3xl font-bold">
@@ -82,14 +90,24 @@ export function ProfileHeader({
 
         {/* Social Links */}
         <div className="flex gap-4 pt-4 border-t border-border-grey dark:border-dark-charcoal">
+          {socials.github && (
+            <a
+              href={socials.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors [&_svg_path]:fill-current"
+            >
+              <GithubIcon className="w-5 h-5" />
+            </a>
+          )}
           {socials.twitter && (
             <a
               href={socials.twitter}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors"
+              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors [&_svg_path]:fill-current"
             >
-              𝕏
+              <TwitterIcon className="w-5 h-5" />
             </a>
           )}
           {socials.linkedin && (
@@ -97,19 +115,29 @@ export function ProfileHeader({
               href={socials.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors"
+              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors [&_svg_path]:fill-current"
             >
-              in
+              <LinkedinIcon className="w-5 h-5" />
             </a>
           )}
-          {socials.github && (
+          {socials.telegram && (
             <a
-              href={socials.github}
+              href={socials.telegram}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors"
+              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors [&_svg_path]:fill-current"
             >
-              gh
+              <TelegramIcon className="w-5 h-5" />
+            </a>
+          )}
+          {socials.discord && (
+            <a
+              href={socials.discord}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors [&_svg_path]:fill-current"
+            >
+              <DiscordIcon className="w-5 h-5" />
             </a>
           )}
           {socials.website && (
@@ -119,7 +147,7 @@ export function ProfileHeader({
               rel="noopener noreferrer"
               className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors"
             >
-              🌐
+              <Globe className="w-5 h-5" />
             </a>
           )}
         </div>
