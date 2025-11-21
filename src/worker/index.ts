@@ -23,7 +23,7 @@ export interface Env {
 // Cache auth instance per request
 let authInstance: any = null;
 
-export default {
+const worker = {
   async fetch(request: Request, env: Env, _ctx: any): Promise<Response> {
     const url = new URL(request.url);
 
@@ -119,6 +119,8 @@ export default {
     }
   },
 };
+
+export default worker;
 
 /**
  * Handle Bounties API requests

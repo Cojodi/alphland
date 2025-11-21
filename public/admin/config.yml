@@ -1,7 +1,7 @@
 backend:
   name: github
   repo: cojodi/alphland # Replace with your GitHub repo (owner/repo-name)
-  branch: develop # The branch to save to
+  branch: bounty # The branch to save to
   base_url: https://api.netlify.com # For Netlify's OAuth
   auth_endpoint: auth
 
