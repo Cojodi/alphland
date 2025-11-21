@@ -71,7 +71,7 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
               variant="primary"
               className="h-min"
               style={{ padding: "13px 24px", lineHeight: "normal" }}
-              href="/admin"
+              href="/submit"
             >
               Add your Dapp
             </Button>

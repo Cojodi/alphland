@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Submit Your dApp - Alphland</title>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <style>
+      /* Hide navigation elements that allow browsing other entries */
+      [href="#/collections/dapps"],
+      [data-testid="list-card"],
+      .css-1hwfws3, /* Collection list */
+      a[href*="#/collections/dapps/"]:not([href*="/new"]) {
+        display: none !important;
+      }
+
+      /* Auto-redirect script will handle navigation */
+    </style>
+  </head>
+  <body>
+    <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
+
+    <script>
+      // Redirect to new entry page and prevent navigation elsewhere
+      (function() {
+        const targetPath = '#/collections/dapps/new';
+
+        // Redirect on load if not on new entry page
+        function checkAndRedirect() {
+          if (window.location.hash !== targetPath && !window.location.hash.startsWith('#/collections/dapps/new')) {
+            window.location.hash = targetPath;
+          }
+        }
+
+        // Initial redirect
+        setTimeout(checkAndRedirect, 100);
+
+        // Watch for hash changes and redirect back
+        window.addEventListener('hashchange', function() {
+          // Allow staying on new page or workflow pages (for save/publish)
+          const hash = window.location.hash;
+          if (!hash.startsWith('#/collections/dapps/new') &&
+              !hash.startsWith('#/workflow') &&
+              !hash.startsWith('#/editorial')) {
+            window.location.hash = targetPath;
+          }
+        });
+
+        // Hide sidebar/back navigation after CMS loads
+        setTimeout(function() {
+          const style = document.createElement('style');
+          style.textContent = `
+            /* Hide sidebar collection list */
+            [class*="SidebarNavList"],
+            [class*="CollectionLabel"],
+            nav[class*="Sidebar"] a:not([href*="new"]),
+            /* Hide back button that goes to list */
+            a[href="#/collections/dapps"],
+            button[class*="BackButton"],
+            [class*="BackArrow"],
+            /* Hide any entry cards/lists */
+            [class*="EntryCard"],
+            [class*="EntryListing"],
+            /* Hide collection controls */
+            [class*="CollectionControls"] {
+              display: none !important;
+            }
+          `;
+          document.head.appendChild(style);
+        }, 500);
+      })();
+
+      // Netlify Identity handling
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("init", user => {
+          if (!user) {
+            window.netlifyIdentity.on("login", () => {
+              document.location.href = "/submit/";
+            });
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

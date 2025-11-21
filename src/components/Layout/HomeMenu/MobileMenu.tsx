@@ -215,7 +215,7 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
                 variant="primary"
                 className="w-full"
                 withoutMobile
-                href="/admin"
+                href="/submit"
               >
                 Add your Dapp
               </Button>

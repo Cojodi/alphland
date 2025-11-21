@@ -39,6 +39,10 @@ const nextConfig = {
         destination: "/admin/index.html",
       },
       {
+        source: "/submit",
+        destination: "/submit/index.html",
+      },
+      {
         source: "/config.yml",
         destination: "/admin/config.yml",
       },
