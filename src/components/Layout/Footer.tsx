@@ -12,7 +12,7 @@ interface FooterProps {
 }
 
 const Footer = ({ currentTheme }: FooterProps) => {
-  const donationWalletAddr = "16uJvxtaSkuKEz3DEzCKHsemE4LWvnqZS1WrSAhoeL9Fr";
+  // const donationWalletAddr = "16uJvxtaSkuKEz3DEzCKHsemE4LWvnqZS1WrSAhoeL9Fr";
   return (
     <section>
       <footer className="w-full py-6 px-4 border-t border-border-grey dark:border-white/10 flex flex-col md:flex-row justify-between">
@@ -57,7 +57,7 @@ const Footer = ({ currentTheme }: FooterProps) => {
             <a className="inline-block mx-2">Privacy policy</a>
           </Link>
         </p>
-        <button
+        {/* <button
           onClick={() => {
             navigator.clipboard.writeText(donationWalletAddr).then(() => {
               toast.success(`Copied: ${donationWalletAddr}`);
@@ -67,7 +67,7 @@ const Footer = ({ currentTheme }: FooterProps) => {
           <p className="text-center font-normal  text-xs text-base leading-[16px] ">
             Donations (ALPH): <br /> {donationWalletAddr}
           </p>
-        </button>
+        </button> */}
       </footer>
     </section>
   );
