@@ -180,41 +180,35 @@ collections:
             }
 
       # Optional Advanced Fields
-      - {
-          label: "Smart Contracts",
-          name: "contracts",
-          widget: "list",
-          required: false,
-          default: [],
-          collapsed: true,
-          fields:
-            - { label: "Contract Address", name: "address", widget: "string" }
-            - { label: "Contract Name", name: "name", widget: "string" }
-        }
-      - {
-          label: "Audits",
-          name: "audits",
-          widget: "list",
-          required: false,
-          default: [],
-          collapsed: true,
-          fields:
-            - { label: "Auditor", name: "auditor", widget: "string" }
-            - { label: "Report URL", name: "url", widget: "string" }
-            - { label: "Date", name: "date", widget: "datetime" }
-        }
-      - {
-          label: "Tokens",
-          name: "tokens",
-          widget: "list",
-          required: false,
-          default: [],
-          collapsed: true,
-          fields:
-            - { label: "Token Name", name: "name", widget: "string" }
-            - { label: "Token Symbol", name: "symbol", widget: "string" }
-            - { label: "Token ID", name: "id", widget: "string" }
-        }
+      - label: "Smart Contracts"
+        name: "contracts"
+        widget: "list"
+        required: false
+        default: []
+        collapsed: true
+        fields:
+          - { label: "Contract Address", name: "address", widget: "string" }
+          - { label: "Contract Name", name: "name", widget: "string" }
+      - label: "Audits"
+        name: "audits"
+        widget: "list"
+        required: false
+        default: []
+        collapsed: true
+        fields:
+          - { label: "Auditor", name: "auditor", widget: "string" }
+          - { label: "Report URL", name: "url", widget: "string" }
+          - { label: "Date", name: "date", widget: "datetime" }
+      - label: "Tokens"
+        name: "tokens"
+        widget: "list"
+        required: false
+        default: []
+        collapsed: true
+        fields:
+          - { label: "Token Name", name: "name", widget: "string" }
+          - { label: "Token Symbol", name: "symbol", widget: "string" }
+          - { label: "Token ID", name: "id", widget: "string" }
       - label: "NFT Collection"
         name: "nft"
         widget: "object"
