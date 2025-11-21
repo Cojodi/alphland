@@ -92,7 +92,7 @@ export default function BountyList() {
                   </h2>
 
                   {/* Filter Tabs */}
-                  <div className="flex flex-wrap gap-3 mb-6">
+                  {/* <div className="flex flex-wrap gap-3 mb-6">
                     <button
                       onClick={() => setActiveFilter("all")}
                       className={`px-4 py-2 rounded-lg font-medium text-sm transition ${
@@ -123,7 +123,7 @@ export default function BountyList() {
                     >
                       Projects
                     </button>
-                  </div>
+                  </div> */}
 
                   {/* Category Pills */}
                   <div className="flex flex-wrap gap-2 pb-6 border-b border-border-grey dark:border-dark-charcoal mb-6">

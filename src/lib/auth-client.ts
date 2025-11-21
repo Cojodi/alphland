@@ -81,7 +81,7 @@ export async function signOutUser() {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          window.location.href = "/"; // Redirect to home after logout
+          window.location.href = "/bounty"; // Redirect to bounty page after logout
         },
       },
     });
