@@ -17,21 +17,29 @@ export interface Env {
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
   BETTER_AUTH_SECRET: string;
-  BETTER_AUTH_URL: string;
+  BETTER_AUTH_URL: string; // Frontend URL (e.g., http://localhost:3000)
+  APP_URL?: string; // Same as BETTER_AUTH_URL
 }
 
-// Cache auth instance per request
-let authInstance: any = null;
+// Note: Do NOT cache auth instance globally
+// D1 binding is only available within request context
 
 const worker = {
   async fetch(request: Request, env: Env, _ctx: any): Promise<Response> {
     const url = new URL(request.url);
 
-    // CORS headers for development
+    // Get the origin from the request or use the configured frontend URL
+    const requestOrigin = request.headers.get("Origin");
+    const allowedOrigin =
+      env.APP_URL || env.BETTER_AUTH_URL || "http://localhost:3000";
+
+    // CORS headers - must allow credentials for cookie-based auth
     const corsHeaders = {
-      "Access-Control-Allow-Origin": "*",
+      // Use specific origin instead of "*" to allow credentials
+      "Access-Control-Allow-Origin": requestOrigin || allowedOrigin,
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization, Cookie",
+      "Access-Control-Allow-Credentials": "true", // Required for cookies
     };
 
     // Handle preflight requests
@@ -41,19 +49,34 @@ const worker = {
 
     // Route handling
     try {
-      // Initialize auth if handling auth routes
+      // Handle auth routes - create fresh auth instance per request
+      // D1 binding is only available within request context
       if (url.pathname.startsWith("/api/auth/")) {
-        if (!authInstance) {
-          authInstance = createAuth(env.DB, {
-            GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
-            GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
-            BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
-            BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+        const auth = createAuth(env.DB, {
+          GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
+          GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
+          BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
+          BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+          APP_URL: env.APP_URL,
+        });
+
+        // Handle auth endpoints using better-auth
+        const response = await auth.handler(request);
+
+        // Add CORS headers to auth responses (for non-redirect responses)
+        if (response.status < 300 || response.status >= 400) {
+          const newHeaders = new Headers(response.headers);
+          Object.entries(corsHeaders).forEach(([key, value]) => {
+            newHeaders.set(key, value);
+          });
+          return new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: newHeaders,
           });
         }
 
-        // Handle auth endpoints using better-auth
-        return await authInstance.api.handler(request);
+        return response;
       }
 
       // Health check endpoint

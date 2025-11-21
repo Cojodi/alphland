@@ -2,11 +2,36 @@
 
 import Button from "@/components/Button/Button";
 import Layout from "@/components/Layout";
+import {
+  authClient,
+  signInWithEmail,
+  signUpWithEmail,
+  signInWithGoogle,
+  useSession,
+} from "@/lib/auth-client";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
+/**
+ * Login/Sign Up Page for Bounty System
+ *
+ * Authentication Flow:
+ * 1. User submits form → authClient sends request to /api/auth/*
+ * 2. Next.js rewrites proxy the request to Cloudflare Worker (localhost:8787)
+ * 3. Worker handles auth with Better Auth → writes to D1 database
+ * 4. Cookie is set on localhost:3000 domain (via proxy)
+ * 5. User is redirected to /bounty/profile/edit
+ *
+ * Google OAuth Flow:
+ * 1. User clicks Google button → redirect to Google
+ * 2. Google redirects to /api/auth/callback/google (on localhost:3000)
+ * 3. Next.js proxies to worker → worker validates token → creates session
+ * 4. Worker redirects to callbackURL (/bounty)
+ */
 export default function LoginPage() {
   const router = useRouter();
+  const { data: session, isPending } = useSession();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,41 +39,42 @@ export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState("");
 
+  // Redirect if already logged in
+  useEffect(() => {
+    if (session?.user && !isPending) {
+      router.push("/bounty/profile/edit");
+    }
+  }, [session, isPending, router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const workerUrl =
-        process.env.NEXT_PUBLIC_WORKER_URL || "http://localhost:8787";
-      const endpoint = isSignUp
-        ? `${workerUrl}/api/auth/sign-up/email`
-        : `${workerUrl}/api/auth/sign-in/email`;
-      const body = isSignUp ? { email, password, name } : { email, password };
-
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(body),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Authentication failed");
-      }
-
       if (isSignUp) {
+        // Sign up with email/password
+        const result = await signUpWithEmail(email, password, name);
+
+        if (!result.success) {
+          throw new Error((result.error as any)?.message || "Sign up failed");
+        }
+
+        // Show success message
         setError(
           "Account created! Please check your email to verify your account."
         );
         setIsSignUp(false);
       } else {
-        // Redirect to bounty page or profile
+        // Sign in with email/password
+        const result = await signInWithEmail(email, password);
+
+        if (!result.success) {
+          throw new Error((result.error as any)?.message || "Sign in failed");
+        }
+
+        // Redirect will happen via useEffect when session updates
+        // Or force redirect after successful login
         router.push("/bounty/profile/edit");
       }
     } catch (err: any) {
@@ -59,10 +85,33 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = async () => {
-    const workerUrl =
-      process.env.NEXT_PUBLIC_WORKER_URL || "http://localhost:8787";
-    window.location.href = `${workerUrl}/api/auth/sign-in/google`;
+    setLoading(true);
+    setError("");
+
+    try {
+      // Use authClient.signIn.social - this will redirect to Google
+      // After Google auth, it will callback to /api/auth/callback/google
+      // which gets proxied to the worker, then redirects to callbackURL
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/bounty/profile/edit", // Final redirect after successful auth
+      });
+    } catch (err: any) {
+      setError(err.message || "Google sign in failed");
+      setLoading(false);
+    }
   };
+
+  // Show loading while checking session
+  if (isPending) {
+    return (
+      <Layout title="Loading..." description="Checking authentication status">
+        <div className="min-h-screen bg-smoked-white dark:bg-light-black flex items-center justify-center">
+          <div className="text-black dark:text-white">Loading...</div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout
@@ -193,7 +242,8 @@ export default function LoginPage() {
               <div className="mt-6">
                 <button
                   onClick={handleGoogleLogin}
-                  className="w-full flex items-center justify-center px-4 py-2 border border-border-grey dark:border-dark-charcoal rounded-lg bg-white dark:bg-light-black hover:bg-smoked-white dark:hover:bg-hero-dark transition-colors"
+                  disabled={loading}
+                  className="w-full flex items-center justify-center px-4 py-2 border border-border-grey dark:border-dark-charcoal rounded-lg bg-white dark:bg-light-black hover:bg-smoked-white dark:hover:bg-hero-dark transition-colors disabled:opacity-50"
                 >
                   <svg
                     className="w-5 h-5 mr-2"

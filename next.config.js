@@ -33,7 +33,17 @@ const nextConfig = {
     scrollRestoration: true,
   },
   async rewrites() {
+    // Worker URL for API proxy (development: localhost:8787, production: same domain)
+    const workerUrl =
+      process.env.NEXT_PUBLIC_WORKER_URL || "http://localhost:8787";
+
     return [
+      // Proxy all /api/* requests to Cloudflare Worker
+      // This ensures cookies are set on the same domain as the frontend
+      {
+        source: "/api/:path*",
+        destination: `${workerUrl}/api/:path*`,
+      },
       {
         source: "/admin",
         destination: "/admin/index.html",

@@ -1,11 +1,20 @@
 /**
  * Better Auth client for frontend usage
  * Use this in your React components
+ *
+ * IMPORTANT: Uses window.location.origin as baseURL to work with Next.js proxy:
+ * - Frontend: http://localhost:3000/api/* -> Next.js rewrite -> Worker at :8787
+ * - This ensures cookies are set on the same domain (localhost:3000)
+ * - Google OAuth callback URL should be: http://localhost:3000/api/auth/callback/google
  */
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000",
+  // Use relative URL - requests go through Next.js proxy to worker
+  baseURL: typeof window !== "undefined" ? window.location.origin : "",
+  fetchOptions: {
+    credentials: "include", // Important: ensures cookies are sent with requests
+  },
 });
 
 /**

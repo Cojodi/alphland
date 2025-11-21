@@ -1,45 +1,21 @@
 import Button from "./Button";
+import { useSession, signOutUser } from "@/lib/auth-client";
 import { useRouter } from "next/router";
-import React, { useState, useEffect } from "react";
+import React from "react";
 
-interface User {
-  id: string;
-  email: string;
-  name?: string;
-}
-
+/**
+ * AuthButton - Handles login/logout display in the header
+ *
+ * Uses authClient which sends requests through Next.js proxy:
+ * - Frontend: /api/auth/* -> Next.js rewrite -> Worker at :8787
+ * - Cookies are set on the frontend domain (localhost:3000)
+ */
 const AuthButton = () => {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Check if user is authenticated
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const workerUrl =
-        process.env.NEXT_PUBLIC_WORKER_URL || "http://localhost:8787";
-      const response = await fetch(`${workerUrl}/api/auth/session`, {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        if (data.user) {
-          setUser(data.user);
-        }
-      }
-    } catch (error) {
-      console.error("Failed to check auth:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: session, isPending } = useSession();
 
   const handleAuth = () => {
-    if (user) {
+    if (session?.user) {
       // If logged in, go to profile
       router.push("/bounty/profile/edit");
     } else {
@@ -50,20 +26,14 @@ const AuthButton = () => {
 
   const handleLogout = async () => {
     try {
-      const workerUrl =
-        process.env.NEXT_PUBLIC_WORKER_URL || "http://localhost:8787";
-      await fetch(`${workerUrl}/api/auth/sign-out`, {
-        method: "POST",
-        credentials: "include",
-      });
-      setUser(null);
-      router.push("/bounty");
+      await signOutUser();
+      // signOutUser already handles redirect to home
     } catch (error) {
       console.error("Failed to logout:", error);
     }
   };
 
-  if (loading) {
+  if (isPending) {
     return (
       <Button
         variant="primary"
@@ -76,11 +46,11 @@ const AuthButton = () => {
     );
   }
 
-  if (user) {
+  if (session?.user) {
     return (
       <div className="flex gap-2 items-center">
         <span className="text-sm text-black dark:text-white hidden lg:inline">
-          {user.name || user.email}
+          {session.user.name || session.user.email}
         </span>
         <Button
           variant="secondary"
