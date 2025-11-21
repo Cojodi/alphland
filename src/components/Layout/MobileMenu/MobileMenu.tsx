@@ -5,6 +5,7 @@ import logo from "../../../assets/logo-alphland.svg";
 import { useCategoryStore } from "../../../hooks/useCategoryStore";
 // import ConnectWallet from "../../Button/ConnectWallet";
 import AuthButton from "../../Button/AuthButton";
+import { useSession } from "@/lib/auth-client";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -43,6 +44,7 @@ interface MobileMenuProps {
 
 const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
   const router = useRouter();
+  const { data: session } = useSession();
   const [isNavbarScrolled, setIsNavbarScrolled] = useState(false);
 
   const nav = useRef<HTMLDivElement>(null);
@@ -51,6 +53,20 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
   const isBountyPage =
     router.pathname.startsWith("/bounty") ||
     router.pathname.startsWith("/auth");
+
+  // Check if user is already a sponsor
+  const isSponsor = (session?.user as any)?.is_sponsor || false;
+
+  // Generate sponsor link - if not logged in, go to login with redirect
+  const getSponsorLink = () => {
+    if (!session?.user) {
+      return "/auth/login?redirect=/bounty/sponsor";
+    }
+    if (isSponsor) {
+      return "/bounty/sponsor/dashboard";
+    }
+    return "/bounty/sponsor";
+  };
 
   const handleScroll = () => {
     const position = window.pageYOffset;
@@ -118,9 +134,16 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
           </button>
           {/* <ConnectWallet /> */}
           {isBountyPage && (
-            <div className="scale-75">
-              <AuthButton />
-            </div>
+            <>
+              <Link href={getSponsorLink()}>
+                <a className="px-2.5 py-1.5 text-xs font-medium text-orange border border-orange rounded-md hover:bg-orange/10 transition-colors whitespace-nowrap">
+                  {isSponsor ? "Dashboard" : "Sponsor"}
+                </a>
+              </Link>
+              <div className="scale-75">
+                <AuthButton />
+              </div>
+            </>
           )}
         </div>
       </div>

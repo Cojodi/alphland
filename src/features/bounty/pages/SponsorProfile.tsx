@@ -1,26 +1,10 @@
+import type { Sponsor } from "../types/sponsor.types";
 import Layout from "@/components/Layout";
 import { Globe, CircleDollarSign, BarChart3 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-
-interface Sponsor {
-  id: string;
-  name: string;
-  description?: string;
-  logo_url?: string;
-  website?: string;
-  twitter?: string;
-  discord?: string;
-  telegram?: string;
-  wallet_address?: string;
-  total_bounties_count: number;
-  total_projects_count: number;
-  total_reward_amount: number;
-  is_verified?: boolean;
-  created_at: string;
-}
 
 interface Bounty {
   id: string;
@@ -363,19 +347,30 @@ export async function getServerSideProps(context: any) {
   // TODO: Replace with actual API call to fetch sponsor data
   const mockSponsor: Sponsor = {
     id,
+    user_id: "user1",
     name: "Alphland",
+    username: "alphland",
     description: "A decentralized platform for developers",
+    entity_name: "Alphland Labs",
+    industry: "Infrastructure",
     logo_url: "",
     website: "https://alphland.com",
     twitter: "alphland",
     discord: "",
     telegram: "",
+    contact_first_name: "John",
+    contact_last_name: "Doe",
+    contact_username: "johndoe",
+    contact_telegram: "johndoe",
     wallet_address: "0x1234...",
     total_bounties_count: 10,
     total_projects_count: 5,
     total_reward_amount: 50000,
+    status: "approved",
     is_verified: true,
+    approved_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   };
 
   // TODO: Fetch bounties for this sponsor

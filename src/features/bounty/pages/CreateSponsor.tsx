@@ -1,34 +1,81 @@
 "use client";
 
 import Layout from "@/components/Layout";
-import { Upload, X, Check } from "lucide-react";
+import { useSession } from "@/lib/auth-client";
+import { Upload, X, Info } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 interface FormData {
-  name: string;
-  description: string;
-  website_url: string;
-  twitter_handle: string;
+  // About You
+  first_name: string;
+  last_name: string;
+  username: string;
+  telegram: string;
+  // About Your Company
+  company_name: string;
+  company_username: string;
+  company_url: string;
+  company_twitter: string;
+  entity_name: string;
+  industry: string;
+  company_bio: string;
 }
 
-interface PhotoFile {
+interface LogoFile {
   file: File;
   preview: string;
 }
 
+const INDUSTRIES = [
+  "DeFi",
+  "NFT",
+  "Gaming",
+  "Infrastructure",
+  "DAO",
+  "Social",
+  "Developer Tools",
+  "Wallet",
+  "Exchange",
+  "Other",
+];
+
+const MAX_BIO_LENGTH = 180;
+
 export default function CreateSponsorProfile() {
   const router = useRouter();
+  const { data: session, isPending } = useSession();
   const [loading, setLoading] = useState(false);
-  const [photoFiles, setPhotoFiles] = useState<PhotoFile[]>([]);
+  const [logoFile, setLogoFile] = useState<LogoFile | null>(null);
   const [dragActive, setDragActive] = useState(false);
+  const [agreed, setAgreed] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    name: "",
-    description: "",
-    website_url: "",
-    twitter_handle: "",
+    first_name: "",
+    last_name: "",
+    username: "",
+    telegram: "",
+    company_name: "",
+    company_username: "",
+    company_url: "",
+    company_twitter: "",
+    entity_name: "",
+    industry: "",
+    company_bio: "",
   });
+
+  // Pre-fill user data from session
+  useEffect(() => {
+    if (session?.user) {
+      const nameParts = (session.user.name || "").split(" ");
+      setFormData((prev) => ({
+        ...prev,
+        first_name: nameParts[0] || "",
+        last_name: nameParts.slice(1).join(" ") || "",
+      }));
+    }
+  }, [session]);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -46,304 +93,512 @@ export default function CreateSponsorProfile() {
     setDragActive(false);
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFiles(e.dataTransfer.files);
+      handleLogoFile(e.dataTransfer.files[0]);
     }
   };
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      handleFiles(e.target.files);
+    if (e.target.files && e.target.files[0]) {
+      handleLogoFile(e.target.files[0]);
     }
   };
 
-  const handleFiles = (files: FileList) => {
-    const newFiles = Array.from(files)
-      .filter(
-        (file) => file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024
-      )
-      .slice(0, 5 - photoFiles.length)
-      .map((file) => ({
+  const handleLogoFile = (file: File) => {
+    if (file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024) {
+      setLogoFile({
         file,
         preview: URL.createObjectURL(file),
-      }));
-
-    setPhotoFiles([...photoFiles, ...newFiles]);
+      });
+    }
   };
 
-  const removePhoto = useCallback(
-    (index: number) => {
-      const newPhotoFiles = photoFiles.filter((_, i) => i !== index);
-      setPhotoFiles(newPhotoFiles);
-    },
-    [photoFiles]
-  );
+  const removeLogo = useCallback(() => {
+    if (logoFile) {
+      URL.revokeObjectURL(logoFile.preview);
+    }
+    setLogoFile(null);
+  }, [logoFile]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
+      if (!agreed) return;
       setLoading(true);
 
       try {
-        // TODO: Implement Cloudflare API call
-        console.log("Submitting sponsor profile:", formData, photoFiles);
+        // TODO: Implement API call to create sponsor application
+        // The sponsor will be created with status = 'pending'
+        // Admin will approve and set User.is_sponsor = true
+        const submitData = new FormData();
+        Object.entries(formData).forEach(([key, value]) => {
+          submitData.append(key, value);
+        });
+        if (logoFile) {
+          submitData.append("logo", logoFile.file);
+        }
+
+        console.log("Submitting sponsor application:", formData);
 
         // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        // Redirect to dashboard after successful creation
-        router.push("/bounty/sponsor/dashboard");
+        // Redirect to pending page or dashboard
+        router.push("/bounty/sponsor/pending");
       } catch (error) {
-        console.error("Error creating sponsor profile:", error);
+        console.error("Error submitting sponsor application:", error);
       } finally {
         setLoading(false);
       }
     },
-    [formData, photoFiles, router]
+    [formData, logoFile, agreed, router]
   );
+
+  const bioCharactersLeft = MAX_BIO_LENGTH - formData.company_bio.length;
+
+  // Show loading state
+  if (isPending) {
+    return (
+      <Layout title="Become a Sponsor - Alphland">
+        <div className="min-h-screen bg-smoked-white dark:bg-light-black flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-orange border-t-transparent" />
+        </div>
+      </Layout>
+    );
+  }
+
+  // Require login
+  if (!session?.user) {
+    return (
+      <Layout title="Become a Sponsor - Alphland">
+        <div className="min-h-screen bg-smoked-white dark:bg-light-black flex items-center justify-center px-4">
+          <div className="text-center space-y-6 max-w-md">
+            <h1 className="text-3xl font-bold text-black dark:text-white">
+              Become a Sponsor
+            </h1>
+            <p className="text-light-charcoal dark:text-lightgrey">
+              Please login to apply as a sponsor and start posting bounties on
+              Alphland.
+            </p>
+            <Link
+              href="/auth/login?redirect=/bounty/sponsor"
+              className="inline-block bg-orange hover:bg-orange/90 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
+            >
+              Login to Continue
+            </Link>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout
-      title="Create Sponsor Profile - Alphland"
-      description="Set up your organization profile to launch bounties"
+      title="Become a Sponsor - Alphland"
+      description="Apply to become a sponsor and launch bounties on Alphland"
     >
       <div className="min-h-screen bg-smoked-white dark:bg-light-black py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto mb-12">
-          <h1 className="text-4xl font-bold text-black dark:text-white mb-3">
-            Create Sponsor Profile
-          </h1>
-          <p className="text-light-charcoal dark:text-lightgrey text-lg">
-            Set up your organization profile to launch bounties and engage with
-            talented developers.
-          </p>
-        </div>
-
         <div className="max-w-2xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-10">
+            <h1 className="text-3xl font-bold text-black dark:text-white mb-2">
+              Become a Sponsor
+            </h1>
+            <p className="text-light-charcoal dark:text-lightgrey">
+              Let&apos;s start with some basic information about you and your
+              team
+            </p>
+          </div>
+
           <div className="bg-white dark:bg-hero-dark rounded-lg border border-border-grey dark:border-dark-charcoal">
-            <div className="p-8">
-              <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Organization Information */}
+            <div className="p-6 sm:p-8">
+              <form onSubmit={handleSubmit} className="space-y-10">
+                {/* About You Section */}
                 <div className="space-y-6">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-1 h-6 bg-orange rounded-full"></div>
-                    <h2 className="text-xl font-semibold text-black dark:text-white">
-                      Organization Information
-                    </h2>
+                  <h2 className="text-xl font-bold text-black dark:text-white">
+                    About You
+                  </h2>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        First Name <span className="text-orange">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.first_name}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            first_name: e.target.value,
+                          }))
+                        }
+                        className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                        placeholder="First Name"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        Last Name <span className="text-orange">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.last_name}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            last_name: e.target.value,
+                          }))
+                        }
+                        className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                        placeholder="Last Name"
+                        required
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <label className="block text-sm font-semibold text-black dark:text-white">
-                      Organization Name <span className="text-orange">*</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        Username <span className="text-orange">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.username}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            username: e.target.value,
+                          }))
+                        }
+                        className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                        placeholder="username"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        Telegram <span className="text-orange">*</span>
+                      </label>
+                      <div className="flex">
+                        <span className="inline-flex items-center px-3 bg-smoked-white dark:bg-light-black border border-r-0 border-border-grey dark:border-dark-charcoal rounded-l-lg text-light-charcoal dark:text-lightgrey text-sm">
+                          t.me/
+                        </span>
+                        <input
+                          type="text"
+                          value={formData.telegram}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              telegram: e.target.value,
+                            }))
+                          }
+                          className="flex-1 px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                          placeholder="username"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <hr className="border-border-grey dark:border-dark-charcoal" />
+
+                {/* About Your Company Section */}
+                <div className="space-y-6">
+                  <h2 className="text-xl font-bold text-black dark:text-white">
+                    About Your Company
+                  </h2>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        Company Name <span className="text-orange">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.company_name}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            company_name: e.target.value,
+                          }))
+                        }
+                        className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                        placeholder="Company Name"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        Company Username <span className="text-orange">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.company_username}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            company_username: e.target.value
+                              .toLowerCase()
+                              .replace(/[^a-z0-9_]/g, ""),
+                          }))
+                        }
+                        className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                        placeholder="companyname"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        Company URL <span className="text-orange">*</span>
+                      </label>
+                      <input
+                        type="url"
+                        value={formData.company_url}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            company_url: e.target.value,
+                          }))
+                        }
+                        className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                        placeholder="https://example.com"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        Company X <span className="text-orange">*</span>
+                      </label>
+                      <div className="flex">
+                        <span className="inline-flex items-center px-3 bg-smoked-white dark:bg-light-black border border-r-0 border-border-grey dark:border-dark-charcoal rounded-l-lg text-light-charcoal dark:text-lightgrey text-sm">
+                          x.com/
+                        </span>
+                        <input
+                          type="text"
+                          value={formData.company_twitter}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              company_twitter: e.target.value.replace("@", ""),
+                            }))
+                          }
+                          className="flex-1 px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                          placeholder="companyname"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-black dark:text-white">
+                      Entity Name{" "}
+                      <span className="inline-flex items-center">
+                        <Info className="w-3.5 h-3.5 text-light-charcoal dark:text-lightgrey ml-1" />
+                      </span>{" "}
+                      <span className="text-orange">*</span>
                     </label>
                     <input
                       type="text"
-                      value={formData.name}
+                      value={formData.entity_name}
                       onChange={(e) =>
                         setFormData((prev) => ({
                           ...prev,
-                          name: e.target.value,
+                          entity_name: e.target.value,
                         }))
                       }
-                      className="w-full px-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange"
-                      placeholder="Enter your organization or project name"
+                      className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                      placeholder="Full Entity Name"
                       required
                     />
                   </div>
 
-                  <div className="space-y-3">
-                    <label className="block text-sm font-semibold text-black dark:text-white">
-                      Description
+                  {/* Company Logo */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-black dark:text-white">
+                      Company Logo <span className="text-orange">*</span>
                     </label>
-                    <textarea
-                      value={formData.description}
+
+                    {logoFile ? (
+                      <div className="flex items-center gap-4 p-4 border border-border-grey dark:border-dark-charcoal rounded-lg bg-smoked-white dark:bg-light-black">
+                        <Image
+                          src={logoFile.preview}
+                          alt="Company logo"
+                          width={64}
+                          height={64}
+                          className="w-16 h-16 rounded-lg object-cover"
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-black dark:text-white">
+                            {logoFile.file.name}
+                          </p>
+                          <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                            {Math.round(logoFile.file.size / 1024)} KB
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={removeLogo}
+                          className="p-2 text-light-charcoal hover:text-orange transition-colors"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div
+                        onDragEnter={handleDrag}
+                        onDragLeave={handleDrag}
+                        onDragOver={handleDrag}
+                        onDrop={handleDrop}
+                        className={`border-2 border-dashed rounded-lg p-6 text-center transition-all cursor-pointer ${
+                          dragActive
+                            ? "border-orange bg-orange/5"
+                            : "border-border-grey dark:border-dark-charcoal hover:border-orange/50"
+                        }`}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileInput}
+                          className="hidden"
+                          id="logo-upload"
+                        />
+                        <label
+                          htmlFor="logo-upload"
+                          className="cursor-pointer flex items-center gap-4"
+                        >
+                          <div className="w-12 h-12 bg-smoked-white dark:bg-light-black rounded-lg flex items-center justify-center">
+                            <Upload className="w-5 h-5 text-light-charcoal dark:text-lightgrey" />
+                          </div>
+                          <div className="text-left">
+                            <p className="text-sm font-medium text-orange">
+                              Choose or drag and drop media
+                            </p>
+                            <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                              Maximum size 5 MB
+                            </p>
+                          </div>
+                        </label>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Industry */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-black dark:text-white">
+                      Industry <span className="text-orange">*</span>
+                    </label>
+                    <select
+                      value={formData.industry}
                       onChange={(e) =>
                         setFormData((prev) => ({
                           ...prev,
-                          description: e.target.value,
+                          industry: e.target.value,
                         }))
                       }
-                      className="w-full px-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey resize-none focus:outline-none focus:ring-2 focus:ring-orange"
-                      placeholder="Tell us about your organization or project"
-                      rows={4}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <label className="block text-sm font-semibold text-black dark:text-white">
-                        Website URL
-                      </label>
-                      <input
-                        type="url"
-                        value={formData.website_url}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            website_url: e.target.value,
-                          }))
-                        }
-                        className="w-full px-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange"
-                        placeholder="https://example.com"
-                      />
-                    </div>
-
-                    <div className="space-y-3">
-                      <label className="block text-sm font-semibold text-black dark:text-white">
-                        Twitter Handle
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.twitter_handle}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            twitter_handle: e.target.value,
-                          }))
-                        }
-                        className="w-full px-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange"
-                        placeholder="@username"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Profile Photos */}
-                <div className="space-y-6">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-1 h-6 bg-accessible-green rounded-full"></div>
-                    <h2 className="text-xl font-semibold text-black dark:text-white">
-                      Profile Photos
-                    </h2>
-                  </div>
-
-                  <div className="space-y-3">
-                    <p className="text-sm text-light-charcoal dark:text-lightgrey">
-                      Add up to 5 photos to showcase your organization
-                      (Optional, max 5MB each)
-                    </p>
-
-                    <div
-                      onDragEnter={handleDrag}
-                      onDragLeave={handleDrag}
-                      onDragOver={handleDrag}
-                      onDrop={handleDrop}
-                      className={`border-2 border-dashed rounded-lg p-8 text-center transition-all cursor-pointer ${
-                        dragActive
-                          ? "border-orange bg-orange/5"
-                          : "border-border-grey dark:border-dark-charcoal hover:border-orange/50 hover:bg-smoked-white dark:hover:bg-light-black/50"
-                      }`}
+                      className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                      required
                     >
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={handleFileInput}
-                        className="hidden"
-                        id="file-upload"
-                      />
-                      <label htmlFor="file-upload" className="cursor-pointer">
-                        <div className="flex justify-center mb-4">
-                          <div
-                            className={`p-3 rounded-lg ${
-                              dragActive
-                                ? "bg-orange/10"
-                                : "bg-smoked-white dark:bg-light-black"
-                            }`}
-                          >
-                            <Upload
-                              className={`w-6 h-6 ${
-                                dragActive
-                                  ? "text-orange"
-                                  : "text-light-charcoal dark:text-lightgrey"
-                              }`}
-                            />
-                          </div>
-                        </div>
-                        <p
-                          className={`font-semibold mb-1 ${
-                            dragActive
-                              ? "text-orange"
-                              : "text-black dark:text-white"
-                          }`}
-                        >
-                          {dragActive
-                            ? "Drop photos here"
-                            : "Click to upload or drag photos here"}
-                        </p>
-                        <p className="text-sm text-light-charcoal dark:text-lightgrey">
-                          PNG, JPG, GIF • {5 - photoFiles.length} photos
-                          remaining
-                        </p>
-                      </label>
-                    </div>
+                      <option value="">Select...</option>
+                      {INDUSTRIES.map((industry) => (
+                        <option key={industry} value={industry}>
+                          {industry}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
-                  {photoFiles.length > 0 && (
-                    <div className="space-y-3">
-                      <p className="text-sm font-semibold text-black dark:text-white flex items-center gap-2">
-                        <Check className="w-4 h-4 text-accessible-green" />
-                        {photoFiles.length} photo
-                        {photoFiles.length !== 1 ? "s" : ""} ready to upload
-                      </p>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {photoFiles.map((photo, index) => (
-                          <div key={index} className="relative group">
-                            <Image
-                              src={photo.preview}
-                              alt={`Preview ${index + 1}`}
-                              width={200}
-                              height={112}
-                              className="w-full h-28 object-cover rounded-lg border border-border-grey dark:border-dark-charcoal shadow-sm"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => removePhoto(index)}
-                              className="absolute top-2 right-2 bg-orange text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                            </button>
-                            <div className="absolute bottom-2 left-2 bg-black/80 text-white text-xs px-2 py-1 rounded font-semibold">
-                              {Math.round(photo.file.size / 1024)}KB
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  {/* Company Short Bio */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-black dark:text-white">
+                      Company Short Bio <span className="text-orange">*</span>
+                    </label>
+                    <textarea
+                      value={formData.company_bio}
+                      onChange={(e) => {
+                        if (e.target.value.length <= MAX_BIO_LENGTH) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            company_bio: e.target.value,
+                          }));
+                        }
+                      }}
+                      className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey resize-none focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                      placeholder="What does your company do?"
+                      rows={3}
+                      required
+                    />
+                    <p className="text-xs text-light-charcoal dark:text-lightgrey text-right">
+                      {bioCharactersLeft} characters left
+                    </p>
+                  </div>
                 </div>
 
-                {/* Submit */}
-                <div className="space-y-6 border-t border-border-grey dark:border-dark-charcoal pt-6">
-                  <div className="flex items-start gap-3 p-4 bg-smoked-white dark:bg-light-black rounded-lg">
+                {/* Agreement & Submit */}
+                <div className="space-y-6">
+                  <div className="flex items-start gap-3">
                     <input
                       type="checkbox"
-                      id="privacy"
-                      defaultChecked
-                      className="w-4 h-4 mt-1 rounded border-border-grey dark:border-dark-charcoal cursor-pointer"
+                      id="agreement"
+                      checked={agreed}
+                      onChange={(e) => setAgreed(e.target.checked)}
+                      className="w-4 h-4 mt-0.5 rounded border-border-grey dark:border-dark-charcoal cursor-pointer accent-orange"
                     />
                     <label
-                      htmlFor="privacy"
+                      htmlFor="agreement"
                       className="text-sm text-light-charcoal dark:text-lightgrey cursor-pointer leading-relaxed"
                     >
-                      I agree to keep my organization information accurate and
-                      updated. By creating this profile, you consent to display
-                      your information on the platform.
+                      I understand and acknowledge that this project is built
+                      on, or supports, the Alephium blockchain, and that
+                      Alphland is a platform exclusively for teams and projects
+                      within the Alephium ecosystem.{" "}
+                      <span className="text-orange">*</span>
                     </label>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full bg-accessible-green hover:bg-accessible-green/90 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={loading || !formData.name}
+                    className="w-full bg-orange hover:bg-orange/90 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={
+                      loading ||
+                      !agreed ||
+                      !formData.first_name ||
+                      !formData.last_name ||
+                      !formData.username ||
+                      !formData.telegram ||
+                      !formData.company_name ||
+                      !formData.company_username ||
+                      !formData.company_url ||
+                      !formData.company_twitter ||
+                      !formData.entity_name ||
+                      !formData.industry ||
+                      !formData.company_bio ||
+                      !logoFile
+                    }
                   >
                     {loading ? (
                       <div className="flex items-center justify-center gap-2">
                         <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-                        Creating Profile...
+                        Submitting Application...
                       </div>
                     ) : (
-                      "Create Sponsor Profile"
+                      "Become a Sponsor"
                     )}
                   </button>
+
+                  <p className="text-xs text-center text-light-charcoal dark:text-lightgrey">
+                    Your application will be reviewed by our team. Once
+                    approved, you&apos;ll be able to create and manage bounties.
+                  </p>
                 </div>
               </form>
             </div>

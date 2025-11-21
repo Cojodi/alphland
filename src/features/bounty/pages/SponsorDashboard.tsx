@@ -92,19 +92,31 @@ export default function SponsorDashboard() {
   useEffect(() => {
     // Fetch sponsor data and bounties/submissions
     setLoading(true);
-    // Placeholder fetch logic
+    // Placeholder fetch logic - TODO: Replace with actual API call
     setTimeout(() => {
       setSponsor({
         id: "1",
+        user_id: "user1",
         name: "Alphland",
+        username: "alphland",
         description: "A decentralized platform for developers",
+        entity_name: "Alphland Labs",
+        industry: "Infrastructure",
         website: "https://alphland.com",
-        twitter: "@alphland",
+        twitter: "alphland",
+        contact_first_name: "John",
+        contact_last_name: "Doe",
+        contact_username: "johndoe",
+        contact_telegram: "johndoe",
         wallet_address: "0x1234567890",
         total_bounties_count: 10,
         total_projects_count: 5,
         total_reward_amount: 5000,
+        status: "approved",
+        is_verified: true,
+        approved_at: new Date().toISOString(),
         created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       });
       setBounties([
         {

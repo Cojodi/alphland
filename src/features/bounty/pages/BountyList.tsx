@@ -3,7 +3,9 @@
 import { BountyCard } from "../components/BountyCard";
 import { Bounty } from "../types";
 import Layout from "@/components/Layout";
-import { Filter } from "lucide-react";
+import { useSession } from "@/lib/auth-client";
+import { Filter, Rocket } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 // Mock data - will be replaced with API calls later
@@ -59,10 +61,14 @@ const mockBounties: Array<Bounty & { logo: string }> = [
 ];
 
 export default function BountyList() {
+  const { data: session } = useSession();
   const [activeFilter, setActiveFilter] = useState<
     "all" | "bounties" | "projects"
   >("all");
   const [activeCategory, setActiveCategory] = useState<string>("for-you");
+
+  // TODO: Check if user is already a sponsor from session/API
+  const isSponsor = (session?.user as any)?.is_sponsor || false;
 
   const categories = [
     "For You",
@@ -200,6 +206,33 @@ export default function BountyList() {
 
               {/* Sidebar - Right Side */}
               <div className="lg:col-span-1 space-y-8">
+                {/* Become a Sponsor CTA */}
+                <div className="bg-gradient-to-br from-orange/10 to-accessible-green/10 dark:from-orange/20 dark:to-accessible-green/20 rounded-lg p-6 border border-orange/20">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 bg-orange/20 rounded-lg flex items-center justify-center">
+                      <Rocket className="w-5 h-5 text-orange" />
+                    </div>
+                    <h3 className="text-lg font-bold text-black dark:text-white">
+                      {isSponsor ? "Sponsor Dashboard" : "Become a Sponsor"}
+                    </h3>
+                  </div>
+                  <p className="text-sm text-light-charcoal dark:text-lightgrey mb-4">
+                    {isSponsor
+                      ? "Manage your bounties and track submissions."
+                      : "Launch bounties and engage with talented developers in the Alephium ecosystem."}
+                  </p>
+                  <Link
+                    href={
+                      isSponsor
+                        ? "/bounty/sponsor/dashboard"
+                        : "/bounty/sponsor"
+                    }
+                    className="block w-full bg-orange hover:bg-orange/90 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-center text-sm"
+                  >
+                    {isSponsor ? "Go to Dashboard" : "Get Started"}
+                  </Link>
+                </div>
+
                 {/* How It Works */}
                 <div className="bg-white dark:bg-hero-dark rounded-lg p-6 border border-border-grey dark:border-dark-charcoal">
                   <h3 className="text-lg font-bold text-black dark:text-white mb-4">

@@ -39,12 +39,16 @@ export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState("");
 
+  // Get redirect URL from query params, default to /bounty
+  const redirectUrl = (router.query.redirect as string) || "/bounty";
+
   // Redirect if already logged in
   useEffect(() => {
     if (session?.user && !isPending) {
-      router.push("/bounty/profile/edit");
+      // Redirect to the specified URL or default
+      router.push(redirectUrl);
     }
-  }, [session, isPending, router]);
+  }, [session, isPending, router, redirectUrl]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +79,7 @@ export default function LoginPage() {
 
         // Redirect will happen via useEffect when session updates
         // Or force redirect after successful login
-        router.push("/bounty/profile/edit");
+        router.push(redirectUrl);
       }
     } catch (err: any) {
       setError(err.message || "Something went wrong");
@@ -94,7 +98,7 @@ export default function LoginPage() {
       // which gets proxied to the worker, then redirects to callbackURL
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/bounty/profile/edit", // Final redirect after successful auth
+        callbackURL: redirectUrl, // Final redirect after successful auth
       });
     } catch (err: any) {
       setError(err.message || "Google sign in failed");
