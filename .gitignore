@@ -52,3 +52,4 @@ next-env.d.ts
 .claude
 /migrations/*.sql
 *.png
+/d1-manager-main
