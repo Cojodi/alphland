@@ -6,10 +6,13 @@ import { useCategoryStore } from "../../../hooks/useCategoryStore";
 // import ConnectWallet from "../../Button/ConnectWallet";
 import AuthButton from "../../Button/AuthButton";
 import Button from "../../Button/Button";
+import { NotificationBell } from "@/features/bounty/components/NotificationBell";
 import { useSession } from "@/lib/auth-client";
+import { ChevronDown, LayoutDashboard, User, Edit } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState, useRef, useEffect } from "react";
 
 interface DesktopMenuProps {
   currentTheme?: string;
@@ -19,6 +22,8 @@ interface DesktopMenuProps {
 const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
   const router = useRouter();
   const { data: session } = useSession();
+  const [sponsorDropdownOpen, setSponsorDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const setFilters = useCategoryStore((state) => state.setFilters);
   const changeCategory = useCategoryStore((state) => state.changeCategory);
   const setSort = useCategoryStore((state) => state.setSelectedSort);
@@ -31,6 +36,21 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
 
   // Check if user is already a sponsor
   const isSponsor = (session?.user as any)?.is_sponsor || false;
+  const sponsorId = (session?.user as any)?.sponsor_id;
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setSponsorDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Generate sponsor link - if not logged in, go to login with redirect
   const getSponsorLink = () => {
@@ -82,11 +102,63 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
           {/* <ConnectWallet /> */}
           {isBountyPage ? (
             <>
-              <Link href={getSponsorLink()}>
-                <a className="px-4 py-2 text-sm font-medium text-orange border border-orange rounded-lg hover:bg-orange/10 transition-colors">
-                  {isSponsor ? "Sponsor Dashboard" : "Become a Sponsor"}
-                </a>
-              </Link>
+              {isSponsor ? (
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={() => setSponsorDropdownOpen(!sponsorDropdownOpen)}
+                    className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-orange border border-orange rounded-lg hover:bg-orange/10 transition-colors"
+                  >
+                    Sponsor Dashboard
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform ${
+                        sponsorDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                  {sponsorDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-hero-dark rounded-lg border border-border-grey dark:border-dark-charcoal shadow-lg py-1 z-50">
+                      <Link href="/bounty/sponsor/dashboard">
+                        <a
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
+                          onClick={() => setSponsorDropdownOpen(false)}
+                        >
+                          <LayoutDashboard className="w-4 h-4 text-light-charcoal" />
+                          Dashboard
+                        </a>
+                      </Link>
+                      {sponsorId && (
+                        <Link href={`/bounty/sponsor/${sponsorId}`}>
+                          <a
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
+                            onClick={() => setSponsorDropdownOpen(false)}
+                          >
+                            <User className="w-4 h-4 text-light-charcoal" />
+                            Sponsor Profile
+                          </a>
+                        </Link>
+                      )}
+                      <Link href="/bounty/sponsor/edit">
+                        <a
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
+                          onClick={() => setSponsorDropdownOpen(false)}
+                        >
+                          <Edit className="w-4 h-4 text-light-charcoal" />
+                          Edit Sponsor Profile
+                        </a>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link href={getSponsorLink()}>
+                  <a className="px-4 py-2 text-sm font-medium text-orange border border-orange rounded-lg hover:bg-orange/10 transition-colors">
+                    Become a Sponsor
+                  </a>
+                </Link>
+              )}
+              {session?.user?.id && (
+                <NotificationBell userId={session.user.id} />
+              )}
               <AuthButton />
             </>
           ) : (

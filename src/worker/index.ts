@@ -7,6 +7,8 @@ import {
   handleSubmissionsAPI,
   handleCommentsAPI,
   handleSponsorsAPI,
+  handleNotificationsAPI,
+  handleNotificationPreferencesAPI,
 } from "./handlers";
 
 // Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
@@ -120,6 +122,16 @@ const worker = {
       // Sponsors endpoints
       if (url.pathname.startsWith("/api/sponsors")) {
         return handleSponsorsAPI(request, env, url);
+      }
+
+      // Notifications endpoints
+      if (url.pathname.startsWith("/api/notifications")) {
+        return handleNotificationsAPI(request, env, url);
+      }
+
+      // Notification preferences endpoints
+      if (url.pathname.startsWith("/api/notification-preferences")) {
+        return handleNotificationPreferencesAPI(request, env, url);
       }
 
       // Default 404

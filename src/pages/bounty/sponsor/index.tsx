@@ -1,4 +1,4 @@
-// Create sponsor profile page route
-import CreateSponsor from "@/features/bounty/pages/CreateSponsor";
+// Sponsor landing page route (why/how to become a sponsor)
+import SponsorLanding from "@/features/bounty/pages/SponsorLanding";
 
-export default CreateSponsor;
+export default SponsorLanding;

@@ -2,10 +2,10 @@
 import {
   Users,
   AppWindow,
-  CheckCircle,
-  XCircle,
-  Clock,
   ExternalLink,
+  Ban,
+  CheckCircle,
+  FileText,
 } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
@@ -24,25 +24,27 @@ interface Sponsor {
   contact_first_name?: string;
   contact_last_name?: string;
   contact_telegram?: string;
-  status: "pending" | "approved" | "rejected";
+  is_banned: number;
+  banned_at?: number;
+  bounty_count?: number;
   created_at: number;
   updated_at: number;
 }
 
-type SponsorFilter = "pending" | "approved" | "rejected";
+type SponsorFilter = "active" | "banned";
 
 export default function AdminDashboard() {
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sponsorFilter, setSponsorFilter] = useState<SponsorFilter>("pending");
+  const [sponsorFilter, setSponsorFilter] = useState<SponsorFilter>("active");
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-  const [rejectReason, setRejectReason] = useState("");
-  const [showRejectModal, setShowRejectModal] = useState<string | null>(null);
+  const [showBanModal, setShowBanModal] = useState<string | null>(null);
 
   // Fetch sponsors
   const fetchSponsors = useCallback(async () => {
     try {
-      const url = `/api/sponsors?status=${sponsorFilter}`;
+      const isBanned = sponsorFilter === "banned" ? "true" : "false";
+      const url = `/api/sponsors?is_banned=${isBanned}`;
       const response = await fetch(url);
       const data = await response.json();
       setSponsors(data.sponsors || []);
@@ -56,39 +58,36 @@ export default function AdminDashboard() {
     fetchSponsors().finally(() => setLoading(false));
   }, [fetchSponsors]);
 
-  // Approve sponsor
-  const handleApproveSponsor = async (sponsorId: string) => {
+  // Ban sponsor
+  const handleBanSponsor = async (sponsorId: string) => {
     setActionLoading(sponsorId);
     try {
-      const response = await fetch(`/api/sponsors/${sponsorId}/approve`, {
+      const response = await fetch(`/api/sponsors/${sponsorId}/ban`, {
         method: "PUT",
       });
       if (response.ok) {
         await fetchSponsors();
+        setShowBanModal(null);
       }
     } catch (error) {
-      console.error("Failed to approve sponsor:", error);
+      console.error("Failed to ban sponsor:", error);
     } finally {
       setActionLoading(null);
     }
   };
 
-  // Reject sponsor
-  const handleRejectSponsor = async (sponsorId: string) => {
+  // Unban sponsor
+  const handleUnbanSponsor = async (sponsorId: string) => {
     setActionLoading(sponsorId);
     try {
-      const response = await fetch(`/api/sponsors/${sponsorId}/reject`, {
+      const response = await fetch(`/api/sponsors/${sponsorId}/unban`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason: rejectReason }),
       });
       if (response.ok) {
         await fetchSponsors();
-        setShowRejectModal(null);
-        setRejectReason("");
       }
     } catch (error) {
-      console.error("Failed to reject sponsor:", error);
+      console.error("Failed to unban sponsor:", error);
     } finally {
       setActionLoading(null);
     }
@@ -102,35 +101,22 @@ export default function AdminDashboard() {
     });
   };
 
-  const getStatusBadge = (status: Sponsor["status"]) => {
-    switch (status) {
-      case "approved":
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-accessible-green/10 text-accessible-green">
-            <CheckCircle className="w-3 h-3" />
-            Approved
-          </span>
-        );
-      case "rejected":
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-orange/10 text-orange">
-            <XCircle className="w-3 h-3" />
-            Rejected
-          </span>
-        );
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-clay/20 text-dark-charcoal dark:text-lightgrey">
-            <Clock className="w-3 h-3" />
-            Pending
-          </span>
-        );
+  const getStatusBadge = (sponsor: Sponsor) => {
+    if (sponsor.is_banned) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-orange/10 text-orange">
+          <Ban className="w-3 h-3" />
+          Banned
+        </span>
+      );
     }
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-accessible-green/10 text-accessible-green">
+        <CheckCircle className="w-3 h-3" />
+        Active
+      </span>
+    );
   };
-
-  const filteredSponsors = sponsors;
-
-  const pendingCount = sponsors.filter((s) => s.status === "pending").length;
 
   if (loading) {
     return (
@@ -151,19 +137,19 @@ export default function AdminDashboard() {
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div className="space-y-2">
               <h1 className="text-4xl sm:text-5xl font-bold font-barlow">
-                Admin Dashboard
+                <a href="/">Admin Dashboard</a>
               </h1>
               <p className="text-lightgrey font-barlow">
                 Manage sponsors, dapps and have a full overview of the platform.
               </p>
             </div>
-            {pendingCount > 0 && (
-              <div className="bg-orange/20 rounded-lg px-4 py-2">
-                <span className="text-orange font-barlow font-semibold">
-                  {pendingCount} pending approval{pendingCount > 1 ? "s" : ""}
+            <div className="flex gap-4">
+              <div className="bg-accessible-green/20 rounded-lg px-4 py-2">
+                <span className="text-accessible-green font-barlow font-semibold">
+                  {sponsors.length} sponsor{sponsors.length !== 1 ? "s" : ""}
                 </span>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </section>
@@ -175,11 +161,6 @@ export default function AdminDashboard() {
             <div className="flex items-center gap-2 px-1 py-3 font-barlow font-medium text-sm text-light-black dark:text-white border-b-2 border-orange -mb-px">
               <Users className="w-4 h-4" />
               Sponsor Management
-              {pendingCount > 0 && (
-                <span className="bg-orange text-white text-xs px-2 py-0.5 rounded-full">
-                  {pendingCount}
-                </span>
-              )}
             </div>
             {/* External link to Netlify CMS - cannot use Next.js Link */}
             {/* eslint-disable-next-line @next/next/no-html-link-for-pages, jsx-a11y/anchor-is-valid */}
@@ -197,7 +178,7 @@ export default function AdminDashboard() {
         <div className="space-y-6">
           {/* Filter Buttons */}
           <div className="flex flex-wrap gap-2">
-            {(["pending", "approved", "rejected"] as const).map((filter) => (
+            {(["active", "banned"] as const).map((filter) => (
               <button
                 key={filter}
                 onClick={() => setSponsorFilter(filter)}
@@ -213,16 +194,16 @@ export default function AdminDashboard() {
           </div>
 
           {/* Sponsors List */}
-          {filteredSponsors.length === 0 ? (
+          {sponsors.length === 0 ? (
             <div className="bg-white dark:bg-hero-dark rounded-xl border border-border-grey dark:border-dark-charcoal p-12 text-center">
               <Users className="w-12 h-12 text-light-charcoal mx-auto mb-4" />
               <p className="text-light-charcoal font-barlow">
-                No sponsors found for this filter
+                No {sponsorFilter} sponsors found
               </p>
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredSponsors.map((sponsor) => (
+              {sponsors.map((sponsor) => (
                 <div
                   key={sponsor.id}
                   className="bg-white dark:bg-hero-dark rounded-xl border border-border-grey dark:border-dark-charcoal p-6 hover:shadow-box-image-shadow-hover transition-all duration-300"
@@ -248,7 +229,7 @@ export default function AdminDashboard() {
                           <h3 className="text-lg font-semibold text-light-black dark:text-white font-barlow">
                             {sponsor.name}
                           </h3>
-                          {getStatusBadge(sponsor.status)}
+                          {getStatusBadge(sponsor)}
                         </div>
                         {sponsor.username && (
                           <p className="text-sm text-light-charcoal font-barlow">
@@ -267,7 +248,13 @@ export default function AdminDashboard() {
                           {sponsor.entity_name && (
                             <span>Entity: {sponsor.entity_name}</span>
                           )}
-                          <span>Applied: {formatDate(sponsor.created_at)}</span>
+                          <span>Joined: {formatDate(sponsor.created_at)}</span>
+                          {sponsor.bounty_count !== undefined && (
+                            <span className="flex items-center gap-1">
+                              <FileText className="w-3 h-3" />
+                              {sponsor.bounty_count} bounties
+                            </span>
+                          )}
                         </div>
                         {sponsor.contact_first_name && (
                           <p className="text-xs text-light-charcoal font-barlow mt-1">
@@ -304,11 +291,11 @@ export default function AdminDashboard() {
                       </div>
                     </div>
 
-                    {/* Actions - Only show for pending sponsors */}
-                    {sponsor.status === "pending" && (
-                      <div className="flex gap-3 pt-4 border-t border-border-grey dark:border-dark-charcoal">
+                    {/* Actions */}
+                    <div className="flex gap-3 pt-4 border-t border-border-grey dark:border-dark-charcoal">
+                      {sponsor.is_banned ? (
                         <button
-                          onClick={() => handleApproveSponsor(sponsor.id)}
+                          onClick={() => handleUnbanSponsor(sponsor.id)}
                           disabled={actionLoading === sponsor.id}
                           className="flex items-center justify-center gap-2 px-6 py-2.5 bg-accessible-green hover:opacity-90 text-white rounded-lg font-barlow font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
@@ -317,18 +304,28 @@ export default function AdminDashboard() {
                           ) : (
                             <CheckCircle className="w-4 h-4" />
                           )}
-                          Approve
+                          Unban
                         </button>
+                      ) : (
                         <button
-                          onClick={() => setShowRejectModal(sponsor.id)}
+                          onClick={() => setShowBanModal(sponsor.id)}
                           disabled={actionLoading === sponsor.id}
                           className="flex items-center justify-center gap-2 px-6 py-2.5 bg-orange hover:opacity-90 text-white rounded-lg font-barlow font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
-                          <XCircle className="w-4 h-4" />
-                          Reject
+                          <Ban className="w-4 h-4" />
+                          Ban
                         </button>
-                      </div>
-                    )}
+                      )}
+                      <a
+                        href={`/bounty/sponsor/${sponsor.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 px-6 py-2.5 border border-border-grey dark:border-dark-charcoal text-light-charcoal hover:bg-smoked-white dark:hover:bg-light-black rounded-lg font-barlow font-medium text-sm transition-colors"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        View Profile
+                      </a>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -337,44 +334,36 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Reject Modal */}
-      {showRejectModal && (
+      {/* Ban Confirmation Modal */}
+      {showBanModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-hero-dark rounded-xl p-6 max-w-md w-full space-y-4">
             <h3 className="text-lg font-bold text-light-black dark:text-white font-barlow">
-              Reject Sponsor Application
+              Ban Sponsor
             </h3>
             <p className="text-sm text-light-charcoal font-barlow">
-              Please provide a reason for rejection (optional):
+              Are you sure you want to ban this sponsor? This will also ban the
+              associated user account. They will not be able to access any
+              sponsor or user features.
             </p>
-            <textarea
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
-              placeholder="Enter rejection reason..."
-              className="w-full px-3 py-2 border border-border-grey dark:border-dark-charcoal rounded-lg bg-white dark:bg-light-black text-light-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
-              rows={3}
-            />
             <div className="flex gap-3 justify-end">
               <button
-                onClick={() => {
-                  setShowRejectModal(null);
-                  setRejectReason("");
-                }}
+                onClick={() => setShowBanModal(null)}
                 className="px-4 py-2 border border-border-grey dark:border-dark-charcoal text-light-charcoal hover:bg-smoked-white dark:hover:bg-light-black rounded-lg font-barlow font-medium text-sm transition-colors"
               >
                 Cancel
               </button>
               <button
-                onClick={() => handleRejectSponsor(showRejectModal)}
-                disabled={actionLoading === showRejectModal}
+                onClick={() => handleBanSponsor(showBanModal)}
+                disabled={actionLoading === showBanModal}
                 className="px-4 py-2 bg-orange hover:opacity-90 text-white rounded-lg font-barlow font-medium text-sm disabled:opacity-50 transition-colors flex items-center gap-2"
               >
-                {actionLoading === showRejectModal ? (
+                {actionLoading === showBanModal ? (
                   <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
                 ) : (
-                  <XCircle className="w-4 h-4" />
+                  <Ban className="w-4 h-4" />
                 )}
-                Reject
+                Ban Sponsor
               </button>
             </div>
           </div>

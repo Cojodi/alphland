@@ -149,11 +149,11 @@ export default function CreateSponsorProfile() {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to submit sponsor application");
+          throw new Error("Failed to create sponsor profile");
         }
 
-        // Redirect to pending page
-        router.push("/bounty/sponsor/pending");
+        // Redirect to dashboard (auto-approved)
+        router.push("/bounty/sponsor/dashboard");
       } catch (error) {
         console.error("Error submitting sponsor application:", error);
       } finally {

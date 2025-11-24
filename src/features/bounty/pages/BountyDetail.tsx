@@ -1,13 +1,17 @@
 "use client";
 
+import { CommentSection } from "../components/CommentSection";
+import { NotificationMuteToggle } from "../components/NotificationMuteToggle";
 import { TieredRewardDisplay } from "../components/TieredRewardDisplay";
 import { Bounty } from "../types";
 import { generateTieredRewards } from "../utils/rewardCalculator";
 import { calculateTimeRemaining } from "../utils/timeFormatter";
 import Layout from "@/components/Layout";
-import { Bookmark, MoreVertical, Users, ArrowLeft } from "lucide-react";
+import { apiClient } from "@/lib/api-client";
+import { useSession } from "@/lib/auth-client";
+import { Bookmark, MoreVertical, Users, ArrowLeft, Bell } from "lucide-react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface BountyDetailProps {
   bounty: Bounty;
@@ -15,8 +19,60 @@ interface BountyDetailProps {
 
 export default function BountyDetail({ bounty }: BountyDetailProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"prizes" | "details">("prizes");
+  const { data: session } = useSession();
+  const [activeTab, setActiveTab] = useState<"prizes" | "details" | "comments">(
+    "prizes"
+  );
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [commentCount, setCommentCount] = useState(0);
+  const [showNotificationSettings, setShowNotificationSettings] =
+    useState(false);
+  const [userProfile, setUserProfile] = useState<{
+    username: string | null;
+    image: string | null;
+  } | null>(null);
+  const [sponsorUserId, setSponsorUserId] = useState<string | null>(null);
+  const [isSponsor, setIsSponsor] = useState(false);
+
+  // Fetch user profile
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!session?.user) {
+        setUserProfile(null);
+        return;
+      }
+      try {
+        const response = await fetch("/api/users/me");
+        if (response.ok) {
+          const data = await response.json();
+          setUserProfile({
+            username: data.user?.username || null,
+            image: data.user?.image || null,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error);
+      }
+    };
+    fetchUserProfile();
+  }, [session?.user]);
+
+  // Fetch sponsor info to check if current user is the sponsor
+  useEffect(() => {
+    const fetchSponsorInfo = async () => {
+      if (!bounty.sponsor_id) return;
+      try {
+        const { sponsor } = await apiClient.getSponsor(bounty.sponsor_id);
+        setSponsorUserId(sponsor.user_id);
+        if (session?.user?.id === sponsor.user_id) {
+          setIsSponsor(true);
+        }
+      } catch (error) {
+        console.error("Failed to fetch sponsor info:", error);
+      }
+    };
+    fetchSponsorInfo();
+  }, [bounty.sponsor_id, session?.user?.id]);
 
   const tieredRewards =
     bounty.reward_type === "tiered"
@@ -129,6 +185,21 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
               >
                 Details
               </button>
+              <button
+                onClick={() => setActiveTab("comments")}
+                className={`py-4 px-1 border-b-2 font-medium transition-colors flex items-center gap-2 ${
+                  activeTab === "comments"
+                    ? "border-orange text-orange"
+                    : "border-transparent text-light-charcoal dark:text-lightgrey hover:text-black dark:hover:text-white"
+                }`}
+              >
+                Comments
+                {commentCount > 0 && (
+                  <span className="px-2 py-0.5 text-xs bg-orange/10 text-orange rounded-full">
+                    {commentCount}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
         </section>
@@ -194,7 +265,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                       </div>
                     )}
                   </div>
-                ) : (
+                ) : activeTab === "details" ? (
                   <div className="bg-white dark:bg-hero-dark rounded-lg p-8 border border-border-grey dark:border-dark-charcoal">
                     <h2 className="text-2xl font-bold text-black dark:text-white mb-4">
                       Bounty Details
@@ -249,6 +320,61 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                           </ul>
                         </div>
                       )}
+                    </div>
+                  </div>
+                ) : (
+                  // Comments Tab
+                  <div className="space-y-6">
+                    {/* Notification Settings for Sponsor */}
+                    {isSponsor && session?.user?.id && (
+                      <div className="bg-white dark:bg-hero-dark rounded-lg p-6 border border-border-grey dark:border-dark-charcoal">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-2">
+                            <Bell className="w-5 h-5 text-light-charcoal dark:text-lightgrey" />
+                            <h3 className="font-semibold text-black dark:text-white">
+                              Notification Settings
+                            </h3>
+                          </div>
+                          <button
+                            onClick={() =>
+                              setShowNotificationSettings(
+                                !showNotificationSettings
+                              )
+                            }
+                            className="text-sm text-orange hover:text-primary-dark transition"
+                          >
+                            {showNotificationSettings ? "Hide" : "Configure"}
+                          </button>
+                        </div>
+                        {showNotificationSettings && (
+                          <NotificationMuteToggle
+                            userId={session.user.id}
+                            bountyId={bounty.id}
+                            bountyTitle={bounty.title}
+                          />
+                        )}
+                      </div>
+                    )}
+
+                    {/* Comment Section */}
+                    <div className="bg-white dark:bg-hero-dark rounded-lg p-6 border border-border-grey dark:border-dark-charcoal">
+                      <CommentSection
+                        bountyId={bounty.id}
+                        bountyTitle={bounty.title}
+                        currentUserId={session?.user?.id}
+                        currentUsername={
+                          userProfile?.username ||
+                          session?.user?.name ||
+                          undefined
+                        }
+                        currentUserAvatar={
+                          userProfile?.image ||
+                          session?.user?.image ||
+                          undefined
+                        }
+                        sponsorUserId={sponsorUserId || undefined}
+                        onCommentCount={setCommentCount}
+                      />
                     </div>
                   </div>
                 )}

@@ -5,6 +5,11 @@ export { BountyCard } from "./BountyCard";
 
 // Bounty detail components
 export { TieredRewardDisplay } from "./TieredRewardDisplay";
+export { CommentSection } from "./CommentSection";
+
+// Notification components
+export { NotificationBell } from "./NotificationBell";
+export { NotificationMuteToggle } from "./NotificationMuteToggle";
 
 // Profile components
 export { ProfileHeader } from "./ProfileHeader";

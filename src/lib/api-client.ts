@@ -109,6 +109,8 @@ export interface BountyComment {
   updated_at: string;
   user_username?: string;
   user_avatar?: string;
+  like_count?: number;
+  user_liked?: number;
 }
 
 export interface CreateCommentInput {
@@ -116,6 +118,46 @@ export interface CreateCommentInput {
   user_id: string;
   content: string;
   parent_comment_id?: string;
+}
+
+export interface UpdateCommentInput {
+  content: string;
+}
+
+export interface Notification {
+  id: string;
+  user_id: string;
+  type: string;
+  title: string;
+  message: string;
+  link: string | null;
+  read: number;
+  created_at: number;
+}
+
+export interface CreateNotificationInput {
+  user_id: string;
+  type: string;
+  title: string;
+  message: string;
+  link?: string;
+}
+
+export interface NotificationPreference {
+  id: string;
+  user_id: string;
+  bounty_id: string;
+  mute_comments: number;
+  mute_submissions: number;
+  created_at: number;
+  updated_at: number;
+}
+
+export interface CreateNotificationPreferenceInput {
+  user_id: string;
+  bounty_id: string;
+  mute_comments?: boolean;
+  mute_submissions?: boolean;
 }
 
 export interface Sponsor {
@@ -288,9 +330,13 @@ class ApiClient {
 
   // Comments
   async getCommentsByBounty(
-    bountyId: string
+    bountyId: string,
+    userId?: string
   ): Promise<{ comments: BountyComment[] }> {
-    return this.request(`/api/comments/bounty/${bountyId}`);
+    const url = userId
+      ? `/api/comments/bounty/${bountyId}?user_id=${userId}`
+      : `/api/comments/bounty/${bountyId}`;
+    return this.request(url);
   }
 
   async createComment(
@@ -302,8 +348,37 @@ class ApiClient {
     });
   }
 
+  async updateComment(
+    id: string,
+    data: UpdateCommentInput
+  ): Promise<{ comment: BountyComment }> {
+    return this.request(`/api/comments/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+  }
+
   async deleteComment(id: string): Promise<{ success: boolean }> {
     return this.request(`/api/comments/${id}`, {
+      method: "DELETE",
+    });
+  }
+
+  async likeComment(
+    commentId: string,
+    userId: string
+  ): Promise<{ success: boolean; like_count: number }> {
+    return this.request(`/api/comments/${commentId}/like`, {
+      method: "POST",
+      body: JSON.stringify({ user_id: userId }),
+    });
+  }
+
+  async unlikeComment(
+    commentId: string,
+    userId: string
+  ): Promise<{ success: boolean; like_count: number }> {
+    return this.request(`/api/comments/${commentId}/like?user_id=${userId}`, {
       method: "DELETE",
     });
   }
@@ -367,6 +442,81 @@ class ApiClient {
     return this.request(`/api/sponsors/${id}/reject`, {
       method: "PUT",
       body: JSON.stringify({ reason }),
+    });
+  }
+
+  // Notifications
+  async getNotifications(
+    userId: string,
+    options?: { limit?: number; unreadOnly?: boolean }
+  ): Promise<{ notifications: Notification[]; unread_count: number }> {
+    let url = `/api/notifications/user/${userId}`;
+    const params = new URLSearchParams();
+    if (options?.limit) params.append("limit", options.limit.toString());
+    if (options?.unreadOnly) params.append("unread_only", "true");
+    if (params.toString()) url += `?${params.toString()}`;
+    return this.request(url);
+  }
+
+  async createNotification(
+    data: CreateNotificationInput
+  ): Promise<{ notification: Notification }> {
+    return this.request("/api/notifications", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async markNotificationAsRead(id: string): Promise<{ success: boolean }> {
+    return this.request(`/api/notifications/${id}/read`, {
+      method: "PUT",
+    });
+  }
+
+  async markAllNotificationsAsRead(
+    userId: string
+  ): Promise<{ success: boolean }> {
+    return this.request(`/api/notifications/user/${userId}/read-all`, {
+      method: "PUT",
+    });
+  }
+
+  async deleteNotification(id: string): Promise<{ success: boolean }> {
+    return this.request(`/api/notifications/${id}`, {
+      method: "DELETE",
+    });
+  }
+
+  // Notification Preferences
+  async getNotificationPreferences(
+    userId: string
+  ): Promise<{ preferences: NotificationPreference[] }> {
+    return this.request(`/api/notification-preferences/user/${userId}`);
+  }
+
+  async getNotificationPreferenceForBounty(
+    bountyId: string,
+    userId: string
+  ): Promise<{ preference: NotificationPreference | null }> {
+    return this.request(
+      `/api/notification-preferences/bounty/${bountyId}?user_id=${userId}`
+    );
+  }
+
+  async setNotificationPreference(
+    data: CreateNotificationPreferenceInput
+  ): Promise<{ preference: NotificationPreference }> {
+    return this.request("/api/notification-preferences", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteNotificationPreference(
+    id: string
+  ): Promise<{ success: boolean }> {
+    return this.request(`/api/notification-preferences/${id}`, {
+      method: "DELETE",
     });
   }
 }

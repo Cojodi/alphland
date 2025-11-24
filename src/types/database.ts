@@ -269,6 +269,11 @@ export type NotificationType =
   | "submission_rejected"
   | "bounty_completed"
   | "comment_reply"
+  | "comment_like"
+  | "new_comment"
+  | "new_submission"
+  | "sponsor_approved"
+  | "sponsor_rejected"
   | "general";
 
 export interface Notification {
@@ -277,11 +282,23 @@ export interface Notification {
   type: NotificationType;
   title: string;
   message: string;
+  link: string | null;
   related_bounty_id: string | null;
   related_submission_id: string | null;
+  related_comment_id: string | null;
   is_read: number; // 0 or 1
   read_at: number | null;
   created_at: number;
+}
+
+export interface NotificationPreference {
+  id: string;
+  user_id: string;
+  bounty_id: string | null;
+  mute_comments: number; // 0 or 1
+  mute_submissions: number; // 0 or 1
+  created_at: number;
+  updated_at: number;
 }
 
 // ==========================================
