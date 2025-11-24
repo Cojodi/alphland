@@ -1,0 +1,32 @@
+{
+  "name": "Exolix",
+  "description": "Exolix is a leading multi-chain swap aggregator with access to 4M+ pairs, 2K+ assets, and 200+ chains, using compliant and private Web3 routes through CEXs and DEXs to deliver the best rates, privacy, and full interoperability.",
+  "short_description": "Ultimate multi-chain swap aggregator",
+  "tags": ["Onramps"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://exolix.com/",
+    "careers": "",
+    "twitter": "https://x.com/exolix_com",
+    "telegram": "https://t.me/exolixcom",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2018-01-10T00:00:00.000Z",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/exolix/exolix-logo.webp",
+    "bannerUrl": "/dapps/exolix/exolix-banner.webp",
+    "previewUrl": "/dapps/exolix/exolix-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}
