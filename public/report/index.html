@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
     <title>Report an Issue - Alphland</title>
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <style>
       /* Hide navigation elements that allow browsing other entries */
       [href="#/collections/reports"],
@@ -101,19 +100,6 @@
           document.head.appendChild(style);
         }, 500);
       })();
-
-      // Netlify Identity handling
-      if (window.netlifyIdentity) {
-        window.netlifyIdentity.on("init", user => {
-          if (!user) {
-            window.netlifyIdentity.on("login", () => {
-              const urlParams = new URLSearchParams(window.location.search);
-              const dappParam = urlParams.get('dapp') ? `?dapp=${urlParams.get('dapp')}` : '';
-              document.location.href = `/report/${dappParam}`;
-            });
-          }
-        });
-      }
     </script>
   </body>
 </html>

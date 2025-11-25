@@ -1,9 +1,9 @@
 backend:
   name: github
-  repo: cojodi/alphland # Replace with your GitHub repo (owner/repo-name)
+  repo: xbabyx/alphland
   branch: bounty # The branch to save to
-  base_url: https://api.netlify.com # For Netlify's OAuth
-  auth_endpoint: auth
+  # Using GitHub OAuth App for authentication
+  # No base_url needed - uses GitHub's direct OAuth
 
 # Editorial workflow: creates PRs instead of direct commits
 publish_mode: editorial_workflow
@@ -63,30 +63,30 @@ collections:
             "Marketplace"
           ]
         }
-      - {
-          label: "Verified",
-          name: "verified",
-          widget: "boolean",
-          default: false,
-          required: false,
-          hint: "Leave as false - will be reviewed by admins"
-        }
-      - {
-          label: "DOTW (dApp of the Week)",
-          name: "dotw",
-          widget: "boolean",
-          default: false,
-          required: false,
-          hint: "Leave as false - assigned by admins"
-        }
-      - {
-          label: "Council's Choice",
-          name: "councils_choice",
-          widget: "boolean",
-          default: false,
-          required: false,
-          hint: "Leave as false - assigned by admins"
-        }
+      # - {
+      #     label: "Verified",
+      #     name: "verified",
+      #     widget: "boolean",
+      #     default: false,
+      #     required: false,
+      #     hint: "Leave as false - will be reviewed by admins"
+      #   }
+      # - {
+      #     label: "DOTW (dApp of the Week)",
+      #     name: "dotw",
+      #     widget: "boolean",
+      #     default: false,
+      #     required: false,
+      #     hint: "Leave as false - assigned by admins"
+      #   }
+      # - {
+      #    label: "Council's Choice",
+      #    name: "councils_choice",
+      #    widget: "boolean",
+      #    default: false,
+      #    required: false,
+      #    hint: "Leave as false - assigned by admins"
+      #  }
 
       # Links Section
       - label: "Links"
@@ -139,30 +139,21 @@ collections:
               name: "logoUrl",
               widget: "image",
               required: true,
-              hint: "Square logo (recommended: 512x512px, WebP format)",
-              media_folder: "/public/dapps/{{slug}}",
-              public_folder: "/dapps/{{slug}}",
-              default: "/dapps/{{slug}}/logo.webp"
+              hint: "Square logo (recommended: 512x512px, WebP format)"
             }
           - {
               label: "Banner",
               name: "bannerUrl",
               widget: "image",
               required: true,
-              hint: "Wide banner (recommended: 1200x400px, WebP format)",
-              media_folder: "/public/dapps/{{slug}}",
-              public_folder: "/dapps/{{slug}}",
-              default: "/dapps/{{slug}}/banner.webp"
+              hint: "Wide banner (recommended: 1200x400px, WebP format)"
             }
           - {
               label: "Preview Image",
               name: "previewUrl",
               widget: "image",
               required: true,
-              hint: "Screenshot or preview (recommended: 1200x800px, WebP format)",
-              media_folder: "/public/dapps/{{slug}}",
-              public_folder: "/dapps/{{slug}}",
-              default: "/dapps/{{slug}}/preview.webp"
+              hint: "Screenshot or preview (recommended: 1200x800px, WebP format)"
             }
           - {
               label: "Video URL",
@@ -273,13 +264,13 @@ collections:
           required: false,
           hint: "Optional - for follow-up questions"
         }
-      - {
-          label: "Status",
-          name: "status",
-          widget: "select",
-          default: "pending",
-          options: ["pending", "reviewing", "resolved", "rejected"]
-        }
+      #- {
+      #    label: "Status",
+      #    name: "status",
+      #    widget: "select",
+      #    default: "pending",
+      #    options: ["pending", "reviewing", "resolved", "rejected"]
+      #  }
       - {
           label: "Submission Date",
           name: "date",
