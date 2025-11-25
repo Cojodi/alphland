@@ -30,7 +30,7 @@ export const { useSession, signIn, signUp, signOut } = authClient;
 export async function signUpWithEmail(
   email: string,
   password: string,
-  name: string = ""
+  name: string = "",
 ) {
   try {
     const result = await authClient.signUp.email({
@@ -95,7 +95,7 @@ export async function signOutUser() {
 // Request password reset
 export async function requestPasswordReset(email: string) {
   try {
-    await authClient.forgetPassword({
+    await authClient.requestPasswordReset({
       email,
       redirectTo: "/reset-password", // Page to handle password reset
     });

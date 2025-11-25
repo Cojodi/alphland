@@ -1,6 +1,7 @@
 import Button from "../Button/Button";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
+import { ReactNode } from "react";
 import styled from "styled-components";
 
 interface FeaturedCardProps {
@@ -11,7 +12,11 @@ interface FeaturedCardProps {
   isHome?: boolean;
 }
 
-const StyledCard = styled.div<{ image: StaticImageData }>`
+const StyledCard = styled.div<{
+  image: StaticImageData;
+  children?: ReactNode;
+  className?: string;
+}>`
   @media (min-width: 1024px) {
     background-image: ${({ image }) => `url(${image?.src})`};
     background-repeat: no-repeat;

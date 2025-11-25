@@ -10,10 +10,13 @@ import SearchBar from "../SearchBar/SearchBar";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ReactNode } from "react";
 import styled from "styled-components";
 
-const CategoryContainer = styled.div`
+const CategoryContainer = styled.div<{
+  className?: string;
+  children?: ReactNode;
+}>`
   ul.hovered li {
     transition: opacity 0.2s ease-in-out;
     opacity: 0.6;
@@ -81,7 +84,7 @@ const Categories = ({
   const renderCategoryCount = (
     category: string,
     isMainCategory?: boolean,
-    isRatingCategory?: boolean
+    isRatingCategory?: boolean,
   ) => {
     const dappCardsFilteredByRating = !isRatingCategory
       ? filterDappcardsByRating({
@@ -104,7 +107,7 @@ const Categories = ({
         const filterMatched = checkIfCategoryExists(
           currentValue,
           nextFilter,
-          dappRatings
+          dappRatings,
         );
         return filterMatched ? prevFiltersCount + 1 : prevFiltersCount;
       }, 0);
@@ -114,13 +117,13 @@ const Categories = ({
 
   const checkIfAnyCategoryIsActive = () =>
     [...categories, ...reputation, ...ratings].some(
-      (category) => category.key === selectedCategory
+      (category) => category.key === selectedCategory,
     );
 
   const checkIfCategoryHasDapps = (
     category: Array<{ key: string; name: string; icon: any }>,
     isMainCategory?: boolean,
-    isRatingCategory?: boolean
+    isRatingCategory?: boolean,
   ) => {
     let activeCategories = 0;
     category.forEach((item) => {
@@ -142,7 +145,7 @@ const Categories = ({
         (category) =>
           selectedFilters.includes(category.key) ||
           selectedRatings.includes(category.key) ||
-          category.key === selectedCategory
+          category.key === selectedCategory,
       )
       .map((category) => ({
         ...category,
@@ -200,7 +203,7 @@ const Categories = ({
                         selectedFilters: selectedFilters,
                         selectedRatings: selectedRatings,
                         selectedCategory: "all",
-                      })
+                      }),
                     );
                   } else {
                     if (category.isRating) {
@@ -321,7 +324,7 @@ const Categories = ({
                     </li>
                   </a>
                 </Link>
-              )
+              ),
           )}
       </ul>
       {checkIfCategoryHasDapps(reputation) ||
@@ -369,7 +372,7 @@ const Categories = ({
                     </p>
                   </div>
                 </li>
-              )
+              ),
           )}
         {ratings
           .filter((rating) => !selectedRatings.includes(rating.key))
@@ -403,7 +406,7 @@ const Categories = ({
                     </p>
                   </div>
                 </li>
-              )
+              ),
           )}
       </ul>
     </CategoryContainer>
