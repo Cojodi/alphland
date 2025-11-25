@@ -4,18 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
-    <title>Submit Your dApp - Alphland</title>
+    <title>Report an Issue - Alphland</title>
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <style>
       /* Hide navigation elements that allow browsing other entries */
-      [href="#/collections/dapps"],
+      [href="#/collections/reports"],
       [data-testid="list-card"],
-      .css-1hwfws3, /* Collection list */
-      a[href*="#/collections/dapps/"]:not([href*="/new"]) {
+      .css-1hwfws3,
+      a[href*="#/collections/reports/"]:not([href*="/new"]) {
         display: none !important;
       }
-
-      /* Auto-redirect script will handle navigation */
     </style>
   </head>
   <body>
@@ -39,11 +37,15 @@
 
       // Redirect to new entry page and prevent navigation elsewhere
       (function() {
-        const targetPath = '#/collections/dapps/new';
+        const targetPath = '#/collections/reports/new';
+
+        // Get dappName from URL query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const dappName = urlParams.get('dapp');
 
         // Redirect on load if not on new entry page
         function checkAndRedirect() {
-          if (window.location.hash !== targetPath && !window.location.hash.startsWith('#/collections/dapps/new')) {
+          if (window.location.hash !== targetPath && !window.location.hash.startsWith('#/collections/reports/new')) {
             window.location.hash = targetPath;
           }
         }
@@ -51,11 +53,25 @@
         // Initial redirect
         setTimeout(checkAndRedirect, 100);
 
+        // Pre-fill dappName field if available
+        if (dappName) {
+          setTimeout(function() {
+            // Wait for CMS to load, then pre-fill the dapp field
+            const checkInterval = setInterval(function() {
+              const dappInput = document.querySelector('input[type="text"]');
+              if (dappInput) {
+                dappInput.value = dappName;
+                dappInput.dispatchEvent(new Event('input', { bubbles: true }));
+                clearInterval(checkInterval);
+              }
+            }, 500);
+          }, 1000);
+        }
+
         // Watch for hash changes and redirect back
         window.addEventListener('hashchange', function() {
-          // Allow staying on new page or workflow pages (for save/publish)
           const hash = window.location.hash;
-          if (!hash.startsWith('#/collections/dapps/new') &&
+          if (!hash.startsWith('#/collections/reports/new') &&
               !hash.startsWith('#/workflow') &&
               !hash.startsWith('#/editorial')) {
             window.location.hash = targetPath;
@@ -71,7 +87,7 @@
             [class*="CollectionLabel"],
             nav[class*="Sidebar"] a:not([href*="new"]),
             /* Hide back button that goes to list */
-            a[href="#/collections/dapps"],
+            a[href="#/collections/reports"],
             button[class*="BackButton"],
             [class*="BackArrow"],
             /* Hide any entry cards/lists */
@@ -91,7 +107,9 @@
         window.netlifyIdentity.on("init", user => {
           if (!user) {
             window.netlifyIdentity.on("login", () => {
-              document.location.href = "/submit/";
+              const urlParams = new URLSearchParams(window.location.search);
+              const dappParam = urlParams.get('dapp') ? `?dapp=${urlParams.get('dapp')}` : '';
+              document.location.href = `/report/${dappParam}`;
             });
           }
         });

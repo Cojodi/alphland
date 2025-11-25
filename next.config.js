@@ -10,7 +10,7 @@ const nextConfig = {
   },
   webpack(config) {
     const fileLoaderRule = config.module.rules.find(
-      (rule) => rule.test && rule.test.test(".svg")
+      (rule) => rule.test && rule.test.test(".svg"),
     );
     fileLoaderRule.exclude = /\.icon\.svg$/;
     config.module.rules.push({
@@ -55,6 +55,10 @@ const nextConfig = {
       {
         source: "/submit",
         destination: "/submit/index.html",
+      },
+      {
+        source: "/report",
+        destination: "/report/index.html",
       },
       {
         source: "/config.yml",

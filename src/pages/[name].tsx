@@ -172,7 +172,7 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
                           {
                             month: "long",
                             year: "numeric",
-                          }
+                          },
                         )
                       : "Unknown"}
                   </p>
@@ -360,15 +360,17 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
 
             {/* Report */}
             <div>
-              <a
-                href="https://x.com/fugashu_codes"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center text-sm text-lightgrey hover:text-orange transition-colors"
-              >
-                <Image src={flagIcon} alt="flag icon" width={16} height={16} />
-                <span className="ml-2">Report</span>
-              </a>
+              <Link href={`/report/?dapp=${encodeURIComponent(dappInfo.name)}`}>
+                <a className="flex items-center text-sm text-lightgrey hover:text-orange transition-colors">
+                  <Image
+                    src={flagIcon}
+                    alt="flag icon"
+                    width={16}
+                    height={16}
+                  />
+                  <span className="ml-2">Report an Issue</span>
+                </a>
+              </Link>
             </div>
 
             {/* Links */}
@@ -400,7 +402,7 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
 };
 
 export const getStaticProps: GetStaticProps<DappPageProps> = async (
-  context
+  context,
 ) => {
   const name = context.params?.name;
 

@@ -218,3 +218,72 @@ collections:
         fields:
           - { label: "Collection Name", name: "name", widget: "string", required: false }
           - { label: "Collection URL", name: "url", widget: "string", required: false }
+
+  # Reports Collection - for users to report issues
+  - name: "reports"
+    label: "Reports"
+    label_singular: "Report"
+    folder: "reports"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    editor:
+      preview: false
+    fields:
+      - {
+          label: "dApp Name",
+          name: "dapp",
+          widget: "string",
+          required: true,
+          hint: "Name of the dApp you're reporting about"
+        }
+      - {
+          label: "Issue Type",
+          name: "issueType",
+          widget: "select",
+          required: true,
+          options: [
+            "Security Vulnerability",
+            "Bug Report",
+            "Incorrect Information",
+            "Scam/Fraud",
+            "Broken Link",
+            "Other"
+          ]
+        }
+      - {
+          label: "Title",
+          name: "title",
+          widget: "string",
+          required: true,
+          hint: "Brief summary of the issue"
+        }
+      - {
+          label: "Description",
+          name: "body",
+          widget: "text",
+          required: true,
+          hint: "Detailed description of the issue"
+        }
+      - {
+          label: "Reporter Email",
+          name: "email",
+          widget: "string",
+          required: false,
+          hint: "Optional - for follow-up questions"
+        }
+      - {
+          label: "Status",
+          name: "status",
+          widget: "select",
+          default: "pending",
+          options: ["pending", "reviewing", "resolved", "rejected"]
+        }
+      - {
+          label: "Submission Date",
+          name: "date",
+          widget: "datetime",
+          default: "{{year}}-{{month}}-{{day}}T{{hour}}:{{minute}}:{{second}}",
+          format: "YYYY-MM-DDTHH:mm:ss"
+        }
