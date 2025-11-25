@@ -143,21 +143,18 @@ export interface CreateNotificationInput {
   link?: string;
 }
 
-export interface NotificationPreference {
+// REMOVED: NotificationPreference - replaced by simpler NotificationMute approach
+// New simplified notification mute interface
+export interface NotificationMute {
   id: string;
   user_id: string;
   bounty_id: string;
-  mute_comments: number;
-  mute_submissions: number;
   created_at: number;
-  updated_at: number;
 }
 
-export interface CreateNotificationPreferenceInput {
+export interface CreateNotificationMuteInput {
   user_id: string;
   bounty_id: string;
-  mute_comments?: boolean;
-  mute_submissions?: boolean;
 }
 
 export interface Sponsor {
@@ -487,37 +484,35 @@ class ApiClient {
     });
   }
 
-  // Notification Preferences
-  async getNotificationPreferences(
-    userId: string
-  ): Promise<{ preferences: NotificationPreference[] }> {
-    return this.request(`/api/notification-preferences/user/${userId}`);
-  }
-
-  async getNotificationPreferenceForBounty(
+  // Notification Mutes (simplified replacement for preferences)
+  async checkNotificationMute(
     bountyId: string,
     userId: string
-  ): Promise<{ preference: NotificationPreference | null }> {
+  ): Promise<{ muted: boolean }> {
     return this.request(
-      `/api/notification-preferences/bounty/${bountyId}?user_id=${userId}`
+      `/api/notification-mutes/check?bounty_id=${bountyId}&user_id=${userId}`
     );
   }
 
-  async setNotificationPreference(
-    data: CreateNotificationPreferenceInput
-  ): Promise<{ preference: NotificationPreference }> {
-    return this.request("/api/notification-preferences", {
+  async muteNotifications(
+    data: CreateNotificationMuteInput
+  ): Promise<{ mute: NotificationMute }> {
+    return this.request("/api/notification-mutes", {
       method: "POST",
       body: JSON.stringify(data),
     });
   }
 
-  async deleteNotificationPreference(
-    id: string
+  async unmuteNotifications(
+    bountyId: string,
+    userId: string
   ): Promise<{ success: boolean }> {
-    return this.request(`/api/notification-preferences/${id}`, {
-      method: "DELETE",
-    });
+    return this.request(
+      `/api/notification-mutes?bounty_id=${bountyId}&user_id=${userId}`,
+      {
+        method: "DELETE",
+      }
+    );
   }
 }
 

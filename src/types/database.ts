@@ -1,18 +1,36 @@
 /**
  * Database type definitions for Cloudflare D1
- * Auto-generated from schema in /sql/d1/
+ * Updated schema after cleanup migration (16_schema_cleanup.sql)
+ *
+ * Table relationships:
+ * - user: Core auth table, connects to session, user_profiles, sponsors, bounty_submissions, bounty_comments, notifications
+ * - user_profiles: Extended user info, connects to user via user_id
+ * - sponsors: Company profiles, connects to user via user_id, to bounties
+ * - bounties: Bounty listings, connects to sponsors via sponsor_id
+ * - bounty_submissions: User submissions, connects to bounties, sponsors, user
+ * - bounty_comments: Comments on bounties, connects to bounties, user (liked_by field replaces comment_likes table)
+ * - notifications: User notifications, connects to user, bounties, bounty_submissions, bounty_comments
+ * - notification_mutes: Per-bounty notification settings, connects to user and bounties
  */
 
 // ==========================================
-// Authentication Tables (Better-auth)
+// Authentication Tables
 // ==========================================
 
+/**
+ * Core user table - handles authentication and basic user info
+ * Connected to: session, user_profiles, sponsors (via user_id), bounty_comments, notifications
+ * Ban logic: If user.is_banned = 1, user cannot access ANY features (user or sponsor)
+ */
 export interface User {
   id: string;
   email: string;
   emailVerified: number; // 0 or 1 (boolean)
   name: string | null;
   image: string | null;
+  is_banned: number; // 0 or 1 - banned users cannot use platform
+  is_sponsor: number; // 0 or 1 - is this user a sponsor
+  sponsor_id: string | null; // Reference to sponsors.id if is_sponsor = 1
   createdAt: number; // Unix timestamp (ms)
   updatedAt: number;
 }
@@ -27,29 +45,8 @@ export interface Session {
   updatedAt: number;
 }
 
-export interface Account {
-  id: string;
-  userId: string;
-  accountId: string; // OAuth provider's user ID
-  providerId: string; // 'google', 'twitter', etc.
-  accessToken: string | null;
-  refreshToken: string | null;
-  idToken: string | null;
-  expiresAt: number | null;
-  scope: string | null;
-  password: string | null; // Hashed password for email auth
-  createdAt: number;
-  updatedAt: number;
-}
-
-export interface Verification {
-  id: string;
-  identifier: string; // email
-  value: string; // verification code
-  expiresAt: number;
-  createdAt: number;
-  updatedAt: number;
-}
+// REMOVED: Account table - no longer needed, auth handled by better-auth
+// REMOVED: Verification table - moved to sponsors.is_verified boolean field
 
 // ==========================================
 // Business Tables
@@ -107,20 +104,37 @@ export interface DbUserProfile
   content_skills: string;
 }
 
+/**
+ * Sponsors table - companies/organizations creating bounties
+ * Connected to: user (via user_id), bounties (via sponsor_id)
+ * Ban logic: When sponsor.is_banned = 1, the associated user.is_banned is also set to 1
+ * Note: approved_at, rejected_at, rejection_reason fields removed - all sponsors auto-approved
+ */
 export interface Sponsor {
   id: string;
-  user_id: string;
+  user_id: string; // Reference to user.id
   name: string;
+  username: string | null;
   description: string | null;
+  entity_name: string | null;
+  industry: string | null;
   logo_url: string | null;
-  website_url: string | null;
-  twitter_handle: string | null;
-  github_handle: string | null;
-  discord_url: string | null;
-  is_verified: number; // 0 or 1
+  website: string | null;
+  twitter: string | null;
+  discord: string | null;
+  telegram: string | null;
+  wallet_address: string | null;
+  contact_first_name: string | null;
+  contact_last_name: string | null;
+  contact_username: string | null;
+  contact_telegram: string | null;
+  status: "approved" | "rejected"; // All new sponsors auto-approved (deprecated, always "approved")
+  is_verified: number; // 0 or 1 - verified badge (replaces verification table)
+  is_banned: number; // 0 or 1 - if banned, sponsor cannot create bounties
+  banned_at: number | null;
   total_bounties_count: number;
   total_projects_count: number;
-  total_reward_amount: number; // REAL in SQLite
+  total_reward_amount: number;
   profile_photos: string[]; // JSON array in DB
   created_at: number;
   updated_at: number;
@@ -214,6 +228,11 @@ export interface DbBountySubmission extends Omit<BountySubmission, "reward"> {
   reward: string; // JSON string
 }
 
+/**
+ * Bounty comments table - discussions on bounties
+ * Connected to: bounties (via bounty_id), user (via user_id)
+ * Note: liked_by field replaces the comment_likes table
+ */
 export interface BountyComment {
   id: string;
   bounty_id: string;
@@ -221,16 +240,17 @@ export interface BountyComment {
   content: string;
   parent_comment_id: string | null;
   like_count: number;
+  liked_by: string[]; // JSON array of user IDs who liked this comment
+  deleted_at: number | null; // Soft delete timestamp
   created_at: number;
   updated_at: number;
 }
 
-export interface CommentLike {
-  id: string;
-  comment_id: string;
-  user_id: string;
-  created_at: number;
+export interface DbBountyComment extends Omit<BountyComment, "liked_by"> {
+  liked_by: string; // JSON string
 }
+
+// REMOVED: CommentLike table - moved to BountyComment.liked_by field (JSON array)
 
 export interface ProofOfWork {
   id: string;
@@ -274,8 +294,13 @@ export type NotificationType =
   | "new_submission"
   | "sponsor_approved"
   | "sponsor_rejected"
+  | "sponsor_banned"
   | "general";
 
+/**
+ * Notifications table - user notifications
+ * Connected to: user (via user_id), bounties, bounty_submissions, bounty_comments
+ */
 export interface Notification {
   id: string;
   user_id: string;
@@ -291,15 +316,19 @@ export interface Notification {
   created_at: number;
 }
 
-export interface NotificationPreference {
+/**
+ * Notification mutes - simpler replacement for notification_preferences
+ * Connected to: user (via user_id), bounties (via bounty_id)
+ * If a record exists, notifications for that bounty are muted for that user
+ */
+export interface NotificationMute {
   id: string;
   user_id: string;
-  bounty_id: string | null;
-  mute_comments: number; // 0 or 1
-  mute_submissions: number; // 0 or 1
+  bounty_id: string;
   created_at: number;
-  updated_at: number;
 }
+
+// REMOVED: NotificationPreference table - replaced by NotificationMute table (simpler approach)
 
 // ==========================================
 // Utility Types

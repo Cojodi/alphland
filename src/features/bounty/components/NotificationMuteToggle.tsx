@@ -1,6 +1,6 @@
 "use client";
 
-import { apiClient, NotificationPreference } from "@/lib/api-client";
+import { apiClient } from "@/lib/api-client";
 import { useState, useEffect } from "react";
 
 interface NotificationMuteToggleProps {
@@ -14,54 +14,41 @@ export function NotificationMuteToggle({
   bountyId,
   bountyTitle,
 }: NotificationMuteToggleProps) {
-  const [preference, setPreference] = useState<NotificationPreference | null>(
-    null
-  );
+  const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    const loadPreference = async () => {
+    const checkMuteStatus = async () => {
       try {
-        const result = await apiClient.getNotificationPreferenceForBounty(
-          bountyId,
-          userId
-        );
-        setPreference(result.preference);
+        const result = await apiClient.checkNotificationMute(bountyId, userId);
+        setIsMuted(result.muted);
       } catch (error) {
-        console.error("Failed to load notification preference:", error);
+        console.error("Failed to check notification mute status:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    loadPreference();
+    checkMuteStatus();
   }, [bountyId, userId]);
 
-  const handleToggle = async (type: "comments" | "submissions") => {
+  const handleToggle = async () => {
     setIsSaving(true);
     try {
-      const newMuteComments =
-        type === "comments"
-          ? preference?.mute_comments === 1
-            ? false
-            : true
-          : preference?.mute_comments === 1;
-      const newMuteSubmissions =
-        type === "submissions"
-          ? preference?.mute_submissions === 1
-            ? false
-            : true
-          : preference?.mute_submissions === 1;
-
-      const result = await apiClient.setNotificationPreference({
-        user_id: userId,
-        bounty_id: bountyId,
-        mute_comments: newMuteComments,
-        mute_submissions: newMuteSubmissions,
-      });
-      setPreference(result.preference);
+      if (isMuted) {
+        // Unmute notifications
+        await apiClient.unmuteNotifications(bountyId, userId);
+        setIsMuted(false);
+      } else {
+        // Mute notifications
+        await apiClient.muteNotifications({
+          user_id: userId,
+          bounty_id: bountyId,
+        });
+        setIsMuted(true);
+      }
     } catch (error) {
-      console.error("Failed to update notification preference:", error);
+      console.error("Failed to update notification settings:", error);
     } finally {
       setIsSaving(false);
     }
@@ -101,7 +88,7 @@ export function NotificationMuteToggle({
       </p>
 
       <div className="space-y-2">
-        {/* Comments Toggle */}
+        {/* Single toggle for all notifications */}
         <label className="flex items-center justify-between p-3 bg-smoked-white dark:bg-light-black rounded-lg cursor-pointer">
           <div className="flex items-center gap-2">
             <svg
@@ -114,64 +101,23 @@ export function NotificationMuteToggle({
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-              />
-            </svg>
-            <span className="text-sm text-black dark:text-white">Comments</span>
-          </div>
-          <button
-            onClick={() => handleToggle("comments")}
-            disabled={isSaving}
-            className={`relative w-10 h-5 rounded-full transition-colors ${
-              preference?.mute_comments === 1
-                ? "bg-light-charcoal dark:bg-dark-charcoal"
-                : "bg-orange"
-            } ${isSaving ? "opacity-50 cursor-not-allowed" : ""}`}
-          >
-            <span
-              className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform ${
-                preference?.mute_comments === 1
-                  ? "translate-x-0"
-                  : "translate-x-5"
-              }`}
-            />
-          </button>
-        </label>
-
-        {/* Submissions Toggle */}
-        <label className="flex items-center justify-between p-3 bg-smoked-white dark:bg-light-black rounded-lg cursor-pointer">
-          <div className="flex items-center gap-2">
-            <svg
-              className="w-4 h-4 text-light-charcoal dark:text-lightgrey"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
               />
             </svg>
             <span className="text-sm text-black dark:text-white">
-              New Submissions
+              All Notifications
             </span>
           </div>
           <button
-            onClick={() => handleToggle("submissions")}
+            onClick={handleToggle}
             disabled={isSaving}
             className={`relative w-10 h-5 rounded-full transition-colors ${
-              preference?.mute_submissions === 1
-                ? "bg-light-charcoal dark:bg-dark-charcoal"
-                : "bg-orange"
+              isMuted ? "bg-light-charcoal dark:bg-dark-charcoal" : "bg-orange"
             } ${isSaving ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <span
               className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform ${
-                preference?.mute_submissions === 1
-                  ? "translate-x-0"
-                  : "translate-x-5"
+                isMuted ? "translate-x-0" : "translate-x-5"
               }`}
             />
           </button>
@@ -179,9 +125,9 @@ export function NotificationMuteToggle({
       </div>
 
       <p className="text-xs text-light-charcoal dark:text-lightgrey">
-        {preference?.mute_comments === 1 || preference?.mute_submissions === 1
-          ? "Some notifications are muted"
-          : "You'll receive all notifications"}
+        {isMuted
+          ? "All notifications are muted for this bounty"
+          : "You'll receive all notifications for this bounty"}
       </p>
     </div>
   );

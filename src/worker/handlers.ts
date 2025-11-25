@@ -214,23 +214,27 @@ export async function handleCommentsAPI(
       `SELECT
         c.*,
         u.username as user_username,
-        usr.image as user_avatar,
-        (SELECT COUNT(*) FROM comment_likes cl WHERE cl.comment_id = c.id) as like_count,
-        ${
-          userId
-            ? `(SELECT COUNT(*) FROM comment_likes cl WHERE cl.comment_id = c.id AND cl.user_id = ?) as user_liked`
-            : "0 as user_liked"
-        }
+        usr.image as user_avatar
        FROM bounty_comments c
        LEFT JOIN user_profiles u ON c.user_id = u.user_id
        LEFT JOIN user usr ON c.user_id = usr.id
        WHERE c.bounty_id = ? AND c.deleted_at IS NULL
        ORDER BY c.created_at ASC`
     )
-      .bind(...(userId ? [userId, bountyId] : [bountyId]))
+      .bind(bountyId)
       .all();
 
-    return new Response(JSON.stringify({ comments: results }), {
+    // Process liked_by field and calculate like_count, user_liked
+    const processedComments = results.map((comment: any) => {
+      const likedBy = comment.liked_by ? JSON.parse(comment.liked_by) : [];
+      return {
+        ...comment,
+        like_count: likedBy.length,
+        user_liked: userId ? (likedBy.includes(userId) ? 1 : 0) : 0,
+      };
+    });
+
+    return new Response(JSON.stringify({ comments: processedComments }), {
       headers: corsHeaders,
     });
   }
@@ -287,8 +291,7 @@ export async function handleCommentsAPI(
       .run();
 
     const comment = await env.DB.prepare(
-      `SELECT c.*, u.username as user_username, usr.image as user_avatar,
-       (SELECT COUNT(*) FROM comment_likes cl WHERE cl.comment_id = c.id) as like_count
+      `SELECT c.*, u.username as user_username, usr.image as user_avatar
        FROM bounty_comments c
        LEFT JOIN user_profiles u ON c.user_id = u.user_id
        LEFT JOIN user usr ON c.user_id = usr.id
@@ -297,7 +300,14 @@ export async function handleCommentsAPI(
       .bind(id)
       .first();
 
-    return new Response(JSON.stringify({ comment }), {
+    // Process liked_by field
+    const likedBy = comment.liked_by ? JSON.parse(comment.liked_by) : [];
+    const processedComment = {
+      ...comment,
+      like_count: likedBy.length,
+    };
+
+    return new Response(JSON.stringify({ comment: processedComment }), {
       headers: corsHeaders,
     });
   }
@@ -328,38 +338,47 @@ export async function handleCommentsAPI(
   ) {
     const commentId = pathname.split("/").slice(-2)[0];
     const body = (await request.json()) as any;
-    const id = crypto.randomUUID();
     const now = Math.floor(Date.now() / 1000);
 
-    // Check if already liked
-    const existing = await env.DB.prepare(
-      `SELECT id FROM comment_likes WHERE comment_id = ? AND user_id = ?`
+    // Get current comment with liked_by field
+    const comment = await env.DB.prepare(
+      `SELECT liked_by FROM bounty_comments WHERE id = ?`
     )
-      .bind(commentId, body.user_id)
+      .bind(commentId)
       .first();
 
-    if (existing) {
+    if (!comment) {
+      return new Response(JSON.stringify({ error: "Comment not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    // Parse liked_by array
+    const likedBy = comment.liked_by ? JSON.parse(comment.liked_by) : [];
+
+    // Check if already liked
+    if (likedBy.includes(body.user_id)) {
       return new Response(JSON.stringify({ error: "Already liked" }), {
         status: 400,
         headers: corsHeaders,
       });
     }
 
+    // Add user to liked_by array
+    likedBy.push(body.user_id);
+
+    // Update comment with new liked_by array and increment like_count
     await env.DB.prepare(
-      `INSERT INTO comment_likes (id, comment_id, user_id, created_at)
-       VALUES (?, ?, ?, ?)`
+      `UPDATE bounty_comments
+       SET liked_by = ?, like_count = ?, updated_at = ?
+       WHERE id = ?`
     )
-      .bind(id, commentId, body.user_id, now)
+      .bind(JSON.stringify(likedBy), likedBy.length, now, commentId)
       .run();
 
-    const likeCount = await env.DB.prepare(
-      `SELECT COUNT(*) as count FROM comment_likes WHERE comment_id = ?`
-    )
-      .bind(commentId)
-      .first();
-
     return new Response(
-      JSON.stringify({ success: true, like_count: likeCount?.count || 0 }),
+      JSON.stringify({ success: true, like_count: likedBy.length }),
       {
         status: 201,
         headers: corsHeaders,
@@ -374,21 +393,39 @@ export async function handleCommentsAPI(
   ) {
     const commentId = pathname.split("/").slice(-2)[0];
     const userId = url.searchParams.get("user_id");
+    const now = Math.floor(Date.now() / 1000);
 
-    await env.DB.prepare(
-      `DELETE FROM comment_likes WHERE comment_id = ? AND user_id = ?`
-    )
-      .bind(commentId, userId)
-      .run();
-
-    const likeCount = await env.DB.prepare(
-      `SELECT COUNT(*) as count FROM comment_likes WHERE comment_id = ?`
+    // Get current comment with liked_by field
+    const comment = await env.DB.prepare(
+      `SELECT liked_by FROM bounty_comments WHERE id = ?`
     )
       .bind(commentId)
       .first();
 
+    if (!comment) {
+      return new Response(JSON.stringify({ error: "Comment not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    // Parse liked_by array
+    const likedBy = comment.liked_by ? JSON.parse(comment.liked_by) : [];
+
+    // Remove user from liked_by array
+    const newLikedBy = likedBy.filter((id: string) => id !== userId);
+
+    // Update comment with new liked_by array and decrement like_count
+    await env.DB.prepare(
+      `UPDATE bounty_comments
+       SET liked_by = ?, like_count = ?, updated_at = ?
+       WHERE id = ?`
+    )
+      .bind(JSON.stringify(newLikedBy), newLikedBy.length, now, commentId)
+      .run();
+
     return new Response(
-      JSON.stringify({ success: true, like_count: likeCount?.count || 0 }),
+      JSON.stringify({ success: true, like_count: newLikedBy.length }),
       {
         headers: corsHeaders,
       }
@@ -1010,7 +1047,7 @@ export async function handleNotificationsAPI(
 }
 
 /**
- * Handle Notification Preferences API requests
+ * Handle Notification Mutes API requests (simplified replacement for preferences)
  */
 export async function handleNotificationPreferencesAPI(
   request: Request,
@@ -1019,120 +1056,97 @@ export async function handleNotificationPreferencesAPI(
 ): Promise<Response> {
   const pathname = url.pathname;
 
-  // GET /api/notification-preferences/user/:userId - Get user's preferences
+  // GET /api/notification-mutes/check - Check if notifications are muted
   if (
     request.method === "GET" &&
-    pathname.match(/^\/api\/notification-preferences\/user\/[^/]+$/)
+    pathname === "/api/notification-mutes/check"
   ) {
-    const userId = pathname.split("/").pop();
-
-    const { results } = await env.DB.prepare(
-      `SELECT * FROM notification_preferences WHERE user_id = ?`
-    )
-      .bind(userId)
-      .all();
-
-    return new Response(JSON.stringify({ preferences: results }), {
-      headers: corsHeaders,
-    });
-  }
-
-  // GET /api/notification-preferences/bounty/:bountyId - Get preference for specific bounty
-  if (
-    request.method === "GET" &&
-    pathname.match(/^\/api\/notification-preferences\/bounty\/[^/]+$/)
-  ) {
-    const bountyId = pathname.split("/").pop();
+    const bountyId = url.searchParams.get("bounty_id");
     const userId = url.searchParams.get("user_id");
 
-    if (!userId) {
-      return new Response(JSON.stringify({ error: "user_id is required" }), {
-        status: 400,
-        headers: corsHeaders,
-      });
+    if (!bountyId || !userId) {
+      return new Response(
+        JSON.stringify({ error: "bounty_id and user_id are required" }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
+      );
     }
 
-    const preference = await env.DB.prepare(
-      `SELECT * FROM notification_preferences WHERE user_id = ? AND bounty_id = ?`
+    const mute = await env.DB.prepare(
+      `SELECT id FROM notification_mutes WHERE user_id = ? AND bounty_id = ?`
     )
       .bind(userId, bountyId)
       .first();
 
-    return new Response(JSON.stringify({ preference: preference || null }), {
+    return new Response(JSON.stringify({ muted: !!mute }), {
       headers: corsHeaders,
     });
   }
 
-  // POST /api/notification-preferences - Create or update preference
-  if (
-    request.method === "POST" &&
-    pathname === "/api/notification-preferences"
-  ) {
+  // POST /api/notification-mutes - Mute notifications for a bounty
+  if (request.method === "POST" && pathname === "/api/notification-mutes") {
     const body = (await request.json()) as any;
     const now = Math.floor(Date.now() / 1000);
 
-    // Check if preference exists
+    // Check if already muted
     const existing = await env.DB.prepare(
-      `SELECT id FROM notification_preferences WHERE user_id = ? AND bounty_id = ?`
+      `SELECT id FROM notification_mutes WHERE user_id = ? AND bounty_id = ?`
     )
       .bind(body.user_id, body.bounty_id)
       .first();
 
     if (existing) {
-      // Update existing
-      await env.DB.prepare(
-        `UPDATE notification_preferences
-         SET mute_comments = ?, mute_submissions = ?, updated_at = ?
-         WHERE id = ?`
-      )
-        .bind(
-          body.mute_comments ? 1 : 0,
-          body.mute_submissions ? 1 : 0,
-          now,
-          (existing as any).id
-        )
-        .run();
-    } else {
-      // Create new
-      const id = crypto.randomUUID();
-      await env.DB.prepare(
-        `INSERT INTO notification_preferences (
-          id, user_id, bounty_id, mute_comments, mute_submissions, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)`
-      )
-        .bind(
-          id,
-          body.user_id,
-          body.bounty_id,
-          body.mute_comments ? 1 : 0,
-          body.mute_submissions ? 1 : 0,
-          now,
-          now
-        )
-        .run();
+      return new Response(
+        JSON.stringify({ error: "Already muted", mute: existing }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
+      );
     }
 
-    const preference = await env.DB.prepare(
-      `SELECT * FROM notification_preferences WHERE user_id = ? AND bounty_id = ?`
+    // Create mute
+    const id = crypto.randomUUID();
+    await env.DB.prepare(
+      `INSERT INTO notification_mutes (id, user_id, bounty_id, created_at)
+       VALUES (?, ?, ?, ?)`
     )
-      .bind(body.user_id, body.bounty_id)
+      .bind(id, body.user_id, body.bounty_id, now)
+      .run();
+
+    const mute = await env.DB.prepare(
+      `SELECT * FROM notification_mutes WHERE id = ?`
+    )
+      .bind(id)
       .first();
 
-    return new Response(JSON.stringify({ preference }), {
+    return new Response(JSON.stringify({ mute }), {
       status: 201,
       headers: corsHeaders,
     });
   }
 
-  // DELETE /api/notification-preferences/:id - Delete preference
-  if (
-    request.method === "DELETE" &&
-    pathname.match(/^\/api\/notification-preferences\/[^/]+$/)
-  ) {
-    const id = pathname.split("/").pop();
+  // DELETE /api/notification-mutes - Unmute notifications
+  if (request.method === "DELETE" && pathname === "/api/notification-mutes") {
+    const bountyId = url.searchParams.get("bounty_id");
+    const userId = url.searchParams.get("user_id");
 
-    await env.DB.prepare(`DELETE FROM notification_preferences WHERE id = ?`)
-      .bind(id)
+    if (!bountyId || !userId) {
+      return new Response(
+        JSON.stringify({ error: "bounty_id and user_id are required" }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
+      );
+    }
+
+    await env.DB.prepare(
+      `DELETE FROM notification_mutes WHERE user_id = ? AND bounty_id = ?`
+    )
+      .bind(userId, bountyId)
       .run();
 
     return new Response(JSON.stringify({ success: true }), {
@@ -1181,6 +1195,7 @@ export async function createNotification(
 
 /**
  * Helper to check if notifications are muted for a bounty
+ * Updated to use notification_mutes table (simpler approach)
  */
 export async function isNotificationMuted(
   env: Env,
@@ -1188,15 +1203,12 @@ export async function isNotificationMuted(
   bountyId: string,
   type: "comments" | "submissions"
 ): Promise<boolean> {
-  const preference = (await env.DB.prepare(
-    `SELECT * FROM notification_preferences WHERE user_id = ? AND bounty_id = ?`
+  const mute = await env.DB.prepare(
+    `SELECT id FROM notification_mutes WHERE user_id = ? AND bounty_id = ?`
   )
     .bind(userId, bountyId)
-    .first()) as any;
+    .first();
 
-  if (!preference) return false;
-
-  return type === "comments"
-    ? preference.mute_comments === 1
-    : preference.mute_submissions === 1;
+  // If a mute record exists, notifications are muted (for all types)
+  return !!mute;
 }

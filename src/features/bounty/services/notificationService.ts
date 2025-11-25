@@ -202,14 +202,10 @@ export async function shouldNotify(
   type: "comments" | "submissions"
 ): Promise<boolean> {
   try {
-    const { preference } = await apiClient.getNotificationPreferenceForBounty(
-      bountyId,
-      userId
-    );
-    if (!preference) return true;
-    return type === "comments"
-      ? preference.mute_comments === 0
-      : preference.mute_submissions === 0;
+    // Check if user has muted notifications for this bounty
+    const { muted } = await apiClient.checkNotificationMute(bountyId, userId);
+    // If muted, don't send notifications (for any type)
+    return !muted;
   } catch {
     return true; // Default to sending notifications if check fails
   }
