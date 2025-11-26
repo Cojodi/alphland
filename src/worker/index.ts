@@ -219,26 +219,41 @@ async function handleBountiesAPI(
     const body = (await request.json()) as any;
 
     const id = crypto.randomUUID();
-    const now = new Date().toISOString();
+    const now = Math.floor(Date.now() / 1000);
+
+    // Convert arrays to JSON strings
+    const requirements = JSON.stringify(body.requirements || []);
+    const deliverables = JSON.stringify(body.deliverables || []);
+    const skills = JSON.stringify(body.skills || []);
 
     await env.DB.prepare(
       `
       INSERT INTO bounties (
-        id, title, description, reward_amount, reward_currency,
-        difficulty, category, status, created_by, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        id, sponsor_id, title, description,
+        requirements, deliverables, skills,
+        reward_amount, reward_currency, reward_type,
+        category, dapp_name,
+        start_date, end_date,
+        status, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     )
       .bind(
         id,
+        body.sponsor_id,
         body.title,
         body.description,
+        requirements,
+        deliverables,
+        skills,
         body.reward_amount,
         body.reward_currency || "ALPH",
-        body.difficulty,
+        body.reward_type || "fixed",
         body.category,
+        body.dapp_name || null,
+        body.start_date,
+        body.end_date,
         "open",
-        body.created_by,
         now,
         now,
       )

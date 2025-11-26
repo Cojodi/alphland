@@ -404,7 +404,7 @@ export default function EditProfile() {
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -415,7 +415,7 @@ export default function EditProfile() {
 
   const handleSocialChange = (
     platform: keyof FormData["socials"],
-    value: string
+    value: string,
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -431,23 +431,38 @@ export default function EditProfile() {
   };
 
   const handleProfilePictureChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
+      console.log("File selected:", file.name, "Size:", file.size, "bytes");
+
       if (file.size > 5 * 1024 * 1024) {
         alert("File size must be less than 5MB");
         return;
       }
+
+      if (!file.type.startsWith("image/")) {
+        alert("Please select an image file");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (event) => {
+        console.log("Image loaded successfully");
         setFormData((prev) => ({
           ...prev,
           profilePicture: file,
           profilePicturePreview: event.target?.result as string,
         }));
       };
+      reader.onerror = (error) => {
+        console.error("Error reading file:", error);
+        alert("Failed to read the image file. Please try again.");
+      };
       reader.readAsDataURL(file);
+    } else {
+      console.log("No file selected");
     }
   };
 
@@ -516,7 +531,7 @@ export default function EditProfile() {
   };
 
   const filteredCountries = COUNTRIES.filter((country) =>
-    country.toLowerCase().includes(locationSearch.toLowerCase())
+    country.toLowerCase().includes(locationSearch.toLowerCase()),
   );
 
   // Project modal functions
@@ -673,7 +688,7 @@ export default function EditProfile() {
       alert(
         error instanceof Error
           ? error.message
-          : "Failed to update profile. Please try again."
+          : "Failed to update profile. Please try again.",
       );
     } finally {
       setIsSubmitting(false);
@@ -1223,7 +1238,7 @@ export default function EditProfile() {
                 {/* Skill suggestions */}
                 <div className="flex flex-wrap gap-2 mb-4">
                   {SKILL_OPTIONS.filter(
-                    (skill) => !formData.skills.includes(skill)
+                    (skill) => !formData.skills.includes(skill),
                   )
                     .slice(0, 10)
                     .map((skill) => (
