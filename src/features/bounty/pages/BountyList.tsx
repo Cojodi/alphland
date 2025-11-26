@@ -4,9 +4,10 @@ import { BountyCard } from "../components/BountyCard";
 import { Bounty } from "../types";
 import Layout from "@/components/Layout";
 import { useSession } from "@/lib/auth-client";
-import { Filter, Rocket } from "lucide-react";
+import { Filter, Rocket, CheckCircle, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 // Mock data - will be replaced with API calls later
 const mockBounties: Array<Bounty & { logo: string }> = [
@@ -61,14 +62,29 @@ const mockBounties: Array<Bounty & { logo: string }> = [
 ];
 
 export default function BountyList() {
+  const router = useRouter();
   const { data: session } = useSession();
   const [activeFilter, setActiveFilter] = useState<
     "all" | "bounties" | "projects"
   >("all");
   const [activeCategory, setActiveCategory] = useState<string>("for-you");
+  const [showVerificationSuccess, setShowVerificationSuccess] = useState(false);
 
   // TODO: Check if user is already a sponsor from session/API
   const isSponsor = (session?.user as any)?.is_sponsor || false;
+
+  // Check if user just verified their email
+  useEffect(() => {
+    // Check for "verified" query parameter from email verification callback
+    if (router.query.verified === "true" && !session) {
+      setShowVerificationSuccess(true);
+      // Remove the query parameter from URL without page reload
+      const { verified, ...rest } = router.query;
+      router.replace({ pathname: router.pathname, query: rest }, undefined, {
+        shallow: true,
+      });
+    }
+  }, [router.query, session]);
 
   const categories = [
     "For You",
@@ -85,6 +101,41 @@ export default function BountyList() {
       description="Browse and participate in bounty opportunities"
     >
       <div className="min-h-screen bg-smoked-white dark:bg-light-black">
+        {/* Email Verification Success Banner */}
+        {showVerificationSuccess && (
+          <div className="bg-accessible-green/10 border-b border-accessible-green/30">
+            <div className="container mx-auto px-4 py-4">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-accessible-green flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-accessible-green">
+                      Email verified successfully!
+                    </p>
+                    <p className="text-xs text-accessible-green/80 mt-0.5">
+                      Please{" "}
+                      <Link
+                        href="/auth/login"
+                        className="underline hover:no-underline font-semibold"
+                      >
+                        sign in
+                      </Link>{" "}
+                      to access all features.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowVerificationSuccess(false)}
+                  className="text-accessible-green hover:text-accessible-green/80 transition-colors"
+                  aria-label="Dismiss"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Main Container */}
         <section className="py-16 md:py-24">
           <div className="container mx-auto px-4">
@@ -194,7 +245,7 @@ export default function BountyList() {
                         bounty.reward_type === "tiered" ? "Bounty" : "Project",
                         `Due in ${Math.ceil(
                           (new Date(bounty.end_date).getTime() - Date.now()) /
-                            (1000 * 60 * 60 * 24)
+                            (1000 * 60 * 60 * 24),
                         )}d`,
                         bounty.current_submissions.toString(),
                         ...(bounty.id === "1" ? ["FEATURED"] : []),

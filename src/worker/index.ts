@@ -21,6 +21,8 @@ export interface Env {
   BETTER_AUTH_SECRET: string;
   BETTER_AUTH_URL: string; // Frontend URL (e.g., http://localhost:3000)
   APP_URL?: string; // Same as BETTER_AUTH_URL
+  RESEND_API_KEY?: string;
+  FROM_EMAIL?: string;
 }
 
 // Note: Do NOT cache auth instance globally
@@ -60,6 +62,8 @@ const worker = {
           BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
           BETTER_AUTH_URL: env.BETTER_AUTH_URL,
           APP_URL: env.APP_URL,
+          RESEND_API_KEY: env.RESEND_API_KEY,
+          FROM_EMAIL: env.FROM_EMAIL,
         });
 
         // Handle auth endpoints using better-auth
@@ -87,7 +91,7 @@ const worker = {
           JSON.stringify({ status: "ok", timestamp: Date.now() }),
           {
             headers: { "Content-Type": "application/json", ...corsHeaders },
-          }
+          },
         );
       }
 
@@ -149,7 +153,7 @@ const worker = {
         {
           status: 500,
           headers: { "Content-Type": "application/json", ...corsHeaders },
-        }
+        },
       );
     }
   },
@@ -163,7 +167,7 @@ export default worker;
 async function handleBountiesAPI(
   request: Request,
   env: Env,
-  url: URL
+  url: URL,
 ): Promise<Response> {
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -179,7 +183,7 @@ async function handleBountiesAPI(
       SELECT * FROM bounties
       WHERE status != 'deleted'
       ORDER BY created_at DESC
-    `
+    `,
     ).all();
 
     return new Response(JSON.stringify({ bounties: results }), {
@@ -193,7 +197,7 @@ async function handleBountiesAPI(
     const bounty = await env.DB.prepare(
       `
       SELECT * FROM bounties WHERE id = ?
-    `
+    `,
     )
       .bind(id)
       .first();
@@ -223,7 +227,7 @@ async function handleBountiesAPI(
         id, title, description, reward_amount, reward_currency,
         difficulty, category, status, created_by, created_at, updated_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `
+    `,
     )
       .bind(
         id,
@@ -236,7 +240,7 @@ async function handleBountiesAPI(
         "open",
         body.created_by,
         now,
-        now
+        now,
       )
       .run();
 
@@ -262,7 +266,7 @@ async function handleBountiesAPI(
 async function handleUsersAPI(
   request: Request,
   env: Env,
-  url: URL
+  url: URL,
 ): Promise<Response> {
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -287,7 +291,7 @@ async function handleUsersAPI(
         u.image
        FROM user_profiles up
        JOIN user u ON up.user_id = u.id
-       WHERE up.username = ?`
+       WHERE up.username = ?`,
     )
       .bind(username)
       .first();
@@ -313,6 +317,8 @@ async function handleUsersAPI(
       BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
       BETTER_AUTH_URL: env.BETTER_AUTH_URL,
       APP_URL: env.APP_URL,
+      RESEND_API_KEY: env.RESEND_API_KEY,
+      FROM_EMAIL: env.FROM_EMAIL,
     });
 
     const session = await auth.api.getSession({ headers: request.headers });
@@ -328,7 +334,7 @@ async function handleUsersAPI(
 
     // Get or create user profile
     let profile = await env.DB.prepare(
-      `SELECT * FROM user_profiles WHERE user_id = ?`
+      `SELECT * FROM user_profiles WHERE user_id = ?`,
     )
       .bind(userId)
       .first();
@@ -339,13 +345,13 @@ async function handleUsersAPI(
 
       await env.DB.prepare(
         `INSERT INTO user_profiles (id, user_id, created_at, updated_at)
-         VALUES (?, ?, ?, ?)`
+         VALUES (?, ?, ?, ?)`,
       )
         .bind(profileId, userId, now, now)
         .run();
 
       profile = await env.DB.prepare(
-        `SELECT * FROM user_profiles WHERE user_id = ?`
+        `SELECT * FROM user_profiles WHERE user_id = ?`,
       )
         .bind(userId)
         .first();
@@ -362,7 +368,7 @@ async function handleUsersAPI(
       }),
       {
         headers: corsHeaders,
-      }
+      },
     );
   }
 
@@ -378,7 +384,7 @@ async function handleUsersAPI(
         u.image
        FROM user_profiles up
        JOIN user u ON up.user_id = u.id
-       WHERE up.user_id = ?`
+       WHERE up.user_id = ?`,
     )
       .bind(id)
       .first();
@@ -390,7 +396,7 @@ async function handleUsersAPI(
 
       await env.DB.prepare(
         `INSERT INTO user_profiles (id, user_id, created_at, updated_at)
-         VALUES (?, ?, ?, ?)`
+         VALUES (?, ?, ?, ?)`,
       )
         .bind(profileId, id, now, now)
         .run();
@@ -403,7 +409,7 @@ async function handleUsersAPI(
           u.image
          FROM user_profiles up
          JOIN user u ON up.user_id = u.id
-         WHERE up.user_id = ?`
+         WHERE up.user_id = ?`,
       )
         .bind(id)
         .first();
@@ -423,7 +429,7 @@ async function handleUsersAPI(
     // Check if username is taken (if provided and changed)
     if (body.username) {
       const existing = await env.DB.prepare(
-        `SELECT id FROM user_profiles WHERE username = ? AND user_id != ?`
+        `SELECT id FROM user_profiles WHERE username = ? AND user_id != ?`,
       )
         .bind(body.username, id)
         .first();
@@ -434,7 +440,7 @@ async function handleUsersAPI(
           {
             status: 400,
             headers: corsHeaders,
-          }
+          },
         );
       }
     }
@@ -466,7 +472,7 @@ async function handleUsersAPI(
            web3_interests = ?,
            projects = ?,
            updated_at = ?
-       WHERE user_id = ?`
+       WHERE user_id = ?`,
     )
       .bind(
         body.username || null,
@@ -486,7 +492,7 @@ async function handleUsersAPI(
         body.web3_interests ? JSON.stringify(body.web3_interests) : null,
         body.projects ? JSON.stringify(body.projects) : null,
         now,
-        id
+        id,
       )
       .run();
 
@@ -494,7 +500,7 @@ async function handleUsersAPI(
     const user = await env.DB.prepare(
       `SELECT up.*, u.image FROM user_profiles up
        JOIN user u ON up.user_id = u.id
-       WHERE up.user_id = ?`
+       WHERE up.user_id = ?`,
     )
       .bind(id)
       .first();

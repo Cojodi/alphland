@@ -37,7 +37,7 @@ export async function signUpWithEmail(
       email,
       password,
       name,
-      callbackURL: "/bounty", // Redirect to bounty list after signup
+      callbackURL: "/bounty?verified=true", // Redirect with verified flag after email verification
     });
     return { success: true, data: result };
   } catch (error) {

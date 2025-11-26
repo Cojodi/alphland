@@ -64,17 +64,45 @@ export default function LoginPage() {
           throw new Error((result.error as any)?.message || "Sign up failed");
         }
 
-        // Show success message
+        // Show success message and keep user on signup mode
         setError(
-          "Account created! Please check your email to verify your account."
+          "✅ Account created successfully! Please check your email inbox (and spam folder) to verify your account. After verification, you can sign in.",
         );
-        setIsSignUp(false);
+        // Clear form fields
+        setEmail("");
+        setPassword("");
+        setName("");
+        // Don't switch to sign in yet, let user read the message
+        return;
       } else {
         // Sign in with email/password
         const result = await signInWithEmail(email, password);
 
         if (!result.success) {
-          throw new Error((result.error as any)?.message || "Sign in failed");
+          const errorMsg = (result.error as any)?.message || "";
+
+          // Provide helpful error messages
+          if (
+            errorMsg.includes("not found") ||
+            errorMsg.includes("User not found")
+          ) {
+            throw new Error(
+              "Account not found. Please sign up first or check your email address.",
+            );
+          } else if (
+            errorMsg.includes("verified") ||
+            errorMsg.includes("verification")
+          ) {
+            throw new Error(
+              "Please verify your email address before signing in. Check your inbox (and spam folder) for the verification email.",
+            );
+          } else if (errorMsg.includes("password")) {
+            throw new Error("Incorrect password. Please try again.");
+          } else {
+            throw new Error(
+              errorMsg || "Sign in failed. Please check your credentials.",
+            );
+          }
         }
 
         // Redirect will happen via useEffect when session updates
