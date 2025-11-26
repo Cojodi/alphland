@@ -147,23 +147,24 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
       ref={nav}
     >
       <div className="flex justify-between items-center py-2 px-4 relative z-50 bg-smoked-white dark:bg-light-black">
-        <Link
-          href="/"
-          className="flex items-center"
-          onClick={() => {
-            setFilters([]);
-            setSort(null);
-            setRatings([]);
-            changeCategory("all");
-          }}
-        >
-          <Image
-            src={currentTheme === "dark" ? logoLight : logo}
-            alt="logo"
-            width={133}
-            height={40}
-            style={{ height: "auto !important" }}
-          />
+        <Link href="/">
+          <span
+            className="flex items-center cursor-pointer"
+            onClick={() => {
+              setFilters([]);
+              setSort(null);
+              setRatings([]);
+              changeCategory("all");
+            }}
+          >
+            <Image
+              src={currentTheme === "dark" ? logoLight : logo}
+              alt="logo"
+              width={133}
+              height={40}
+              style={{ height: "auto !important" }}
+            />
+          </span>
         </Link>
         <div className="flex items-center gap-2">
           <button

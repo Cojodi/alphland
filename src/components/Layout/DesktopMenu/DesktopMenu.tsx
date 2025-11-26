@@ -94,23 +94,24 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
     <div className="hidden lg:block bg-white dark:bg-light-black">
       <div className="relative w-full flex justify-between items-center px-6 py-4 border-t border-b border-border-grey dark:border-white/10">
         <div className="flex items-center gap-6 z-[2]">
-          <Link
-            href="/"
-            className="flex items-center hover:opacity-80 transition-opacity"
-            onClick={() => {
-              setFilters([]);
-              setSort(null);
-              setRatings([]);
-              changeCategory("all");
-            }}
-          >
-            <Image
-              src={currentTheme === "dark" ? logoLight : logo}
-              alt="Alphland logo"
-              width={133}
-              height={40}
-              style={{ height: "auto" }}
-            />
+          <Link href="/">
+            <span
+              className="flex items-center hover:opacity-80 transition-opacity cursor-pointer"
+              onClick={() => {
+                setFilters([]);
+                setSort(null);
+                setRatings([]);
+                changeCategory("all");
+              }}
+            >
+              <Image
+                src={currentTheme === "dark" ? logoLight : logo}
+                alt="Alphland logo"
+                width={133}
+                height={40}
+                style={{ height: "auto" }}
+              />
+            </span>
           </Link>
         </div>
         <div className="flex gap-3.5 z-[2] items-center">

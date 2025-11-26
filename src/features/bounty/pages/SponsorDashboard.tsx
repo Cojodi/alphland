@@ -22,7 +22,6 @@ export default function SponsorDashboard() {
   const [bounties, setBounties] = useState<Bounty[]>([]);
   const [allSubmissions, setAllSubmissions] = useState<Submission[]>([]);
   const [activeTab, setActiveTab] = useState("overview");
-  const [showProfileManager, setShowProfileManager] = useState(false);
   const [showSubmissionDetails, setShowSubmissionDetails] = useState(false);
   const [selectedSubmission, setSelectedSubmission] =
     useState<Submission | null>(null);
@@ -73,10 +72,6 @@ export default function SponsorDashboard() {
     const bounty = bounties.find((b) => b.id === bountyId);
     return bounty ? bounty.title : "Unknown Bounty";
   };
-
-  const handleProfileUpdate = useCallback((updatedSponsor: Sponsor) => {
-    setSponsor(updatedSponsor);
-  }, []);
 
   const handleStatusUpdate = useCallback(
     (submissionId: string, status: "submitted" | "accepted" | "rejected") => {
@@ -364,18 +359,9 @@ export default function SponsorDashboard() {
               <div className="space-y-6">
                 {/* Profile Section */}
                 <div className="bg-white dark:bg-hero-dark rounded-xl border border-light-gray dark:border-dark-charcoal p-6 space-y-6">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-bold text-orange font-barlow">
-                      Profile Information
-                    </h2>
-                    <button
-                      onClick={() => setShowProfileManager(true)}
-                      className="bg-orange hover:bg-orange/90 text-white font-barlow font-medium px-4 py-2 rounded-lg flex items-center gap-2"
-                    >
-                      <Edit className="w-4 h-4" />
-                      Edit
-                    </button>
-                  </div>
+                  <h2 className="text-xl font-bold text-orange font-barlow">
+                    Profile Information
+                  </h2>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
