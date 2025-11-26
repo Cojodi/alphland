@@ -28,15 +28,42 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
   const changeCategory = useCategoryStore((state) => state.changeCategory);
   const setSort = useCategoryStore((state) => state.setSelectedSort);
   const setRatings = useCategoryStore((state) => state.setRatings);
+  const [isSponsor, setIsSponsor] = useState(false);
+  const [sponsorId, setSponsorId] = useState<string | null>(null);
 
   // Check if current page is bounty, sponsor, or user profile related
   const isBountyPage =
     router.pathname.startsWith("/bounty") ||
     router.pathname.startsWith("/auth");
 
-  // Check if user is already a sponsor
-  const isSponsor = (session?.user as any)?.is_sponsor || false;
-  const sponsorId = (session?.user as any)?.sponsor_id;
+  // Check if user is a sponsor
+  useEffect(() => {
+    async function checkSponsorStatus() {
+      if (!session?.user?.id) {
+        setIsSponsor(false);
+        setSponsorId(null);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/sponsors/user/${session.user.id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setIsSponsor(!!data.sponsor);
+          setSponsorId(data.sponsor?.id || null);
+        } else {
+          setIsSponsor(false);
+          setSponsorId(null);
+        }
+      } catch (error) {
+        console.error("Error checking sponsor status:", error);
+        setIsSponsor(false);
+        setSponsorId(null);
+      }
+    }
+
+    checkSponsorStatus();
+  }, [session?.user?.id]);
 
   // Close dropdown when clicking outside
   useEffect(() => {

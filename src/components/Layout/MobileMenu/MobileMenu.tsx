@@ -50,6 +50,8 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
   const [isNavbarScrolled, setIsNavbarScrolled] = useState(false);
   const [sponsorDropdownOpen, setSponsorDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isSponsor, setIsSponsor] = useState(false);
+  const [sponsorId, setSponsorId] = useState<string | null>(null);
 
   const nav = useRef<HTMLDivElement>(null);
 
@@ -58,9 +60,34 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
     router.pathname.startsWith("/bounty") ||
     router.pathname.startsWith("/auth");
 
-  // Check if user is already a sponsor
-  const isSponsor = (session?.user as any)?.is_sponsor || false;
-  const sponsorId = (session?.user as any)?.sponsor_id;
+  // Check if user is a sponsor
+  useEffect(() => {
+    async function checkSponsorStatus() {
+      if (!session?.user?.id) {
+        setIsSponsor(false);
+        setSponsorId(null);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/sponsors/user/${session.user.id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setIsSponsor(!!data.sponsor);
+          setSponsorId(data.sponsor?.id || null);
+        } else {
+          setIsSponsor(false);
+          setSponsorId(null);
+        }
+      } catch (error) {
+        console.error("Error checking sponsor status:", error);
+        setIsSponsor(false);
+        setSponsorId(null);
+      }
+    }
+
+    checkSponsorStatus();
+  }, [session?.user?.id]);
 
   // Close dropdown when clicking outside
   useEffect(() => {

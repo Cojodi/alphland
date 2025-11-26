@@ -160,7 +160,7 @@ export default function CreateSponsorProfile() {
         setLoading(false);
       }
     },
-    [formData, logoFile, agreed, router, session?.user?.id]
+    [formData, logoFile, agreed, router, session?.user?.id],
   );
 
   const bioCharactersLeft = MAX_BIO_LENGTH - formData.company_bio.length;
@@ -604,11 +604,6 @@ export default function CreateSponsorProfile() {
                       "Become a Sponsor"
                     )}
                   </button>
-
-                  <p className="text-xs text-center text-light-charcoal dark:text-lightgrey">
-                    Your application will be reviewed by our team. Once
-                    approved, you&apos;ll be able to create and manage bounties.
-                  </p>
                 </div>
               </form>
             </div>

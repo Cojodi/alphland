@@ -344,42 +344,54 @@ export default function SponsorProfile({
 export async function getServerSideProps(context: any) {
   const { id } = context.params;
 
-  // TODO: Replace with actual API call to fetch sponsor data
-  const mockSponsor: Sponsor = {
-    id,
-    user_id: "user1",
-    name: "Alphland",
-    username: "alphland",
-    description: "A decentralized platform for developers",
-    entity_name: "Alphland Labs",
-    industry: "Infrastructure",
-    logo_url: "",
-    website: "https://alphland.com",
-    twitter: "alphland",
-    discord: "",
-    telegram: "",
-    contact_first_name: "John",
-    contact_last_name: "Doe",
-    contact_username: "johndoe",
-    contact_telegram: "johndoe",
-    wallet_address: "0x1234...",
-    total_bounties_count: 10,
-    total_projects_count: 5,
-    total_reward_amount: 50000,
-    status: "approved",
-    is_verified: true,
-    approved_at: new Date().toISOString(),
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  };
+  try {
+    // Determine the API base URL
+    const protocol = context.req.headers["x-forwarded-proto"] || "http";
+    const host = context.req.headers.host || "localhost:3000";
+    const baseUrl = `${protocol}://${host}`;
 
-  // TODO: Fetch bounties for this sponsor
-  const mockBounties: Bounty[] = [];
+    // Fetch sponsor data with bounties
+    const response = await fetch(`${baseUrl}/api/sponsors/${id}/dashboard`);
 
-  return {
-    props: {
-      sponsor: mockSponsor,
-      bounties: mockBounties,
-    },
-  };
+    if (!response.ok) {
+      return {
+        notFound: true,
+      };
+    }
+
+    const data = await response.json();
+
+    // Transform sponsor data
+    const sponsor: Sponsor = {
+      ...data.sponsor,
+      is_verified: data.sponsor.status === "approved",
+    };
+
+    // Transform bounties data
+    const bounties: Bounty[] = (data.bounties || [])
+      .filter((b: any) => b.status === "open")
+      .map((b: any) => ({
+        id: b.id,
+        title: b.title,
+        description: b.description,
+        end_date: b.end_date,
+        current_submissions: b.submission_count || 0,
+        reward: {
+          amount: parseFloat(b.reward_amount) || 0,
+          token: b.reward_currency || "ALPH",
+        },
+      }));
+
+    return {
+      props: {
+        sponsor,
+        bounties,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching sponsor data:", error);
+    return {
+      notFound: true,
+    };
+  }
 }

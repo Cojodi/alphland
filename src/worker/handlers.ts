@@ -15,7 +15,7 @@ const corsHeaders = {
 export async function handleSubmissionsAPI(
   request: Request,
   env: Env,
-  url: URL
+  url: URL,
 ): Promise<Response> {
   const pathname = url.pathname;
 
@@ -29,7 +29,7 @@ export async function handleSubmissionsAPI(
       `INSERT INTO bounty_submissions (
         id, bounty_id, submitted_by, submission_url, description,
         status, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, 'pending', ?, ?)`
+      ) VALUES (?, ?, ?, ?, ?, 'pending', ?, ?)`,
     )
       .bind(
         id,
@@ -38,12 +38,12 @@ export async function handleSubmissionsAPI(
         body.submission_url,
         body.description || null,
         now,
-        now
+        now,
       )
       .run();
 
     const submission = await env.DB.prepare(
-      `SELECT * FROM bounty_submissions WHERE id = ?`
+      `SELECT * FROM bounty_submissions WHERE id = ?`,
     )
       .bind(id)
       .first();
@@ -62,7 +62,7 @@ export async function handleSubmissionsAPI(
     const id = pathname.split("/").pop();
 
     const submission = await env.DB.prepare(
-      `SELECT * FROM bounty_submissions WHERE id = ?`
+      `SELECT * FROM bounty_submissions WHERE id = ?`,
     )
       .bind(id)
       .first();
@@ -91,7 +91,7 @@ export async function handleSubmissionsAPI(
        FROM bounty_submissions s
        JOIN bounties b ON s.bounty_id = b.id
        WHERE s.submitted_by = ?
-       ORDER BY s.created_at DESC`
+       ORDER BY s.created_at DESC`,
     )
       .bind(userId)
       .all();
@@ -113,7 +113,7 @@ export async function handleSubmissionsAPI(
        FROM bounty_submissions s
        LEFT JOIN user_profiles u ON s.submitted_by = u.user_id
        WHERE s.bounty_id = ?
-       ORDER BY s.created_at DESC`
+       ORDER BY s.created_at DESC`,
     )
       .bind(bountyId)
       .all();
@@ -136,7 +136,7 @@ export async function handleSubmissionsAPI(
        JOIN bounties b ON s.bounty_id = b.id
        LEFT JOIN user_profiles u ON s.submitted_by = u.user_id
        WHERE b.sponsor_id = ?
-       ORDER BY s.created_at DESC`
+       ORDER BY s.created_at DESC`,
     )
       .bind(sponsorId)
       .all();
@@ -162,7 +162,7 @@ export async function handleSubmissionsAPI(
            transaction_hash = ?,
            reviewed_at = ?,
            updated_at = ?
-       WHERE id = ?`
+       WHERE id = ?`,
     )
       .bind(
         body.status,
@@ -170,12 +170,12 @@ export async function handleSubmissionsAPI(
         body.transaction_hash || null,
         now,
         now,
-        id
+        id,
       )
       .run();
 
     const submission = await env.DB.prepare(
-      `SELECT * FROM bounty_submissions WHERE id = ?`
+      `SELECT * FROM bounty_submissions WHERE id = ?`,
     )
       .bind(id)
       .first();
@@ -197,7 +197,7 @@ export async function handleSubmissionsAPI(
 export async function handleCommentsAPI(
   request: Request,
   env: Env,
-  url: URL
+  url: URL,
 ): Promise<Response> {
   const pathname = url.pathname;
 
@@ -219,7 +219,7 @@ export async function handleCommentsAPI(
        LEFT JOIN user_profiles u ON c.user_id = u.user_id
        LEFT JOIN user usr ON c.user_id = usr.id
        WHERE c.bounty_id = ? AND c.deleted_at IS NULL
-       ORDER BY c.created_at ASC`
+       ORDER BY c.created_at ASC`,
     )
       .bind(bountyId)
       .all();
@@ -249,7 +249,7 @@ export async function handleCommentsAPI(
       `INSERT INTO bounty_comments (
         id, bounty_id, user_id, content, parent_comment_id,
         created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?)`
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
     )
       .bind(
         id,
@@ -258,7 +258,7 @@ export async function handleCommentsAPI(
         body.content,
         body.parent_comment_id || null,
         now,
-        now
+        now,
       )
       .run();
 
@@ -267,7 +267,7 @@ export async function handleCommentsAPI(
        FROM bounty_comments c
        LEFT JOIN user_profiles u ON c.user_id = u.user_id
        LEFT JOIN user usr ON c.user_id = usr.id
-       WHERE c.id = ?`
+       WHERE c.id = ?`,
     )
       .bind(id)
       .first();
@@ -285,7 +285,7 @@ export async function handleCommentsAPI(
     const now = Math.floor(Date.now() / 1000);
 
     await env.DB.prepare(
-      `UPDATE bounty_comments SET content = ?, updated_at = ? WHERE id = ?`
+      `UPDATE bounty_comments SET content = ?, updated_at = ? WHERE id = ?`,
     )
       .bind(body.content, now, id)
       .run();
@@ -295,7 +295,7 @@ export async function handleCommentsAPI(
        FROM bounty_comments c
        LEFT JOIN user_profiles u ON c.user_id = u.user_id
        LEFT JOIN user usr ON c.user_id = usr.id
-       WHERE c.id = ?`
+       WHERE c.id = ?`,
     )
       .bind(id)
       .first();
@@ -321,7 +321,7 @@ export async function handleCommentsAPI(
     const now = Math.floor(Date.now() / 1000);
 
     await env.DB.prepare(
-      `UPDATE bounty_comments SET deleted_at = ? WHERE id = ?`
+      `UPDATE bounty_comments SET deleted_at = ? WHERE id = ?`,
     )
       .bind(now, id)
       .run();
@@ -342,7 +342,7 @@ export async function handleCommentsAPI(
 
     // Get current comment with liked_by field
     const comment = await env.DB.prepare(
-      `SELECT liked_by FROM bounty_comments WHERE id = ?`
+      `SELECT liked_by FROM bounty_comments WHERE id = ?`,
     )
       .bind(commentId)
       .first();
@@ -372,7 +372,7 @@ export async function handleCommentsAPI(
     await env.DB.prepare(
       `UPDATE bounty_comments
        SET liked_by = ?, like_count = ?, updated_at = ?
-       WHERE id = ?`
+       WHERE id = ?`,
     )
       .bind(JSON.stringify(likedBy), likedBy.length, now, commentId)
       .run();
@@ -382,7 +382,7 @@ export async function handleCommentsAPI(
       {
         status: 201,
         headers: corsHeaders,
-      }
+      },
     );
   }
 
@@ -397,7 +397,7 @@ export async function handleCommentsAPI(
 
     // Get current comment with liked_by field
     const comment = await env.DB.prepare(
-      `SELECT liked_by FROM bounty_comments WHERE id = ?`
+      `SELECT liked_by FROM bounty_comments WHERE id = ?`,
     )
       .bind(commentId)
       .first();
@@ -419,7 +419,7 @@ export async function handleCommentsAPI(
     await env.DB.prepare(
       `UPDATE bounty_comments
        SET liked_by = ?, like_count = ?, updated_at = ?
-       WHERE id = ?`
+       WHERE id = ?`,
     )
       .bind(JSON.stringify(newLikedBy), newLikedBy.length, now, commentId)
       .run();
@@ -428,7 +428,7 @@ export async function handleCommentsAPI(
       JSON.stringify({ success: true, like_count: newLikedBy.length }),
       {
         headers: corsHeaders,
-      }
+      },
     );
   }
 
@@ -444,7 +444,7 @@ export async function handleCommentsAPI(
 export async function handleSponsorsAPI(
   request: Request,
   env: Env,
-  url: URL
+  url: URL,
 ): Promise<Response> {
   const pathname = url.pathname;
 
@@ -476,7 +476,7 @@ export async function handleSponsorsAPI(
     const userId = pathname.split("/").pop();
 
     const sponsor = await env.DB.prepare(
-      `SELECT * FROM sponsors WHERE user_id = ?`
+      `SELECT * FROM sponsors WHERE user_id = ?`,
     )
       .bind(userId)
       .first();
@@ -515,7 +515,7 @@ export async function handleSponsorsAPI(
           logo_url, website, twitter, discord, telegram, wallet_address,
           contact_first_name, contact_last_name, contact_username, contact_telegram,
           status, approved_at, is_banned, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?, 0, ?, ?)`
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?, 0, ?, ?)`,
       )
         .bind(
           id,
@@ -537,7 +537,7 @@ export async function handleSponsorsAPI(
           body.contact_telegram || null,
           now, // approved_at
           now, // created_at
-          now // updated_at
+          now, // updated_at
         )
         .run();
     } else {
@@ -548,7 +548,7 @@ export async function handleSponsorsAPI(
           logo_url, website, twitter, discord, telegram, wallet_address,
           contact_first_name, contact_last_name, contact_username, contact_telegram,
           status, approved_at, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?, ?, ?)`
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?, ?, ?)`,
       )
         .bind(
           id,
@@ -570,7 +570,7 @@ export async function handleSponsorsAPI(
           body.contact_telegram || null,
           now, // approved_at
           now, // created_at
-          now // updated_at
+          now, // updated_at
         )
         .run();
     }
@@ -578,7 +578,7 @@ export async function handleSponsorsAPI(
     // Try to update user's is_sponsor flag (may fail if columns don't exist)
     try {
       await env.DB.prepare(
-        `UPDATE user SET is_sponsor = 1, sponsor_id = ? WHERE id = ?`
+        `UPDATE user SET is_sponsor = 1, sponsor_id = ? WHERE id = ?`,
       )
         .bind(id, body.user_id)
         .run();
@@ -594,6 +594,71 @@ export async function handleSponsorsAPI(
       status: 201,
       headers: corsHeaders,
     });
+  }
+
+  // GET /api/sponsors/:id/dashboard - Get sponsor dashboard data
+  if (
+    request.method === "GET" &&
+    pathname.match(/^\/api\/sponsors\/[^/]+\/dashboard$/)
+  ) {
+    const id = pathname.replace("/dashboard", "").split("/").pop();
+
+    // Get sponsor info
+    const sponsor = await env.DB.prepare(`SELECT * FROM sponsors WHERE id = ?`)
+      .bind(id)
+      .first();
+
+    if (!sponsor) {
+      return new Response(JSON.stringify({ error: "Sponsor not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    // Get bounties for this sponsor
+    const { results: bounties } = await env.DB.prepare(
+      `SELECT * FROM bounties
+       WHERE sponsor_id = ?
+       ORDER BY created_at DESC`,
+    )
+      .bind(id)
+      .all();
+
+    // Get submissions for all bounties by this sponsor
+    const { results: submissions } = await env.DB.prepare(
+      `SELECT s.*, b.title as bounty_name, u.name as user_username
+       FROM bounty_submissions s
+       JOIN bounties b ON s.bounty_id = b.id
+       LEFT JOIN user u ON s.submitted_by = u.id
+       WHERE b.sponsor_id = ?
+       ORDER BY s.created_at DESC`,
+    )
+      .bind(id)
+      .all();
+
+    // Calculate stats
+    const total_bounties_count = bounties.length;
+    const total_projects_count = 0; // TODO: Implement projects
+    const total_reward_amount = bounties.reduce(
+      (sum: number, b: any) => sum + (parseFloat(b.reward_amount) || 0),
+      0,
+    );
+
+    return new Response(
+      JSON.stringify({
+        sponsor: {
+          ...sponsor,
+          total_bounties_count,
+          total_projects_count,
+          total_reward_amount,
+        },
+        bounties,
+        submissions,
+      }),
+      {
+        headers: corsHeaders,
+      },
+    );
   }
 
   // PUT /api/sponsors/:id - Update sponsor
@@ -613,7 +678,7 @@ export async function handleSponsorsAPI(
            telegram = COALESCE(?, telegram),
            wallet_address = COALESCE(?, wallet_address),
            updated_at = ?
-       WHERE id = ?`
+       WHERE id = ?`,
     )
       .bind(
         body.name || null,
@@ -625,7 +690,7 @@ export async function handleSponsorsAPI(
         body.telegram || null,
         body.wallet_address || null,
         now,
-        id
+        id,
       )
       .run();
 
@@ -653,7 +718,7 @@ export async function handleSponsorsAPI(
            rejected_at = NULL,
            rejection_reason = NULL,
            updated_at = ?
-       WHERE id = ?`
+       WHERE id = ?`,
     )
       .bind(now, now, id)
       .run();
@@ -690,7 +755,7 @@ export async function handleSponsorsAPI(
            rejection_reason = ?,
            approved_at = NULL,
            updated_at = ?
-       WHERE id = ?`
+       WHERE id = ?`,
     )
       .bind(now, body.reason || null, now, id)
       .run();
@@ -749,7 +814,7 @@ export async function handleSponsorsAPI(
         {
           status: 400,
           headers: corsHeaders,
-        }
+        },
       );
     }
 
@@ -759,7 +824,7 @@ export async function handleSponsorsAPI(
        SET is_banned = 1,
            banned_at = ?,
            updated_at = ?
-       WHERE id = ?`
+       WHERE id = ?`,
     )
       .bind(now, now, id)
       .run();
@@ -774,7 +839,7 @@ export async function handleSponsorsAPI(
     }
 
     const updatedSponsor = await env.DB.prepare(
-      `SELECT * FROM sponsors WHERE id = ?`
+      `SELECT * FROM sponsors WHERE id = ?`,
     )
       .bind(id)
       .first();
@@ -822,7 +887,7 @@ export async function handleSponsorsAPI(
         {
           status: 400,
           headers: corsHeaders,
-        }
+        },
       );
     }
 
@@ -832,7 +897,7 @@ export async function handleSponsorsAPI(
        SET is_banned = 0,
            banned_at = NULL,
            updated_at = ?
-       WHERE id = ?`
+       WHERE id = ?`,
     )
       .bind(now, id)
       .run();
@@ -847,7 +912,7 @@ export async function handleSponsorsAPI(
     }
 
     const updatedSponsor = await env.DB.prepare(
-      `SELECT * FROM sponsors WHERE id = ?`
+      `SELECT * FROM sponsors WHERE id = ?`,
     )
       .bind(id)
       .first();
@@ -919,7 +984,7 @@ export async function handleSponsorsAPI(
 export async function handleNotificationsAPI(
   request: Request,
   env: Env,
-  url: URL
+  url: URL,
 ): Promise<Response> {
   const pathname = url.pathname;
 
@@ -942,7 +1007,7 @@ export async function handleNotificationsAPI(
 
     // Get unread count
     const unreadCount = await env.DB.prepare(
-      `SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND read = 0`
+      `SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND read = 0`,
     )
       .bind(userId)
       .first();
@@ -954,7 +1019,7 @@ export async function handleNotificationsAPI(
       }),
       {
         headers: corsHeaders,
-      }
+      },
     );
   }
 
@@ -967,7 +1032,7 @@ export async function handleNotificationsAPI(
     await env.DB.prepare(
       `INSERT INTO notifications (
         id, user_id, type, title, message, link, read, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, 0, ?)`
+      ) VALUES (?, ?, ?, ?, ?, ?, 0, ?)`,
     )
       .bind(
         id,
@@ -976,12 +1041,12 @@ export async function handleNotificationsAPI(
         body.title,
         body.message,
         body.link || null,
-        now
+        now,
       )
       .run();
 
     const notification = await env.DB.prepare(
-      `SELECT * FROM notifications WHERE id = ?`
+      `SELECT * FROM notifications WHERE id = ?`,
     )
       .bind(id)
       .first();
@@ -1052,7 +1117,7 @@ export async function handleNotificationsAPI(
 export async function handleNotificationPreferencesAPI(
   request: Request,
   env: Env,
-  url: URL
+  url: URL,
 ): Promise<Response> {
   const pathname = url.pathname;
 
@@ -1070,12 +1135,12 @@ export async function handleNotificationPreferencesAPI(
         {
           status: 400,
           headers: corsHeaders,
-        }
+        },
       );
     }
 
     const mute = await env.DB.prepare(
-      `SELECT id FROM notification_mutes WHERE user_id = ? AND bounty_id = ?`
+      `SELECT id FROM notification_mutes WHERE user_id = ? AND bounty_id = ?`,
     )
       .bind(userId, bountyId)
       .first();
@@ -1092,7 +1157,7 @@ export async function handleNotificationPreferencesAPI(
 
     // Check if already muted
     const existing = await env.DB.prepare(
-      `SELECT id FROM notification_mutes WHERE user_id = ? AND bounty_id = ?`
+      `SELECT id FROM notification_mutes WHERE user_id = ? AND bounty_id = ?`,
     )
       .bind(body.user_id, body.bounty_id)
       .first();
@@ -1103,7 +1168,7 @@ export async function handleNotificationPreferencesAPI(
         {
           status: 400,
           headers: corsHeaders,
-        }
+        },
       );
     }
 
@@ -1111,13 +1176,13 @@ export async function handleNotificationPreferencesAPI(
     const id = crypto.randomUUID();
     await env.DB.prepare(
       `INSERT INTO notification_mutes (id, user_id, bounty_id, created_at)
-       VALUES (?, ?, ?, ?)`
+       VALUES (?, ?, ?, ?)`,
     )
       .bind(id, body.user_id, body.bounty_id, now)
       .run();
 
     const mute = await env.DB.prepare(
-      `SELECT * FROM notification_mutes WHERE id = ?`
+      `SELECT * FROM notification_mutes WHERE id = ?`,
     )
       .bind(id)
       .first();
@@ -1139,12 +1204,12 @@ export async function handleNotificationPreferencesAPI(
         {
           status: 400,
           headers: corsHeaders,
-        }
+        },
       );
     }
 
     await env.DB.prepare(
-      `DELETE FROM notification_mutes WHERE user_id = ? AND bounty_id = ?`
+      `DELETE FROM notification_mutes WHERE user_id = ? AND bounty_id = ?`,
     )
       .bind(userId, bountyId)
       .run();
@@ -1171,7 +1236,7 @@ export async function createNotification(
     title: string;
     message: string;
     link?: string;
-  }
+  },
 ): Promise<void> {
   const id = crypto.randomUUID();
   const now = Math.floor(Date.now() / 1000);
@@ -1179,7 +1244,7 @@ export async function createNotification(
   await env.DB.prepare(
     `INSERT INTO notifications (
       id, user_id, type, title, message, link, read, created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, 0, ?)`
+    ) VALUES (?, ?, ?, ?, ?, ?, 0, ?)`,
   )
     .bind(
       id,
@@ -1188,7 +1253,7 @@ export async function createNotification(
       data.title,
       data.message,
       data.link || null,
-      now
+      now,
     )
     .run();
 }
@@ -1201,10 +1266,10 @@ export async function isNotificationMuted(
   env: Env,
   userId: string,
   bountyId: string,
-  type: "comments" | "submissions"
+  type: "comments" | "submissions",
 ): Promise<boolean> {
   const mute = await env.DB.prepare(
-    `SELECT id FROM notification_mutes WHERE user_id = ? AND bounty_id = ?`
+    `SELECT id FROM notification_mutes WHERE user_id = ? AND bounty_id = ?`,
   )
     .bind(userId, bountyId)
     .first();

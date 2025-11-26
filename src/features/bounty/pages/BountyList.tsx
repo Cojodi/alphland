@@ -69,9 +69,36 @@ export default function BountyList() {
   >("all");
   const [activeCategory, setActiveCategory] = useState<string>("for-you");
   const [showVerificationSuccess, setShowVerificationSuccess] = useState(false);
+  const [isSponsor, setIsSponsor] = useState(false);
+  const [checkingSponsor, setCheckingSponsor] = useState(true);
 
-  // TODO: Check if user is already a sponsor from session/API
-  const isSponsor = (session?.user as any)?.is_sponsor || false;
+  // Check if user is a sponsor
+  useEffect(() => {
+    async function checkSponsorStatus() {
+      if (!session?.user?.id) {
+        setCheckingSponsor(false);
+        setIsSponsor(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/sponsors/user/${session.user.id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setIsSponsor(!!data.sponsor);
+        } else {
+          setIsSponsor(false);
+        }
+      } catch (error) {
+        console.error("Error checking sponsor status:", error);
+        setIsSponsor(false);
+      } finally {
+        setCheckingSponsor(false);
+      }
+    }
+
+    checkSponsorStatus();
+  }, [session?.user?.id]);
 
   // Check if user just verified their email
   useEffect(() => {
