@@ -77,21 +77,11 @@ export default function SponsorProfile({
     >
       <div className="min-h-screen bg-smoked-white dark:bg-light-black">
         {/* Header Banner */}
-        <div className="h-40 bg-gradient-to-r from-orange to-orange/80 relative overflow-hidden">
-          <div className="absolute inset-0 bg-orange/5"></div>
-          {sponsor.logo_url && (
-            <div className="absolute inset-0 flex items-center justify-center opacity-10">
-              <Image
-                src={sponsor.logo_url}
-                alt={sponsor.name}
-                layout="fill"
-                objectFit="contain"
-              />
-            </div>
-          )}
+        <div className="h-48 bg-gradient-to-r from-orange to-orange/80 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10"></div>
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 pb-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 pb-12">
           <div className="space-y-8">
             {/* Profile Header */}
             <div className="flex flex-col sm:flex-row gap-6 items-start">

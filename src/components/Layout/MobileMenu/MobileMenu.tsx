@@ -147,24 +147,23 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
       ref={nav}
     >
       <div className="flex justify-between items-center py-2 px-4 relative z-50 bg-smoked-white dark:bg-light-black">
-        <Link href="/">
-          <a
-            className="flex items-center"
-            onClick={() => {
-              setFilters([]);
-              setSort(null);
-              setRatings([]);
-              changeCategory("all");
-            }}
-          >
-            <Image
-              src={currentTheme === "dark" ? logoLight : logo}
-              alt="logo"
-              width={133}
-              height={40}
-              style={{ height: "auto !important" }}
-            />
-          </a>
+        <Link
+          href="/"
+          className="flex items-center"
+          onClick={() => {
+            setFilters([]);
+            setSort(null);
+            setRatings([]);
+            changeCategory("all");
+          }}
+        >
+          <Image
+            src={currentTheme === "dark" ? logoLight : logo}
+            alt="logo"
+            width={133}
+            height={40}
+            style={{ height: "auto !important" }}
+          />
         </Link>
         <div className="flex items-center gap-2">
           <button
@@ -197,42 +196,43 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
                   {sponsorDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-hero-dark rounded-lg border border-border-grey dark:border-dark-charcoal shadow-lg py-1 z-[1000]">
                       <Link href="/bounty/sponsor/dashboard">
-                        <a
-                          className="flex items-center gap-2 px-3 py-2 text-xs text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
+                        <span
+                          className="flex items-center gap-2 px-3 py-2 text-xs text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors cursor-pointer"
                           onClick={() => setSponsorDropdownOpen(false)}
                         >
                           <LayoutDashboard className="w-3.5 h-3.5 text-light-charcoal" />
                           Dashboard
-                        </a>
+                        </span>
                       </Link>
                       {sponsorId && (
                         <Link href={`/bounty/sponsor/${sponsorId}`}>
-                          <a
-                            className="flex items-center gap-2 px-3 py-2 text-xs text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
+                          <span
+                            className="flex items-center gap-2 px-3 py-2 text-xs text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors cursor-pointer"
                             onClick={() => setSponsorDropdownOpen(false)}
                           >
                             <User className="w-3.5 h-3.5 text-light-charcoal" />
                             Sponsor Profile
-                          </a>
+                          </span>
                         </Link>
                       )}
                       <Link href="/bounty/sponsor/edit">
-                        <a
-                          className="flex items-center gap-2 px-3 py-2 text-xs text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
+                        <span
+                          className="flex items-center gap-2 px-3 py-2 text-xs text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors cursor-pointer"
                           onClick={() => setSponsorDropdownOpen(false)}
                         >
                           <Edit className="w-3.5 h-3.5 text-light-charcoal" />
                           Edit Profile
-                        </a>
+                        </span>
                       </Link>
                     </div>
                   )}
                 </div>
               ) : (
-                <Link href={getSponsorLink()}>
-                  <a className="px-2.5 py-1.5 text-xs font-medium text-orange border border-orange rounded-md hover:bg-orange/10 transition-colors whitespace-nowrap">
-                    Sponsor
-                  </a>
+                <Link
+                  href={getSponsorLink()}
+                  className="px-2.5 py-1.5 text-xs font-medium text-orange border border-orange rounded-md hover:bg-orange/10 transition-colors whitespace-nowrap"
+                >
+                  Sponsor
                 </Link>
               )}
               {session?.user?.id && (

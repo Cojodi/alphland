@@ -184,7 +184,7 @@ export default function EditSponsorProfile() {
         setLoading(false);
       }
     },
-    [formData, logoFile, router, session?.user?.id, sponsorId]
+    [formData, logoFile, router, session?.user?.id, sponsorId],
   );
 
   const bioCharactersLeft = MAX_BIO_LENGTH - formData.description.length;
@@ -257,12 +257,11 @@ export default function EditSponsorProfile() {
       <div className="min-h-screen bg-smoked-white dark:bg-light-black py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto">
           {/* Back Link */}
-          <Link
-            href="/bounty/sponsor/dashboard"
-            className="inline-flex items-center gap-2 text-light-charcoal dark:text-lightgrey hover:text-orange transition-colors mb-6"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
+          <Link href="/bounty/sponsor/dashboard">
+            <span className="inline-flex items-center gap-2 text-light-charcoal dark:text-lightgrey hover:text-orange transition-colors mb-6 cursor-pointer">
+              <ArrowLeft className="w-4 h-4" />
+              Back to Dashboard
+            </span>
           </Link>
 
           {/* Header */}
