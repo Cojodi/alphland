@@ -126,6 +126,17 @@ export default function CreateSponsorProfile() {
       setLoading(true);
 
       try {
+        // Convert logo file to base64 if it exists
+        let logoDataUrl = null;
+        if (logoFile) {
+          const reader = new FileReader();
+          logoDataUrl = await new Promise<string>((resolve, reject) => {
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(logoFile.file);
+          });
+        }
+
         // Create sponsor application via API
         const response = await fetch("/api/sponsors", {
           method: "POST",
@@ -143,8 +154,7 @@ export default function CreateSponsorProfile() {
             contact_last_name: formData.last_name,
             contact_username: formData.username,
             contact_telegram: formData.telegram,
-            // TODO: Handle logo upload separately with file storage
-            logo_url: logoFile?.preview || null,
+            logo_url: logoDataUrl,
           }),
         });
 
