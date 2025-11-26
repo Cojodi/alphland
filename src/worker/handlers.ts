@@ -922,6 +922,102 @@ export async function handleSponsorsAPI(
     });
   }
 
+  // PUT /api/sponsors/:id/verify - Verify sponsor
+  if (
+    request.method === "PUT" &&
+    pathname.match(/^\/api\/sponsors\/[^/]+\/verify$/)
+  ) {
+    const id = pathname.split("/").slice(-2)[0];
+    const now = Math.floor(Date.now() / 1000);
+
+    // Check if is_verified column exists
+    let hasVerifiedColumn = false;
+    try {
+      await env.DB.prepare(`SELECT is_verified FROM sponsors LIMIT 1`).first();
+      hasVerifiedColumn = true;
+    } catch {
+      hasVerifiedColumn = false;
+    }
+
+    if (!hasVerifiedColumn) {
+      return new Response(
+        JSON.stringify({
+          error:
+            "Verify feature requires database migration. Please add is_verified column to sponsors table.",
+        }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        },
+      );
+    }
+
+    await env.DB.prepare(
+      `UPDATE sponsors
+       SET is_verified = 1,
+           updated_at = ?
+       WHERE id = ?`,
+    )
+      .bind(now, id)
+      .run();
+
+    const sponsor = await env.DB.prepare(`SELECT * FROM sponsors WHERE id = ?`)
+      .bind(id)
+      .first();
+
+    return new Response(JSON.stringify({ sponsor }), {
+      headers: corsHeaders,
+    });
+  }
+
+  // PUT /api/sponsors/:id/unverify - Unverify sponsor
+  if (
+    request.method === "PUT" &&
+    pathname.match(/^\/api\/sponsors\/[^/]+\/unverify$/)
+  ) {
+    const id = pathname.split("/").slice(-2)[0];
+    const now = Math.floor(Date.now() / 1000);
+
+    // Check if is_verified column exists
+    let hasVerifiedColumn = false;
+    try {
+      await env.DB.prepare(`SELECT is_verified FROM sponsors LIMIT 1`).first();
+      hasVerifiedColumn = true;
+    } catch {
+      hasVerifiedColumn = false;
+    }
+
+    if (!hasVerifiedColumn) {
+      return new Response(
+        JSON.stringify({
+          error:
+            "Unverify feature requires database migration. Please add is_verified column to sponsors table.",
+        }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        },
+      );
+    }
+
+    await env.DB.prepare(
+      `UPDATE sponsors
+       SET is_verified = 0,
+           updated_at = ?
+       WHERE id = ?`,
+    )
+      .bind(now, id)
+      .run();
+
+    const sponsor = await env.DB.prepare(`SELECT * FROM sponsors WHERE id = ?`)
+      .bind(id)
+      .first();
+
+    return new Response(JSON.stringify({ sponsor }), {
+      headers: corsHeaders,
+    });
+  }
+
   // GET /api/sponsors - List all sponsors (for admin)
   if (request.method === "GET" && pathname === "/api/sponsors") {
     const isBanned = url.searchParams.get("is_banned");

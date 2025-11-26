@@ -62,8 +62,12 @@ export default function SponsorProfile({
     return `${hours} hour${hours > 1 ? "s" : ""} left`;
   };
 
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString();
+  const formatDate = (date: string | number) => {
+    // Handle Unix timestamp (seconds) or ISO string
+    const timestamp = typeof date === "string" ? parseInt(date) : date;
+    // If it's a Unix timestamp in seconds (< 10000000000), convert to milliseconds
+    const milliseconds = timestamp < 10000000000 ? timestamp * 1000 : timestamp;
+    return new Date(milliseconds).toLocaleDateString();
   };
 
   return (
@@ -310,22 +314,16 @@ export default function SponsorProfile({
                               {formatDate(sponsor.created_at)}
                             </p>
                           </div>
-                          <div>
-                            <p className="text-sm font-semibold text-orange mb-1">
-                              Status
-                            </p>
-                            <span
-                              className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                sponsor.is_verified
-                                  ? "bg-accessible-green/20 text-accessible-green"
-                                  : "bg-smoked-white dark:bg-light-black text-light-charcoal dark:text-lightgrey"
-                              }`}
-                            >
-                              {sponsor.is_verified
-                                ? "Verified"
-                                : "Pending Verification"}
-                            </span>
-                          </div>
+                          {sponsor.is_verified && (
+                            <div>
+                              <p className="text-sm font-semibold text-orange mb-1">
+                                Verification
+                              </p>
+                              <span className="px-3 py-1 rounded-full text-sm font-medium bg-accessible-green/20 text-accessible-green">
+                                Verified
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -364,7 +362,7 @@ export async function getServerSideProps(context: any) {
     // Transform sponsor data
     const sponsor: Sponsor = {
       ...data.sponsor,
-      is_verified: data.sponsor.status === "approved",
+      is_verified: data.sponsor.is_verified === 1,
     };
 
     // Transform bounties data

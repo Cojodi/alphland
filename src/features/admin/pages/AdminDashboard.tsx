@@ -26,6 +26,7 @@ interface Sponsor {
   contact_telegram?: string;
   is_banned: number;
   banned_at?: number;
+  is_verified: number;
   bounty_count?: number;
   created_at: number;
   updated_at: number;
@@ -88,6 +89,40 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error("Failed to unban sponsor:", error);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  // Verify sponsor
+  const handleVerifySponsor = async (sponsorId: string) => {
+    setActionLoading(sponsorId);
+    try {
+      const response = await fetch(`/api/sponsors/${sponsorId}/verify`, {
+        method: "PUT",
+      });
+      if (response.ok) {
+        await fetchSponsors();
+      }
+    } catch (error) {
+      console.error("Failed to verify sponsor:", error);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  // Unverify sponsor
+  const handleUnverifySponsor = async (sponsorId: string) => {
+    setActionLoading(sponsorId);
+    try {
+      const response = await fetch(`/api/sponsors/${sponsorId}/unverify`, {
+        method: "PUT",
+      });
+      if (response.ok) {
+        await fetchSponsors();
+      }
+    } catch (error) {
+      console.error("Failed to unverify sponsor:", error);
     } finally {
       setActionLoading(null);
     }
@@ -230,6 +265,12 @@ export default function AdminDashboard() {
                             {sponsor.name}
                           </h3>
                           {getStatusBadge(sponsor)}
+                          {sponsor.is_verified === 1 && (
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-accessible-green/10 text-accessible-green">
+                              <CheckCircle className="w-3 h-3" />
+                              Verified
+                            </span>
+                          )}
                         </div>
                         {sponsor.username && (
                           <p className="text-sm text-light-charcoal font-barlow">
@@ -292,7 +333,7 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex gap-3 pt-4 border-t border-border-grey dark:border-dark-charcoal">
+                    <div className="flex flex-wrap gap-3 pt-4 border-t border-border-grey dark:border-dark-charcoal">
                       {sponsor.is_banned ? (
                         <button
                           onClick={() => handleUnbanSponsor(sponsor.id)}
@@ -314,6 +355,33 @@ export default function AdminDashboard() {
                         >
                           <Ban className="w-4 h-4" />
                           Ban
+                        </button>
+                      )}
+                      {sponsor.is_verified === 1 ? (
+                        <button
+                          onClick={() => handleUnverifySponsor(sponsor.id)}
+                          disabled={actionLoading === sponsor.id}
+                          className="flex items-center justify-center gap-2 px-6 py-2.5 bg-light-charcoal hover:opacity-90 text-white rounded-lg font-barlow font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          {actionLoading === sponsor.id ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                          ) : (
+                            <CheckCircle className="w-4 h-4" />
+                          )}
+                          Unverify
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleVerifySponsor(sponsor.id)}
+                          disabled={actionLoading === sponsor.id}
+                          className="flex items-center justify-center gap-2 px-6 py-2.5 bg-accessible-green hover:opacity-90 text-white rounded-lg font-barlow font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          {actionLoading === sponsor.id ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                          ) : (
+                            <CheckCircle className="w-4 h-4" />
+                          )}
+                          Verify
                         </button>
                       )}
                       <a

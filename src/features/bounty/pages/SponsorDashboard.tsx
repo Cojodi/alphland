@@ -131,7 +131,7 @@ export default function SponsorDashboard() {
         // Transform data to match frontend types
         const transformedSponsor: Sponsor = {
           ...dashboardData.sponsor,
-          is_verified: dashboardData.sponsor.status === "approved",
+          is_verified: dashboardData.sponsor.is_verified === 1,
         };
 
         const transformedBounties: Bounty[] = (
