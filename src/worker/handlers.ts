@@ -1373,3 +1373,111 @@ export async function isNotificationMuted(
   // If a mute record exists, notifications are muted (for all types)
   return !!mute;
 }
+
+/**
+ * Handle User Account Deletion API requests
+ */
+export async function handleUserDeletionAPI(
+  request: Request,
+  env: Env,
+  url: URL,
+): Promise<Response> {
+  const pathname = url.pathname;
+
+  // DELETE /api/user/:userId - Delete user account and related data
+  if (request.method === "DELETE" && pathname.match(/^\/api\/user\/[^/]+$/)) {
+    const userId = pathname.split("/").pop();
+
+    if (!userId) {
+      return new Response(JSON.stringify({ error: "User ID is required" }), {
+        status: 400,
+        headers: corsHeaders,
+      });
+    }
+
+    try {
+      // Begin deletion process
+      // 1. Delete user profile
+      await env.DB.prepare(`DELETE FROM user_profiles WHERE user_id = ?`)
+        .bind(userId)
+        .run();
+
+      // 2. Delete sessions
+      await env.DB.prepare(`DELETE FROM session WHERE userId = ?`)
+        .bind(userId)
+        .run();
+
+      // 3. Delete accounts (OAuth connections)
+      await env.DB.prepare(`DELETE FROM account WHERE userId = ?`)
+        .bind(userId)
+        .run();
+
+      // 4. Delete notifications
+      await env.DB.prepare(`DELETE FROM notifications WHERE user_id = ?`)
+        .bind(userId)
+        .run();
+
+      // 5. Delete notification mutes
+      await env.DB.prepare(`DELETE FROM notification_mutes WHERE user_id = ?`)
+        .bind(userId)
+        .run();
+
+      // 6. Soft delete comments (anonymize instead of hard delete)
+      const now = Math.floor(Date.now() / 1000);
+      await env.DB.prepare(
+        `UPDATE bounty_comments
+         SET content = '[deleted]', deleted_at = ?
+         WHERE user_id = ? AND deleted_at IS NULL`,
+      )
+        .bind(now, userId)
+        .run();
+
+      // 7. Keep submissions but anonymize the user (for bounty integrity)
+      // We keep submission records for sponsor's reference but anonymize the user
+      await env.DB.prepare(
+        `UPDATE bounty_submissions
+         SET submitted_by = 'deleted-user'
+         WHERE submitted_by = ?`,
+      )
+        .bind(userId)
+        .run();
+
+      // 8. Delete sponsor profile if exists
+      await env.DB.prepare(`DELETE FROM sponsors WHERE user_id = ?`)
+        .bind(userId)
+        .run();
+
+      // 9. Delete the main user record
+      await env.DB.prepare(`DELETE FROM user WHERE id = ?`).bind(userId).run();
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message:
+            "User account and related data have been deleted successfully",
+        }),
+        {
+          status: 200,
+          headers: corsHeaders,
+        },
+      );
+    } catch (error) {
+      console.error("Error deleting user account:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to delete user account",
+          details: error instanceof Error ? error.message : "Unknown error",
+        }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  return new Response(JSON.stringify({ error: "Method not allowed" }), {
+    status: 405,
+    headers: corsHeaders,
+  });
+}

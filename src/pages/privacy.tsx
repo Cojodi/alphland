@@ -293,10 +293,33 @@ const Home = () => {
           contracts with us that clearly set out their commitment to respecting
           individual rights, and their commitments to assisting us to help you
           exercise your rights as a data subject. The following is a
-          non-exhaustive list of trusted third party service providers: Amazon
-          Web Services, Google Analytics, Amplitude, Branch, SendGrid, Twilio,
-          Mezmo, Datadog, Snowflake and Segment.
+          non-exhaustive list of trusted third party service providers:
         </p>
+
+        <ul className="list-disc pl-8 my-4">
+          <li className="mb-2">
+            <strong>Cloudflare Workers & D1:</strong> Infrastructure and
+            database hosting for our backend API and data storage
+          </li>
+          <li className="mb-2">
+            <strong>Resend:</strong> Email delivery service for account
+            verification, password resets, and notifications
+          </li>
+          <li className="mb-2">
+            <strong>Plausible Analytics:</strong> Privacy-friendly analytics
+            that does not use cookies or collect personal data
+          </li>
+          <li className="mb-2">
+            <strong>Google OAuth:</strong> Optional social login provider (only
+            if you choose to use Google sign-in)
+          </li>
+          <li className="mb-2">
+            <strong>DigitalOcean Spaces:</strong> Image and media hosting (CDN)
+          </li>
+          <li className="mb-2">
+            <strong>Netlify:</strong> Content management system hosting
+          </li>
+        </ul>
 
         <h4 className="text-[20px] font-bold mt-[20px]">Other Disclosures</h4>
         <p className="my-4">

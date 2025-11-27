@@ -92,14 +92,13 @@ export default function CreateBountyPage() {
           <div className="bg-white dark:bg-hero-dark rounded-xl border border-border-grey dark:border-dark-charcoal p-6 mb-8">
             <div className="flex items-center gap-4">
               {sponsor.logo_url ? (
-                <div className="relative w-12 h-12 rounded-lg overflow-hidden">
-                  <Image
-                    src={sponsor.logo_url}
-                    alt={sponsor.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+                <Image
+                  src={sponsor.logo_url}
+                  alt={sponsor.name}
+                  width={48}
+                  height={48}
+                  className="rounded-lg object-cover"
+                />
               ) : (
                 <div className="w-12 h-12 bg-orange/10 rounded-lg flex items-center justify-center">
                   <span className="text-orange font-bold font-barlow text-lg">

@@ -9,6 +9,7 @@ import {
   handleSponsorsAPI,
   handleNotificationsAPI,
   handleNotificationPreferencesAPI,
+  handleUserDeletionAPI,
 } from "./handlers";
 
 // Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
@@ -136,6 +137,11 @@ const worker = {
       // Notification preferences endpoints
       if (url.pathname.startsWith("/api/notification-preferences")) {
         return handleNotificationPreferencesAPI(request, env, url);
+      }
+
+      // User deletion endpoint
+      if (url.pathname.match(/^\/api\/user\/[^/]+$/)) {
+        return handleUserDeletionAPI(request, env, url);
       }
 
       // Default 404

@@ -6,6 +6,7 @@ import Script from "next/script";
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import CookieConsent from "../components/CookieConsent/CookieConsent";
 
 function MyApp({ Component, pageProps }: AppProps) {
   // Suppress ethereum property redefinition errors from browser extensions
@@ -19,7 +20,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         event.preventDefault();
         console.warn(
           "Suppressed error from browser extension or performance monitoring:",
-          event.message
+          event.message,
         );
         return true;
       }
@@ -33,12 +34,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     if (typeof window !== "undefined" && window.performance) {
       const originalMeasure = window.performance.measure.bind(
-        window.performance
+        window.performance,
       );
       window.performance.measure = function (
         measureName: string,
         startOrMeasureOptions?: string | PerformanceMeasureOptions,
-        endMark?: string
+        endMark?: string,
       ): PerformanceMeasure {
         try {
           return originalMeasure(measureName, startOrMeasureOptions, endMark);
@@ -89,6 +90,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           strategy="afterInteractive"
           src="https://identity.netlify.com/v1/netlify-identity-widget.js"
         />
+        <CookieConsent />
         <Component {...pageProps} />
       </AlephiumWalletProvider>
     </ThemeProvider>

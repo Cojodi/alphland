@@ -699,6 +699,43 @@ export default function EditProfile() {
     router.back();
   };
 
+  const handleDeleteAccount = async () => {
+    if (!session?.user) {
+      alert("You must be logged in to delete your account");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`/api/user/${session.user.id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to delete account");
+      }
+
+      alert(
+        "Your account has been successfully deleted. You will be redirected to the homepage.",
+      );
+
+      // Log out the user and redirect to homepage
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Failed to delete account:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to delete account. Please try again or contact support.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // Redirect if not logged in
   if (!session?.user && !isLoading) {
     return (
@@ -1323,6 +1360,41 @@ export default function EditProfile() {
               </div>
             </section>
           </form>
+
+          {/* Danger Zone - Account Deletion */}
+          <section className="bg-white dark:bg-hero-dark rounded-lg p-6 sm:p-8 border-2 border-red-200 dark:border-red-900/30 mt-8">
+            <h2 className="text-xl font-bold text-red-600 dark:text-red-500 mb-4 flex items-center gap-2">
+              <span className="w-1 h-6 bg-red-600 rounded-full"></span>
+              Danger Zone
+            </h2>
+            <p className="text-sm text-light-charcoal dark:text-lightgrey mb-6">
+              Once you delete your account, there is no going back. This action
+              will permanently delete your profile, comments, and personal
+              information. Your submissions will be anonymized but retained for
+              bounty integrity.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                const confirmed = confirm(
+                  "Are you absolutely sure you want to delete your account? This action cannot be undone.\n\nType 'DELETE' to confirm:",
+                );
+                if (confirmed) {
+                  const secondConfirm = prompt(
+                    'Please type "DELETE" to confirm account deletion:',
+                  );
+                  if (secondConfirm === "DELETE") {
+                    handleDeleteAccount();
+                  } else {
+                    alert("Account deletion cancelled.");
+                  }
+                }
+              }}
+              className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
+            >
+              Delete Account
+            </button>
+          </section>
         </main>
       </div>
 
