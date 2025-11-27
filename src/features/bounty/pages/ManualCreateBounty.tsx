@@ -124,6 +124,7 @@ export default function ManualCreateBounty() {
         body: JSON.stringify({
           ...formData,
           sponsor_id: sponsor.id,
+          user_id: session?.user?.id,
           requirements: formData.requirements.filter((r) => r.trim() !== ""),
           deliverables: formData.deliverables.filter((d) => d.trim() !== ""),
           skills: formData.skills.filter((s) => s.trim() !== ""),

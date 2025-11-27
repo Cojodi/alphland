@@ -222,57 +222,136 @@ async function handleBountiesAPI(
 
   // POST /api/bounties - Create new bounty
   if (request.method === "POST" && pathname === "/api/bounties") {
-    const body = (await request.json()) as any;
+    try {
+      const body = (await request.json()) as any;
 
-    const id = crypto.randomUUID();
-    const now = Math.floor(Date.now() / 1000);
+      const id = crypto.randomUUID();
+      const now = Math.floor(Date.now() / 1000);
 
-    // Convert arrays to JSON strings
-    const requirements = JSON.stringify(body.requirements || []);
-    const deliverables = JSON.stringify(body.deliverables || []);
-    const skills = JSON.stringify(body.skills || []);
+      // Get user_id from session or request
+      const created_by = body.created_by || body.user_id;
 
-    await env.DB.prepare(
-      `
-      INSERT INTO bounties (
-        id, sponsor_id, title, description,
-        requirements, deliverables, skills,
-        reward_amount, reward_currency, reward_type,
-        category, dapp_name,
-        start_date, end_date,
-        status, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `,
-    )
-      .bind(
-        id,
-        body.sponsor_id,
-        body.title,
-        body.description,
-        requirements,
-        deliverables,
-        skills,
-        body.reward_amount,
-        body.reward_currency || "ALPH",
-        body.reward_type || "fixed",
-        body.category,
-        body.dapp_name || null,
-        body.start_date,
-        body.end_date,
-        "open",
-        now,
-        now,
+      // Validate required fields
+      if (!created_by) {
+        return new Response(
+          JSON.stringify({
+            error: "User ID is required",
+          }),
+          {
+            status: 400,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      if (!body.sponsor_id) {
+        return new Response(
+          JSON.stringify({
+            error: "Sponsor ID is required",
+          }),
+          {
+            status: 400,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      // Verify sponsor exists
+      const sponsor = await env.DB.prepare(
+        "SELECT id FROM sponsors WHERE id = ?",
       )
-      .run();
+        .bind(body.sponsor_id)
+        .first();
 
-    const bounty = await env.DB.prepare("SELECT * FROM bounties WHERE id = ?")
-      .bind(id)
-      .first();
+      if (!sponsor) {
+        return new Response(
+          JSON.stringify({
+            error: "Sponsor not found",
+          }),
+          {
+            status: 404,
+            headers: corsHeaders,
+          },
+        );
+      }
 
-    return new Response(JSON.stringify({ bounty }), {
-      status: 201,
-      headers: corsHeaders,
-    });
+      // Verify user exists
+      const user = await env.DB.prepare("SELECT id FROM user WHERE id = ?")
+        .bind(created_by)
+        .first();
+
+      if (!user) {
+        return new Response(
+          JSON.stringify({
+            error: "User not found",
+          }),
+          {
+            status: 404,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      // Convert arrays to JSON strings
+      const requirements = JSON.stringify(body.requirements || []);
+      const deliverables = JSON.stringify(body.deliverables || []);
+      const skills = JSON.stringify(body.skills || []);
+
+      await env.DB.prepare(
+        `
+        INSERT INTO bounties (
+          id, sponsor_id, title, description,
+          requirements, deliverables, skills,
+          reward_amount, reward_currency, reward_type,
+          category, dapp_name,
+          start_date, end_date,
+          status, created_by, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `,
+      )
+        .bind(
+          id,
+          body.sponsor_id,
+          body.title,
+          body.description,
+          requirements,
+          deliverables,
+          skills,
+          body.reward_amount,
+          body.reward_currency || "ALPH",
+          body.reward_type || "fixed",
+          body.category,
+          body.dapp_name || null,
+          body.start_date,
+          body.end_date,
+          "open",
+          created_by,
+          now,
+          now,
+        )
+        .run();
+
+      const bounty = await env.DB.prepare("SELECT * FROM bounties WHERE id = ?")
+        .bind(id)
+        .first();
+
+      return new Response(JSON.stringify({ bounty }), {
+        status: 201,
+        headers: corsHeaders,
+      });
+    } catch (error: any) {
+      console.error("Error creating bounty:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to create bounty",
+          details: error.message,
+        }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
   }
 
   return new Response(JSON.stringify({ error: "Method not allowed" }), {

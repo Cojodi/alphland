@@ -1,9 +1,19 @@
 /**
  * API Client for Cloudflare D1 Worker
  * This provides type-safe methods to interact with your D1 database via the worker
+ * Uses Next.js proxy to forward requests to the worker on port 8787
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787";
+// Function to get API base URL at runtime
+function getApiBaseUrl(): string {
+  // In browser, check for environment variable first
+  if (typeof window !== "undefined") {
+    // Next.js exposes env vars to the browser via __NEXT_DATA__
+    return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787";
+  }
+  // On server, use environment variable or default
+  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787";
+}
 
 export interface Bounty {
   id: string;
@@ -213,13 +223,13 @@ export interface UpdateSponsorInput {
 class ApiClient {
   private baseURL: string;
 
-  constructor(baseURL: string = API_BASE_URL) {
-    this.baseURL = baseURL;
+  constructor(baseURL?: string) {
+    this.baseURL = baseURL || getApiBaseUrl();
   }
 
   private async request<T>(
     endpoint: string,
-    options?: RequestInit
+    options?: RequestInit,
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
 
@@ -237,7 +247,7 @@ class ApiClient {
           .json()
           .catch(() => ({ error: "Unknown error" }));
         throw new Error(
-          error.error || `HTTP error! status: ${response.status}`
+          error.error || `HTTP error! status: ${response.status}`,
         );
       }
 
@@ -281,7 +291,7 @@ class ApiClient {
 
   async updateUserProfile(
     userId: string,
-    data: UpdateUserProfileInput
+    data: UpdateUserProfileInput,
   ): Promise<{ user: UserProfile }> {
     return this.request(`/api/users/${userId}`, {
       method: "PUT",
@@ -291,7 +301,7 @@ class ApiClient {
 
   // Bounty Submissions
   async createSubmission(
-    data: CreateSubmissionInput
+    data: CreateSubmissionInput,
   ): Promise<{ submission: BountySubmission }> {
     return this.request("/api/submissions", {
       method: "POST",
@@ -304,20 +314,20 @@ class ApiClient {
   }
 
   async getSubmissionsByBounty(
-    bountyId: string
+    bountyId: string,
   ): Promise<{ submissions: BountySubmission[] }> {
     return this.request(`/api/submissions/bounty/${bountyId}`);
   }
 
   async getSubmissionsByUser(
-    userId: string
+    userId: string,
   ): Promise<{ submissions: BountySubmission[] }> {
     return this.request(`/api/submissions/user/${userId}`);
   }
 
   async updateSubmission(
     id: string,
-    data: UpdateSubmissionInput
+    data: UpdateSubmissionInput,
   ): Promise<{ submission: BountySubmission }> {
     return this.request(`/api/submissions/${id}`, {
       method: "PUT",
@@ -328,7 +338,7 @@ class ApiClient {
   // Comments
   async getCommentsByBounty(
     bountyId: string,
-    userId?: string
+    userId?: string,
   ): Promise<{ comments: BountyComment[] }> {
     const url = userId
       ? `/api/comments/bounty/${bountyId}?user_id=${userId}`
@@ -337,7 +347,7 @@ class ApiClient {
   }
 
   async createComment(
-    data: CreateCommentInput
+    data: CreateCommentInput,
   ): Promise<{ comment: BountyComment }> {
     return this.request("/api/comments", {
       method: "POST",
@@ -347,7 +357,7 @@ class ApiClient {
 
   async updateComment(
     id: string,
-    data: UpdateCommentInput
+    data: UpdateCommentInput,
   ): Promise<{ comment: BountyComment }> {
     return this.request(`/api/comments/${id}`, {
       method: "PUT",
@@ -363,7 +373,7 @@ class ApiClient {
 
   async likeComment(
     commentId: string,
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; like_count: number }> {
     return this.request(`/api/comments/${commentId}/like`, {
       method: "POST",
@@ -373,7 +383,7 @@ class ApiClient {
 
   async unlikeComment(
     commentId: string,
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean; like_count: number }> {
     return this.request(`/api/comments/${commentId}/like?user_id=${userId}`, {
       method: "DELETE",
@@ -398,7 +408,7 @@ class ApiClient {
 
   async updateSponsor(
     id: string,
-    data: UpdateSponsorInput
+    data: UpdateSponsorInput,
   ): Promise<{ sponsor: Sponsor }> {
     return this.request(`/api/sponsors/${id}`, {
       method: "PUT",
@@ -407,13 +417,13 @@ class ApiClient {
   }
 
   async getBountiesBySponsor(
-    sponsorId: string
+    sponsorId: string,
   ): Promise<{ bounties: Bounty[] }> {
     return this.request(`/api/bounties/sponsor/${sponsorId}`);
   }
 
   async getSubmissionsBySponsor(
-    sponsorId: string
+    sponsorId: string,
   ): Promise<{ submissions: BountySubmission[] }> {
     return this.request(`/api/submissions/sponsor/${sponsorId}`);
   }
@@ -434,7 +444,7 @@ class ApiClient {
   // Admin: Reject sponsor
   async rejectSponsor(
     id: string,
-    reason?: string
+    reason?: string,
   ): Promise<{ sponsor: Sponsor }> {
     return this.request(`/api/sponsors/${id}/reject`, {
       method: "PUT",
@@ -445,7 +455,7 @@ class ApiClient {
   // Notifications
   async getNotifications(
     userId: string,
-    options?: { limit?: number; unreadOnly?: boolean }
+    options?: { limit?: number; unreadOnly?: boolean },
   ): Promise<{ notifications: Notification[]; unread_count: number }> {
     let url = `/api/notifications/user/${userId}`;
     const params = new URLSearchParams();
@@ -456,7 +466,7 @@ class ApiClient {
   }
 
   async createNotification(
-    data: CreateNotificationInput
+    data: CreateNotificationInput,
   ): Promise<{ notification: Notification }> {
     return this.request("/api/notifications", {
       method: "POST",
@@ -471,7 +481,7 @@ class ApiClient {
   }
 
   async markAllNotificationsAsRead(
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean }> {
     return this.request(`/api/notifications/user/${userId}/read-all`, {
       method: "PUT",
@@ -487,15 +497,15 @@ class ApiClient {
   // Notification Mutes (simplified replacement for preferences)
   async checkNotificationMute(
     bountyId: string,
-    userId: string
+    userId: string,
   ): Promise<{ muted: boolean }> {
     return this.request(
-      `/api/notification-mutes/check?bounty_id=${bountyId}&user_id=${userId}`
+      `/api/notification-mutes/check?bounty_id=${bountyId}&user_id=${userId}`,
     );
   }
 
   async muteNotifications(
-    data: CreateNotificationMuteInput
+    data: CreateNotificationMuteInput,
   ): Promise<{ mute: NotificationMute }> {
     return this.request("/api/notification-mutes", {
       method: "POST",
@@ -505,13 +515,13 @@ class ApiClient {
 
   async unmuteNotifications(
     bountyId: string,
-    userId: string
+    userId: string,
   ): Promise<{ success: boolean }> {
     return this.request(
       `/api/notification-mutes?bounty_id=${bountyId}&user_id=${userId}`,
       {
         method: "DELETE",
-      }
+      },
     );
   }
 }
