@@ -1,9 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  env: {
-    NEXT_PUBLIC_API_URL: "https://api.alph.land",
-  },
+  // Remove hardcoded API URL - use proxy instead
+  // env: {
+  //   NEXT_PUBLIC_API_URL: "https://api.alph.land",
+  // },
   swcMinify: true,
   compiler: {
     styledComponents: true,

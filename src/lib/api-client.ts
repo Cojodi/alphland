@@ -4,16 +4,10 @@
  * Uses Next.js proxy to forward requests to the worker on port 8787
  */
 
-// Function to get API base URL at runtime
-function getApiBaseUrl(): string {
-  // In browser, check for environment variable first
-  if (typeof window !== "undefined") {
-    // Next.js exposes env vars to the browser via __NEXT_DATA__
-    return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787";
-  }
-  // On server, use environment variable or default
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787";
-}
+// Use relative path to leverage Next.js proxy
+// The proxy in next.config.js forwards /api/* to the worker
+// This avoids CORS issues and keeps cookies on the same domain
+const API_BASE_URL = "";
 
 export interface Bounty {
   id: string;
@@ -223,8 +217,8 @@ export interface UpdateSponsorInput {
 class ApiClient {
   private baseURL: string;
 
-  constructor(baseURL?: string) {
-    this.baseURL = baseURL || getApiBaseUrl();
+  constructor(baseURL: string = API_BASE_URL) {
+    this.baseURL = baseURL;
   }
 
   private async request<T>(
