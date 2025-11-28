@@ -1,65 +1,13 @@
 "use client";
 
 import { BountyCard } from "../components/BountyCard";
-import { Bounty } from "../types";
 import Layout from "@/components/Layout";
 import { useSession } from "@/lib/auth-client";
+import { apiClient, Bounty } from "@/lib/api-client";
 import { Filter, Rocket, CheckCircle, X } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-
-// Mock data - will be replaced with API calls later
-const mockBounties: Array<Bounty & { logo: string }> = [
-  {
-    id: "1",
-    sponsor_id: "1",
-    logo: "🎲",
-    title:
-      "Twitter Thread on BlockBet's Referral Program | BlockBet Creator Campaign",
-    description: "Create engaging Twitter content about our referral program",
-    requirements: ["Twitter presence", "Content creation skills"],
-    deliverables: ["Twitter thread", "Engagement metrics"],
-    skills: ["Content", "Social Media"],
-    reward: {
-      amount: 5000,
-      token: "USDC",
-      usd_equivalent: 5000,
-    },
-    reward_type: "tiered",
-    status: "open",
-    start_date: new Date().toISOString(),
-    end_date: new Date(Date.now() + 9 * 24 * 60 * 60 * 1000).toISOString(),
-    current_submissions: 17,
-    category: "Content",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    sponsor_id: "2",
-    logo: "📱",
-    title:
-      "Join FlipFlop's Ambassador Program: Footprint Sprint - starting from India 🇮🇳",
-    description: "Become an ambassador for our India launch",
-    requirements: ["Based in India", "Community building"],
-    deliverables: ["Community growth", "Event participation"],
-    skills: ["Community", "Marketing"],
-    reward: {
-      amount: 1510,
-      token: "USDT",
-      usd_equivalent: 1510,
-    },
-    reward_type: "fixed",
-    status: "open",
-    start_date: new Date().toISOString(),
-    end_date: new Date(Date.now() + 18 * 24 * 60 * 60 * 1000).toISOString(),
-    current_submissions: 0,
-    category: "Community",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-];
 
 export default function BountyList() {
   const router = useRouter();
@@ -71,6 +19,24 @@ export default function BountyList() {
   const [showVerificationSuccess, setShowVerificationSuccess] = useState(false);
   const [isSponsor, setIsSponsor] = useState(false);
   const [checkingSponsor, setCheckingSponsor] = useState(true);
+  const [bounties, setBounties] = useState<Bounty[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch bounties from API
+  useEffect(() => {
+    async function fetchBounties() {
+      try {
+        const { bounties: fetchedBounties } = await apiClient.getBounties();
+        setBounties(fetchedBounties);
+      } catch (error) {
+        console.error("Error fetching bounties:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchBounties();
+  }, []);
 
   // Check if user is a sponsor
   useEffect(() => {
@@ -258,27 +224,50 @@ export default function BountyList() {
 
                 {/* Bounty Cards */}
                 <div className="space-y-4">
-                  {mockBounties.map((bounty) => (
-                    <BountyCard
-                      key={bounty.id}
-                      id={bounty.id}
-                      logo={bounty.logo}
-                      title={bounty.title}
-                      company={bounty.dapp_name || "Company"}
-                      reward={`${bounty.reward.amount.toLocaleString()} ${
-                        bounty.reward.token
-                      }`}
-                      tags={[
-                        bounty.reward_type === "tiered" ? "Bounty" : "Project",
-                        `Due in ${Math.ceil(
-                          (new Date(bounty.end_date).getTime() - Date.now()) /
-                            (1000 * 60 * 60 * 24),
-                        )}d`,
-                        bounty.current_submissions.toString(),
-                        ...(bounty.id === "1" ? ["FEATURED"] : []),
-                      ]}
-                    />
-                  ))}
+                  {loading ? (
+                    <div className="text-center py-8">
+                      <p className="text-light-charcoal dark:text-lightgrey">
+                        Loading bounties...
+                      </p>
+                    </div>
+                  ) : bounties.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-light-charcoal dark:text-lightgrey">
+                        No bounties available at the moment.
+                      </p>
+                    </div>
+                  ) : (
+                    bounties.map((bounty) => {
+                      const daysRemaining = bounty.end_date
+                        ? Math.ceil(
+                            (new Date(bounty.end_date).getTime() - Date.now()) /
+                              (1000 * 60 * 60 * 24),
+                          )
+                        : null;
+
+                      return (
+                        <BountyCard
+                          key={bounty.id}
+                          id={bounty.id}
+                          logo="💼"
+                          title={bounty.title}
+                          company="Sponsor"
+                          reward={`${bounty.reward_amount?.toLocaleString() || "0"} ${
+                            bounty.reward_currency || "ALPH"
+                          }`}
+                          tags={[
+                            bounty.difficulty || "beginner",
+                            ...(daysRemaining !== null && daysRemaining > 0
+                              ? [`Due in ${daysRemaining}d`]
+                              : daysRemaining === 0
+                                ? ["Due today"]
+                                : ["Ended"]),
+                            bounty.category,
+                          ]}
+                        />
+                      );
+                    })
+                  )}
                 </div>
               </div>
 

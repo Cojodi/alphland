@@ -21,7 +21,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
   const router = useRouter();
   const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState<"prizes" | "details" | "comments">(
-    "prizes"
+    "prizes",
   );
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [commentCount, setCommentCount] = useState(0);
@@ -250,10 +250,10 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                                 {tier.position === 1
                                   ? "1st"
                                   : tier.position === 2
-                                  ? "2nd"
-                                  : tier.position === 3
-                                  ? "3rd"
-                                  : `${tier.position}th`}{" "}
+                                    ? "2nd"
+                                    : tier.position === 3
+                                      ? "3rd"
+                                      : `${tier.position}th`}{" "}
                                 Place
                               </span>
                               <span className="text-accessible-green font-bold">
@@ -338,7 +338,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                           <button
                             onClick={() =>
                               setShowNotificationSettings(
-                                !showNotificationSettings
+                                !showNotificationSettings,
                               )
                             }
                             className="text-sm text-orange hover:text-primary-dark transition"
@@ -391,40 +391,61 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
 export async function getServerSideProps(context: any) {
   const { id } = context.params;
 
-  // TODO: Replace with actual API call to Cloudflare
-  const mockBounty: Bounty = {
-    id,
-    sponsor_id: "1",
-    title: "Twitter Thread on BlockBet's Referral Program",
-    description: "Create engaging Twitter content about our referral program",
-    requirements: [
-      "Twitter presence with 1000+ followers",
-      "Content creation experience",
-    ],
-    deliverables: [
-      "Twitter thread with 10+ tweets",
-      "Engagement metrics report",
-    ],
-    skills: ["Content", "Social Media", "Writing"],
-    reward: {
-      amount: 5000,
-      token: "USDC",
-      usd_equivalent: 5000,
-    },
-    reward_type: "tiered",
-    status: "open",
-    start_date: new Date().toISOString(),
-    end_date: new Date(Date.now() + 9 * 24 * 60 * 60 * 1000).toISOString(),
-    current_submissions: 17,
-    category: "Content",
-    dapp_name: "BlockBet",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  };
+  try {
+    // Fetch bounty from API
+    const protocol = context.req.headers["x-forwarded-proto"] || "http";
+    const host = context.req.headers.host || "localhost:3000";
+    const baseUrl = `${protocol}://${host}`;
 
-  return {
-    props: {
-      bounty: mockBounty,
-    },
-  };
+    const response = await fetch(`${baseUrl}/api/bounties/${id}`);
+
+    if (!response.ok) {
+      return {
+        notFound: true,
+      };
+    }
+
+    const data = await response.json();
+    const bountyData = data.bounty;
+
+    // Transform the bounty data to match the Bounty type
+    const bounty: Bounty = {
+      id: bountyData.id,
+      sponsor_id: bountyData.sponsor_id,
+      title: bountyData.title,
+      description: bountyData.description,
+      requirements: bountyData.requirements
+        ? JSON.parse(bountyData.requirements)
+        : [],
+      deliverables: bountyData.deliverables
+        ? JSON.parse(bountyData.deliverables)
+        : [],
+      skills: bountyData.skills ? JSON.parse(bountyData.skills) : [],
+      reward: {
+        amount: parseFloat(bountyData.reward_amount) || 0,
+        token: bountyData.reward_currency || "ALPH",
+        usd_equivalent: parseFloat(bountyData.reward_usd_value) || 0,
+      },
+      reward_type: bountyData.reward_type || "fixed",
+      status: bountyData.status,
+      start_date: bountyData.start_date,
+      end_date: bountyData.end_date,
+      current_submissions: bountyData.submission_count || 0,
+      category: bountyData.category,
+      dapp_name: bountyData.dapp_name || undefined,
+      created_at: bountyData.created_at,
+      updated_at: bountyData.updated_at,
+    };
+
+    return {
+      props: {
+        bounty,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching bounty:", error);
+    return {
+      notFound: true,
+    };
+  }
 }

@@ -202,7 +202,10 @@ async function handleBountiesAPI(
     const id = pathname.split("/").pop();
     const bounty = await env.DB.prepare(
       `
-      SELECT * FROM bounties WHERE id = ?
+      SELECT b.*,
+             (SELECT COUNT(*) FROM bounty_submissions WHERE bounty_id = b.id) as submission_count
+      FROM bounties b
+      WHERE b.id = ?
     `,
     )
       .bind(id)

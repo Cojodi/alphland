@@ -213,11 +213,11 @@ export async function handleCommentsAPI(
     const { results } = await env.DB.prepare(
       `SELECT
         c.*,
-        u.username as user_username,
+        COALESCE(up.username, usr.name, usr.email) as user_username,
         usr.image as user_avatar
        FROM bounty_comments c
-       LEFT JOIN user_profiles u ON c.user_id = u.user_id
        LEFT JOIN user usr ON c.user_id = usr.id
+       LEFT JOIN user_profiles up ON c.user_id = up.user_id
        WHERE c.bounty_id = ? AND c.deleted_at IS NULL
        ORDER BY c.created_at ASC`,
     )
@@ -226,7 +226,24 @@ export async function handleCommentsAPI(
 
     // Process liked_by field and calculate like_count, user_liked
     const processedComments = results.map((comment: any) => {
-      const likedBy = comment.liked_by ? JSON.parse(comment.liked_by) : [];
+      let likedBy: string[] = [];
+      try {
+        if (
+          comment.liked_by &&
+          typeof comment.liked_by === "string" &&
+          comment.liked_by.trim() !== ""
+        ) {
+          likedBy = JSON.parse(comment.liked_by);
+        }
+      } catch (e) {
+        console.error("Failed to parse liked_by JSON:", e);
+        likedBy = [];
+      }
+
+      if (!Array.isArray(likedBy)) {
+        likedBy = [];
+      }
+
       return {
         ...comment,
         like_count: likedBy.length,
@@ -263,10 +280,12 @@ export async function handleCommentsAPI(
       .run();
 
     const comment = await env.DB.prepare(
-      `SELECT c.*, u.username as user_username, usr.image as user_avatar
+      `SELECT c.*,
+        COALESCE(up.username, usr.name, usr.email) as user_username,
+        usr.image as user_avatar
        FROM bounty_comments c
-       LEFT JOIN user_profiles u ON c.user_id = u.user_id
        LEFT JOIN user usr ON c.user_id = usr.id
+       LEFT JOIN user_profiles up ON c.user_id = up.user_id
        WHERE c.id = ?`,
     )
       .bind(id)
@@ -291,17 +310,36 @@ export async function handleCommentsAPI(
       .run();
 
     const comment = await env.DB.prepare(
-      `SELECT c.*, u.username as user_username, usr.image as user_avatar
+      `SELECT c.*,
+        COALESCE(up.username, usr.name, usr.email) as user_username,
+        usr.image as user_avatar
        FROM bounty_comments c
-       LEFT JOIN user_profiles u ON c.user_id = u.user_id
        LEFT JOIN user usr ON c.user_id = usr.id
+       LEFT JOIN user_profiles up ON c.user_id = up.user_id
        WHERE c.id = ?`,
     )
       .bind(id)
       .first();
 
     // Process liked_by field
-    const likedBy = comment.liked_by ? JSON.parse(comment.liked_by) : [];
+    let likedBy: string[] = [];
+    try {
+      if (
+        comment.liked_by &&
+        typeof comment.liked_by === "string" &&
+        comment.liked_by.trim() !== ""
+      ) {
+        likedBy = JSON.parse(comment.liked_by);
+      }
+    } catch (e) {
+      console.error("Failed to parse liked_by JSON:", e);
+      likedBy = [];
+    }
+
+    if (!Array.isArray(likedBy)) {
+      likedBy = [];
+    }
+
     const processedComment = {
       ...comment,
       like_count: likedBy.length,
@@ -340,6 +378,13 @@ export async function handleCommentsAPI(
     const body = (await request.json()) as any;
     const now = Math.floor(Date.now() / 1000);
 
+    if (!body.user_id) {
+      return new Response(JSON.stringify({ error: "user_id is required" }), {
+        status: 400,
+        headers: corsHeaders,
+      });
+    }
+
     // Get current comment with liked_by field
     const comment = await env.DB.prepare(
       `SELECT liked_by FROM bounty_comments WHERE id = ?`,
@@ -354,15 +399,35 @@ export async function handleCommentsAPI(
       });
     }
 
-    // Parse liked_by array
-    const likedBy = comment.liked_by ? JSON.parse(comment.liked_by) : [];
+    // Parse liked_by array - handle null, empty string, or invalid JSON
+    let likedBy: string[] = [];
+    try {
+      if (
+        comment.liked_by &&
+        typeof comment.liked_by === "string" &&
+        comment.liked_by.trim() !== ""
+      ) {
+        likedBy = JSON.parse(comment.liked_by);
+      }
+    } catch (e) {
+      console.error("Failed to parse liked_by JSON:", e);
+      likedBy = [];
+    }
+
+    // Ensure likedBy is an array
+    if (!Array.isArray(likedBy)) {
+      likedBy = [];
+    }
 
     // Check if already liked
     if (likedBy.includes(body.user_id)) {
-      return new Response(JSON.stringify({ error: "Already liked" }), {
-        status: 400,
-        headers: corsHeaders,
-      });
+      return new Response(
+        JSON.stringify({ error: "Already liked", like_count: likedBy.length }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        },
+      );
     }
 
     // Add user to liked_by array
@@ -395,6 +460,13 @@ export async function handleCommentsAPI(
     const userId = url.searchParams.get("user_id");
     const now = Math.floor(Date.now() / 1000);
 
+    if (!userId) {
+      return new Response(JSON.stringify({ error: "user_id is required" }), {
+        status: 400,
+        headers: corsHeaders,
+      });
+    }
+
     // Get current comment with liked_by field
     const comment = await env.DB.prepare(
       `SELECT liked_by FROM bounty_comments WHERE id = ?`,
@@ -409,8 +481,25 @@ export async function handleCommentsAPI(
       });
     }
 
-    // Parse liked_by array
-    const likedBy = comment.liked_by ? JSON.parse(comment.liked_by) : [];
+    // Parse liked_by array - handle null, empty string, or invalid JSON
+    let likedBy: string[] = [];
+    try {
+      if (
+        comment.liked_by &&
+        typeof comment.liked_by === "string" &&
+        comment.liked_by.trim() !== ""
+      ) {
+        likedBy = JSON.parse(comment.liked_by);
+      }
+    } catch (e) {
+      console.error("Failed to parse liked_by JSON:", e);
+      likedBy = [];
+    }
+
+    // Ensure likedBy is an array
+    if (!Array.isArray(likedBy)) {
+      likedBy = [];
+    }
 
     // Remove user from liked_by array
     const newLikedBy = likedBy.filter((id: string) => id !== userId);
@@ -1362,7 +1451,7 @@ export async function isNotificationMuted(
   env: Env,
   userId: string,
   bountyId: string,
-  type: "comments" | "submissions",
+  _type: "comments" | "submissions",
 ): Promise<boolean> {
   const mute = await env.DB.prepare(
     `SELECT id FROM notification_mutes WHERE user_id = ? AND bounty_id = ?`,
