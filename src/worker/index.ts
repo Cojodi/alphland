@@ -104,6 +104,28 @@ const worker = {
         });
       }
 
+      // Bounty overview stats endpoint
+      if (url.pathname === "/api/bounty-overview") {
+        const overview = await env.DB.prepare(
+          "SELECT * FROM bounty_overview WHERE id = 1",
+        ).first();
+
+        return new Response(
+          JSON.stringify({
+            overview: overview || {
+              total_value_usd: 0,
+              total_value_alph: 0,
+              list_number: 0,
+              user_number: 0,
+              sponsor_number: 0,
+            },
+          }),
+          {
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          },
+        );
+      }
+
       // Bounties API endpoints
       if (url.pathname.startsWith("/api/bounties")) {
         return handleBountiesAPI(request, env, url);

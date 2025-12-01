@@ -216,6 +216,16 @@ export interface UpdateSponsorInput {
   wallet_address?: string;
 }
 
+export interface BountyOverview {
+  id: number;
+  total_value_usd: number;
+  total_value_alph: number;
+  list_number: number;
+  user_number: number;
+  sponsor_number: number;
+  updated_at: number;
+}
+
 class ApiClient {
   private baseURL: string;
 
@@ -519,6 +529,11 @@ class ApiClient {
         method: "DELETE",
       },
     );
+  }
+
+  // Bounty Overview
+  async getBountyOverview(): Promise<{ overview: BountyOverview }> {
+    return this.request("/api/bounty-overview");
   }
 }
 

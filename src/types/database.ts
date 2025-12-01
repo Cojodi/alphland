@@ -252,6 +252,20 @@ export interface DbBountyComment extends Omit<BountyComment, "liked_by"> {
 
 // REMOVED: CommentLike table - moved to BountyComment.liked_by field (JSON array)
 
+/**
+ * Bounty overview table - stores global platform statistics
+ * Single row table with id = 1
+ */
+export interface BountyOverview {
+  id: number; // Always 1
+  total_value_usd: number;
+  total_value_alph: number;
+  list_number: number; // Total bounties listed
+  user_number: number; // Total users
+  sponsor_number: number; // Total sponsors
+  updated_at: number;
+}
+
 export interface ProofOfWork {
   id: string;
   user_id: string;
@@ -362,11 +376,11 @@ export type UpdateBountySubmission = Partial<BountySubmission> & { id: string };
 export type DbToApp<T> = T extends DbUserProfile
   ? UserProfile
   : T extends DbBounty
-  ? Bounty
-  : T extends DbBountySubmission
-  ? BountySubmission
-  : T extends DbSponsor
-  ? Sponsor
-  : T extends DbProofOfWork
-  ? ProofOfWork
-  : T;
+    ? Bounty
+    : T extends DbBountySubmission
+      ? BountySubmission
+      : T extends DbSponsor
+        ? Sponsor
+        : T extends DbProofOfWork
+          ? ProofOfWork
+          : T;

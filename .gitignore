@@ -53,3 +53,4 @@ next-env.d.ts
 /migrations/*.sql
 *.png
 /d1-manager-main
+*.sh

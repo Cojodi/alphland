@@ -21,21 +21,32 @@ export default function BountyList() {
   const [checkingSponsor, setCheckingSponsor] = useState(true);
   const [bounties, setBounties] = useState<Bounty[]>([]);
   const [loading, setLoading] = useState(true);
+  const [overview, setOverview] = useState({
+    total_value_usd: 0,
+    total_value_alph: 0,
+    list_number: 0,
+    user_number: 0,
+    sponsor_number: 0,
+  });
 
-  // Fetch bounties from API
+  // Fetch bounties and overview from API
   useEffect(() => {
-    async function fetchBounties() {
+    async function fetchData() {
       try {
-        const { bounties: fetchedBounties } = await apiClient.getBounties();
-        setBounties(fetchedBounties);
+        const [bountiesData, overviewData] = await Promise.all([
+          apiClient.getBounties(),
+          apiClient.getBountyOverview(),
+        ]);
+        setBounties(bountiesData.bounties);
+        setOverview(overviewData.overview);
       } catch (error) {
-        console.error("Error fetching bounties:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchBounties();
+    fetchData();
   }, []);
 
   // Check if user is a sponsor
@@ -201,7 +212,11 @@ export default function BountyList() {
                   <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="space-y-1">
                       <p className="text-2xl font-bold text-black dark:text-white">
-                        9,213,730 USD
+                        {overview.total_value_usd > 0
+                          ? `${overview.total_value_usd.toLocaleString()} USD`
+                          : overview.total_value_alph > 0
+                            ? `${overview.total_value_alph.toLocaleString()} ALPH`
+                            : "0 USD"}
                       </p>
                       <p className="text-sm text-light-charcoal dark:text-lightgrey">
                         Total Value Earned
@@ -209,7 +224,7 @@ export default function BountyList() {
                     </div>
                     <div className="space-y-1">
                       <p className="text-2xl font-bold text-black dark:text-white">
-                        2415
+                        {overview.list_number.toLocaleString()}
                       </p>
                       <p className="text-sm text-light-charcoal dark:text-lightgrey">
                         Opportunities Listed
