@@ -12,6 +12,7 @@ import { useSession } from "@/lib/auth-client";
 import { Bookmark, MoreVertical, Users, ArrowLeft, Bell } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 interface BountyDetailProps {
   bounty: Bounty;
@@ -98,10 +99,20 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
 
             <div className="flex items-start gap-4 sm:gap-6">
               {/* Logo */}
-              <div className="h-16 w-16 flex-shrink-0 rounded-lg bg-gradient-to-br from-orange to-orange/80 flex items-center justify-center">
-                <span className="text-2xl font-bold text-white">
-                  {bounty.dapp_name?.[0] || "B"}
-                </span>
+              <div className="h-16 w-16 flex-shrink-0 rounded-lg bg-gradient-to-br from-orange/20 to-accessible-green/20 dark:from-orange/10 dark:to-accessible-green/10 flex items-center justify-center overflow-hidden">
+                {bounty.sponsor_logo_url ? (
+                  <Image
+                    src={bounty.sponsor_logo_url}
+                    alt={bounty.sponsor_name || "Sponsor"}
+                    width={64}
+                    height={64}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-2xl font-bold text-orange">
+                    {bounty.sponsor_name?.[0] || bounty.dapp_name?.[0] || "B"}
+                  </span>
+                )}
               </div>
 
               {/* Title and Info */}
@@ -113,7 +124,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                 <div className="flex flex-wrap gap-4 text-sm text-light-charcoal dark:text-lightgrey mb-4">
                   <div className="flex items-center gap-2">
                     <span className="font-medium">
-                      by {bounty.dapp_name || "Sponsor"}
+                      by {bounty.sponsor_name || bounty.dapp_name || "Sponsor"}
                     </span>
                   </div>
                   <div className="flex items-center gap-1">
@@ -433,6 +444,8 @@ export async function getServerSideProps(context: any) {
       current_submissions: bountyData.submission_count || 0,
       category: bountyData.category,
       dapp_name: bountyData.dapp_name || undefined,
+      sponsor_name: bountyData.sponsor_name || undefined,
+      sponsor_logo_url: bountyData.sponsor_logo_url || undefined,
       created_at: bountyData.created_at,
       updated_at: bountyData.updated_at,
     };

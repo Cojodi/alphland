@@ -249,9 +249,9 @@ export default function BountyList() {
                         <BountyCard
                           key={bounty.id}
                           id={bounty.id}
-                          logo="💼"
+                          logo={bounty.sponsor_logo_url || "💼"}
                           title={bounty.title}
-                          company="Sponsor"
+                          company={bounty.sponsor_name || "Sponsor"}
                           reward={`${bounty.reward_amount?.toLocaleString() || "0"} ${
                             bounty.reward_currency || "ALPH"
                           }`}

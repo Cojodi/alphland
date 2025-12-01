@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 interface BountyCardProps {
   id: string;
@@ -22,8 +23,18 @@ export function BountyCard({
       <div className="p-6 bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal rounded-xl hover:shadow-box-image-shadow-hover transition hover:border-orange/20 cursor-pointer">
         <div className="flex gap-4">
           {/* Logo */}
-          <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-orange/20 to-accessible-green/20 dark:from-orange/10 dark:to-accessible-green/10 flex items-center justify-center text-2xl flex-shrink-0">
-            {logo || "📦"}
+          <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-orange/20 to-accessible-green/20 dark:from-orange/10 dark:to-accessible-green/10 flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden">
+            {logo ? (
+              <Image
+                src={logo}
+                alt={company}
+                width={64}
+                height={64}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              "📦"
+            )}
           </div>
 
           {/* Content */}

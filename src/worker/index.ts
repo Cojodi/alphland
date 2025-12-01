@@ -186,9 +186,11 @@ async function handleBountiesAPI(
   if (request.method === "GET" && pathname === "/api/bounties") {
     const { results } = await env.DB.prepare(
       `
-      SELECT * FROM bounties
-      WHERE status != 'deleted'
-      ORDER BY created_at DESC
+      SELECT b.*, s.name as sponsor_name, s.logo_url as sponsor_logo_url
+      FROM bounties b
+      LEFT JOIN sponsors s ON b.sponsor_id = s.id
+      WHERE b.status != 'deleted'
+      ORDER BY b.created_at DESC
     `,
     ).all();
 
@@ -203,8 +205,11 @@ async function handleBountiesAPI(
     const bounty = await env.DB.prepare(
       `
       SELECT b.*,
+             s.name as sponsor_name,
+             s.logo_url as sponsor_logo_url,
              (SELECT COUNT(*) FROM bounty_submissions WHERE bounty_id = b.id) as submission_count
       FROM bounties b
+      LEFT JOIN sponsors s ON b.sponsor_id = s.id
       WHERE b.id = ?
     `,
     )

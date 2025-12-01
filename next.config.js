@@ -33,6 +33,16 @@ const nextConfig = {
       "mintsquare.sfo3.cdn.digitaloceanspaces.com",
       "lh3.googleusercontent.com", // Google profile pictures
     ],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: "**",
+      },
+    ],
   },
   experimental: {
     scrollRestoration: true,

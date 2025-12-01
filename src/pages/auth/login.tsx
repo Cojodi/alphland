@@ -1,12 +1,9 @@
-"use client";
-
 import Button from "@/components/Button/Button";
 import Layout from "@/components/Layout";
 import {
   authClient,
   signInWithEmail,
   signUpWithEmail,
-  signInWithGoogle,
   useSession,
 } from "@/lib/auth-client";
 import { useRouter } from "next/router";
