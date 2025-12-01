@@ -112,10 +112,10 @@ export default function SponsorPending() {
           <p className="text-sm text-light-charcoal dark:text-lightgrey mb-6">
             Have questions? Contact us via{" "}
             <a
-              href="mailto:baby@alephium.org"
+              href="mailto:alph.land@alephium.org"
               className="text-orange hover:underline"
             >
-              baby@alephium.org{" "}
+              alph.land@alephium.org{" "}
             </a>{" "}
           </p>
 

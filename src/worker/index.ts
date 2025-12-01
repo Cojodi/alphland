@@ -867,6 +867,9 @@ async function handleUsersAPI(
     await env.DB.prepare(
       `UPDATE user_profiles
        SET username = ?,
+           first_name = ?,
+           last_name = ?,
+           full_name = ?,
            bio = ?,
            wallet_address = ?,
            github_username = ?,
@@ -887,6 +890,9 @@ async function handleUsersAPI(
     )
       .bind(
         body.username || null,
+        body.first_name || null,
+        body.last_name || null,
+        body.full_name || null,
         body.bio || null,
         body.wallet_address || null,
         body.github_username || null,

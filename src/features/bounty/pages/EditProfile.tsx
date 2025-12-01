@@ -359,14 +359,22 @@ export default function EditProfile() {
             : [];
           const projects = profile.projects ? JSON.parse(profile.projects) : [];
 
-          // Split name into first and last
-          const nameParts = (profile.name || "").split(" ");
+          // Get first_name and last_name from profile, fallback to splitting name
+          let firstName = profile.first_name || "";
+          let lastName = profile.last_name || "";
+
+          // Fallback: if no first/last name in profile, try splitting the name field
+          if (!firstName && !lastName && profile.name) {
+            const nameParts = profile.name.split(" ");
+            firstName = nameParts[0] || "";
+            lastName = nameParts.slice(1).join(" ") || "";
+          }
 
           setFormData((prev) => ({
             ...prev,
             username: profile.username || "",
-            firstName: nameParts[0] || "",
-            lastName: nameParts.slice(1).join(" ") || "",
+            firstName,
+            lastName,
             bio: profile.bio || "",
             alphWalletAddress: profile.wallet_address || "",
             profilePicturePreview: profile.image || null,
@@ -647,6 +655,9 @@ export default function EditProfile() {
       // Prepare request body with optional image
       const requestBody: Record<string, unknown> = {
         username: formData.username,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        full_name: `${formData.firstName} ${formData.lastName}`.trim(),
         bio: formData.bio,
         wallet_address: formData.alphWalletAddress,
         github_username: formData.socials.github,
@@ -814,11 +825,10 @@ export default function EditProfile() {
                   <div className="flex items-center gap-4">
                     <div className="w-20 h-20 rounded-full bg-smoked-white dark:bg-light-black flex items-center justify-center overflow-hidden flex-shrink-0">
                       {formData.profilePicturePreview ? (
-                        <Image
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
                           src={formData.profilePicturePreview}
                           alt="Profile"
-                          width={80}
-                          height={80}
                           className="w-full h-full object-cover"
                         />
                       ) : (
