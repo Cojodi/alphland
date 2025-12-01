@@ -9,7 +9,7 @@ import { calculateTimeRemaining } from "../utils/timeFormatter";
 import Layout from "@/components/Layout";
 import { apiClient } from "@/lib/api-client";
 import { useSession } from "@/lib/auth-client";
-import { Bookmark, MoreVertical, Users, ArrowLeft, Bell } from "lucide-react";
+import { Bookmark, Users, ArrowLeft, Bell } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Image from "next/image";
@@ -79,6 +79,50 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
     };
     fetchSponsorInfo();
   }, [bounty.sponsor_id, session?.user?.id]);
+
+  // Check if bounty is bookmarked
+  useEffect(() => {
+    const checkBookmarkStatus = async () => {
+      if (!session?.user?.id) {
+        setIsBookmarked(false);
+        return;
+      }
+      try {
+        const result = await apiClient.checkBookmark(
+          session.user.id,
+          bounty.id,
+        );
+        setIsBookmarked(result.bookmarked);
+      } catch (error) {
+        console.error("Error checking bookmark status:", error);
+      }
+    };
+    checkBookmarkStatus();
+  }, [session?.user?.id, bounty.id]);
+
+  // Handle bookmark toggle
+  const handleBookmarkToggle = async () => {
+    if (!session?.user?.id) {
+      alert("Please sign in to bookmark this bounty");
+      return;
+    }
+
+    try {
+      if (isBookmarked) {
+        await apiClient.deleteBookmark(session.user.id, bounty.id);
+        setIsBookmarked(false);
+      } else {
+        await apiClient.createBookmark({
+          user_id: session.user.id,
+          bounty_id: bounty.id,
+        });
+        setIsBookmarked(true);
+      }
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+      alert("Failed to update bookmark");
+    }
+  };
 
   const tieredRewards =
     bounty.reward_type === "tiered"
@@ -157,21 +201,37 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
               {/* Action Buttons */}
               <div className="flex items-center gap-2 flex-shrink-0">
                 <button
-                  onClick={() => setIsBookmarked(!isBookmarked)}
+                  onClick={handleBookmarkToggle}
                   className={`p-2 rounded-lg border transition ${
                     isBookmarked
                       ? "text-orange bg-orange/5 border-orange"
                       : "border-border-grey dark:border-dark-charcoal hover:border-orange"
                   }`}
+                  title={
+                    isBookmarked ? "Remove bookmark" : "Bookmark this bounty"
+                  }
                 >
                   <Bookmark
                     className="w-4 h-4"
                     fill={isBookmarked ? "currentColor" : "none"}
                   />
                 </button>
-                <button className="p-2 rounded-lg border border-border-grey dark:border-dark-charcoal hover:border-orange transition">
-                  <MoreVertical className="w-4 h-4" />
-                </button>
+                {/* Notification Bell for Sponsor */}
+                {isSponsor && session?.user?.id && (
+                  <button
+                    onClick={() =>
+                      setShowNotificationSettings(!showNotificationSettings)
+                    }
+                    className={`p-2 rounded-lg border transition ${
+                      showNotificationSettings
+                        ? "text-orange bg-orange/5 border-orange"
+                        : "border-border-grey dark:border-dark-charcoal hover:border-orange"
+                    }`}
+                    title="Notification settings"
+                  >
+                    <Bell className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -227,35 +287,23 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                   />
 
                   {/* Notification Settings for Sponsor */}
-                  {isSponsor && session?.user?.id && (
-                    <div className="bg-white dark:bg-hero-dark rounded-lg p-4 border border-border-grey dark:border-dark-charcoal">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          <Bell className="w-4 h-4 text-light-charcoal dark:text-lightgrey" />
+                  {isSponsor &&
+                    session?.user?.id &&
+                    showNotificationSettings && (
+                      <div className="bg-white dark:bg-hero-dark rounded-lg p-4 border border-border-grey dark:border-dark-charcoal">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Bell className="w-4 h-4 text-orange" />
                           <h3 className="text-sm font-semibold text-black dark:text-white">
                             Notification Settings
                           </h3>
                         </div>
-                        <button
-                          onClick={() =>
-                            setShowNotificationSettings(
-                              !showNotificationSettings,
-                            )
-                          }
-                          className="text-xs text-orange hover:text-primary-dark transition"
-                        >
-                          {showNotificationSettings ? "Hide" : "Configure"}
-                        </button>
-                      </div>
-                      {showNotificationSettings && (
                         <NotificationMuteToggle
                           userId={session.user.id}
                           bountyId={bounty.id}
                           bountyTitle={bounty.title}
                         />
-                      )}
-                    </div>
-                  )}
+                      </div>
+                    )}
                 </div>
               </div>
 

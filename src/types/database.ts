@@ -266,6 +266,17 @@ export interface BountyOverview {
   updated_at: number;
 }
 
+/**
+ * Bookmarks table - users can bookmark bounties to save for later
+ * Connected to: user (via user_id), bounties (via bounty_id)
+ */
+export interface Bookmark {
+  id: string;
+  user_id: string;
+  bounty_id: string;
+  created_at: number;
+}
+
 export interface ProofOfWork {
   id: string;
   user_id: string;

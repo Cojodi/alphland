@@ -10,6 +10,7 @@ import {
   handleNotificationsAPI,
   handleNotificationPreferencesAPI,
   handleUserDeletionAPI,
+  handleBookmarksAPI,
 } from "./handlers";
 
 // Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
@@ -162,6 +163,11 @@ const worker = {
         url.pathname.startsWith("/api/notification-mutes")
       ) {
         return handleNotificationPreferencesAPI(request, env, url);
+      }
+
+      // Bookmarks endpoints
+      if (url.pathname.startsWith("/api/bookmarks")) {
+        return handleBookmarksAPI(request, env, url);
       }
 
       // User deletion endpoint

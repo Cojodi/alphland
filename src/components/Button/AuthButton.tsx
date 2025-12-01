@@ -87,6 +87,9 @@ const AuthButton = () => {
     setIsDropdownOpen(false);
     if (userProfile?.username) {
       router.push(`/bounty/profile/${userProfile.username}`);
+    } else if (session?.user?.id) {
+      // If no username set, use user ID to view profile
+      router.push(`/bounty/profile/${session.user.id}`);
     }
   };
 
@@ -142,14 +145,12 @@ const AuthButton = () => {
 
         {isDropdownOpen && (
           <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal rounded-lg shadow-lg z-50 py-1">
-            {userProfile?.username && (
-              <button
-                onClick={handleViewProfile}
-                className="w-full text-left px-4 py-2 text-sm text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
-              >
-                Profile
-              </button>
-            )}
+            <button
+              onClick={handleViewProfile}
+              className="w-full text-left px-4 py-2 text-sm text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
+            >
+              My Profile
+            </button>
             <button
               onClick={handleEditProfile}
               className="w-full text-left px-4 py-2 text-sm text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors"

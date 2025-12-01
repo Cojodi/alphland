@@ -1,6 +1,7 @@
 "use client";
 
 import { ActivityFeed } from "../components/ActivityFeed";
+import { BookmarksSection } from "../components/BookmarksSection";
 import { ProfileDetails } from "../components/ProfileDetails";
 import { ProfileHeader } from "../components/ProfileHeader";
 import { ProofOfWorkSection } from "../components/ProofOfWorkSection";
@@ -50,7 +51,14 @@ export default function UserProfile() {
     const fetchUserProfile = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/users/username/${username}`);
+
+        // Try to fetch by username first
+        let response = await fetch(`/api/users/username/${username}`);
+
+        // If username fetch fails with 404, try by user ID
+        if (!response.ok && response.status === 404) {
+          response = await fetch(`/api/users/${username}`);
+        }
 
         if (!response.ok) {
           if (response.status === 404) {
@@ -218,6 +226,8 @@ export default function UserProfile() {
 
             {/* Right Column */}
             <div className="lg:col-span-2 space-y-8">
+              {/* Show Bookmarks section only on own profile */}
+              {isOwnProfile && <BookmarksSection userId={userData.user_id} />}
               <ProofOfWorkSection works={projects} />
               <ActivityFeed />
             </div>

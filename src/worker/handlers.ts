@@ -1570,3 +1570,197 @@ export async function handleUserDeletionAPI(
     headers: corsHeaders,
   });
 }
+
+/**
+ * Handle Bookmarks API requests
+ */
+export async function handleBookmarksAPI(
+  request: Request,
+  env: Env,
+  url: URL,
+): Promise<Response> {
+  const pathname = url.pathname;
+
+  // GET /api/bookmarks - Get user's bookmarks
+  if (request.method === "GET" && pathname === "/api/bookmarks") {
+    const userId = url.searchParams.get("user_id");
+
+    if (!userId) {
+      return new Response(JSON.stringify({ error: "user_id is required" }), {
+        status: 400,
+        headers: corsHeaders,
+      });
+    }
+
+    try {
+      const bookmarks = await env.DB.prepare(
+        `SELECT
+          b.id,
+          b.bounty_id,
+          b.created_at,
+          bo.title,
+          bo.reward_amount,
+          bo.reward_currency,
+          bo.status,
+          bo.end_date,
+          s.name as sponsor_name,
+          s.logo_url as sponsor_logo_url
+        FROM bookmarks b
+        LEFT JOIN bounties bo ON b.bounty_id = bo.id
+        LEFT JOIN sponsors s ON bo.sponsor_id = s.id
+        WHERE b.user_id = ?
+        ORDER BY b.created_at DESC`,
+      )
+        .bind(userId)
+        .all();
+
+      return new Response(
+        JSON.stringify({ bookmarks: bookmarks.results || [] }),
+        {
+          headers: corsHeaders,
+        },
+      );
+    } catch (error) {
+      console.error("Error fetching bookmarks:", error);
+      return new Response(
+        JSON.stringify({ error: "Failed to fetch bookmarks" }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  // GET /api/bookmarks/check - Check if bounty is bookmarked
+  if (request.method === "GET" && pathname === "/api/bookmarks/check") {
+    const userId = url.searchParams.get("user_id");
+    const bountyId = url.searchParams.get("bounty_id");
+
+    if (!userId || !bountyId) {
+      return new Response(
+        JSON.stringify({ error: "user_id and bounty_id are required" }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        },
+      );
+    }
+
+    try {
+      const bookmark = await env.DB.prepare(
+        `SELECT id FROM bookmarks WHERE user_id = ? AND bounty_id = ?`,
+      )
+        .bind(userId, bountyId)
+        .first();
+
+      return new Response(JSON.stringify({ bookmarked: !!bookmark }), {
+        headers: corsHeaders,
+      });
+    } catch (error) {
+      console.error("Error checking bookmark:", error);
+      return new Response(
+        JSON.stringify({ error: "Failed to check bookmark" }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  // POST /api/bookmarks - Create bookmark
+  if (request.method === "POST" && pathname === "/api/bookmarks") {
+    try {
+      const body = (await request.json()) as any;
+      const id = crypto.randomUUID();
+      const now = Math.floor(Date.now() / 1000);
+
+      // Check if already bookmarked
+      const existing = await env.DB.prepare(
+        `SELECT id FROM bookmarks WHERE user_id = ? AND bounty_id = ?`,
+      )
+        .bind(body.user_id, body.bounty_id)
+        .first();
+
+      if (existing) {
+        return new Response(
+          JSON.stringify({ error: "Already bookmarked", bookmark: existing }),
+          {
+            status: 409,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      await env.DB.prepare(
+        `INSERT INTO bookmarks (id, user_id, bounty_id, created_at)
+         VALUES (?, ?, ?, ?)`,
+      )
+        .bind(id, body.user_id, body.bounty_id, now)
+        .run();
+
+      const bookmark = await env.DB.prepare(
+        `SELECT * FROM bookmarks WHERE id = ?`,
+      )
+        .bind(id)
+        .first();
+
+      return new Response(JSON.stringify({ bookmark }), {
+        status: 201,
+        headers: corsHeaders,
+      });
+    } catch (error) {
+      console.error("Error creating bookmark:", error);
+      return new Response(
+        JSON.stringify({ error: "Failed to create bookmark" }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  // DELETE /api/bookmarks - Delete bookmark
+  if (request.method === "DELETE" && pathname === "/api/bookmarks") {
+    const userId = url.searchParams.get("user_id");
+    const bountyId = url.searchParams.get("bounty_id");
+
+    if (!userId || !bountyId) {
+      return new Response(
+        JSON.stringify({ error: "user_id and bounty_id are required" }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        },
+      );
+    }
+
+    try {
+      await env.DB.prepare(
+        `DELETE FROM bookmarks WHERE user_id = ? AND bounty_id = ?`,
+      )
+        .bind(userId, bountyId)
+        .run();
+
+      return new Response(JSON.stringify({ success: true }), {
+        headers: corsHeaders,
+      });
+    } catch (error) {
+      console.error("Error deleting bookmark:", error);
+      return new Response(
+        JSON.stringify({ error: "Failed to delete bookmark" }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  return new Response(JSON.stringify({ error: "Method not allowed" }), {
+    status: 405,
+    headers: corsHeaders,
+  });
+}

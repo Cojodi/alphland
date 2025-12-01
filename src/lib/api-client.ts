@@ -535,6 +535,42 @@ class ApiClient {
   async getBountyOverview(): Promise<{ overview: BountyOverview }> {
     return this.request("/api/bounty-overview");
   }
+
+  // Bookmarks
+  async getBookmarks(userId: string): Promise<{ bookmarks: any[] }> {
+    return this.request(`/api/bookmarks?user_id=${userId}`);
+  }
+
+  async checkBookmark(
+    userId: string,
+    bountyId: string,
+  ): Promise<{ bookmarked: boolean }> {
+    return this.request(
+      `/api/bookmarks/check?user_id=${userId}&bounty_id=${bountyId}`,
+    );
+  }
+
+  async createBookmark(data: {
+    user_id: string;
+    bounty_id: string;
+  }): Promise<{ bookmark: any }> {
+    return this.request("/api/bookmarks", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteBookmark(
+    userId: string,
+    bountyId: string,
+  ): Promise<{ success: boolean }> {
+    return this.request(
+      `/api/bookmarks?user_id=${userId}&bounty_id=${bountyId}`,
+      {
+        method: "DELETE",
+      },
+    );
+  }
 }
 
 // Export singleton instance
