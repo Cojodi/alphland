@@ -14,6 +14,7 @@ interface BountyFormData {
   reward_amount: string;
   reward_currency: string;
   reward_type: "fixed" | "tiered";
+  tier_count: number;
   start_date: string;
   end_date: string;
   dapp_name: string;
@@ -29,13 +30,14 @@ export default function ManualCreateBounty() {
   const [formData, setFormData] = useState<BountyFormData>({
     title: "",
     description: "",
-    category: "Development",
+    category: "Content",
     requirements: [""],
     deliverables: [""],
     skills: [""],
     reward_amount: "",
     reward_currency: "ALPH",
     reward_type: "fixed",
+    tier_count: 5,
     start_date: new Date().toISOString().split("T")[0],
     end_date: "",
     dapp_name: "",
@@ -136,7 +138,8 @@ export default function ManualCreateBounty() {
       }
 
       const data = await response.json();
-      router.push(`/bounty/${data.bounty.id}`);
+      // Redirect to sponsor dashboard after successful creation
+      router.push("/bounty/sponsor/dashboard");
     } catch (error) {
       console.error("Error creating bounty:", error);
       alert("Failed to create bounty. Please try again.");
@@ -162,15 +165,7 @@ export default function ManualCreateBounty() {
     return null;
   }
 
-  const categories = [
-    "Development",
-    "Design",
-    "Marketing",
-    "Content",
-    "Research",
-    "Testing",
-    "Other",
-  ];
+  const categories = ["Content", "Design", "Development", "Other"];
 
   return (
     <Layout title="Create Bounty - Alphland">
@@ -408,6 +403,15 @@ export default function ManualCreateBounty() {
                 Reward Information
               </h2>
 
+              {/* Payment Notice */}
+              <div className="bg-orange/5 border border-orange/20 rounded-lg p-4">
+                <p className="text-sm text-light-charcoal dark:text-lightgrey font-barlow">
+                  <span className="font-semibold text-orange">Note:</span>{" "}
+                  Rewards will be paid in ALPH, converted to USD at the current
+                  exchange rate.
+                </p>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
@@ -479,6 +483,208 @@ export default function ManualCreateBounty() {
                   </label>
                 </div>
               </div>
+
+              {/* Tiered Reward Configuration */}
+              {formData.reward_type === "tiered" && (
+                <div className="space-y-4">
+                  <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow">
+                    Number of Winners *
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[3, 5, 10].map((count) => (
+                      <button
+                        key={count}
+                        type="button"
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            tier_count: count,
+                          }))
+                        }
+                        className={`p-4 rounded-lg border-2 transition-all ${
+                          formData.tier_count === count
+                            ? "border-orange bg-orange/5"
+                            : "border-border-grey dark:border-dark-charcoal hover:border-orange/50"
+                        }`}
+                      >
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-black dark:text-white font-barlow mb-2">
+                            {count}
+                          </div>
+                          <div className="text-xs text-light-charcoal dark:text-lightgrey font-barlow">
+                            Winners
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Prize Distribution Preview */}
+                  <div className="mt-4 bg-smoked-white dark:bg-light-black rounded-lg p-4">
+                    <h4 className="text-sm font-semibold text-black dark:text-white font-barlow mb-3">
+                      Prize Distribution
+                    </h4>
+                    <div className="space-y-2">
+                      {formData.tier_count === 3 && (
+                        <>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              1st Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              50%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              2nd Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              30%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              3rd Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              20%
+                            </span>
+                          </div>
+                        </>
+                      )}
+                      {formData.tier_count === 5 && (
+                        <>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              1st Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              40%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              2nd Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              25%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              3rd Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              15%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              4th Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              10%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              5th Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              10%
+                            </span>
+                          </div>
+                        </>
+                      )}
+                      {formData.tier_count === 10 && (
+                        <>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              1st Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              25%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              2nd Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              18%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              3rd Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              14%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              4th Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              11%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              5th Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              9%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              6th Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              7%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              7th Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              6%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              8th Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              4%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              9th Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              3%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              10th Place
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              3%
+                            </span>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Timeline */}

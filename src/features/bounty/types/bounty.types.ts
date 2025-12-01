@@ -25,6 +25,7 @@ export interface Bounty {
   skills: string[];
   reward: Reward;
   reward_type: RewardType;
+  tier_count?: number;
   tiered_rewards?: TieredReward[];
   status: BountyStatus;
   start_date: string;

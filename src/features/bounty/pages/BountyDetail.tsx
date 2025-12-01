@@ -21,9 +21,6 @@ interface BountyDetailProps {
 export default function BountyDetail({ bounty }: BountyDetailProps) {
   const router = useRouter();
   const { data: session } = useSession();
-  const [activeTab, setActiveTab] = useState<"prizes" | "details" | "comments">(
-    "prizes",
-  );
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [commentCount, setCommentCount] = useState(0);
   const [showNotificationSettings, setShowNotificationSettings] =
@@ -34,6 +31,14 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
   } | null>(null);
   const [sponsorUserId, setSponsorUserId] = useState<string | null>(null);
   const [isSponsor, setIsSponsor] = useState(false);
+
+  // Smooth scroll to section
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   // Fetch user profile
   useEffect(() => {
@@ -77,7 +82,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
 
   const tieredRewards =
     bounty.reward_type === "tiered"
-      ? generateTieredRewards(bounty.reward, 5)
+      ? generateTieredRewards(bounty.reward, bounty.tier_count || 5)
       : undefined;
 
   const timeRemaining = calculateTimeRemaining(bounty.end_date);
@@ -172,37 +177,25 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
           </div>
         </section>
 
-        {/* Tabs */}
-        <section className="border-b border-border-grey dark:border-dark-charcoal bg-white dark:bg-hero-dark">
+        {/* Navigation */}
+        <section className="border-b border-border-grey dark:border-dark-charcoal bg-white dark:bg-hero-dark sticky top-0 z-10">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex gap-8">
               <button
-                onClick={() => setActiveTab("prizes")}
-                className={`py-4 px-1 border-b-2 font-medium transition-colors ${
-                  activeTab === "prizes"
-                    ? "border-orange text-orange"
-                    : "border-transparent text-light-charcoal dark:text-lightgrey hover:text-black dark:hover:text-white"
-                }`}
+                onClick={() => scrollToSection("prizes-section")}
+                className="py-4 px-1 border-b-2 border-transparent font-medium transition-colors text-light-charcoal dark:text-lightgrey hover:text-orange hover:border-orange"
               >
                 Prizes
               </button>
               <button
-                onClick={() => setActiveTab("details")}
-                className={`py-4 px-1 border-b-2 font-medium transition-colors ${
-                  activeTab === "details"
-                    ? "border-orange text-orange"
-                    : "border-transparent text-light-charcoal dark:text-lightgrey hover:text-black dark:hover:text-white"
-                }`}
+                onClick={() => scrollToSection("details-section")}
+                className="py-4 px-1 border-b-2 border-transparent font-medium transition-colors text-light-charcoal dark:text-lightgrey hover:text-orange hover:border-orange"
               >
                 Details
               </button>
               <button
-                onClick={() => setActiveTab("comments")}
-                className={`py-4 px-1 border-b-2 font-medium transition-colors flex items-center gap-2 ${
-                  activeTab === "comments"
-                    ? "border-orange text-orange"
-                    : "border-transparent text-light-charcoal dark:text-lightgrey hover:text-black dark:hover:text-white"
-                }`}
+                onClick={() => scrollToSection("comments-section")}
+                className="py-4 px-1 border-b-2 border-transparent font-medium transition-colors text-light-charcoal dark:text-lightgrey hover:text-orange hover:border-orange flex items-center gap-2"
               >
                 Comments
                 {commentCount > 0 && (
@@ -236,159 +229,177 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
               </div>
 
               {/* Main Content */}
-              <div className="lg:col-span-2">
-                {activeTab === "prizes" ? (
-                  <div className="bg-white dark:bg-hero-dark rounded-lg p-8 border border-border-grey dark:border-dark-charcoal">
-                    <h2 className="text-2xl font-bold text-black dark:text-white mb-4">
-                      Prize Distribution
-                    </h2>
-                    <p className="text-light-charcoal dark:text-lightgrey mb-6">
-                      {bounty.description}
+              <div className="lg:col-span-2 space-y-8">
+                {/* Prizes Section */}
+                <div
+                  id="prizes-section"
+                  className="bg-white dark:bg-hero-dark rounded-lg p-8 border border-border-grey dark:border-dark-charcoal scroll-mt-20"
+                >
+                  <h2 className="text-2xl font-bold text-black dark:text-white mb-4">
+                    Prize Distribution
+                  </h2>
+                  <p className="text-light-charcoal dark:text-lightgrey mb-6">
+                    {bounty.description}
+                  </p>
+
+                  {/* Payment Terms Notice */}
+                  <div className="bg-orange/5 border border-orange/20 rounded-lg p-4 mb-6">
+                    <p className="text-sm text-light-charcoal dark:text-lightgrey font-barlow leading-relaxed">
+                      <span className="font-semibold text-orange">
+                        Payment Terms:
+                      </span>{" "}
+                      Rewards will be paid in ALPH, converted to USD at the
+                      current exchange rate. If the exchange rate at the time of
+                      payment differs by more than 10% from the rate when the
+                      bounty was posted, the platform reserves the right to
+                      apply a fairer exchange rate.
                     </p>
-
-                    {tieredRewards && (
-                      <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-black dark:text-white">
-                          Reward Breakdown
-                        </h3>
-                        <div className="space-y-2">
-                          {tieredRewards.map((tier) => (
-                            <div
-                              key={tier.position}
-                              className="flex justify-between items-center p-3 bg-smoked-white dark:bg-light-black rounded-lg"
-                            >
-                              <span className="font-medium text-black dark:text-white">
-                                {tier.position === 1
-                                  ? "1st"
-                                  : tier.position === 2
-                                    ? "2nd"
-                                    : tier.position === 3
-                                      ? "3rd"
-                                      : `${tier.position}th`}{" "}
-                                Place
-                              </span>
-                              <span className="text-accessible-green font-bold">
-                                {tier.amount.toLocaleString()} {tier.token}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
-                ) : activeTab === "details" ? (
-                  <div className="bg-white dark:bg-hero-dark rounded-lg p-8 border border-border-grey dark:border-dark-charcoal">
-                    <h2 className="text-2xl font-bold text-black dark:text-white mb-4">
-                      Bounty Details
-                    </h2>
 
-                    <div className="space-y-6">
+                  {tieredRewards && (
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold text-black dark:text-white">
+                        Reward Breakdown
+                      </h3>
+                      <div className="space-y-2">
+                        {tieredRewards.map((tier) => (
+                          <div
+                            key={tier.position}
+                            className="flex justify-between items-center p-3 bg-smoked-white dark:bg-light-black rounded-lg"
+                          >
+                            <span className="font-medium text-black dark:text-white">
+                              {tier.position === 1
+                                ? "1st"
+                                : tier.position === 2
+                                  ? "2nd"
+                                  : tier.position === 3
+                                    ? "3rd"
+                                    : `${tier.position}th`}{" "}
+                              Place
+                            </span>
+                            <span className="text-accessible-green font-bold">
+                              {tier.amount.toLocaleString()} {tier.token}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Details Section */}
+                <div
+                  id="details-section"
+                  className="bg-white dark:bg-hero-dark rounded-lg p-8 border border-border-grey dark:border-dark-charcoal scroll-mt-20"
+                >
+                  <h2 className="text-2xl font-bold text-black dark:text-white mb-4">
+                    Bounty Details
+                  </h2>
+
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
+                        Description
+                      </h3>
+                      <p className="text-light-charcoal dark:text-lightgrey leading-relaxed">
+                        {bounty.description}
+                      </p>
+                    </div>
+
+                    {bounty.requirements.length > 0 && (
                       <div>
                         <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
-                          Description
+                          Requirements
                         </h3>
-                        <p className="text-light-charcoal dark:text-lightgrey leading-relaxed">
-                          {bounty.description}
-                        </p>
-                      </div>
-
-                      {bounty.requirements.length > 0 && (
-                        <div>
-                          <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
-                            Requirements
-                          </h3>
-                          <ul className="space-y-2">
-                            {bounty.requirements.map((req, idx) => (
-                              <li
-                                key={idx}
-                                className="flex items-start gap-2 text-light-charcoal dark:text-lightgrey"
-                              >
-                                <span className="text-orange mt-1">•</span>
-                                <span>{req}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {bounty.deliverables.length > 0 && (
-                        <div>
-                          <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
-                            Deliverables
-                          </h3>
-                          <ul className="space-y-2">
-                            {bounty.deliverables.map((item, idx) => (
-                              <li
-                                key={idx}
-                                className="flex items-start gap-2 text-light-charcoal dark:text-lightgrey"
-                              >
-                                <span className="text-accessible-green mt-1">
-                                  ✓
-                                </span>
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  // Comments Tab
-                  <div className="space-y-6">
-                    {/* Notification Settings for Sponsor */}
-                    {isSponsor && session?.user?.id && (
-                      <div className="bg-white dark:bg-hero-dark rounded-lg p-6 border border-border-grey dark:border-dark-charcoal">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-2">
-                            <Bell className="w-5 h-5 text-light-charcoal dark:text-lightgrey" />
-                            <h3 className="font-semibold text-black dark:text-white">
-                              Notification Settings
-                            </h3>
-                          </div>
-                          <button
-                            onClick={() =>
-                              setShowNotificationSettings(
-                                !showNotificationSettings,
-                              )
-                            }
-                            className="text-sm text-orange hover:text-primary-dark transition"
-                          >
-                            {showNotificationSettings ? "Hide" : "Configure"}
-                          </button>
-                        </div>
-                        {showNotificationSettings && (
-                          <NotificationMuteToggle
-                            userId={session.user.id}
-                            bountyId={bounty.id}
-                            bountyTitle={bounty.title}
-                          />
-                        )}
+                        <ul className="space-y-2">
+                          {bounty.requirements.map((req, idx) => (
+                            <li
+                              key={idx}
+                              className="flex items-start gap-2 text-light-charcoal dark:text-lightgrey"
+                            >
+                              <span className="text-orange mt-1">•</span>
+                              <span>{req}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     )}
 
-                    {/* Comment Section */}
-                    <div className="bg-white dark:bg-hero-dark rounded-lg p-6 border border-border-grey dark:border-dark-charcoal">
-                      <CommentSection
-                        bountyId={bounty.id}
-                        bountyTitle={bounty.title}
-                        currentUserId={session?.user?.id}
-                        currentUsername={
-                          userProfile?.username ||
-                          session?.user?.name ||
-                          undefined
-                        }
-                        currentUserAvatar={
-                          userProfile?.image ||
-                          session?.user?.image ||
-                          undefined
-                        }
-                        sponsorUserId={sponsorUserId || undefined}
-                        onCommentCount={setCommentCount}
-                      />
-                    </div>
+                    {bounty.deliverables.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
+                          Deliverables
+                        </h3>
+                        <ul className="space-y-2">
+                          {bounty.deliverables.map((item, idx) => (
+                            <li
+                              key={idx}
+                              className="flex items-start gap-2 text-light-charcoal dark:text-lightgrey"
+                            >
+                              <span className="text-accessible-green mt-1">
+                                ✓
+                              </span>
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
+
+                {/* Comments Section */}
+                <div id="comments-section" className="space-y-6 scroll-mt-20">
+                  {/* Notification Settings for Sponsor */}
+                  {isSponsor && session?.user?.id && (
+                    <div className="bg-white dark:bg-hero-dark rounded-lg p-6 border border-border-grey dark:border-dark-charcoal">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <Bell className="w-5 h-5 text-light-charcoal dark:text-lightgrey" />
+                          <h3 className="font-semibold text-black dark:text-white">
+                            Notification Settings
+                          </h3>
+                        </div>
+                        <button
+                          onClick={() =>
+                            setShowNotificationSettings(
+                              !showNotificationSettings,
+                            )
+                          }
+                          className="text-sm text-orange hover:text-primary-dark transition"
+                        >
+                          {showNotificationSettings ? "Hide" : "Configure"}
+                        </button>
+                      </div>
+                      {showNotificationSettings && (
+                        <NotificationMuteToggle
+                          userId={session.user.id}
+                          bountyId={bounty.id}
+                          bountyTitle={bounty.title}
+                        />
+                      )}
+                    </div>
+                  )}
+
+                  {/* Comment Section */}
+                  <div className="bg-white dark:bg-hero-dark rounded-lg p-6 border border-border-grey dark:border-dark-charcoal">
+                    <CommentSection
+                      bountyId={bounty.id}
+                      bountyTitle={bounty.title}
+                      currentUserId={session?.user?.id}
+                      currentUsername={
+                        userProfile?.username ||
+                        session?.user?.name ||
+                        undefined
+                      }
+                      currentUserAvatar={
+                        userProfile?.image || session?.user?.image || undefined
+                      }
+                      sponsorUserId={sponsorUserId || undefined}
+                      onCommentCount={setCommentCount}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
