@@ -2,6 +2,7 @@
 
 import { CommentSection } from "../components/CommentSection";
 import { NotificationMuteToggle } from "../components/NotificationMuteToggle";
+import { SubmissionModal } from "../components/SubmissionModal";
 import { TieredRewardDisplay } from "../components/TieredRewardDisplay";
 import { Bounty } from "../types";
 import { generateTieredRewards } from "../utils/rewardCalculator";
@@ -31,6 +32,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
   } | null>(null);
   const [sponsorUserId, setSponsorUserId] = useState<string | null>(null);
   const [isSponsor, setIsSponsor] = useState(false);
+  const [showSubmissionModal, setShowSubmissionModal] = useState(false);
 
   // Smooth scroll to section
   const scrollToSection = (sectionId: string) => {
@@ -283,7 +285,13 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                     submissions={bounty.current_submissions}
                     timeRemaining={timeRemaining}
                     skills={bounty.skills}
-                    onSubmit={() => console.log("Submit clicked")}
+                    onSubmit={() => {
+                      if (!session?.user?.id) {
+                        alert("Please sign in to submit your work");
+                        return;
+                      }
+                      setShowSubmissionModal(true);
+                    }}
                   />
 
                   {/* Notification Settings for Sponsor */}
@@ -450,6 +458,23 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
             </div>
           </div>
         </section>
+
+        {/* Submission Modal */}
+        {session?.user?.id && (
+          <SubmissionModal
+            isOpen={showSubmissionModal}
+            onClose={() => setShowSubmissionModal(false)}
+            bountyId={bounty.id}
+            bountyTitle={bounty.title}
+            userId={session.user.id}
+            username={userProfile?.username || session.user.name || undefined}
+            sponsorUserId={sponsorUserId || undefined}
+            onSuccess={() => {
+              // Optionally refresh submissions count or show success message
+              alert("Submission successful! The sponsor has been notified.");
+            }}
+          />
+        )}
       </div>
     </Layout>
   );

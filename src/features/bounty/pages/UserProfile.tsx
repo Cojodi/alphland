@@ -7,6 +7,7 @@ import { ProfileHeader } from "../components/ProfileHeader";
 import { ProofOfWorkSection } from "../components/ProofOfWorkSection";
 import { SkillsSection } from "../components/SkillsSection";
 import { StatsSection } from "../components/StatsSection";
+import { SubmissionsSection } from "../components/SubmissionsSection";
 import Layout from "@/components/Layout";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/router";
@@ -228,6 +229,10 @@ export default function UserProfile() {
             <div className="lg:col-span-2 space-y-8">
               {/* Show Bookmarks section only on own profile */}
               {isOwnProfile && <BookmarksSection userId={userData.user_id} />}
+
+              {/* Show Submissions section only on own profile */}
+              {isOwnProfile && <SubmissionsSection userId={userData.user_id} />}
+
               <ProofOfWorkSection works={projects} />
               <ActivityFeed />
             </div>

@@ -1,6 +1,8 @@
 import type { Bounty } from "../types/bounty.types";
 import type { Sponsor } from "../types/sponsor.types";
 import type { Submission } from "../types/submission.types";
+import { SubmissionReviewModal } from "../components/SubmissionReviewModal";
+import { BountySubmission } from "@/lib/api-client";
 import {
   CircleDollarSign,
   Plus,
@@ -24,7 +26,8 @@ export default function SponsorDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [showSubmissionDetails, setShowSubmissionDetails] = useState(false);
   const [selectedSubmission, setSelectedSubmission] =
-    useState<Submission | null>(null);
+    useState<BountySubmission | null>(null);
+  const [selectedBountyTitle, setSelectedBountyTitle] = useState("");
 
   const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab);
@@ -45,10 +48,35 @@ export default function SponsorDashboard() {
     [router],
   );
 
-  const viewSubmission = useCallback((submission: Submission) => {
-    setSelectedSubmission(submission);
-    setShowSubmissionDetails(true);
-  }, []);
+  const viewSubmission = useCallback(
+    (submission: any, bountyId: string) => {
+      // Convert Submission to BountySubmission format
+      const bountySubmission: BountySubmission = {
+        id: submission.id,
+        bounty_id: bountyId,
+        submitted_by: submission.user_id,
+        submission_url: submission.submission_url || "",
+        description: submission.description || submission.title || null,
+        status:
+          submission.status === "accepted"
+            ? "approved"
+            : submission.status === "rejected"
+              ? "rejected"
+              : "pending",
+        reviewer_notes: submission.feedback || null,
+        reviewed_by: null,
+        reviewed_at: submission.completed_at || null,
+        transaction_hash: submission.transaction_hash || null,
+        created_at: submission.submitted_at,
+        updated_at: submission.submitted_at,
+      };
+
+      setSelectedSubmission(bountySubmission);
+      setSelectedBountyTitle(getBountyTitle(bountyId));
+      setShowSubmissionDetails(true);
+    },
+    [bounties],
+  );
 
   const handleSelectBounty = useCallback(
     (bounty: Bounty) => {
@@ -73,19 +101,42 @@ export default function SponsorDashboard() {
     return bounty ? bounty.title : "Unknown Bounty";
   };
 
-  const handleStatusUpdate = useCallback(
-    (submissionId: string, status: "submitted" | "accepted" | "rejected") => {
-      const updatedSubmissions = allSubmissions.map((submission) =>
-        submission.id === submissionId ? { ...submission, status } : submission,
-      );
-      setAllSubmissions(updatedSubmissions);
-    },
-    [allSubmissions],
-  );
+  const refreshSubmissions = useCallback(async () => {
+    if (!sponsor) return;
 
-  const refreshSubmissions = useCallback(() => {
-    // Logic to refresh submissions
-  }, []);
+    try {
+      // Fetch fresh dashboard data
+      const dashboardResponse = await fetch(
+        `/api/sponsors/${sponsor.id}/dashboard`,
+      );
+
+      if (dashboardResponse.ok) {
+        const dashboardData = await dashboardResponse.json();
+
+        const transformedSubmissions: Submission[] = (
+          dashboardData.submissions || []
+        ).map((s: any) => ({
+          id: s.id,
+          title: s.title || "Submission",
+          description: s.description || "",
+          submission_url: s.submission_url,
+          user_username: s.user_username || "Unknown",
+          user_avatar_url: s.user_avatar_url || "",
+          user_id: s.submitted_by,
+          user_wallet_address: s.user_wallet_address || "",
+          bounty_id: s.bounty_id,
+          bounty_name: s.bounty_name,
+          sponsor_id: sponsor.id,
+          status: s.status,
+          submitted_at: s.created_at,
+        }));
+
+        setAllSubmissions(transformedSubmissions);
+      }
+    } catch (error) {
+      console.error("Error refreshing submissions:", error);
+    }
+  }, [sponsor]);
 
   useEffect(() => {
     async function fetchSponsorData() {
@@ -494,7 +545,9 @@ export default function SponsorDashboard() {
                           <div
                             key={submission.id}
                             className="p-4 border border-light-gray dark:border-dark-charcoal rounded-lg hover:border-accessible-green hover:bg-accessible-green/5 transition-all duration-200 cursor-pointer"
-                            onClick={() => viewSubmission(submission)}
+                            onClick={() =>
+                              viewSubmission(submission, submission.bounty_id)
+                            }
                           >
                             <div className="flex items-center justify-between gap-2">
                               <div className="flex items-center gap-3 min-w-0">
@@ -616,7 +669,9 @@ export default function SponsorDashboard() {
                     <div
                       key={submission.id}
                       className="bg-white dark:bg-hero-dark rounded-xl border border-light-gray dark:border-dark-charcoal p-6 hover:border-orange hover:shadow-lg transition-all duration-300 cursor-pointer"
-                      onClick={() => viewSubmission(submission)}
+                      onClick={() =>
+                        viewSubmission(submission, submission.bounty_id)
+                      }
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div className="flex items-center gap-4 min-w-0">
@@ -655,28 +710,21 @@ export default function SponsorDashboard() {
           </div>
         </div>
 
-        {/* Dialogs - TODO: Implement these components */}
-        {/* <SponsorSubmissionDialog
+        {/* Submission Review Modal */}
+        <SubmissionReviewModal
           isOpen={showSubmissionDetails}
-          onClose={() => setShowSubmissionDetails(false)}
+          onClose={() => {
+            setShowSubmissionDetails(false);
+            setSelectedSubmission(null);
+          }}
           submission={selectedSubmission}
-          onStatusUpdate={handleStatusUpdate}
-          onRefresh={refreshSubmissions}
-        /> */}
-
-        {/* <Dialog open={showProfileManager} onOpenChange={setShowProfileManager}>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="font-barlow">Edit Profile</DialogTitle>
-            </DialogHeader>
-            {sponsor && (
-              <ProfilePictureManager
-                sponsor={sponsor}
-                onUpdate={handleProfileUpdate}
-              />
-            )}
-          </DialogContent>
-        </Dialog> */}
+          bountyTitle={selectedBountyTitle}
+          onSuccess={() => {
+            refreshSubmissions();
+            setShowSubmissionDetails(false);
+            setSelectedSubmission(null);
+          }}
+        />
       </div>
     </Layout>
   );

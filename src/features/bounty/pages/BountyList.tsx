@@ -230,10 +230,6 @@ export default function BountyList() {
                         Opportunities Listed
                       </p>
                     </div>
-                    <button className="flex items-center gap-2 text-orange font-medium text-sm hover:gap-3 transition">
-                      <Filter className="w-4 h-4" />
-                      Filter
-                    </button>
                   </div>
                 </div>
 
