@@ -128,6 +128,40 @@ const worker = {
         );
       }
 
+      // Recent earners endpoint - users with >1 submission in past week
+      if (url.pathname === "/api/recent-earners") {
+        const oneWeekAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;
+
+        const { results } = await env.DB.prepare(
+          `SELECT
+            u.id,
+            u.name,
+            u.image,
+            up.username,
+            up.avatar_url,
+            COUNT(s.id) as submission_count
+          FROM bounty_submissions s
+          JOIN user u ON s.submitted_by = u.id
+          LEFT JOIN user_profiles up ON u.id = up.user_id
+          WHERE s.created_at >= ?
+          GROUP BY u.id, u.name, u.image, up.username, up.avatar_url
+          HAVING COUNT(s.id) > 1
+          ORDER BY submission_count DESC
+          LIMIT 10`,
+        )
+          .bind(oneWeekAgo)
+          .all();
+
+        return new Response(
+          JSON.stringify({
+            earners: results,
+          }),
+          {
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          },
+        );
+      }
+
       // Bounties API endpoints
       if (url.pathname.startsWith("/api/bounties")) {
         return handleBountiesAPI(request, env, url);
@@ -347,11 +381,11 @@ async function handleBountiesAPI(
         INSERT INTO bounties (
           id, sponsor_id, title, description,
           requirements, deliverables, skills,
-          reward_amount, reward_currency, reward_type,
+          reward_amount, reward_currency, reward_type, tier_count,
           category, dapp_name,
           start_date, end_date,
           status, created_by, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       )
         .bind(
@@ -365,6 +399,7 @@ async function handleBountiesAPI(
           body.reward_amount,
           body.reward_currency || "ALPH",
           body.reward_type || "fixed",
+          body.tier_count || 5,
           body.category,
           body.dapp_name || null,
           body.start_date,

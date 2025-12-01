@@ -15,6 +15,8 @@ export interface Bounty {
   description: string;
   reward_amount: number;
   reward_currency: string;
+  reward_type?: string;
+  tier_count?: number;
   difficulty: "beginner" | "intermediate" | "advanced" | "expert";
   category: string;
   status:
@@ -43,6 +45,8 @@ export interface CreateBountyInput {
   description: string;
   reward_amount: number;
   reward_currency?: string;
+  reward_type?: string;
+  tier_count?: number;
   difficulty: "beginner" | "intermediate" | "advanced" | "expert";
   category: string;
   created_by: string;
@@ -534,6 +538,20 @@ class ApiClient {
   // Bounty Overview
   async getBountyOverview(): Promise<{ overview: BountyOverview }> {
     return this.request("/api/bounty-overview");
+  }
+
+  // Recent Earners - users with >1 submission in past week
+  async getRecentEarners(): Promise<{
+    earners: Array<{
+      id: string;
+      name: string | null;
+      image: string | null;
+      username: string | null;
+      avatar_url: string | null;
+      submission_count: number;
+    }>;
+  }> {
+    return this.request("/api/recent-earners");
   }
 
   // Bookmarks

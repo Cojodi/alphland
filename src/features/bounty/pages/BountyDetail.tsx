@@ -141,7 +141,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             {/* Back Button */}
             <button
-              onClick={() => router.back()}
+              onClick={() => router.push("/bounty")}
               className="flex items-center gap-2 text-orange hover:text-orange/80 mb-4 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -520,6 +520,7 @@ export async function getServerSideProps(context: any) {
         usd_equivalent: parseFloat(bountyData.reward_usd_value) || 0,
       },
       reward_type: bountyData.reward_type || "fixed",
+      tier_count: bountyData.tier_count || 5,
       status: bountyData.status,
       start_date: bountyData.start_date,
       end_date: bountyData.end_date,

@@ -28,17 +28,29 @@ export default function BountyList() {
     user_number: 0,
     sponsor_number: 0,
   });
+  const [recentEarners, setRecentEarners] = useState<
+    Array<{
+      id: string;
+      name: string | null;
+      image: string | null;
+      username: string | null;
+      avatar_url: string | null;
+      submission_count: number;
+    }>
+  >([]);
 
-  // Fetch bounties and overview from API
+  // Fetch bounties, overview, and recent earners from API
   useEffect(() => {
     async function fetchData() {
       try {
-        const [bountiesData, overviewData] = await Promise.all([
+        const [bountiesData, overviewData, earnersData] = await Promise.all([
           apiClient.getBounties(),
           apiClient.getBountyOverview(),
+          apiClient.getRecentEarners(),
         ]);
         setBounties(bountiesData.bounties);
         setOverview(overviewData.overview);
+        setRecentEarners(earnersData.earners);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -328,9 +340,59 @@ export default function BountyList() {
                   <h3 className="text-lg font-bold text-black dark:text-white mb-4">
                     Recent Earners
                   </h3>
-                  <p className="text-sm text-light-charcoal dark:text-lightgrey">
-                    Top contributors this week
-                  </p>
+                  {loading ? (
+                    <p className="text-sm text-light-charcoal dark:text-lightgrey">
+                      Loading...
+                    </p>
+                  ) : recentEarners.length === 0 ? (
+                    <p className="text-sm text-light-charcoal dark:text-lightgrey">
+                      No recent earners this week
+                    </p>
+                  ) : (
+                    <div className="space-y-3">
+                      {recentEarners.map((earner) => {
+                        const displayName =
+                          earner.username || earner.name || "Anonymous";
+                        const avatarUrl =
+                          earner.avatar_url || earner.image || null;
+                        const profileUrl = earner.username
+                          ? `/profile/${earner.username}`
+                          : `/profile/user/${earner.id}`;
+
+                        return (
+                          <Link
+                            key={earner.id}
+                            href={profileUrl}
+                            className="flex items-center gap-3 p-2 rounded-lg hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
+                          >
+                            {avatarUrl ? (
+                              <img
+                                src={avatarUrl}
+                                alt={displayName}
+                                className="w-10 h-10 rounded-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-10 h-10 rounded-full bg-orange/10 flex items-center justify-center">
+                                <span className="text-orange font-bold text-sm">
+                                  {displayName.charAt(0).toUpperCase()}
+                                </span>
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-black dark:text-white truncate">
+                                {displayName}
+                              </p>
+                              <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                                {earner.submission_count} submission
+                                {earner.submission_count !== 1 ? "s" : ""} this
+                                week
+                              </p>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
