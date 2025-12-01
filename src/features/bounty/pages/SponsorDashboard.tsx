@@ -27,7 +27,7 @@ export default function SponsorDashboard() {
   const [showSubmissionDetails, setShowSubmissionDetails] = useState(false);
   const [selectedSubmission, setSelectedSubmission] =
     useState<BountySubmission | null>(null);
-  const [selectedBountyTitle, setSelectedBountyTitle] = useState("");
+  const [selectedBounty, setSelectedBounty] = useState<Bounty | null>(null);
 
   const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab);
@@ -71,8 +71,11 @@ export default function SponsorDashboard() {
         updated_at: submission.submitted_at,
       };
 
+      // Find the associated bounty
+      const bounty = bounties.find((b) => b.id === bountyId) || null;
+
       setSelectedSubmission(bountySubmission);
-      setSelectedBountyTitle(getBountyTitle(bountyId));
+      setSelectedBounty(bounty);
       setShowSubmissionDetails(true);
     },
     [bounties],
@@ -716,13 +719,15 @@ export default function SponsorDashboard() {
           onClose={() => {
             setShowSubmissionDetails(false);
             setSelectedSubmission(null);
+            setSelectedBounty(null);
           }}
           submission={selectedSubmission}
-          bountyTitle={selectedBountyTitle}
+          bounty={selectedBounty}
           onSuccess={() => {
             refreshSubmissions();
             setShowSubmissionDetails(false);
             setSelectedSubmission(null);
+            setSelectedBounty(null);
           }}
         />
       </div>
