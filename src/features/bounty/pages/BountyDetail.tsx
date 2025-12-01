@@ -225,6 +225,37 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                     skills={bounty.skills}
                     onSubmit={() => console.log("Submit clicked")}
                   />
+
+                  {/* Notification Settings for Sponsor */}
+                  {isSponsor && session?.user?.id && (
+                    <div className="bg-white dark:bg-hero-dark rounded-lg p-4 border border-border-grey dark:border-dark-charcoal">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <Bell className="w-4 h-4 text-light-charcoal dark:text-lightgrey" />
+                          <h3 className="text-sm font-semibold text-black dark:text-white">
+                            Notification Settings
+                          </h3>
+                        </div>
+                        <button
+                          onClick={() =>
+                            setShowNotificationSettings(
+                              !showNotificationSettings,
+                            )
+                          }
+                          className="text-xs text-orange hover:text-primary-dark transition"
+                        >
+                          {showNotificationSettings ? "Hide" : "Configure"}
+                        </button>
+                      </div>
+                      {showNotificationSettings && (
+                        <NotificationMuteToggle
+                          userId={session.user.id}
+                          bountyId={bounty.id}
+                          bountyTitle={bounty.title}
+                        />
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -349,56 +380,23 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                 </div>
 
                 {/* Comments Section */}
-                <div id="comments-section" className="space-y-6 scroll-mt-20">
-                  {/* Notification Settings for Sponsor */}
-                  {isSponsor && session?.user?.id && (
-                    <div className="bg-white dark:bg-hero-dark rounded-lg p-6 border border-border-grey dark:border-dark-charcoal">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-2">
-                          <Bell className="w-5 h-5 text-light-charcoal dark:text-lightgrey" />
-                          <h3 className="font-semibold text-black dark:text-white">
-                            Notification Settings
-                          </h3>
-                        </div>
-                        <button
-                          onClick={() =>
-                            setShowNotificationSettings(
-                              !showNotificationSettings,
-                            )
-                          }
-                          className="text-sm text-orange hover:text-primary-dark transition"
-                        >
-                          {showNotificationSettings ? "Hide" : "Configure"}
-                        </button>
-                      </div>
-                      {showNotificationSettings && (
-                        <NotificationMuteToggle
-                          userId={session.user.id}
-                          bountyId={bounty.id}
-                          bountyTitle={bounty.title}
-                        />
-                      )}
-                    </div>
-                  )}
-
-                  {/* Comment Section */}
-                  <div className="bg-white dark:bg-hero-dark rounded-lg p-6 border border-border-grey dark:border-dark-charcoal">
-                    <CommentSection
-                      bountyId={bounty.id}
-                      bountyTitle={bounty.title}
-                      currentUserId={session?.user?.id}
-                      currentUsername={
-                        userProfile?.username ||
-                        session?.user?.name ||
-                        undefined
-                      }
-                      currentUserAvatar={
-                        userProfile?.image || session?.user?.image || undefined
-                      }
-                      sponsorUserId={sponsorUserId || undefined}
-                      onCommentCount={setCommentCount}
-                    />
-                  </div>
+                <div
+                  id="comments-section"
+                  className="bg-white dark:bg-hero-dark rounded-lg p-6 border border-border-grey dark:border-dark-charcoal scroll-mt-20"
+                >
+                  <CommentSection
+                    bountyId={bounty.id}
+                    bountyTitle={bounty.title}
+                    currentUserId={session?.user?.id}
+                    currentUsername={
+                      userProfile?.username || session?.user?.name || undefined
+                    }
+                    currentUserAvatar={
+                      userProfile?.image || session?.user?.image || undefined
+                    }
+                    sponsorUserId={sponsorUserId || undefined}
+                    onCommentCount={setCommentCount}
+                  />
                 </div>
               </div>
             </div>

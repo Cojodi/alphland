@@ -156,8 +156,11 @@ const worker = {
         return handleNotificationsAPI(request, env, url);
       }
 
-      // Notification preferences endpoints
-      if (url.pathname.startsWith("/api/notification-preferences")) {
+      // Notification preferences and mutes endpoints
+      if (
+        url.pathname.startsWith("/api/notification-preferences") ||
+        url.pathname.startsWith("/api/notification-mutes")
+      ) {
         return handleNotificationPreferencesAPI(request, env, url);
       }
 
