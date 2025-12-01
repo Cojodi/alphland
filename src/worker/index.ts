@@ -380,6 +380,49 @@ async function handleBountiesAPI(
         .bind(id)
         .first();
 
+      // Update bounty_overview statistics
+      try {
+        // Get current overview
+        const overview = await env.DB.prepare(
+          "SELECT * FROM bounty_overview WHERE id = 1",
+        ).first();
+
+        if (overview) {
+          // Calculate new totals
+          const rewardUsd =
+            body.reward_currency === "USD" ? body.reward_amount || 0 : 0;
+          const rewardAlph =
+            body.reward_currency === "ALPH" ? body.reward_amount || 0 : 0;
+
+          await env.DB.prepare(
+            `UPDATE bounty_overview
+             SET total_value_usd = total_value_usd + ?,
+                 total_value_alph = total_value_alph + ?,
+                 list_number = list_number + 1,
+                 updated_at = ?
+             WHERE id = 1`,
+          )
+            .bind(rewardUsd, rewardAlph, now)
+            .run();
+        } else {
+          // Initialize overview if it doesn't exist
+          const rewardUsd =
+            body.reward_currency === "USD" ? body.reward_amount || 0 : 0;
+          const rewardAlph =
+            body.reward_currency === "ALPH" ? body.reward_amount || 0 : 0;
+
+          await env.DB.prepare(
+            `INSERT INTO bounty_overview (id, total_value_usd, total_value_alph, list_number, user_number, sponsor_number, updated_at)
+             VALUES (1, ?, ?, 1, 0, 0, ?)`,
+          )
+            .bind(rewardUsd, rewardAlph, now)
+            .run();
+        }
+      } catch (overviewError) {
+        console.error("Failed to update bounty_overview:", overviewError);
+        // Don't fail the bounty creation if overview update fails
+      }
+
       return new Response(JSON.stringify({ bounty }), {
         status: 201,
         headers: corsHeaders,
@@ -389,6 +432,229 @@ async function handleBountiesAPI(
       return new Response(
         JSON.stringify({
           error: "Failed to create bounty",
+          details: error.message,
+        }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  // DELETE /api/bounties/:id - Delete (soft delete) a bounty
+  if (
+    request.method === "DELETE" &&
+    pathname.match(/^\/api\/bounties\/[^/]+$/)
+  ) {
+    try {
+      const id = pathname.split("/").pop();
+
+      // Get the bounty before deleting to update overview
+      const bounty = await env.DB.prepare(
+        "SELECT reward_amount, reward_currency, status FROM bounties WHERE id = ?",
+      )
+        .bind(id)
+        .first();
+
+      if (!bounty) {
+        return new Response(JSON.stringify({ error: "Bounty not found" }), {
+          status: 404,
+          headers: corsHeaders,
+        });
+      }
+
+      // Only update overview if bounty is not already deleted
+      if (bounty.status !== "deleted") {
+        const now = Math.floor(Date.now() / 1000);
+
+        // Soft delete the bounty
+        await env.DB.prepare(
+          "UPDATE bounties SET status = 'deleted', updated_at = ? WHERE id = ?",
+        )
+          .bind(now, id)
+          .run();
+
+        // Update bounty_overview statistics
+        try {
+          const rewardUsd =
+            bounty.reward_currency === "USD" ? bounty.reward_amount || 0 : 0;
+          const rewardAlph =
+            bounty.reward_currency === "ALPH" ? bounty.reward_amount || 0 : 0;
+
+          await env.DB.prepare(
+            `UPDATE bounty_overview
+             SET total_value_usd = CASE
+                   WHEN total_value_usd - ? >= 0 THEN total_value_usd - ?
+                   ELSE 0
+                 END,
+                 total_value_alph = CASE
+                   WHEN total_value_alph - ? >= 0 THEN total_value_alph - ?
+                   ELSE 0
+                 END,
+                 list_number = CASE
+                   WHEN list_number > 0 THEN list_number - 1
+                   ELSE 0
+                 END,
+                 updated_at = ?
+             WHERE id = 1`,
+          )
+            .bind(rewardUsd, rewardUsd, rewardAlph, rewardAlph, now)
+            .run();
+        } catch (overviewError) {
+          console.error(
+            "Failed to update bounty_overview after deletion:",
+            overviewError,
+          );
+          // Don't fail the deletion if overview update fails
+        }
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: "Bounty deleted successfully",
+        }),
+        {
+          headers: corsHeaders,
+        },
+      );
+    } catch (error: any) {
+      console.error("Error deleting bounty:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to delete bounty",
+          details: error.message,
+        }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  // PUT /api/bounties/:id - Update a bounty
+  if (request.method === "PUT" && pathname.match(/^\/api\/bounties\/[^/]+$/)) {
+    try {
+      const id = pathname.split("/").pop();
+      const body = (await request.json()) as any;
+      const now = Math.floor(Date.now() / 1000);
+
+      // Get the old bounty data to calculate overview changes
+      const oldBounty = await env.DB.prepare(
+        "SELECT reward_amount, reward_currency, status FROM bounties WHERE id = ?",
+      )
+        .bind(id)
+        .first();
+
+      if (!oldBounty) {
+        return new Response(JSON.stringify({ error: "Bounty not found" }), {
+          status: 404,
+          headers: corsHeaders,
+        });
+      }
+
+      // Build update query dynamically based on provided fields
+      const updates: string[] = [];
+      const values: any[] = [];
+
+      if (body.title !== undefined) {
+        updates.push("title = ?");
+        values.push(body.title);
+      }
+      if (body.description !== undefined) {
+        updates.push("description = ?");
+        values.push(body.description);
+      }
+      if (body.reward_amount !== undefined) {
+        updates.push("reward_amount = ?");
+        values.push(body.reward_amount);
+      }
+      if (body.reward_currency !== undefined) {
+        updates.push("reward_currency = ?");
+        values.push(body.reward_currency);
+      }
+      if (body.status !== undefined) {
+        updates.push("status = ?");
+        values.push(body.status);
+      }
+      if (body.category !== undefined) {
+        updates.push("category = ?");
+        values.push(body.category);
+      }
+
+      updates.push("updated_at = ?");
+      values.push(now);
+      values.push(id);
+
+      if (updates.length > 1) {
+        // More than just updated_at
+        await env.DB.prepare(
+          `UPDATE bounties SET ${updates.join(", ")} WHERE id = ?`,
+        )
+          .bind(...values)
+          .run();
+
+        // Update overview if reward changed
+        if (
+          body.reward_amount !== undefined ||
+          body.reward_currency !== undefined
+        ) {
+          try {
+            const oldRewardUsd =
+              oldBounty.reward_currency === "USD"
+                ? oldBounty.reward_amount || 0
+                : 0;
+            const oldRewardAlph =
+              oldBounty.reward_currency === "ALPH"
+                ? oldBounty.reward_amount || 0
+                : 0;
+
+            const newRewardUsd =
+              (body.reward_currency || oldBounty.reward_currency) === "USD"
+                ? (body.reward_amount ?? oldBounty.reward_amount) || 0
+                : 0;
+            const newRewardAlph =
+              (body.reward_currency || oldBounty.reward_currency) === "ALPH"
+                ? (body.reward_amount ?? oldBounty.reward_amount) || 0
+                : 0;
+
+            const diffUsd = newRewardUsd - oldRewardUsd;
+            const diffAlph = newRewardAlph - oldRewardAlph;
+
+            await env.DB.prepare(
+              `UPDATE bounty_overview
+               SET total_value_usd = total_value_usd + ?,
+                   total_value_alph = total_value_alph + ?,
+                   updated_at = ?
+               WHERE id = 1`,
+            )
+              .bind(diffUsd, diffAlph, now)
+              .run();
+          } catch (overviewError) {
+            console.error(
+              "Failed to update bounty_overview after edit:",
+              overviewError,
+            );
+          }
+        }
+      }
+
+      const updatedBounty = await env.DB.prepare(
+        "SELECT * FROM bounties WHERE id = ?",
+      )
+        .bind(id)
+        .first();
+
+      return new Response(JSON.stringify({ bounty: updatedBounty }), {
+        headers: corsHeaders,
+      });
+    } catch (error: any) {
+      console.error("Error updating bounty:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to update bounty",
           details: error.message,
         }),
         {

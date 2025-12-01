@@ -57,14 +57,6 @@ export function createAuth(db: D1Database, env: AuthEnv) {
       type: "sqlite",
     },
 
-    // Account linking configuration
-    account: {
-      accountLinking: {
-        enabled: true,
-        trustedProviders: ["google"],
-      },
-    },
-
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: true,
