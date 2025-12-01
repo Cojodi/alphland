@@ -11,6 +11,7 @@ import {
   handleNotificationPreferencesAPI,
   handleUserDeletionAPI,
   handleBookmarksAPI,
+  handleAccountLinkingAPI,
 } from "./handlers";
 
 // Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
@@ -168,6 +169,11 @@ const worker = {
       // Bookmarks endpoints
       if (url.pathname.startsWith("/api/bookmarks")) {
         return handleBookmarksAPI(request, env, url);
+      }
+
+      // Account linking endpoints
+      if (url.pathname.startsWith("/api/account-linking")) {
+        return handleAccountLinkingAPI(request, env, url);
       }
 
       // User deletion endpoint

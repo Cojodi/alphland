@@ -1764,3 +1764,323 @@ export async function handleBookmarksAPI(
     headers: corsHeaders,
   });
 }
+
+/**
+ * Handle Account Linking API requests
+ */
+export async function handleAccountLinkingAPI(
+  request: Request,
+  env: Env,
+  url: URL,
+): Promise<Response> {
+  const pathname = url.pathname;
+  const {
+    checkAccountConflict,
+    createAccountLinkRequest,
+    getAccountLinkRequest,
+    linkAccounts,
+    rejectAccountLinkRequest,
+    getUserConnectedAccounts,
+    disconnectAccount,
+  } = await import("./account-linking");
+
+  // POST /api/account-linking/check - Check if email has account conflict
+  if (request.method === "POST" && pathname === "/api/account-linking/check") {
+    try {
+      const body = (await request.json()) as any;
+      const { email, providerId } = body;
+
+      if (!email || !providerId) {
+        return new Response(
+          JSON.stringify({ error: "email and providerId are required" }),
+          {
+            status: 400,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      const result = await checkAccountConflict(env.DB, email, providerId);
+
+      return new Response(JSON.stringify(result), {
+        headers: corsHeaders,
+      });
+    } catch (error) {
+      console.error("Error checking account conflict:", error);
+      return new Response(
+        JSON.stringify({ error: "Failed to check account conflict" }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  // POST /api/account-linking/request - Create account link request
+  if (
+    request.method === "POST" &&
+    pathname === "/api/account-linking/request"
+  ) {
+    try {
+      const body = (await request.json()) as any;
+      const { existingUserId, email, providerId, accountId, providerData } =
+        body;
+
+      if (!existingUserId || !email || !providerId || !accountId) {
+        return new Response(
+          JSON.stringify({
+            error:
+              "existingUserId, email, providerId, and accountId are required",
+          }),
+          {
+            status: 400,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      const linkRequest = await createAccountLinkRequest(
+        env.DB,
+        existingUserId,
+        email,
+        providerId,
+        accountId,
+        providerData,
+      );
+
+      return new Response(JSON.stringify({ linkRequest }), {
+        status: 201,
+        headers: corsHeaders,
+      });
+    } catch (error) {
+      console.error("Error creating account link request:", error);
+      return new Response(
+        JSON.stringify({ error: "Failed to create account link request" }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  // GET /api/account-linking/request/:token - Get account link request
+  if (
+    request.method === "GET" &&
+    pathname.match(/^\/api\/account-linking\/request\/[^/]+$/)
+  ) {
+    try {
+      const token = pathname.split("/").pop();
+
+      if (!token) {
+        return new Response(JSON.stringify({ error: "Token is required" }), {
+          status: 400,
+          headers: corsHeaders,
+        });
+      }
+
+      const linkRequest = await getAccountLinkRequest(env.DB, token);
+
+      if (!linkRequest) {
+        return new Response(
+          JSON.stringify({ error: "Link request not found or expired" }),
+          {
+            status: 404,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      return new Response(JSON.stringify({ linkRequest }), {
+        headers: corsHeaders,
+      });
+    } catch (error) {
+      console.error("Error getting account link request:", error);
+      return new Response(
+        JSON.stringify({ error: "Failed to get account link request" }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  // POST /api/account-linking/confirm - Confirm and link accounts
+  if (
+    request.method === "POST" &&
+    pathname === "/api/account-linking/confirm"
+  ) {
+    try {
+      const body = (await request.json()) as any;
+      const { token } = body;
+
+      if (!token) {
+        return new Response(JSON.stringify({ error: "Token is required" }), {
+          status: 400,
+          headers: corsHeaders,
+        });
+      }
+
+      const linkRequest = await getAccountLinkRequest(env.DB, token);
+
+      if (!linkRequest) {
+        return new Response(
+          JSON.stringify({ error: "Link request not found or expired" }),
+          {
+            status: 404,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      const result = await linkAccounts(env.DB, linkRequest);
+
+      if (!result.success) {
+        return new Response(JSON.stringify({ error: result.error }), {
+          status: 400,
+          headers: corsHeaders,
+        });
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: "Accounts linked successfully",
+        }),
+        {
+          headers: corsHeaders,
+        },
+      );
+    } catch (error) {
+      console.error("Error confirming account link:", error);
+      return new Response(
+        JSON.stringify({ error: "Failed to link accounts" }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  // POST /api/account-linking/reject - Reject account link request
+  if (request.method === "POST" && pathname === "/api/account-linking/reject") {
+    try {
+      const body = (await request.json()) as any;
+      const { token } = body;
+
+      if (!token) {
+        return new Response(JSON.stringify({ error: "Token is required" }), {
+          status: 400,
+          headers: corsHeaders,
+        });
+      }
+
+      await rejectAccountLinkRequest(env.DB, token);
+
+      return new Response(
+        JSON.stringify({ success: true, message: "Link request rejected" }),
+        {
+          headers: corsHeaders,
+        },
+      );
+    } catch (error) {
+      console.error("Error rejecting account link:", error);
+      return new Response(
+        JSON.stringify({ error: "Failed to reject link request" }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  // GET /api/account-linking/connected/:userId - Get connected accounts
+  if (
+    request.method === "GET" &&
+    pathname.match(/^\/api\/account-linking\/connected\/[^/]+$/)
+  ) {
+    try {
+      const userId = pathname.split("/").pop();
+
+      if (!userId) {
+        return new Response(JSON.stringify({ error: "User ID is required" }), {
+          status: 400,
+          headers: corsHeaders,
+        });
+      }
+
+      const accounts = await getUserConnectedAccounts(env.DB, userId);
+
+      return new Response(JSON.stringify({ accounts }), {
+        headers: corsHeaders,
+      });
+    } catch (error) {
+      console.error("Error getting connected accounts:", error);
+      return new Response(
+        JSON.stringify({ error: "Failed to get connected accounts" }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  // DELETE /api/account-linking/disconnect - Disconnect account
+  if (
+    request.method === "DELETE" &&
+    pathname === "/api/account-linking/disconnect"
+  ) {
+    try {
+      const body = (await request.json()) as any;
+      const { userId, accountId } = body;
+
+      if (!userId || !accountId) {
+        return new Response(
+          JSON.stringify({ error: "userId and accountId are required" }),
+          {
+            status: 400,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      const result = await disconnectAccount(env.DB, userId, accountId);
+
+      if (!result.success) {
+        return new Response(JSON.stringify({ error: result.error }), {
+          status: 400,
+          headers: corsHeaders,
+        });
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: "Account disconnected successfully",
+        }),
+        {
+          headers: corsHeaders,
+        },
+      );
+    } catch (error) {
+      console.error("Error disconnecting account:", error);
+      return new Response(
+        JSON.stringify({ error: "Failed to disconnect account" }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  return new Response(JSON.stringify({ error: "Method not allowed" }), {
+    status: 405,
+    headers: corsHeaders,
+  });
+}
