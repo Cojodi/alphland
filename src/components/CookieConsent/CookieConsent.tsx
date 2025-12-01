@@ -6,8 +6,8 @@ const CookieConsent: React.FC = () => {
   return (
     <CookieConsentBanner
       location="bottom"
-      buttonText="Accept All"
-      declineButtonText="Decline"
+      buttonText="Got it"
+      declineButtonText="Close"
       enableDeclineButton
       cookieName="alphland-cookie-consent"
       style={{
@@ -63,7 +63,7 @@ const CookieConsent: React.FC = () => {
             color: "#ffffff",
           }}
         >
-          🍪 Cookie Notice
+          🍪 Privacy Notice
         </div>
         <div
           style={{
@@ -72,10 +72,10 @@ const CookieConsent: React.FC = () => {
             color: "#d1d5db",
           }}
         >
-          We use essential cookies to maintain your session and keep you logged
-          in. We also use privacy-friendly analytics (Plausible) that
-          doesn&apos;t use cookies or track personal data. By clicking
-          &quot;Accept All&quot;, you consent to our use of cookies.{" "}
+          We only use <strong>essential cookies</strong> to maintain your
+          session and login status. We also use Vercel Web Analytics for website
+          analysis, which does not use cookies and does not collect personally
+          identifiable information.{" "}
           <Link
             href="/privacy"
             style={{
@@ -84,8 +84,9 @@ const CookieConsent: React.FC = () => {
               fontWeight: "500",
             }}
           >
-            Learn more in our Privacy Policy
+            Learn more and see our full cookie list in our Privacy Policy
           </Link>
+          .
         </div>
       </div>
     </CookieConsentBanner>
