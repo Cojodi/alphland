@@ -6,6 +6,9 @@ import {
   Ban,
   CheckCircle,
   FileText,
+  TrendingUp,
+  DollarSign,
+  Award,
 } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
@@ -32,6 +35,16 @@ interface Sponsor {
   updated_at: number;
 }
 
+interface BountyOverview {
+  id: number;
+  total_value_usd: number;
+  total_value_alph: number;
+  list_number: number;
+  user_number: number;
+  sponsor_number: number;
+  updated_at: number;
+}
+
 type SponsorFilter = "active" | "banned";
 
 export default function AdminDashboard() {
@@ -40,6 +53,20 @@ export default function AdminDashboard() {
   const [sponsorFilter, setSponsorFilter] = useState<SponsorFilter>("active");
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [showBanModal, setShowBanModal] = useState<string | null>(null);
+  const [bountyOverview, setBountyOverview] = useState<BountyOverview | null>(
+    null,
+  );
+
+  // Fetch bounty overview
+  const fetchBountyOverview = useCallback(async () => {
+    try {
+      const response = await fetch("/api/bounty-overview");
+      const data = await response.json();
+      setBountyOverview(data.overview);
+    } catch (error) {
+      console.error("Failed to fetch bounty overview:", error);
+    }
+  }, []);
 
   // Fetch sponsors
   const fetchSponsors = useCallback(async () => {
@@ -56,8 +83,10 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     setLoading(true);
-    fetchSponsors().finally(() => setLoading(false));
-  }, [fetchSponsors]);
+    Promise.all([fetchBountyOverview(), fetchSponsors()]).finally(() =>
+      setLoading(false),
+    );
+  }, [fetchBountyOverview, fetchSponsors]);
 
   // Ban sponsor
   const handleBanSponsor = async (sponsorId: string) => {
@@ -190,6 +219,81 @@ export default function AdminDashboard() {
       </section>
 
       <div className="max-w-7xl mx-auto px-6 sm:px-8 py-8 space-y-8">
+        {/* Bounty Overview Stats */}
+        {bountyOverview && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="bg-white dark:bg-hero-dark rounded-xl border border-border-grey dark:border-dark-charcoal p-6 hover:shadow-box-image-shadow-hover transition-all duration-300">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-orange/10 rounded-lg">
+                  <DollarSign className="w-5 h-5 text-orange" />
+                </div>
+                <span className="text-sm text-light-charcoal font-barlow">
+                  Total Value (USD)
+                </span>
+              </div>
+              <p className="text-2xl font-bold text-light-black dark:text-white font-barlow">
+                ${bountyOverview.total_value_usd.toLocaleString()}
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-hero-dark rounded-xl border border-border-grey dark:border-dark-charcoal p-6 hover:shadow-box-image-shadow-hover transition-all duration-300">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-accessible-green/10 rounded-lg">
+                  <Award className="w-5 h-5 text-accessible-green" />
+                </div>
+                <span className="text-sm text-light-charcoal font-barlow">
+                  Total Value (ALPH)
+                </span>
+              </div>
+              <p className="text-2xl font-bold text-light-black dark:text-white font-barlow">
+                {bountyOverview.total_value_alph.toLocaleString()}
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-hero-dark rounded-xl border border-border-grey dark:border-dark-charcoal p-6 hover:shadow-box-image-shadow-hover transition-all duration-300">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-orange/10 rounded-lg">
+                  <FileText className="w-5 h-5 text-orange" />
+                </div>
+                <span className="text-sm text-light-charcoal font-barlow">
+                  Total Bounties
+                </span>
+              </div>
+              <p className="text-2xl font-bold text-light-black dark:text-white font-barlow">
+                {bountyOverview.list_number}
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-hero-dark rounded-xl border border-border-grey dark:border-dark-charcoal p-6 hover:shadow-box-image-shadow-hover transition-all duration-300">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-accessible-green/10 rounded-lg">
+                  <Users className="w-5 h-5 text-accessible-green" />
+                </div>
+                <span className="text-sm text-light-charcoal font-barlow">
+                  Total Users
+                </span>
+              </div>
+              <p className="text-2xl font-bold text-light-black dark:text-white font-barlow">
+                {bountyOverview.user_number}
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-hero-dark rounded-xl border border-border-grey dark:border-dark-charcoal p-6 hover:shadow-box-image-shadow-hover transition-all duration-300">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-orange/10 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-orange" />
+                </div>
+                <span className="text-sm text-light-charcoal font-barlow">
+                  Total Sponsors
+                </span>
+              </div>
+              <p className="text-2xl font-bold text-light-black dark:text-white font-barlow">
+                {bountyOverview.sponsor_number}
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Tabs */}
         <div className="border-b border-border-grey dark:border-dark-charcoal">
           <div className="flex gap-6">
