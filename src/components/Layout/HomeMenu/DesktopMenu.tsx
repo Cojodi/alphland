@@ -100,12 +100,14 @@ const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
       </div>
       <div className="relative flex flex-col justify-center items-center pb-[86px]">
         <Link href="/">
-          <Image
-            src={currentTheme === "dark" ? logoLight : logoDark}
-            width={525}
-            height={150}
-            alt="Alphland logo"
-          />
+          <a className="cursor-pointer">
+            <Image
+              src={currentTheme === "dark" ? logoLight : logoDark}
+              width={525}
+              height={150}
+              alt="Alphland logo"
+            />
+          </a>
         </Link>
         <h1 className="bg-black dark:bg-white text-white dark:text-black pl-4 pr-4 pt-1 pb-2 text-center text-[32px] font-bold leading-[38px] rounded-md mb-6">
           Discover the best of Alephium&apos;s ecosystem

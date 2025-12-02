@@ -129,6 +129,7 @@ export default function CreateSponsorProfile() {
         // Upload logo to R2 if it exists
         let logoUrl = null;
         if (logoFile) {
+          console.log("Uploading sponsor logo to R2...");
           // Read file as base64
           const reader = new FileReader();
           const logoDataUrl = await new Promise<string>((resolve, reject) => {
@@ -136,6 +137,8 @@ export default function CreateSponsorProfile() {
             reader.onerror = reject;
             reader.readAsDataURL(logoFile.file);
           });
+
+          console.log("Logo data URL length:", logoDataUrl.length);
 
           // Upload to R2
           const uploadResponse = await fetch("/api/upload/image", {
@@ -149,11 +152,15 @@ export default function CreateSponsorProfile() {
           });
 
           if (!uploadResponse.ok) {
+            const errorText = await uploadResponse.text();
+            console.error("Upload failed:", errorText);
+            alert("Failed to upload logo. Please try again.");
             throw new Error("Failed to upload logo");
           }
 
           const uploadData = await uploadResponse.json();
           logoUrl = uploadData.url;
+          console.log("Logo uploaded successfully:", logoUrl);
         }
 
         // Create sponsor application via API

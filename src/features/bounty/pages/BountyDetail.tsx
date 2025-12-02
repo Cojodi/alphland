@@ -526,9 +526,9 @@ export async function getServerSideProps(context: any) {
       end_date: bountyData.end_date,
       current_submissions: bountyData.submission_count || 0,
       category: bountyData.category,
-      dapp_name: bountyData.dapp_name || undefined,
-      sponsor_name: bountyData.sponsor_name || undefined,
-      sponsor_logo_url: bountyData.sponsor_logo_url || undefined,
+      dapp_name: bountyData.dapp_name || null,
+      sponsor_name: bountyData.sponsor_name || null,
+      sponsor_logo_url: bountyData.sponsor_logo_url || null,
       created_at: bountyData.created_at,
       updated_at: bountyData.updated_at,
     };

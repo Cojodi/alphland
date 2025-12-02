@@ -160,13 +160,51 @@ export default function EditSponsorProfile() {
       setLoading(true);
 
       try {
+        // Upload logo to R2 if a new one was selected
+        let logoUrl = null;
+        if (logoFile?.file) {
+          console.log("Uploading sponsor logo to R2...");
+          const file = logoFile.file; // Store in const for type narrowing
+          // Read file as base64
+          const reader = new FileReader();
+          const logoDataUrl = await new Promise<string>((resolve, reject) => {
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+
+          console.log("Logo data URL length:", logoDataUrl.length);
+
+          // Upload to R2
+          const uploadResponse = await fetch("/api/upload/image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              image: logoDataUrl,
+              fileName: file.name,
+              type: "sponsor",
+            }),
+          });
+
+          if (!uploadResponse.ok) {
+            const errorText = await uploadResponse.text();
+            console.error("Upload failed:", errorText);
+            alert("Failed to upload logo. Please try again.");
+            throw new Error("Failed to upload logo");
+          }
+
+          const uploadData = await uploadResponse.json();
+          logoUrl = uploadData.url;
+          console.log("Logo uploaded successfully:", logoUrl);
+        }
+
         const response = await fetch(`/api/sponsors/${sponsorId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: formData.name,
             description: formData.description,
-            logo_url: logoFile?.preview || null,
+            logo_url: logoUrl,
             website: formData.website,
             twitter: formData.twitter,
           }),
@@ -180,6 +218,7 @@ export default function EditSponsorProfile() {
         router.push("/bounty/sponsor/dashboard");
       } catch (error) {
         console.error("Error updating sponsor profile:", error);
+        alert("Failed to update sponsor profile. Please try again.");
       } finally {
         setLoading(false);
       }

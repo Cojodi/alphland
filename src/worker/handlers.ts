@@ -570,14 +570,8 @@ export async function handleSponsorsAPI(
       .bind(userId)
       .first();
 
-    if (!sponsor) {
-      return new Response(JSON.stringify({ error: "Sponsor not found" }), {
-        status: 404,
-        headers: corsHeaders,
-      });
-    }
-
-    return new Response(JSON.stringify({ sponsor }), {
+    // Return 200 with null sponsor instead of 404 to avoid console errors
+    return new Response(JSON.stringify({ sponsor: sponsor || null }), {
       headers: corsHeaders,
     });
   }
