@@ -6,6 +6,7 @@ import { useSession } from "@/lib/auth-client";
 import { apiClient, Bounty } from "@/lib/api-client";
 import { Filter, Rocket, CheckCircle, X } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
@@ -360,34 +361,36 @@ export default function BountyList() {
                           : `/profile/user/${earner.id}`;
 
                         return (
-                          <Link
-                            key={earner.id}
-                            href={profileUrl}
-                            className="flex items-center gap-3 p-2 rounded-lg hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
-                          >
-                            {avatarUrl ? (
-                              <img
-                                src={avatarUrl}
-                                alt={displayName}
-                                className="w-10 h-10 rounded-full object-cover"
-                              />
-                            ) : (
-                              <div className="w-10 h-10 rounded-full bg-orange/10 flex items-center justify-center">
-                                <span className="text-orange font-bold text-sm">
-                                  {displayName.charAt(0).toUpperCase()}
-                                </span>
+                          <Link key={earner.id} href={profileUrl}>
+                            <span className="flex items-center gap-3 p-2 rounded-lg hover:bg-smoked-white dark:hover:bg-light-black transition-colors cursor-pointer">
+                              {avatarUrl ? (
+                                <Image
+                                  src={avatarUrl}
+                                  alt={displayName}
+                                  width={40}
+                                  height={40}
+                                  className="w-10 h-10 rounded-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-10 h-10 rounded-full bg-orange/10 flex items-center justify-center">
+                                  <span className="text-orange font-bold text-sm">
+                                    {displayName.charAt(0).toUpperCase()}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-black dark:text-white truncate">
+                                  {displayName}
+                                </p>
+                                <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                                  {earner.submission_count} submission
+                                  {earner.submission_count !== 1
+                                    ? "s"
+                                    : ""}{" "}
+                                  this week
+                                </p>
                               </div>
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-black dark:text-white truncate">
-                                {displayName}
-                              </p>
-                              <p className="text-xs text-light-charcoal dark:text-lightgrey">
-                                {earner.submission_count} submission
-                                {earner.submission_count !== 1 ? "s" : ""} this
-                                week
-                              </p>
-                            </div>
+                            </span>
                           </Link>
                         );
                       })}

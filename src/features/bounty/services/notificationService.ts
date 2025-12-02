@@ -40,7 +40,7 @@ async function createNotification(data: NotificationData) {
  */
 export async function notifySponsorApproved(
   userId: string,
-  sponsorName: string
+  sponsorName: string,
 ) {
   await createNotification({
     user_id: userId,
@@ -57,7 +57,7 @@ export async function notifySponsorApproved(
 export async function notifySponsorRejected(
   userId: string,
   sponsorName: string,
-  reason?: string
+  reason?: string,
 ) {
   await createNotification({
     user_id: userId,
@@ -78,7 +78,7 @@ export async function notifySubmissionApproved(
   bountyId: string,
   bountyTitle: string,
   rewardAmount?: number,
-  rewardCurrency?: string
+  rewardCurrency?: string,
 ) {
   const rewardText =
     rewardAmount && rewardCurrency
@@ -100,7 +100,7 @@ export async function notifySubmissionRejected(
   userId: string,
   bountyId: string,
   bountyTitle: string,
-  feedback?: string
+  feedback?: string,
 ) {
   await createNotification({
     user_id: userId,
@@ -120,7 +120,7 @@ export async function notifyNewSubmission(
   sponsorUserId: string,
   bountyId: string,
   bountyTitle: string,
-  submitterUsername?: string
+  submitterUsername?: string,
 ) {
   const submitterText = submitterUsername ? ` from ${submitterUsername}` : "";
   await createNotification({
@@ -128,7 +128,7 @@ export async function notifyNewSubmission(
     type: "new_submission",
     title: "New Submission",
     message: `Your bounty "${bountyTitle}" received a new submission${submitterText}.`,
-    link: `/bounty/${bountyId}`,
+    link: "/bounty/sponsor/dashboard",
   });
 }
 
@@ -139,7 +139,7 @@ export async function notifyCommentReply(
   userId: string,
   bountyId: string,
   bountyTitle: string,
-  replierUsername?: string
+  replierUsername?: string,
 ) {
   const replierText = replierUsername
     ? `${replierUsername} replied`
@@ -160,7 +160,7 @@ export async function notifyCommentLike(
   userId: string,
   bountyId: string,
   bountyTitle: string,
-  likerUsername?: string
+  likerUsername?: string,
 ) {
   const likerText = likerUsername ? `${likerUsername} liked` : "Someone liked";
   await createNotification({
@@ -179,7 +179,7 @@ export async function notifyNewComment(
   sponsorUserId: string,
   bountyId: string,
   bountyTitle: string,
-  commenterUsername?: string
+  commenterUsername?: string,
 ) {
   const commenterText = commenterUsername
     ? `${commenterUsername} commented`
@@ -199,7 +199,7 @@ export async function notifyNewComment(
 export async function shouldNotify(
   userId: string,
   bountyId: string,
-  type: "comments" | "submissions"
+  type: "comments" | "submissions",
 ): Promise<boolean> {
   try {
     // Check if user has muted notifications for this bounty

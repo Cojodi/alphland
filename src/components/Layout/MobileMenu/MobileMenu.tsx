@@ -147,25 +147,37 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
       ref={nav}
     >
       <div className="flex justify-between items-center py-2 px-4 relative z-50 bg-smoked-white dark:bg-light-black">
-        <Link href="/">
-          <span
-            className="flex items-center cursor-pointer"
-            onClick={() => {
-              setFilters([]);
-              setSort(null);
-              setRatings([]);
-              changeCategory("all");
-            }}
-          >
-            <Image
-              src={currentTheme === "dark" ? logoLight : logo}
-              alt="logo"
-              width={133}
-              height={40}
-              style={{ height: "auto !important" }}
-            />
-          </span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/">
+            <span
+              className="flex items-center cursor-pointer"
+              onClick={() => {
+                setFilters([]);
+                setSort(null);
+                setRatings([]);
+                changeCategory("all");
+              }}
+            >
+              <Image
+                src={currentTheme === "dark" ? logoLight : logo}
+                alt="logo"
+                width={133}
+                height={40}
+                style={{ height: "auto !important" }}
+              />
+            </span>
+          </Link>
+          {isBountyPage && (
+            <>
+              <div className="h-6 w-px bg-border-grey dark:bg-white/10" />
+              <Link href="/bounty">
+                <span className="text-lg font-black tracking-wider text-black dark:text-white hover:text-orange dark:hover:text-orange transition-colors cursor-pointer">
+                  BOUNTY
+                </span>
+              </Link>
+            </>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <button
             type="button"

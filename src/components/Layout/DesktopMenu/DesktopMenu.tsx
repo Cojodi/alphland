@@ -113,6 +113,16 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
               />
             </span>
           </Link>
+          {isBountyPage && (
+            <>
+              <div className="h-8 w-px bg-border-grey dark:bg-white/10" />
+              <Link href="/bounty">
+                <span className="text-2xl font-black tracking-wider text-black dark:text-white hover:text-orange dark:hover:text-orange transition-colors cursor-pointer">
+                  BOUNTY
+                </span>
+              </Link>
+            </>
+          )}
         </div>
         <div className="flex gap-3.5 z-[2] items-center">
           <button

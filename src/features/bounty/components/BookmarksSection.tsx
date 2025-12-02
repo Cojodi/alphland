@@ -3,6 +3,7 @@
 import { apiClient } from "@/lib/api-client";
 import { Bookmark, Calendar, DollarSign } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface BookmarkItem {
@@ -122,9 +123,11 @@ export function BookmarksSection({ userId }: BookmarksSectionProps) {
             <div className="flex items-start gap-3">
               {/* Sponsor Logo */}
               {bookmark.sponsor_logo_url ? (
-                <img
+                <Image
                   src={bookmark.sponsor_logo_url}
                   alt={bookmark.sponsor_name}
+                  width={48}
+                  height={48}
                   className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
                 />
               ) : (
