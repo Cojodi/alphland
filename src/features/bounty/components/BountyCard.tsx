@@ -25,13 +25,22 @@ export function BountyCard({
           {/* Logo */}
           <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-orange/20 to-accessible-green/20 dark:from-orange/10 dark:to-accessible-green/10 flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden">
             {logo ? (
-              <Image
-                src={logo}
-                alt={company}
-                width={64}
-                height={64}
-                className="w-full h-full object-cover"
-              />
+              logo.startsWith("blob:") || logo.startsWith("data:") ? (
+                // Use regular img tag for blob and data URLs (Next.js Image doesn't support them)
+                <img
+                  src={logo}
+                  alt={company}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Image
+                  src={logo}
+                  alt={company}
+                  width={64}
+                  height={64}
+                  className="w-full h-full object-cover"
+                />
+              )
             ) : (
               "📦"
             )}

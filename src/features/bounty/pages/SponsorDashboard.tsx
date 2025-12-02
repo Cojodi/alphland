@@ -183,31 +183,6 @@ export default function SponsorDashboard() {
           is_verified: dashboardData.sponsor.is_verified === 1,
         };
 
-        const transformedBounties: Bounty[] = (
-          dashboardData.bounties || []
-        ).map((b: any) => ({
-          id: b.id,
-          sponsor_id: b.sponsor_id,
-          title: b.title,
-          description: b.description,
-          requirements: b.requirements ? JSON.parse(b.requirements) : [],
-          deliverables: b.deliverables ? JSON.parse(b.deliverables) : [],
-          skills: b.skills ? JSON.parse(b.skills) : [],
-          status: b.status,
-          current_submissions: b.submission_count || 0,
-          end_date: b.end_date,
-          start_date: b.start_date,
-          reward: {
-            amount: parseFloat(b.reward_amount) || 0,
-            token: b.reward_currency || "ALPH",
-            usd_equivalent: parseFloat(b.reward_usd_value) || 0,
-          },
-          reward_type: b.reward_type || "fixed",
-          category: b.category || "Development",
-          created_at: b.created_at,
-          updated_at: b.updated_at,
-        }));
-
         const transformedSubmissions: Submission[] = (
           dashboardData.submissions || []
         ).map((s: any) => ({
@@ -224,6 +199,38 @@ export default function SponsorDashboard() {
           sponsor_id: sponsorId,
           status: s.status,
           submitted_at: s.created_at,
+        }));
+
+        // Count submissions per bounty
+        const submissionCountByBounty: Record<string, number> = {};
+        transformedSubmissions.forEach((sub) => {
+          submissionCountByBounty[sub.bounty_id] =
+            (submissionCountByBounty[sub.bounty_id] || 0) + 1;
+        });
+
+        const transformedBounties: Bounty[] = (
+          dashboardData.bounties || []
+        ).map((b: any) => ({
+          id: b.id,
+          sponsor_id: b.sponsor_id,
+          title: b.title,
+          description: b.description,
+          requirements: b.requirements ? JSON.parse(b.requirements) : [],
+          deliverables: b.deliverables ? JSON.parse(b.deliverables) : [],
+          skills: b.skills ? JSON.parse(b.skills) : [],
+          status: b.status,
+          current_submissions: submissionCountByBounty[b.id] || 0,
+          end_date: b.end_date,
+          start_date: b.start_date,
+          reward: {
+            amount: parseFloat(b.reward_amount) || 0,
+            token: b.reward_currency || "ALPH",
+            usd_equivalent: parseFloat(b.reward_usd_value) || 0,
+          },
+          reward_type: b.reward_type || "fixed",
+          category: b.category || "Development",
+          created_at: b.created_at,
+          updated_at: b.updated_at,
         }));
 
         setSponsor(transformedSponsor);
