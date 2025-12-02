@@ -2084,3 +2084,184 @@ export async function handleAccountLinkingAPI(
     headers: corsHeaders,
   });
 }
+
+/**
+ * Handle Image Upload API requests
+ * Upload images to R2 bucket
+ */
+export async function handleImageUploadAPI(
+  request: Request,
+  env: Env,
+  url: URL,
+): Promise<Response> {
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Content-Type": "application/json",
+  };
+
+  const pathname = url.pathname;
+
+  // POST /api/upload/image - Upload image to R2
+  if (request.method === "POST" && pathname === "/api/upload/image") {
+    try {
+      const contentType = request.headers.get("content-type") || "";
+
+      if (!contentType.includes("application/json")) {
+        return new Response(
+          JSON.stringify({ error: "Content-Type must be application/json" }),
+          {
+            status: 400,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      const body = (await request.json()) as any;
+
+      // Validate required fields
+      if (!body.image) {
+        return new Response(
+          JSON.stringify({ error: "Image data is required" }),
+          {
+            status: 400,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      if (!body.fileName) {
+        return new Response(
+          JSON.stringify({ error: "File name is required" }),
+          {
+            status: 400,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      // Extract base64 data from data URL
+      let base64Data = body.image;
+      let mimeType = "image/png"; // default
+
+      // Check if it's a data URL (data:image/png;base64,...)
+      if (base64Data.startsWith("data:")) {
+        const matches = base64Data.match(/^data:([^;]+);base64,(.+)$/);
+        if (!matches) {
+          return new Response(
+            JSON.stringify({ error: "Invalid image data format" }),
+            {
+              status: 400,
+              headers: corsHeaders,
+            },
+          );
+        }
+        mimeType = matches[1];
+        base64Data = matches[2];
+      }
+
+      // Convert base64 to binary
+      const binaryString = atob(base64Data);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+
+      // Generate unique file name
+      const timestamp = Date.now();
+      const randomStr = crypto.randomUUID().substring(0, 8);
+      const fileExtension = mimeType.split("/")[1] || "png";
+      const uniqueFileName = `${timestamp}-${randomStr}-${body.fileName.replace(/[^a-zA-Z0-9.-]/g, "_")}.${fileExtension}`;
+
+      // Determine folder based on type
+      const folder = body.type === "sponsor" ? "sponsors" : "users";
+      const key = `${folder}/${uniqueFileName}`;
+
+      // Upload to R2
+      await env.IMAGES.put(key, bytes, {
+        httpMetadata: {
+          contentType: mimeType,
+        },
+      });
+
+      // Generate public URL
+      // Note: You'll need to configure R2 public access or use a custom domain
+      // For now, we'll return a path that can be served through the worker
+      const imageUrl = `/api/images/${key}`;
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          url: imageUrl,
+          key: key,
+        }),
+        {
+          status: 201,
+          headers: corsHeaders,
+        },
+      );
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to upload image",
+          details: error instanceof Error ? error.message : "Unknown error",
+        }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  return new Response(JSON.stringify({ error: "Method not allowed" }), {
+    status: 405,
+    headers: corsHeaders,
+  });
+}
+
+/**
+ * Handle Image Serving API requests
+ * Serve images from R2 bucket
+ */
+export async function handleImageServingAPI(
+  request: Request,
+  env: Env,
+  url: URL,
+): Promise<Response> {
+  const pathname = url.pathname;
+
+  // GET /api/images/* - Serve image from R2
+  if (request.method === "GET" && pathname.startsWith("/api/images/")) {
+    try {
+      // Extract key from pathname (remove /api/images/ prefix)
+      const key = pathname.replace("/api/images/", "");
+
+      if (!key) {
+        return new Response("Image not found", { status: 404 });
+      }
+
+      // Get image from R2
+      const object = await env.IMAGES.get(key);
+
+      if (!object) {
+        return new Response("Image not found", { status: 404 });
+      }
+
+      // Return image with proper headers
+      const headers = new Headers();
+      object.writeHttpMetadata(headers);
+      headers.set("Cache-Control", "public, max-age=31536000"); // Cache for 1 year
+      headers.set("Access-Control-Allow-Origin", "*");
+
+      return new Response(object.body, {
+        headers,
+      });
+    } catch (error) {
+      console.error("Error serving image:", error);
+      return new Response("Internal server error", { status: 500 });
+    }
+  }
+
+  return new Response("Not found", { status: 404 });
+}

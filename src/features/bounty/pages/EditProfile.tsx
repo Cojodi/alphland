@@ -652,6 +652,28 @@ export default function EditProfile() {
     setIsSubmitting(true);
 
     try {
+      // Upload profile picture to R2 if a new one was uploaded
+      let imageUrl = null;
+      if (formData.profilePicture && formData.profilePicturePreview) {
+        // Upload to R2
+        const uploadResponse = await fetch("/api/upload/image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            image: formData.profilePicturePreview,
+            fileName: formData.profilePicture.name,
+            type: "user",
+          }),
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error("Failed to upload profile picture");
+        }
+
+        const uploadData = await uploadResponse.json();
+        imageUrl = uploadData.url;
+      }
+
       // Prepare request body with optional image
       const requestBody: Record<string, unknown> = {
         username: formData.username,
@@ -675,9 +697,9 @@ export default function EditProfile() {
         projects: formData.projects,
       };
 
-      // Include image if a new one was uploaded (base64 data URL)
-      if (formData.profilePicture && formData.profilePicturePreview) {
-        requestBody.image = formData.profilePicturePreview;
+      // Include image URL if uploaded
+      if (imageUrl) {
+        requestBody.image = imageUrl;
       }
 
       const response = await fetch(`/api/users/${session.user.id}`, {

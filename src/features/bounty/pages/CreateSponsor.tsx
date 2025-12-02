@@ -126,15 +126,34 @@ export default function CreateSponsorProfile() {
       setLoading(true);
 
       try {
-        // Convert logo file to base64 if it exists
-        let logoDataUrl = null;
+        // Upload logo to R2 if it exists
+        let logoUrl = null;
         if (logoFile) {
+          // Read file as base64
           const reader = new FileReader();
-          logoDataUrl = await new Promise<string>((resolve, reject) => {
+          const logoDataUrl = await new Promise<string>((resolve, reject) => {
             reader.onloadend = () => resolve(reader.result as string);
             reader.onerror = reject;
             reader.readAsDataURL(logoFile.file);
           });
+
+          // Upload to R2
+          const uploadResponse = await fetch("/api/upload/image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              image: logoDataUrl,
+              fileName: logoFile.file.name,
+              type: "sponsor",
+            }),
+          });
+
+          if (!uploadResponse.ok) {
+            throw new Error("Failed to upload logo");
+          }
+
+          const uploadData = await uploadResponse.json();
+          logoUrl = uploadData.url;
         }
 
         // Create sponsor application via API
@@ -154,7 +173,7 @@ export default function CreateSponsorProfile() {
             contact_last_name: formData.last_name,
             contact_username: formData.username,
             contact_telegram: formData.telegram,
-            logo_url: logoDataUrl,
+            logo_url: logoUrl,
           }),
         });
 

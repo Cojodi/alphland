@@ -12,13 +12,17 @@ import {
   handleUserDeletionAPI,
   handleBookmarksAPI,
   handleAccountLinkingAPI,
+  handleImageUploadAPI,
+  handleImageServingAPI,
 } from "./handlers";
 
 // Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
 type D1Database = any;
+type R2Bucket = any;
 
 export interface Env {
   DB: D1Database;
+  IMAGES: R2Bucket; // R2 bucket for image storage
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
   BETTER_AUTH_SECRET: string;
@@ -213,6 +217,16 @@ const worker = {
       // User deletion endpoint
       if (url.pathname.match(/^\/api\/user\/[^/]+$/)) {
         return handleUserDeletionAPI(request, env, url);
+      }
+
+      // Image upload endpoint
+      if (url.pathname.startsWith("/api/upload/image")) {
+        return handleImageUploadAPI(request, env, url);
+      }
+
+      // Image serving endpoint
+      if (url.pathname.startsWith("/api/images/")) {
+        return handleImageServingAPI(request, env, url);
       }
 
       // Default 404
