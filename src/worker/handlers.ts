@@ -2143,24 +2143,85 @@ export async function handleImageUploadAPI(
       let base64Data = body.image;
       let mimeType = "image/png"; // default
 
+      console.log(
+        `Received image data, starts with: ${base64Data.substring(0, 100)}`,
+      );
+
       // Check if it's a data URL (data:image/png;base64,...)
       if (base64Data.startsWith("data:")) {
-        const matches = base64Data.match(/^data:([^;]+);base64,(.+)$/);
-        if (!matches) {
+        // Find the base64 data after "base64,"
+        const base64Index = base64Data.indexOf("base64,");
+        if (base64Index === -1) {
           return new Response(
-            JSON.stringify({ error: "Invalid image data format" }),
+            JSON.stringify({
+              error: "Invalid image data format - no base64 marker found",
+            }),
             {
               status: 400,
               headers: corsHeaders,
             },
           );
         }
-        mimeType = matches[1];
-        base64Data = matches[2];
+
+        // Extract MIME type
+        const mimeMatch = base64Data.match(/^data:([^;]+);/);
+        if (mimeMatch) {
+          mimeType = mimeMatch[1];
+        }
+
+        // Get base64 data after "base64,"
+        base64Data = base64Data.substring(base64Index + 7);
       }
 
+      // Clean up base64 string - remove any whitespace, newlines, etc.
+      base64Data = base64Data.replace(/\s/g, "");
+
+      // Validate base64 string contains only valid characters
+      if (!/^[A-Za-z0-9+/]*={0,2}$/.test(base64Data)) {
+        console.error("Base64 contains invalid characters");
+        // Find first invalid character for debugging
+        const firstInvalid = base64Data
+          .split("")
+          .findIndex((c: string) => !/[A-Za-z0-9+/=]/.test(c));
+        console.error(
+          `First invalid char at position ${firstInvalid}: ${base64Data[firstInvalid]}`,
+        );
+        return new Response(
+          JSON.stringify({
+            error: "Invalid base64 data",
+            details: `Base64 string contains invalid characters at position ${firstInvalid}`,
+          }),
+          {
+            status: 400,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      console.log(
+        `Base64 length: ${base64Data.length}, MIME type: ${mimeType}`,
+      );
+
       // Convert base64 to binary
-      const binaryString = atob(base64Data);
+      let binaryString;
+      try {
+        binaryString = atob(base64Data);
+        console.log(
+          `Successfully decoded base64, binary length: ${binaryString.length}`,
+        );
+      } catch (error) {
+        console.error("Failed to decode base64:", error);
+        return new Response(
+          JSON.stringify({
+            error: "Invalid base64 data",
+            details: error instanceof Error ? error.message : "Unknown error",
+          }),
+          {
+            status: 400,
+            headers: corsHeaders,
+          },
+        );
+      }
       const bytes = new Uint8Array(binaryString.length);
       for (let i = 0; i < binaryString.length; i++) {
         bytes[i] = binaryString.charCodeAt(i);

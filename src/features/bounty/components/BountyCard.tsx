@@ -24,15 +24,19 @@ export function BountyCard({
         <div className="flex gap-4">
           {/* Logo */}
           <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-orange/20 to-accessible-green/20 dark:from-orange/10 dark:to-accessible-green/10 flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden">
-            {logo ? (
-              logo.startsWith("blob:") || logo.startsWith("data:") ? (
-                // Use regular img tag for blob and data URLs (Next.js Image doesn't support them)
+            {logo && logo !== "💼" ? (
+              logo.startsWith("blob:") ||
+              logo.startsWith("data:") ||
+              logo.startsWith("http://") ||
+              logo.startsWith("https://") ? (
+                // Use regular img tag for blob, data, and external URLs
                 <img
                   src={logo}
                   alt={company}
                   className="w-full h-full object-cover"
                 />
-              ) : (
+              ) : logo.startsWith("/") ? (
+                // Use Next.js Image for internal paths
                 <Image
                   src={logo}
                   alt={company}
@@ -40,9 +44,12 @@ export function BountyCard({
                   height={64}
                   className="w-full h-full object-cover"
                 />
+              ) : (
+                // Fallback for emoji or invalid URLs
+                <span className="text-2xl">{logo}</span>
               )
             ) : (
-              "📦"
+              <span className="text-2xl">📦</span>
             )}
           </div>
 

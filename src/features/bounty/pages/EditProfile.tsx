@@ -377,7 +377,10 @@ export default function EditProfile() {
             lastName,
             bio: profile.bio || "",
             alphWalletAddress: profile.wallet_address || "",
-            profilePicturePreview: profile.image || null,
+            // Keep the current preview if user has selected a new image, otherwise use profile image
+            profilePicturePreview: prev.profilePicture
+              ? prev.profilePicturePreview
+              : profile.image || null,
             socials: {
               discord: profile.discord_username || "",
               twitter: profile.twitter_username || "",
@@ -457,12 +460,18 @@ export default function EditProfile() {
 
       const reader = new FileReader();
       reader.onload = (event) => {
+        const result = event.target?.result as string;
         console.log("Image loaded successfully");
-        setFormData((prev) => ({
-          ...prev,
-          profilePicture: file,
-          profilePicturePreview: event.target?.result as string,
-        }));
+        console.log("New preview starts with:", result?.substring(0, 50));
+        console.log("New preview length:", result?.length);
+        setFormData((prev) => {
+          console.log("Setting form data with new image");
+          return {
+            ...prev,
+            profilePicture: file,
+            profilePicturePreview: result,
+          };
+        });
       };
       reader.onerror = (error) => {
         console.error("Error reading file:", error);
@@ -652,9 +661,30 @@ export default function EditProfile() {
     setIsSubmitting(true);
 
     try {
+      console.log("=== Starting form submission ===");
+      console.log("formData.profilePicture:", formData.profilePicture);
+      console.log(
+        "formData.profilePicturePreview starts with:",
+        formData.profilePicturePreview?.substring(0, 50),
+      );
+      console.log(
+        "formData.profilePicturePreview length:",
+        formData.profilePicturePreview?.length,
+      );
+
       // Upload profile picture to R2 if a new one was uploaded
       let imageUrl = null;
       if (formData.profilePicture && formData.profilePicturePreview) {
+        console.log("Uploading profile picture to R2...");
+        console.log(
+          "Image preview starts with:",
+          formData.profilePicturePreview.substring(0, 50),
+        );
+        console.log(
+          "Image preview length:",
+          formData.profilePicturePreview.length,
+        );
+
         // Upload to R2
         const uploadResponse = await fetch("/api/upload/image", {
           method: "POST",
@@ -667,11 +697,14 @@ export default function EditProfile() {
         });
 
         if (!uploadResponse.ok) {
+          const errorText = await uploadResponse.text();
+          console.error("Upload failed:", errorText);
           throw new Error("Failed to upload profile picture");
         }
 
         const uploadData = await uploadResponse.json();
         imageUrl = uploadData.url;
+        console.log("Image uploaded successfully:", imageUrl);
       }
 
       // Prepare request body with optional image
@@ -700,14 +733,17 @@ export default function EditProfile() {
       // Include image URL if uploaded
       if (imageUrl) {
         requestBody.image = imageUrl;
+        console.log("Including image URL in update request:", imageUrl);
       }
 
+      console.log("Updating user profile...");
       const response = await fetch(`/api/users/${session.user.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify(requestBody),
       });
+      console.log("Update response status:", response.status);
 
       if (!response.ok) {
         const data = await response.json();

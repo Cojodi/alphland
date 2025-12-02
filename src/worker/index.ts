@@ -134,36 +134,50 @@ const worker = {
 
       // Recent earners endpoint - users with >1 submission in past week
       if (url.pathname === "/api/recent-earners") {
-        const oneWeekAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;
+        try {
+          const oneWeekAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;
 
-        const { results } = await env.DB.prepare(
-          `SELECT
-            u.id,
-            u.name,
-            u.image,
-            up.username,
-            up.avatar_url,
-            COUNT(s.id) as submission_count
-          FROM bounty_submissions s
-          JOIN user u ON s.submitted_by = u.id
-          LEFT JOIN user_profiles up ON u.id = up.user_id
-          WHERE s.created_at >= ?
-          GROUP BY u.id, u.name, u.image, up.username, up.avatar_url
-          HAVING COUNT(s.id) > 1
-          ORDER BY submission_count DESC
-          LIMIT 10`,
-        )
-          .bind(oneWeekAgo)
-          .all();
+          const { results } = await env.DB.prepare(
+            `SELECT
+              u.id,
+              u.name,
+              u.image,
+              up.username,
+              u.image as avatar_url,
+              COUNT(s.id) as submission_count
+            FROM bounty_submissions s
+            JOIN user u ON s.submitted_by = u.id
+            LEFT JOIN user_profiles up ON u.id = up.user_id
+            WHERE s.created_at >= ?
+            GROUP BY u.id, u.name, u.image, up.username
+            HAVING COUNT(s.id) > 1
+            ORDER BY submission_count DESC
+            LIMIT 10`,
+          )
+            .bind(oneWeekAgo)
+            .all();
 
-        return new Response(
-          JSON.stringify({
-            earners: results,
-          }),
-          {
-            headers: { "Content-Type": "application/json", ...corsHeaders },
-          },
-        );
+          return new Response(
+            JSON.stringify({
+              earners: results || [],
+            }),
+            {
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
+        } catch (error) {
+          console.error("Error fetching recent earners:", error);
+          return new Response(
+            JSON.stringify({
+              error: "Internal server error",
+              message: error instanceof Error ? error.message : "Unknown error",
+            }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
+        }
       }
 
       // Bounties API endpoints
@@ -912,13 +926,21 @@ async function handleUsersAPI(
         .run();
     }
 
+    // Update user name in user table if first/last name provided
+    if (body.first_name || body.last_name) {
+      const fullName =
+        `${body.first_name || ""} ${body.last_name || ""}`.trim();
+      if (fullName) {
+        await env.DB.prepare(`UPDATE user SET name = ? WHERE id = ?`)
+          .bind(fullName, id)
+          .run();
+      }
+    }
+
     // Update profile with all fields (allow clearing fields with empty strings)
     await env.DB.prepare(
       `UPDATE user_profiles
        SET username = ?,
-           first_name = ?,
-           last_name = ?,
-           full_name = ?,
            bio = ?,
            wallet_address = ?,
            github_username = ?,
@@ -939,9 +961,6 @@ async function handleUsersAPI(
     )
       .bind(
         body.username || null,
-        body.first_name || null,
-        body.last_name || null,
-        body.full_name || null,
         body.bio || null,
         body.wallet_address || null,
         body.github_username || null,

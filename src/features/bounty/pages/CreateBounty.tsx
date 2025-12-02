@@ -46,8 +46,8 @@ export default function CreateBountyPage() {
   };
 
   const handleAIGenerate = () => {
-    // TODO: V2 - Navigate to AI generation page
-    router.push("/bounty/create/generate");
+    // V2 Feature - Coming Soon
+    alert("Coming Soon: AI-powered bounty generation will be available in V2!");
   };
 
   if (loading || isPending) {
@@ -137,18 +137,18 @@ export default function CreateBountyPage() {
             {/* AI Generation - V2 Feature */}
             <button
               onClick={handleAIGenerate}
-              className="w-full bg-white dark:bg-hero-dark rounded-xl border border-border-grey dark:border-dark-charcoal p-6 hover:shadow-box-image-shadow-hover hover:border-orange dark:hover:border-orange transition-all duration-300 text-left group relative overflow-hidden"
+              className="w-full bg-white dark:bg-hero-dark rounded-xl border border-border-grey dark:border-dark-charcoal p-6 transition-all duration-300 text-left relative overflow-hidden opacity-60 cursor-not-allowed"
             >
               {/* V2 Badge */}
               <div className="absolute top-3 right-3 bg-orange/10 text-orange text-xs font-bold px-2 py-1 rounded">
-                V2
+                COMING SOON
               </div>
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-orange/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-orange/20 transition-colors">
+                <div className="w-12 h-12 bg-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
                   <Sparkles className="w-6 h-6 text-orange" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-black dark:text-white font-barlow mb-2 group-hover:text-orange transition-colors">
+                  <h3 className="text-xl font-semibold text-black dark:text-white font-barlow mb-2">
                     AI Generate
                   </h3>
                   <p className="text-sm text-light-charcoal dark:text-lightgrey font-barlow leading-relaxed">
