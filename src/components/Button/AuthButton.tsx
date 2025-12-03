@@ -87,9 +87,9 @@ const AuthButton = () => {
     setIsDropdownOpen(false);
     if (userProfile?.username) {
       router.push(`/bounty/profile/${userProfile.username}`);
-    } else if (session?.user?.id) {
-      // If no username set, use user ID to view profile
-      router.push(`/bounty/profile/${session.user.id}`);
+    } else {
+      // If no username set, redirect to edit profile
+      router.push("/bounty/profile/edit");
     }
   };
 

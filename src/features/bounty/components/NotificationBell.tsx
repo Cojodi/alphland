@@ -2,6 +2,7 @@
 
 import { apiClient, Notification } from "@/lib/api-client";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState, useEffect, useRef, useCallback } from "react";
 
 interface NotificationBellProps {
@@ -158,6 +159,7 @@ function NotificationIcon({ type }: { type: string }) {
 }
 
 export function NotificationBell({ userId }: NotificationBellProps) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -202,7 +204,7 @@ export function NotificationBell({ userId }: NotificationBellProps) {
     try {
       await apiClient.markNotificationAsRead(id);
       setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, read: 1 } : n))
+        prev.map((n) => (n.id === id ? { ...n, read: 1 } : n)),
       );
       setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (error) {
@@ -325,15 +327,21 @@ export function NotificationBell({ userId }: NotificationBellProps) {
                   }`}
                 >
                   {notification.link ? (
-                    <Link
-                      href={notification.link}
+                    <div
                       onClick={() => {
                         if (notification.read === 0) {
                           handleMarkAsRead(notification.id);
                         }
                         setIsOpen(false);
+                        // Check if we're already on the target page and link exists
+                        if (
+                          notification.link &&
+                          router.asPath !== notification.link
+                        ) {
+                          router.push(notification.link);
+                        }
                       }}
-                      className="block px-4 py-3 hover:bg-smoked-white dark:hover:bg-light-black transition"
+                      className="block px-4 py-3 hover:bg-smoked-white dark:hover:bg-light-black transition cursor-pointer"
                     >
                       <div className="flex gap-3">
                         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-smoked-white dark:bg-light-black flex items-center justify-center">
@@ -354,7 +362,7 @@ export function NotificationBell({ userId }: NotificationBellProps) {
                           <div className="flex-shrink-0 w-2 h-2 mt-2 rounded-full bg-orange" />
                         )}
                       </div>
-                    </Link>
+                    </div>
                   ) : (
                     <div
                       onClick={() => {

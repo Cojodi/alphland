@@ -94,6 +94,7 @@ export interface BountySubmission {
   transaction_hash: string | null;
   created_at: string;
   updated_at: string;
+  user_username?: string; // Username from user_profiles
 }
 
 export interface CreateSubmissionInput {
@@ -307,6 +308,16 @@ class ApiClient {
       method: "PUT",
       body: JSON.stringify(data),
     });
+  }
+
+  async getUserStats(userId: string): Promise<{
+    stats: {
+      submissions: number;
+      won: number;
+      earned: number;
+    };
+  }> {
+    return this.request(`/api/users/${userId}/stats`);
   }
 
   // Bounty Submissions

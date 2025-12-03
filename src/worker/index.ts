@@ -894,6 +894,62 @@ async function handleUsersAPI(
     });
   }
 
+  // GET /api/users/:id/stats - Get user public statistics
+  if (
+    request.method === "GET" &&
+    pathname.match(/^\/api\/users\/[^/]+\/stats$/)
+  ) {
+    const id = pathname.split("/")[3]; // Extract user ID from /api/users/:id/stats
+
+    // Get total submissions count
+    const submissionsResult = await env.DB.prepare(
+      `SELECT COUNT(*) as count FROM bounty_submissions WHERE submitted_by = ?`,
+    )
+      .bind(id)
+      .first();
+    const totalSubmissions = (submissionsResult?.count as number) || 0;
+
+    // Get approved submissions count (won)
+    const wonResult = await env.DB.prepare(
+      `SELECT COUNT(*) as count FROM bounty_submissions WHERE submitted_by = ? AND status = 'approved'`,
+    )
+      .bind(id)
+      .first();
+    const totalWon = (wonResult?.count as number) || 0;
+
+    // Get total earnings (sum of approved submission rewards from reviewer_notes)
+    const { results: approvedSubmissions } = await env.DB.prepare(
+      `SELECT reviewer_notes FROM bounty_submissions WHERE submitted_by = ? AND status = 'approved'`,
+    )
+      .bind(id)
+      .all();
+
+    let totalEarned = 0;
+    for (const submission of approvedSubmissions) {
+      const notes = submission.reviewer_notes as string;
+      if (notes) {
+        // Extract USD amount from reviewer notes like "Reward: 100 ALPH (for $50.00 USD bounty)"
+        const usdMatch = notes.match(/\$(\d+\.?\d*)\s*USD/i);
+        if (usdMatch) {
+          totalEarned += parseFloat(usdMatch[1]);
+        }
+      }
+    }
+
+    return new Response(
+      JSON.stringify({
+        stats: {
+          submissions: totalSubmissions,
+          won: totalWon,
+          earned: totalEarned,
+        },
+      }),
+      {
+        headers: corsHeaders,
+      },
+    );
+  }
+
   // PUT /api/users/:id - Update user profile
   if (request.method === "PUT" && pathname.match(/^\/api\/users\/[^/]+$/)) {
     const id = pathname.split("/").pop();

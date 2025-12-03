@@ -45,6 +45,11 @@ export default function UserProfile() {
   const [userData, setUserData] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userStats, setUserStats] = useState<{
+    submissions: number;
+    won: number;
+    earned: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!username) return;
@@ -53,13 +58,8 @@ export default function UserProfile() {
       try {
         setLoading(true);
 
-        // Try to fetch by username first
-        let response = await fetch(`/api/users/username/${username}`);
-
-        // If username fetch fails with 404, try by user ID
-        if (!response.ok && response.status === 404) {
-          response = await fetch(`/api/users/${username}`);
-        }
+        // Fetch by username only
+        const response = await fetch(`/api/users/username/${username}`);
 
         if (!response.ok) {
           if (response.status === 404) {
@@ -72,6 +72,20 @@ export default function UserProfile() {
 
         const data = await response.json();
         setUserData(data.user);
+
+        // Fetch user stats
+        try {
+          const statsResponse = await fetch(
+            `/api/users/${data.user.user_id}/stats`,
+          );
+          if (statsResponse.ok) {
+            const statsData = await statsResponse.json();
+            setUserStats(statsData.stats);
+          }
+        } catch (err) {
+          console.error("Error fetching user stats:", err);
+          // Don't fail the whole page if stats fail to load
+        }
       } catch (err) {
         console.error("Error fetching profile:", err);
         setError("Failed to load profile");
@@ -222,7 +236,11 @@ export default function UserProfile() {
                 location={userData.location || undefined}
               />
               <SkillsSection skills={skillsGrouped} />
-              <StatsSection earned={0} submissions={0} won={0} />
+              <StatsSection
+                earned={userStats?.earned || 0}
+                submissions={userStats?.submissions || 0}
+                won={userStats?.won || 0}
+              />
             </div>
 
             {/* Right Column */}

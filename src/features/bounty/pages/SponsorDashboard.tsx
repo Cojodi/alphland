@@ -51,7 +51,7 @@ export default function SponsorDashboard() {
   const viewSubmission = useCallback(
     (submission: any, bountyId: string) => {
       // Convert Submission to BountySubmission format
-      const bountySubmission: BountySubmission = {
+      const bountySubmission: any = {
         id: submission.id,
         bounty_id: bountyId,
         submitted_by: submission.user_id,
@@ -69,6 +69,7 @@ export default function SponsorDashboard() {
         transaction_hash: submission.transaction_hash || null,
         created_at: submission.submitted_at,
         updated_at: submission.submitted_at,
+        user_username: submission.user_username || null,
       };
 
       // Find the associated bounty

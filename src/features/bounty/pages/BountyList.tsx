@@ -112,6 +112,21 @@ export default function BountyList() {
     "Other",
   ];
 
+  // Filter bounties based on active category
+  const filteredBounties = bounties.filter((bounty) => {
+    if (activeCategory === "all") {
+      return true;
+    }
+    if (activeCategory === "for-you") {
+      // For now, show all bounties. Later can be personalized based on user skills/interests
+      return true;
+    }
+    // Match the bounty category with the active category
+    // Categories in DB are stored as "Content", "Design", etc. (capitalized)
+    // activeCategory is like "content", "design" (lowercase)
+    return bounty.category?.toLowerCase() === activeCategory.toLowerCase();
+  });
+
   return (
     <Layout
       title="Bounties - Alphland"
@@ -254,14 +269,16 @@ export default function BountyList() {
                         Loading bounties...
                       </p>
                     </div>
-                  ) : bounties.length === 0 ? (
+                  ) : filteredBounties.length === 0 ? (
                     <div className="text-center py-8">
                       <p className="text-light-charcoal dark:text-lightgrey">
-                        No bounties available at the moment.
+                        {bounties.length === 0
+                          ? "No bounties available at the moment."
+                          : `No bounties found in the "${categories.find((c) => c.toLowerCase().replace(" ", "-") === activeCategory)}" category.`}
                       </p>
                     </div>
                   ) : (
-                    bounties.map((bounty) => {
+                    filteredBounties.map((bounty) => {
                       const daysRemaining = bounty.end_date
                         ? Math.ceil(
                             (new Date(bounty.end_date).getTime() - Date.now()) /
@@ -357,41 +374,45 @@ export default function BountyList() {
                         const avatarUrl =
                           earner.avatar_url || earner.image || null;
                         const profileUrl = earner.username
-                          ? `/profile/${earner.username}`
-                          : `/profile/user/${earner.id}`;
+                          ? `/bounty/profile/${earner.username}`
+                          : null;
 
-                        return (
-                          <Link key={earner.id} href={profileUrl}>
-                            <span className="flex items-center gap-3 p-2 rounded-lg hover:bg-smoked-white dark:hover:bg-light-black transition-colors cursor-pointer">
-                              {avatarUrl ? (
-                                <Image
-                                  src={avatarUrl}
-                                  alt={displayName}
-                                  width={40}
-                                  height={40}
-                                  className="w-10 h-10 rounded-full object-cover"
-                                />
-                              ) : (
-                                <div className="w-10 h-10 rounded-full bg-orange/10 flex items-center justify-center">
-                                  <span className="text-orange font-bold text-sm">
-                                    {displayName.charAt(0).toUpperCase()}
-                                  </span>
-                                </div>
-                              )}
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-black dark:text-white truncate">
-                                  {displayName}
-                                </p>
-                                <p className="text-xs text-light-charcoal dark:text-lightgrey">
-                                  {earner.submission_count} submission
-                                  {earner.submission_count !== 1
-                                    ? "s"
-                                    : ""}{" "}
-                                  this week
-                                </p>
+                        const content = (
+                          <span className="flex items-center gap-3 p-2 rounded-lg hover:bg-smoked-white dark:hover:bg-light-black transition-colors cursor-pointer">
+                            {avatarUrl ? (
+                              <Image
+                                src={avatarUrl}
+                                alt={displayName}
+                                width={40}
+                                height={40}
+                                className="w-10 h-10 rounded-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-10 h-10 rounded-full bg-orange/10 flex items-center justify-center">
+                                <span className="text-orange font-bold text-sm">
+                                  {displayName.charAt(0).toUpperCase()}
+                                </span>
                               </div>
-                            </span>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-black dark:text-white truncate">
+                                {displayName}
+                              </p>
+                              <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                                {earner.submission_count} submission
+                                {earner.submission_count !== 1 ? "s" : ""} this
+                                week
+                              </p>
+                            </div>
+                          </span>
+                        );
+
+                        return profileUrl ? (
+                          <Link key={earner.id} href={profileUrl}>
+                            {content}
                           </Link>
+                        ) : (
+                          <div key={earner.id}>{content}</div>
                         );
                       })}
                     </div>

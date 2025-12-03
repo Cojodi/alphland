@@ -9,6 +9,7 @@ import {
   AlertCircle,
   Copy,
 } from "lucide-react";
+import Link from "next/link";
 import { apiClient, BountySubmission } from "@/lib/api-client";
 import { notificationService } from "../services/notificationService";
 import { Bounty, TieredReward } from "../types/bounty.types";
@@ -266,11 +267,23 @@ export function SubmissionReviewModal({
             )}
 
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="text-sm text-light-charcoal dark:text-lightgrey">
+              <div className="text-sm text-light-charcoal dark:text-lightgrey">
                 Submitted by:{" "}
-                <span className="font-medium">{submission.submitted_by}</span>
+                {submission.user_username ? (
+                  <Link href={`/bounty/profile/${submission.user_username}`}>
+                    <span className="font-medium text-orange hover:text-orange/80 transition-colors cursor-pointer">
+                      {submission.user_username}
+                    </span>
+                  </Link>
+                ) : (
+                  <span className="font-medium text-light-charcoal">
+                    Anonymous (ID: {submission.submitted_by.substring(0, 8)}...)
+                  </span>
+                )}
+              </div>
+              <span className="text-sm text-light-charcoal dark:text-lightgrey">
+                •
               </span>
-              <span>•</span>
               <span className="text-sm text-light-charcoal dark:text-lightgrey">
                 {new Date(
                   Number(submission.created_at) * 1000,
