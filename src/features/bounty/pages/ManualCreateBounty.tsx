@@ -35,7 +35,7 @@ export default function ManualCreateBounty() {
     deliverables: [""],
     skills: [""],
     reward_amount: "",
-    reward_currency: "ALPH",
+    reward_currency: "USD",
     reward_type: "fixed",
     tier_count: 5,
     start_date: new Date().toISOString().split("T")[0],
@@ -407,46 +407,28 @@ export default function ManualCreateBounty() {
               <div className="bg-orange/5 border border-orange/20 rounded-lg p-4">
                 <p className="text-sm text-light-charcoal dark:text-lightgrey font-barlow">
                   <span className="font-semibold text-orange">Note:</span>{" "}
-                  Rewards will be paid in ALPH, converted to USD at the current
-                  exchange rate.
+                  Rewards will be paid in ALPH, converted from USD at the
+                  current exchange rate.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
-                    Reward Amount *
-                  </label>
-                  <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-light-charcoal dark:text-lightgrey" />
-                    <input
-                      type="number"
-                      name="reward_amount"
-                      value={formData.reward_amount}
-                      onChange={handleInputChange}
-                      required
-                      min="0"
-                      step="0.01"
-                      placeholder="0.00"
-                      className="w-full pl-10 pr-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
-                    Currency *
-                  </label>
-                  <select
-                    name="reward_currency"
-                    value={formData.reward_currency}
+              <div>
+                <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
+                  Reward Amount (USD) *
+                </label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-light-charcoal dark:text-lightgrey" />
+                  <input
+                    type="number"
+                    name="reward_amount"
+                    value={formData.reward_amount}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
-                  >
-                    <option value="ALPH">ALPH</option>
-                    <option value="USD">USD</option>
-                  </select>
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    className="w-full pl-10 pr-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
+                  />
                 </div>
               </div>
 

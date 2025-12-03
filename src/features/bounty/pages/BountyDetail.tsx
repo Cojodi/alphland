@@ -336,10 +336,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                         Payment Terms:
                       </span>{" "}
                       Rewards will be paid in ALPH, converted to USD at the
-                      current exchange rate. If the exchange rate at the time of
-                      payment differs by more than 10% from the rate when the
-                      bounty was posted, the platform reserves the right to
-                      apply a fairer exchange rate.
+                      current exchange rate.
                     </p>
                   </div>
 

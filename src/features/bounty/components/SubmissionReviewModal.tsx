@@ -145,8 +145,26 @@ export function SubmissionReviewModal({
 
       // Close bounty if requested and this is the last spot
       if (reviewAction === "approved" && closeBounty) {
-        // TODO: Add API call to close bounty
-        // await apiClient.updateBounty(bounty.id, { status: "closed" });
+        console.log("Closing bounty:", bounty.id);
+        const closeBountyResponse = await fetch(`/api/bounties/${bounty.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Include cookies for authentication
+          body: JSON.stringify({ status: "completed" }),
+        });
+
+        if (!closeBountyResponse.ok) {
+          const errorText = await closeBountyResponse.text();
+          console.error("Failed to close bounty:", errorText);
+          // Don't throw error, just log it - submission was already approved
+          console.warn(
+            "Bounty could not be closed automatically, but submission was approved",
+          );
+        } else {
+          console.log("Bounty closed successfully");
+        }
       }
 
       // Send notification to submitter

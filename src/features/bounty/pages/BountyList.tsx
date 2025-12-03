@@ -286,6 +286,23 @@ export default function BountyList() {
                           )
                         : null;
 
+                      // Determine status tag based on bounty status and date
+                      const getStatusTag = () => {
+                        if (
+                          bounty.status === "completed" ||
+                          bounty.status === "cancelled"
+                        ) {
+                          return "Closed";
+                        }
+                        if (daysRemaining !== null && daysRemaining > 0) {
+                          return `Due in ${daysRemaining}d`;
+                        }
+                        if (daysRemaining === 0) {
+                          return "Due today";
+                        }
+                        return "Ended";
+                      };
+
                       return (
                         <BountyCard
                           key={bounty.id}
@@ -298,11 +315,7 @@ export default function BountyList() {
                           }`}
                           tags={[
                             bounty.difficulty || "beginner",
-                            ...(daysRemaining !== null && daysRemaining > 0
-                              ? [`Due in ${daysRemaining}d`]
-                              : daysRemaining === 0
-                                ? ["Due today"]
-                                : ["Ended"]),
+                            getStatusTag(),
                             bounty.category,
                           ]}
                         />

@@ -29,9 +29,11 @@ interface NotificationData {
  */
 async function createNotification(data: NotificationData) {
   try {
+    console.log("Creating notification with data:", data);
     await apiClient.createNotification(data);
   } catch (error) {
     console.error("Failed to create notification:", error);
+    console.error("Notification data was:", data);
   }
 }
 

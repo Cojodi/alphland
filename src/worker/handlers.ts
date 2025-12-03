@@ -1229,6 +1229,26 @@ export async function handleNotificationsAPI(
   // POST /api/notifications - Create notification
   if (request.method === "POST" && pathname === "/api/notifications") {
     const body = (await request.json()) as any;
+
+    // Validate required fields
+    if (!body.user_id || !body.type || !body.title || !body.message) {
+      return new Response(
+        JSON.stringify({
+          error: "Missing required fields",
+          details: {
+            user_id: body.user_id ? "ok" : "missing",
+            type: body.type ? "ok" : "missing",
+            title: body.title ? "ok" : "missing",
+            message: body.message ? "ok" : "missing",
+          },
+        }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        },
+      );
+    }
+
     const id = crypto.randomUUID();
     const now = Math.floor(Date.now() / 1000);
 

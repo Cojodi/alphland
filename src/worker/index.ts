@@ -923,7 +923,7 @@ async function handleUsersAPI(
       .first();
     const totalWon = (wonResult?.count as number) || 0;
 
-    // Get total earnings (sum of approved submission rewards from reviewer_notes)
+    // Get total earnings (sum of approved submission rewards in USD from reviewer_notes)
     const { results: approvedSubmissions } = await env.DB.prepare(
       `SELECT reviewer_notes FROM bounty_submissions WHERE submitted_by = ? AND status = 'approved'`,
     )
@@ -934,8 +934,9 @@ async function handleUsersAPI(
     for (const submission of approvedSubmissions) {
       const notes = submission.reviewer_notes as string;
       if (notes) {
-        // Extract USD amount from reviewer notes like "Reward: 100 ALPH (for $50.00 USD bounty)"
-        const usdMatch = notes.match(/\$(\d+\.?\d*)\s*USD/i);
+        // Extract USD amount from reviewer notes like "Reward: 999.96 ALPH (for 100 USD bounty)"
+        // Look for pattern like "for X USD bounty" or "for $X USD bounty"
+        const usdMatch = notes.match(/for\s+\$?(\d+\.?\d*)\s*USD\s+bounty/i);
         if (usdMatch) {
           totalEarned += parseFloat(usdMatch[1]);
         }
