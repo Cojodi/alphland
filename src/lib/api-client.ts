@@ -84,17 +84,31 @@ export interface UpdateUserProfileInput {
 export interface BountySubmission {
   id: string;
   bounty_id: string;
-  submitted_by: string;
+  bounty_name: string;
+  sponsor_id: string;
+  sponsor_name: string;
+  sponsor_logo_url: string | null;
+  user_id: string;
+  title: string;
+  description: string;
   submission_url: string;
-  description: string | null;
-  status: "pending" | "approved" | "rejected" | "revision_requested";
-  reviewer_notes: string | null;
-  reviewed_by: string | null;
-  reviewed_at: string | null;
+  tweet_url: string | null;
+  status: "submitted" | "in_review" | "accepted" | "rejected";
+  feedback: string | null;
+  review_started_at: number | null;
+  completed_at: number | null;
+  reward: {
+    token: string;
+    amount: number;
+    usd_equivalent: number;
+  };
+  user_username: string | null;
+  user_avatar_url: string | null;
+  user_full_name: string | null;
+  user_wallet_address: string | null;
   transaction_hash: string | null;
-  created_at: string;
-  updated_at: string;
-  user_username?: string; // Username from user_profiles
+  created_at: number;
+  updated_at: number;
 }
 
 export interface CreateSubmissionInput {

@@ -109,9 +109,14 @@ export async function handleSubmissionsAPI(
     const bountyId = pathname.split("/").pop();
 
     const { results } = await env.DB.prepare(
-      `SELECT s.*, u.username as user_username
+      `SELECT s.*,
+              s.submitted_by as user_id,
+              up.username as user_username,
+              u.name as user_full_name,
+              u.image as user_avatar_url
        FROM bounty_submissions s
-       LEFT JOIN user_profiles u ON s.submitted_by = u.user_id
+       LEFT JOIN user u ON s.submitted_by = u.id
+       LEFT JOIN user_profiles up ON s.submitted_by = up.user_id
        WHERE s.bounty_id = ?
        ORDER BY s.created_at DESC`,
     )
@@ -131,10 +136,21 @@ export async function handleSubmissionsAPI(
     const sponsorId = pathname.split("/").pop();
 
     const { results } = await env.DB.prepare(
-      `SELECT s.*, b.title as bounty_title, u.username as user_username
+      `SELECT s.*,
+              s.submitted_by as user_id,
+              b.title as bounty_title,
+              b.title as bounty_name,
+              b.sponsor_id,
+              sp.name as sponsor_name,
+              sp.logo_url as sponsor_logo_url,
+              up.username as user_username,
+              u.name as user_full_name,
+              u.image as user_avatar_url
        FROM bounty_submissions s
        JOIN bounties b ON s.bounty_id = b.id
-       LEFT JOIN user_profiles u ON s.submitted_by = u.user_id
+       LEFT JOIN sponsors sp ON b.sponsor_id = sp.id
+       LEFT JOIN user u ON s.submitted_by = u.id
+       LEFT JOIN user_profiles up ON s.submitted_by = up.user_id
        WHERE b.sponsor_id = ?
        ORDER BY s.created_at DESC`,
     )
@@ -709,10 +725,18 @@ export async function handleSponsorsAPI(
 
     // Get submissions for all bounties by this sponsor
     const { results: submissions } = await env.DB.prepare(
-      `SELECT s.*, b.title as bounty_name, u.name as user_username
+      `SELECT s.*,
+              s.submitted_by as user_id,
+              b.title as bounty_name,
+              b.sponsor_id,
+              up.username as user_username,
+              u.name as user_name,
+              u.name as user_full_name,
+              u.image as user_avatar_url
        FROM bounty_submissions s
        JOIN bounties b ON s.bounty_id = b.id
        LEFT JOIN user u ON s.submitted_by = u.id
+       LEFT JOIN user_profiles up ON u.id = up.user_id
        WHERE b.sponsor_id = ?
        ORDER BY s.created_at DESC`,
     )
@@ -2319,4 +2343,228 @@ export async function handleImageServingAPI(
   }
 
   return new Response("Not found", { status: 404 });
+}
+
+/**
+ * Handle Proof of Work API requests
+ */
+export async function handleProofOfWorkAPI(
+  request: Request,
+  env: Env,
+  url: URL,
+): Promise<Response> {
+  const pathname = url.pathname;
+
+  // GET /api/proof-of-work/:username - Get all proof of work for a user
+  if (
+    request.method === "GET" &&
+    pathname.match(/^\/api\/proof-of-work\/[^/]+$/)
+  ) {
+    const username = pathname.split("/").pop();
+
+    const { results } = await env.DB.prepare(
+      `SELECT * FROM proof_of_work WHERE username = ? ORDER BY created_at DESC`,
+    )
+      .bind(username)
+      .all();
+
+    // Parse skills JSON
+    const works = results.map((work: any) => ({
+      ...work,
+      skills: work.skills ? JSON.parse(work.skills) : [],
+    }));
+
+    return new Response(JSON.stringify({ works }), {
+      headers: corsHeaders,
+    });
+  }
+
+  // POST /api/proof-of-work - Create new proof of work
+  if (request.method === "POST" && pathname === "/api/proof-of-work") {
+    try {
+      const body = (await request.json()) as any;
+
+      // Validate required fields
+      if (
+        !body.user_id ||
+        !body.username ||
+        !body.title ||
+        !body.description ||
+        !body.skills ||
+        !body.link
+      ) {
+        return new Response(
+          JSON.stringify({ error: "Missing required fields" }),
+          {
+            status: 400,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      const id = crypto.randomUUID();
+      const now = Math.floor(Date.now() / 1000);
+
+      await env.DB.prepare(
+        `INSERT INTO proof_of_work (
+          id, user_id, username, title, description, skills, link, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+        .bind(
+          id,
+          body.user_id,
+          body.username,
+          body.title,
+          body.description,
+          JSON.stringify(body.skills),
+          body.link,
+          now,
+          now,
+        )
+        .run();
+
+      const work = await env.DB.prepare(
+        `SELECT * FROM proof_of_work WHERE id = ?`,
+      )
+        .bind(id)
+        .first();
+
+      return new Response(
+        JSON.stringify({
+          work: {
+            ...work,
+            skills: work ? JSON.parse((work as any).skills) : [],
+          },
+        }),
+        {
+          status: 201,
+          headers: corsHeaders,
+        },
+      );
+    } catch (error: any) {
+      console.error("Error creating proof of work:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to create proof of work",
+          details: error.message,
+        }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  // PUT /api/proof-of-work/:id - Update proof of work
+  if (
+    request.method === "PUT" &&
+    pathname.match(/^\/api\/proof-of-work\/[^/]+$/)
+  ) {
+    try {
+      const id = pathname.split("/").pop();
+      const body = (await request.json()) as any;
+      const now = Math.floor(Date.now() / 1000);
+
+      // Build update query dynamically
+      const updates: string[] = [];
+      const values: any[] = [];
+
+      if (body.title !== undefined) {
+        updates.push("title = ?");
+        values.push(body.title);
+      }
+      if (body.description !== undefined) {
+        updates.push("description = ?");
+        values.push(body.description);
+      }
+      if (body.skills !== undefined) {
+        updates.push("skills = ?");
+        values.push(JSON.stringify(body.skills));
+      }
+      if (body.link !== undefined) {
+        updates.push("link = ?");
+        values.push(body.link);
+      }
+
+      updates.push("updated_at = ?");
+      values.push(now);
+      values.push(id);
+
+      if (updates.length > 1) {
+        await env.DB.prepare(
+          `UPDATE proof_of_work SET ${updates.join(", ")} WHERE id = ?`,
+        )
+          .bind(...values)
+          .run();
+      }
+
+      const work = await env.DB.prepare(
+        `SELECT * FROM proof_of_work WHERE id = ?`,
+      )
+        .bind(id)
+        .first();
+
+      return new Response(
+        JSON.stringify({
+          work: work
+            ? { ...work, skills: JSON.parse((work as any).skills) }
+            : null,
+        }),
+        {
+          headers: corsHeaders,
+        },
+      );
+    } catch (error: any) {
+      console.error("Error updating proof of work:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to update proof of work",
+          details: error.message,
+        }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  // DELETE /api/proof-of-work/:id - Delete proof of work
+  if (
+    request.method === "DELETE" &&
+    pathname.match(/^\/api\/proof-of-work\/[^/]+$/)
+  ) {
+    try {
+      const id = pathname.split("/").pop();
+
+      await env.DB.prepare(`DELETE FROM proof_of_work WHERE id = ?`)
+        .bind(id)
+        .run();
+
+      return new Response(
+        JSON.stringify({ success: true, message: "Proof of work deleted" }),
+        {
+          headers: corsHeaders,
+        },
+      );
+    } catch (error: any) {
+      console.error("Error deleting proof of work:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to delete proof of work",
+          details: error.message,
+        }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+  }
+
+  return new Response(JSON.stringify({ error: "Method not allowed" }), {
+    status: 405,
+    headers: corsHeaders,
+  });
 }

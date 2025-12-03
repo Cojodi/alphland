@@ -163,7 +163,7 @@ export default function SponsorProfile({
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal rounded-lg p-5 hover:shadow-box-image-shadow-hover transition-shadow">
+              {/* <div className="bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal rounded-lg p-5 hover:shadow-box-image-shadow-hover transition-shadow">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-accessible-green/10 dark:bg-accessible-green/20 rounded-lg flex items-center justify-center flex-shrink-0">
                     <BarChart3 className="w-6 h-6 text-accessible-green" />
@@ -177,7 +177,7 @@ export default function SponsorProfile({
                     </h3>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               <div className="bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal rounded-lg p-5 hover:shadow-box-image-shadow-hover transition-shadow">
                 <div className="flex items-center gap-4">

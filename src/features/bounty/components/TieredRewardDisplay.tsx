@@ -41,9 +41,9 @@ export function TieredRewardDisplay({
               <p className="text-2xl font-bold text-black dark:text-white">
                 {formatRewardAmount(totalAmount, token)}
               </p>
-              <p className="text-sm text-light-charcoal dark:text-lightgrey">
+              {/* <p className="text-sm text-light-charcoal dark:text-lightgrey">
                 {formatUSDAmount(usdEquivalent)}
-              </p>
+              </p> */}
             </div>
           </div>
         </div>

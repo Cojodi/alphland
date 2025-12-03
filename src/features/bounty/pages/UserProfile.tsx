@@ -50,6 +50,27 @@ export default function UserProfile() {
     won: number;
     earned: number;
   } | null>(null);
+  const [proofOfWork, setProofOfWork] = useState<
+    Array<{
+      id: string;
+      title: string;
+      description: string;
+      skills: string[];
+      link: string;
+    }>
+  >([]);
+
+  const fetchProofOfWork = async (username: string) => {
+    try {
+      const response = await fetch(`/api/proof-of-work/${username}`);
+      if (response.ok) {
+        const data = await response.json();
+        setProofOfWork(data.works || []);
+      }
+    } catch (err) {
+      console.error("Error fetching proof of work:", err);
+    }
+  };
 
   useEffect(() => {
     if (!username) return;
@@ -85,6 +106,11 @@ export default function UserProfile() {
         } catch (err) {
           console.error("Error fetching user stats:", err);
           // Don't fail the whole page if stats fail to load
+        }
+
+        // Fetch proof of work
+        if (data.user.username) {
+          await fetchProofOfWork(data.user.username);
         }
       } catch (err) {
         console.error("Error fetching profile:", err);
@@ -153,25 +179,6 @@ export default function UserProfile() {
   const skillsGrouped: Record<string, string[]> = {
     SKILLS: skills,
   };
-
-  // Parse projects from JSON and map to expected format
-  const rawProjects = parseJsonField<
-    Array<{
-      id: string;
-      title: string;
-      description: string;
-      skills: string[];
-      subSkills: string[];
-      link: string;
-    }>
-  >(userData.projects, []);
-
-  const projects = rawProjects.map((p) => ({
-    id: p.id,
-    title: p.title,
-    description: p.description,
-    url: p.link,
-  }));
 
   // Build socials object
   const socials: Record<string, string> = {};
@@ -251,7 +258,17 @@ export default function UserProfile() {
               {/* Show Submissions section only on own profile */}
               {isOwnProfile && <SubmissionsSection userId={userData.user_id} />}
 
-              <ProofOfWorkSection works={projects} />
+              <ProofOfWorkSection
+                works={proofOfWork}
+                username={userData.username || undefined}
+                userId={userData.user_id}
+                isOwnProfile={isOwnProfile || false}
+                onUpdate={() => {
+                  if (userData.username) {
+                    fetchProofOfWork(userData.username);
+                  }
+                }}
+              />
               <ActivityFeed />
             </div>
           </div>

@@ -70,6 +70,7 @@ export default function SponsorDashboard() {
         created_at: submission.submitted_at,
         updated_at: submission.submitted_at,
         user_username: submission.user_username || null,
+        user_name: submission.user_name || null,
       };
 
       // Find the associated bounty
@@ -124,7 +125,8 @@ export default function SponsorDashboard() {
           title: s.title || "Submission",
           description: s.description || "",
           submission_url: s.submission_url,
-          user_username: s.user_username || "Unknown",
+          user_username: s.user_username || null,
+          user_name: s.user_name || "Unknown",
           user_avatar_url: s.user_avatar_url || "",
           user_id: s.submitted_by,
           user_wallet_address: s.user_wallet_address || "",
@@ -191,7 +193,8 @@ export default function SponsorDashboard() {
           title: s.title || "Submission",
           description: s.description || "",
           submission_url: s.submission_url,
-          user_username: s.user_username || "Unknown",
+          user_username: s.user_username || null,
+          user_name: s.user_name || "Unknown",
           user_avatar_url: s.user_avatar_url || "",
           user_id: s.submitted_by,
           user_wallet_address: s.user_wallet_address || "",
@@ -229,6 +232,7 @@ export default function SponsorDashboard() {
             usd_equivalent: parseFloat(b.reward_usd_value) || 0,
           },
           reward_type: b.reward_type || "fixed",
+          tier_count: b.tier_count || null,
           category: b.category || "Development",
           created_at: b.created_at,
           updated_at: b.updated_at,

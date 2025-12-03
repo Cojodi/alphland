@@ -14,6 +14,7 @@ import {
   handleAccountLinkingAPI,
   handleImageUploadAPI,
   handleImageServingAPI,
+  handleProofOfWorkAPI,
 } from "./handlers";
 
 // Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
@@ -241,6 +242,11 @@ const worker = {
       // Image serving endpoint
       if (url.pathname.startsWith("/api/images/")) {
         return handleImageServingAPI(request, env, url);
+      }
+
+      // Proof of Work endpoints
+      if (url.pathname.startsWith("/api/proof-of-work")) {
+        return handleProofOfWorkAPI(request, env, url);
       }
 
       // Default 404

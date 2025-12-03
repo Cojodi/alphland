@@ -51,29 +51,31 @@ export function SubmissionReviewModal({
       ? generateTieredRewards(bounty.reward, bounty.tier_count)
       : undefined;
 
-  // Get USD amount for the selected tier or fixed reward
-  const getUSDAmount = (): number => {
+  // Get token amount for the selected tier or fixed reward
+  const getTokenAmount = (): { amount: number; token: string } => {
     if (bounty?.reward_type === "tiered" && selectedTier && tieredRewards) {
       const tier = tieredRewards.find((t) => t.position === selectedTier);
       return tier
-        ? tier.usd_equivalent ||
-            tier.amount * (bounty.reward.usd_equivalent / bounty.reward.amount)
-        : 0;
+        ? { amount: tier.amount, token: tier.token }
+        : { amount: 0, token: bounty?.reward.token || "ALPH" };
     }
-    return bounty?.reward.usd_equivalent || 0;
+    return {
+      amount: bounty?.reward.amount || 0,
+      token: bounty?.reward.token || "ALPH",
+    };
   };
 
   // Fetch user wallet address when submission changes
   useEffect(() => {
     const fetchWalletAddress = async () => {
-      if (!submission?.submitted_by) {
+      if (!submission?.user_id) {
         setUserWalletAddress(null);
         return;
       }
 
       setLoadingWallet(true);
       try {
-        const response = await fetch(`/api/users/${submission.submitted_by}`);
+        const response = await fetch(`/api/users/${submission.user_id}`);
         if (response.ok) {
           const data = await response.json();
           setUserWalletAddress(data.user?.wallet_address || null);
@@ -127,8 +129,8 @@ export function SubmissionReviewModal({
           bounty.reward_type === "tiered" && selectedTier
             ? `Tier ${selectedTier} placement. `
             : "";
-        const usdAmount = getUSDAmount();
-        const rewardInfo = `${tierInfo}Reward: ${rewardAmount} ALPH (for $${usdAmount.toFixed(2)} USD bounty)`;
+        const tokenReward = getTokenAmount();
+        const rewardInfo = `${tierInfo}Reward: ${rewardAmount} ALPH (for ${tokenReward.amount.toLocaleString()} ${tokenReward.token} bounty)`;
         finalReviewerNotes = finalReviewerNotes
           ? `${finalReviewerNotes}\n\n${rewardInfo}`
           : rewardInfo;
@@ -141,22 +143,6 @@ export function SubmissionReviewModal({
         transaction_hash: transactionHash.trim() || undefined,
       });
 
-      // Update bounty_overview with ALPH amount
-      if (reviewAction === "approved" && rewardAmount) {
-        try {
-          await fetch("/api/bounty-overview/update-alph", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              alph_amount: parseFloat(rewardAmount),
-            }),
-          });
-        } catch (err) {
-          console.error("Failed to update bounty overview:", err);
-          // Don't fail the whole operation if this fails
-        }
-      }
-
       // Close bounty if requested and this is the last spot
       if (reviewAction === "approved" && closeBounty) {
         // TODO: Add API call to close bounty
@@ -166,7 +152,7 @@ export function SubmissionReviewModal({
       // Send notification to submitter
       if (reviewAction === "approved") {
         await notificationService.notifySubmissionApproved(
-          submission.submitted_by,
+          submission.user_id,
           submission.bounty_id,
           bounty.title,
           parseFloat(rewardAmount),
@@ -174,7 +160,7 @@ export function SubmissionReviewModal({
         );
       } else if (reviewAction === "rejected") {
         await notificationService.notifySubmissionRejected(
-          submission.submitted_by,
+          submission.user_id,
           submission.bounty_id,
           bounty.title,
           reviewerNotes,
@@ -272,12 +258,13 @@ export function SubmissionReviewModal({
                 {submission.user_username ? (
                   <Link href={`/bounty/profile/${submission.user_username}`}>
                     <span className="font-medium text-orange hover:text-orange/80 transition-colors cursor-pointer">
-                      {submission.user_username}
+                      {submission.user_full_name || submission.user_username}
                     </span>
                   </Link>
                 ) : (
                   <span className="font-medium text-light-charcoal">
-                    Anonymous (ID: {submission.submitted_by.substring(0, 8)}...)
+                    {submission.user_full_name ||
+                      `Anonymous (ID: ${submission.user_id.substring(0, 8)}...)`}
                   </span>
                 )}
               </div>
@@ -468,16 +455,30 @@ export function SubmissionReviewModal({
               bounty?.reward_type === "tiered" &&
               tieredRewards && (
                 <div>
-                  <label className="block text-sm font-semibold text-black dark:text-white mb-3">
+                  <label
+                    htmlFor="select_tier"
+                    className="block text-sm font-semibold text-black dark:text-white mb-2"
+                  >
                     Select Tier Placement{" "}
                     <span className="text-red-500">*</span>
                   </label>
+                  <p className="text-sm text-black dark:text-white mb-1 font-medium">
+                    This is a{" "}
+                    <span className="text-orange font-bold">
+                      {tieredRewards.length}-tier
+                    </span>{" "}
+                    bounty with a total of{" "}
+                    <span className="text-accessible-green font-bold">
+                      {bounty.reward.amount.toLocaleString()}{" "}
+                      {bounty.reward.token}
+                    </span>
+                  </p>
+                  <p className="text-xs text-light-charcoal dark:text-lightgrey mb-4">
+                    Click on a tier below to select the placement for this
+                    submission:
+                  </p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {tieredRewards.map((tier) => {
-                      const tierUSD =
-                        tier.usd_equivalent ||
-                        tier.amount *
-                          (bounty.reward.usd_equivalent / bounty.reward.amount);
                       return (
                         <button
                           key={tier.position}
@@ -488,8 +489,8 @@ export function SubmissionReviewModal({
                           }}
                           className={`p-4 border-2 rounded-lg transition-all ${
                             selectedTier === tier.position
-                              ? "border-orange bg-orange/10"
-                              : "border-border-grey dark:border-dark-charcoal hover:border-orange"
+                              ? "border-orange bg-orange/20 shadow-md"
+                              : "border-border-grey dark:border-dark-charcoal hover:border-orange bg-white dark:bg-hero-dark"
                           }`}
                         >
                           <div className="text-center">
@@ -501,21 +502,34 @@ export function SubmissionReviewModal({
                               }`}
                             >
                               {tier.position === 1
-                                ? "1st"
+                                ? "🥇 1st"
                                 : tier.position === 2
-                                  ? "2nd"
+                                  ? "🥈 2nd"
                                   : tier.position === 3
-                                    ? "3rd"
+                                    ? "🥉 3rd"
                                     : `${tier.position}th`}
                             </div>
                             <div className="text-sm font-semibold text-accessible-green">
-                              ${tierUSD.toFixed(2)} USD
+                              {tier.amount.toLocaleString()} {tier.token}
                             </div>
                           </div>
                         </button>
                       );
                     })}
                   </div>
+                  {selectedTier && (
+                    <p className="text-xs text-accessible-green mt-3 font-medium">
+                      ✓ Selected:{" "}
+                      {selectedTier === 1
+                        ? "1st"
+                        : selectedTier === 2
+                          ? "2nd"
+                          : selectedTier === 3
+                            ? "3rd"
+                            : `${selectedTier}th`}{" "}
+                      place
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -529,16 +543,17 @@ export function SubmissionReviewModal({
                   Payment Amount (ALPH) <span className="text-red-500">*</span>
                 </label>
 
-                {/* Show USD amount to pay */}
+                {/* Show token amount to pay */}
                 <div className="mb-3 p-3 bg-accessible-green/10 border border-accessible-green/20 rounded-lg">
                   <p className="text-sm text-light-charcoal dark:text-lightgrey">
                     Bounty Value:{" "}
                     <span className="font-bold text-accessible-green text-base">
-                      ${getUSDAmount().toFixed(2)} USD
+                      {getTokenAmount().amount.toLocaleString()}{" "}
+                      {getTokenAmount().token}
                     </span>
                   </p>
                   <p className="text-xs text-light-charcoal dark:text-lightgrey mt-1">
-                    Enter the amount of ALPH you are sending for this USD value
+                    Enter the amount of ALPH you are sending for this reward
                   </p>
                 </div>
 

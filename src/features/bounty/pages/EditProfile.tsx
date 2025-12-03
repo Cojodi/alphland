@@ -1,10 +1,8 @@
 "use client";
 
 import Layout from "@/components/Layout";
-import Modal from "@/components/Modal/Modal";
 import { useSession } from "@/lib/auth-client";
-import { X, Plus, Upload } from "lucide-react";
-import Image from "next/image";
+import { X, Upload } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
@@ -255,15 +253,6 @@ const SKILL_OPTIONS = [
   "Blockchain",
 ];
 
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  skills: string[];
-  subSkills: string[];
-  link: string;
-}
-
 interface FormData {
   profilePicture: File | null;
   profilePicturePreview: string | null;
@@ -285,7 +274,6 @@ interface FormData {
   web3Familiarity: string;
   workPreference: string;
   currentEmployer: string;
-  projects: Project[];
   skills: string[];
   keepPrivate: boolean;
 }
@@ -294,21 +282,10 @@ export default function EditProfile() {
   const router = useRouter();
   const { data: session } = useSession();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [newSkillInput, setNewSkillInput] = useState("");
   const [locationSearch, setLocationSearch] = useState("");
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [newProject, setNewProject] = useState<Omit<Project, "id">>({
-    title: "",
-    description: "",
-    skills: [],
-    subSkills: [],
-    link: "",
-  });
-  const [projectSkillInput, setProjectSkillInput] = useState("");
-  const [projectSubSkillInput, setProjectSubSkillInput] = useState("");
 
   const [formData, setFormData] = useState<FormData>({
     profilePicture: null,
@@ -331,7 +308,6 @@ export default function EditProfile() {
     web3Familiarity: "",
     workPreference: "",
     currentEmployer: "",
-    projects: [],
     skills: [],
     keepPrivate: false,
   });
@@ -357,7 +333,6 @@ export default function EditProfile() {
           const web3Interests = profile.web3_interests
             ? JSON.parse(profile.web3_interests)
             : [];
-          const projects = profile.projects ? JSON.parse(profile.projects) : [];
 
           // Get first_name and last_name from profile, fallback to splitting name
           let firstName = profile.first_name || "";
@@ -395,7 +370,6 @@ export default function EditProfile() {
             currentEmployer: profile.current_employer || "",
             skills,
             web3Interests,
-            projects,
           }));
 
           if (profile.location) {
@@ -551,87 +525,7 @@ export default function EditProfile() {
     country.toLowerCase().includes(locationSearch.toLowerCase()),
   );
 
-  // Project modal functions
-  const openProjectModal = () => {
-    setNewProject({
-      title: "",
-      description: "",
-      skills: [],
-      subSkills: [],
-      link: "",
-    });
-    setProjectSkillInput("");
-    setProjectSubSkillInput("");
-    setIsProjectModalOpen(true);
-  };
-
-  const addProjectSkill = (skill: string) => {
-    const trimmedSkill = skill.trim();
-    if (trimmedSkill && !newProject.skills.includes(trimmedSkill)) {
-      setNewProject((prev) => ({
-        ...prev,
-        skills: [...prev.skills, trimmedSkill],
-      }));
-    }
-    setProjectSkillInput("");
-  };
-
-  const removeProjectSkill = (skill: string) => {
-    setNewProject((prev) => ({
-      ...prev,
-      skills: prev.skills.filter((s) => s !== skill),
-    }));
-  };
-
-  const addProjectSubSkill = (skill: string) => {
-    const trimmedSkill = skill.trim();
-    if (trimmedSkill && !newProject.subSkills.includes(trimmedSkill)) {
-      setNewProject((prev) => ({
-        ...prev,
-        subSkills: [...prev.subSkills, trimmedSkill],
-      }));
-    }
-    setProjectSubSkillInput("");
-  };
-
-  const removeProjectSubSkill = (skill: string) => {
-    setNewProject((prev) => ({
-      ...prev,
-      subSkills: prev.subSkills.filter((s) => s !== skill),
-    }));
-  };
-
-  const handleAddProject = () => {
-    if (
-      !newProject.title ||
-      !newProject.description ||
-      !newProject.link ||
-      newProject.skills.length === 0 ||
-      newProject.subSkills.length === 0
-    ) {
-      alert("Please fill in all required fields");
-      return;
-    }
-    const project: Project = {
-      ...newProject,
-      id: Date.now().toString(),
-    };
-    setFormData((prev) => ({
-      ...prev,
-      projects: [...prev.projects, project],
-    }));
-    setIsProjectModalOpen(false);
-  };
-
-  const removeProject = (id: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      projects: prev.projects.filter((p) => p.id !== id),
-    }));
-  };
-
   const bioCharactersLeft = 150 - formData.bio.length;
-  const projectDescCharactersLeft = 180 - newProject.description.length;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -727,7 +621,6 @@ export default function EditProfile() {
         web3_familiarity: formData.web3Familiarity,
         skills: formData.skills,
         web3_interests: formData.web3Interests,
-        projects: formData.projects,
       };
 
       // Include image URL if uploaded
@@ -1255,75 +1148,6 @@ export default function EditProfile() {
               </div>
             </section>
 
-            {/* Proof of Work Section */}
-            <section className="bg-white dark:bg-hero-dark rounded-lg p-6 sm:p-8 border border-border-grey dark:border-dark-charcoal">
-              <h2 className="text-xl font-bold text-black dark:text-white mb-6 flex items-center gap-2">
-                <span className="w-1 h-6 bg-yellow-500 rounded-full"></span>
-                Proof of Work
-              </h2>
-
-              <p className="text-sm text-light-charcoal dark:text-lightgrey mb-4">
-                Add projects you&apos;ve worked on to showcase your experience
-              </p>
-
-              {/* Existing Projects */}
-              {formData.projects.length > 0 && (
-                <div className="space-y-4 mb-6">
-                  {formData.projects.map((project) => (
-                    <div
-                      key={project.id}
-                      className="p-4 bg-smoked-white dark:bg-light-black rounded-lg border border-border-grey dark:border-dark-charcoal"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-semibold text-black dark:text-white">
-                            {project.title}
-                          </h3>
-                          <p className="text-sm text-light-charcoal dark:text-lightgrey mt-1">
-                            {project.description}
-                          </p>
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            {project.skills.map((skill) => (
-                              <span
-                                key={skill}
-                                className="px-2 py-1 bg-orange/10 text-orange rounded text-xs"
-                              >
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                          <a
-                            href={project.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm text-orange hover:underline mt-2 inline-block"
-                          >
-                            {project.link}
-                          </a>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => removeProject(project.id)}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          <X className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <button
-                type="button"
-                onClick={openProjectModal}
-                className="flex items-center gap-2 px-4 py-2 border border-dashed border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white hover:border-orange transition-colors"
-              >
-                <Plus className="w-5 h-5" />
-                Add Project
-              </button>
-            </section>
-
             {/* Skills Section */}
             <section className="bg-white dark:bg-hero-dark rounded-lg p-6 sm:p-8 border border-border-grey dark:border-dark-charcoal">
               <h2 className="text-xl font-bold text-black dark:text-white mb-6 flex items-center gap-2">
@@ -1430,7 +1254,7 @@ export default function EditProfile() {
           </form>
 
           {/* Danger Zone - Account Deletion */}
-          <section className="bg-white dark:bg-hero-dark rounded-lg p-6 sm:p-8 border-2 border-red-200 dark:border-red-900/30 mt-8">
+          {/* <section className="bg-white dark:bg-hero-dark rounded-lg p-6 sm:p-8 border-2 border-red-200 dark:border-red-900/30 mt-8">
             <h2 className="text-xl font-bold text-red-600 dark:text-red-500 mb-4 flex items-center gap-2">
               <span className="w-1 h-6 bg-red-600 rounded-full"></span>
               Danger Zone
@@ -1462,161 +1286,9 @@ export default function EditProfile() {
             >
               Delete Account
             </button>
-          </section>
+          </section> */}
         </main>
       </div>
-
-      {/* Add Project Modal */}
-      <Modal
-        isOpen={isProjectModalOpen}
-        onClose={() => setIsProjectModalOpen(false)}
-      >
-        <div className="p-6">
-          <h3 className="text-xl font-bold text-black mb-6">Add Project</h3>
-
-          <div className="space-y-4">
-            {/* Project Title */}
-            <div>
-              <label className="block text-sm font-semibold text-black mb-2">
-                Project Title <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={newProject.title}
-                onChange={(e) =>
-                  setNewProject((prev) => ({ ...prev, title: e.target.value }))
-                }
-                placeholder="Project Title"
-                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Description */}
-            <div>
-              <label className="block text-sm font-semibold text-black mb-2">
-                Description <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                value={newProject.description}
-                onChange={(e) =>
-                  setNewProject((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
-                }
-                placeholder="Project Description"
-                rows={4}
-                maxLength={180}
-                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-black resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <p className="text-xs text-gray-500 mt-1 text-right">
-                {projectDescCharactersLeft} characters left
-              </p>
-            </div>
-
-            {/* Skills */}
-            <div>
-              <label className="block text-sm font-semibold text-black mb-2">
-                Skills <span className="text-red-500">*</span>
-              </label>
-              {newProject.skills.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {newProject.skills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-                    >
-                      {skill}
-                      <button
-                        type="button"
-                        onClick={() => removeProjectSkill(skill)}
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              )}
-              <input
-                type="text"
-                value={projectSkillInput}
-                onChange={(e) => setProjectSkillInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addProjectSkill(projectSkillInput);
-                  }
-                }}
-                placeholder="Select..."
-                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Sub Skills */}
-            <div>
-              <label className="block text-sm font-semibold text-black mb-2">
-                Sub Skills <span className="text-red-500">*</span>
-              </label>
-              {newProject.subSkills.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {newProject.subSkills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm"
-                    >
-                      {skill}
-                      <button
-                        type="button"
-                        onClick={() => removeProjectSubSkill(skill)}
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              )}
-              <input
-                type="text"
-                value={projectSubSkillInput}
-                onChange={(e) => setProjectSubSkillInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addProjectSubSkill(projectSubSkillInput);
-                  }
-                }}
-                placeholder="Select..."
-                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Link */}
-            <div>
-              <label className="block text-sm font-semibold text-black mb-2">
-                Link <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="url"
-                value={newProject.link}
-                onChange={(e) =>
-                  setNewProject((prev) => ({ ...prev, link: e.target.value }))
-                }
-                placeholder="https://example.com"
-                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Add Project Button */}
-            <button
-              type="button"
-              onClick={handleAddProject}
-              className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
-            >
-              Add Project
-            </button>
-          </div>
-        </div>
-      </Modal>
     </Layout>
   );
 }

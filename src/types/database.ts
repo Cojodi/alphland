@@ -280,11 +280,11 @@ export interface Bookmark {
 export interface ProofOfWork {
   id: string;
   user_id: string;
+  username: string;
   title: string;
   description: string;
-  category: BountyCategory;
   skills: string[]; // JSON array in DB
-  project_url: string;
+  link: string;
   created_at: number;
   updated_at: number;
 }

@@ -79,7 +79,7 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
     }
   };
 
-  const formatDate = (timestamp: string) => {
+  const formatDate = (timestamp: string | number) => {
     const date = new Date(Number(timestamp) * 1000);
     return date.toLocaleDateString("en-US", {
       year: "numeric",
@@ -194,13 +194,13 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
                     )}
                   </div>
 
-                  {submission.reviewer_notes && (
+                  {submission.feedback && (
                     <div className="mt-3 p-3 bg-smoked-white dark:bg-light-black rounded-lg">
                       <p className="text-xs font-semibold text-black dark:text-white mb-1">
                         Reviewer Notes:
                       </p>
                       <p className="text-sm text-light-charcoal dark:text-lightgrey">
-                        {submission.reviewer_notes}
+                        {submission.feedback}
                       </p>
                     </div>
                   )}
