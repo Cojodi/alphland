@@ -54,6 +54,7 @@ export default function SponsorDashboard() {
       const bountySubmission: any = {
         id: submission.id,
         bounty_id: bountyId,
+        user_id: submission.user_id,
         submitted_by: submission.user_id,
         submission_url: submission.submission_url || "",
         description: submission.description || submission.title || null,

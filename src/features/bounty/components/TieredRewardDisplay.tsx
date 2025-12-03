@@ -107,9 +107,9 @@ export function TieredRewardDisplay({
           >
             Submit Now
           </button>
-          <p className="text-xs text-light-charcoal dark:text-lightgrey text-center -mt-4">
+          {/* <p className="text-xs text-light-charcoal dark:text-lightgrey text-center -mt-4">
             * Connect wallet to submit
-          </p>
+          </p> */}
         </>
       )}
 
