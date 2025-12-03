@@ -4,5 +4,16 @@
       "source": "/api/:path*",
       "destination": "https://alphland-bounty-api.alephium.workers.dev/api/:path*"
     }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    }
   ]
 }
