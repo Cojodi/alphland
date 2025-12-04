@@ -64,33 +64,73 @@ const worker = {
       // Handle auth routes - create fresh auth instance per request
       // D1 binding is only available within request context
       if (url.pathname.startsWith("/api/auth/")) {
-        const auth = createAuth(env.DB, {
-          GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
-          GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
-          BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
-          BETTER_AUTH_URL: env.BETTER_AUTH_URL,
-          APP_URL: env.APP_URL,
-          RESEND_API_KEY: env.RESEND_API_KEY,
-          FROM_EMAIL: env.FROM_EMAIL,
-        });
+        console.log(`[AUTH] ${request.method} ${url.pathname}${url.search}`);
+        console.log(
+          `[AUTH] GOOGLE_CLIENT_ID: ${env.GOOGLE_CLIENT_ID ? "SET" : "NOT SET"}`,
+        );
+        console.log(
+          `[AUTH] GOOGLE_CLIENT_SECRET: ${env.GOOGLE_CLIENT_SECRET ? "SET" : "NOT SET"}`,
+        );
+        console.log(`[AUTH] BETTER_AUTH_URL: ${env.BETTER_AUTH_URL}`);
 
-        // Handle auth endpoints using better-auth
-        const response = await auth.handler(request);
-
-        // Add CORS headers to auth responses (for non-redirect responses)
-        if (response.status < 300 || response.status >= 400) {
-          const newHeaders = new Headers(response.headers);
-          Object.entries(corsHeaders).forEach(([key, value]) => {
-            newHeaders.set(key, value);
+        try {
+          const auth = createAuth(env.DB, {
+            GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
+            GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
+            BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
+            BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+            APP_URL: env.APP_URL,
+            RESEND_API_KEY: env.RESEND_API_KEY,
+            FROM_EMAIL: env.FROM_EMAIL,
           });
-          return new Response(response.body, {
+
+          console.log("[AUTH] Auth instance created successfully");
+
+          // Handle auth endpoints using better-auth
+          const response = await auth.handler(request);
+          console.log(`[AUTH] Response status: ${response.status}`);
+          console.log(
+            `[AUTH] Response headers:`,
+            Object.fromEntries(response.headers),
+          );
+
+          const responseText = await response.text();
+          console.log(`[AUTH] Response body:`, responseText.substring(0, 200));
+
+          // Add CORS headers to auth responses (for non-redirect responses)
+          if (response.status < 300 || response.status >= 400) {
+            const newHeaders = new Headers(response.headers);
+            Object.entries(corsHeaders).forEach(([key, value]) => {
+              newHeaders.set(key, value);
+            });
+            return new Response(responseText, {
+              status: response.status,
+              statusText: response.statusText,
+              headers: newHeaders,
+            });
+          }
+
+          // Return response with original body for redirects
+          return new Response(responseText, {
             status: response.status,
             statusText: response.statusText,
-            headers: newHeaders,
+            headers: response.headers,
           });
+        } catch (authError) {
+          console.error("[AUTH] Error handling auth request:", authError);
+          const errorMessage =
+            authError instanceof Error ? authError.message : "Unknown error";
+          return new Response(
+            JSON.stringify({
+              error: "Auth handler error",
+              details: errorMessage,
+            }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
         }
-
-        return response;
       }
 
       // Health check endpoint

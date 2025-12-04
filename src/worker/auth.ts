@@ -131,9 +131,9 @@ export function createAuth(db: D1Database, env: AuthEnv) {
 
     socialProviders: {
       google: {
-        clientId: env.GOOGLE_CLIENT_ID || "",
-        clientSecret: env.GOOGLE_CLIENT_SECRET || "",
-        redirectURI: `${publicUrl}/api/auth/callback/google`,
+        clientId: env.GOOGLE_CLIENT_ID!,
+        clientSecret: env.GOOGLE_CLIENT_SECRET!,
+        enabled: !!(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET),
       },
     },
 
@@ -148,6 +148,15 @@ export function createAuth(db: D1Database, env: AuthEnv) {
     baseURL: publicUrl,
     secret: env.BETTER_AUTH_SECRET,
     trustedOrigins: [publicUrl],
+
+    // TODO: Re-enable account settings when we have a real production domain
+    // Currently commented out to avoid cookie/state issues in preview domains
+    // account: {
+    //   accountLinking: {
+    //     enabled: true,
+    //   },
+    //   skipStateCookieCheck: true, // Skip state cookie check for Vercel preview domains
+    // },
 
     advanced: {
       database: {
