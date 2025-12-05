@@ -457,8 +457,11 @@ async function handleBountiesAPI(
         usd_equivalent: body.reward_usd_value || 0,
       });
 
-      // Normalize category to lowercase for CHECK constraint
+      // Normalize category and difficulty_level to lowercase for CHECK constraint
       const category = body.category ? body.category.toLowerCase() : null;
+      const difficulty_level = body.difficulty_level
+        ? body.difficulty_level.toLowerCase()
+        : null;
 
       await env.DB.prepare(
         `
@@ -466,10 +469,10 @@ async function handleBountiesAPI(
           id, sponsor_id, title, description,
           requirements, deliverables, skills,
           reward, reward_type, reward_usd_value, tier_count,
-          category, dapp_name,
+          category, difficulty_level, dapp_name,
           start_date, end_date,
           status, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       )
         .bind(
@@ -485,6 +488,7 @@ async function handleBountiesAPI(
           body.reward_usd_value || 0,
           body.tier_count || 5,
           category,
+          difficulty_level,
           body.dapp_name || null,
           body.start_date,
           body.end_date,

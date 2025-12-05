@@ -8,6 +8,7 @@ interface BountyFormData {
   title: string;
   description: string;
   category: string;
+  difficulty_level: string;
   requirements: string[];
   deliverables: string[];
   skills: string[];
@@ -31,6 +32,7 @@ export default function ManualCreateBounty() {
     title: "",
     description: "",
     category: "Content",
+    difficulty_level: "intermediate",
     requirements: [""],
     deliverables: [""],
     skills: [""],
@@ -166,6 +168,23 @@ export default function ManualCreateBounty() {
   }
 
   const categories = ["Content", "Design", "Development", "Other"];
+  const difficultyLevels = [
+    {
+      value: "beginner",
+      label: "Beginner",
+      description: "Suitable for newcomers",
+    },
+    {
+      value: "intermediate",
+      label: "Intermediate",
+      description: "Requires some experience",
+    },
+    {
+      value: "advanced",
+      label: "Advanced",
+      description: "For experienced developers",
+    },
+  ];
 
   return (
     <Layout title="Create Bounty - Alphland">
@@ -226,7 +245,7 @@ export default function ManualCreateBounty() {
                 />
               </div>
 
-              {/* Category and DApp Name */}
+              {/* Category, Difficulty Level and DApp Name */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
@@ -249,17 +268,37 @@ export default function ManualCreateBounty() {
 
                 <div>
                   <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
-                    DApp Name (Optional)
+                    Difficulty Level *
                   </label>
-                  <input
-                    type="text"
-                    name="dapp_name"
-                    value={formData.dapp_name}
+                  <select
+                    name="difficulty_level"
+                    value={formData.difficulty_level}
                     onChange={handleInputChange}
-                    placeholder="e.g., AlphDeFi"
+                    required
                     className="w-full px-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
-                  />
+                  >
+                    {difficultyLevels.map((level) => (
+                      <option key={level.value} value={level.value}>
+                        {level.label} - {level.description}
+                      </option>
+                    ))}
+                  </select>
                 </div>
+              </div>
+
+              {/* DApp Name */}
+              <div>
+                <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
+                  DApp Name (Optional)
+                </label>
+                <input
+                  type="text"
+                  name="dapp_name"
+                  value={formData.dapp_name}
+                  onChange={handleInputChange}
+                  placeholder="e.g., AlphDeFi"
+                  className="w-full px-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
+                />
               </div>
             </div>
 
