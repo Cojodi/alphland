@@ -598,24 +598,33 @@ export async function handleSponsorsAPI(
     const id = crypto.randomUUID();
     const now = Math.floor(Date.now() / 1000);
 
-    // Use the actual production database schema columns
-    // The production database uses: website_url, twitter_handle, discord_url, github_handle
     await env.DB.prepare(
       `INSERT INTO sponsors (
-        id, user_id, name, description,
-        logo_url, website_url, twitter_handle, discord_url,
-        created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        id, user_id, name, username, description, entity_name, industry,
+        logo_url, website, twitter, discord, telegram, wallet_address,
+        contact_first_name, contact_last_name, contact_username, contact_telegram,
+        status, approved_at, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?, ?, ?)`,
     )
       .bind(
         id,
         body.user_id,
         body.name,
+        body.username || null,
         body.description || null,
+        body.entity_name || null,
+        body.industry || null,
         body.logo_url || null,
         body.website || null,
         body.twitter || null,
         body.discord || null,
+        body.telegram || null,
+        body.wallet_address || null,
+        body.contact_first_name || null,
+        body.contact_last_name || null,
+        body.contact_username || null,
+        body.contact_telegram || null,
+        now, // approved_at
         now, // created_at
         now, // updated_at
       )
@@ -721,15 +730,16 @@ export async function handleSponsorsAPI(
     const body = (await request.json()) as any;
     const now = Math.floor(Date.now() / 1000);
 
-    // Use production schema column names
     await env.DB.prepare(
       `UPDATE sponsors
        SET name = COALESCE(?, name),
            description = COALESCE(?, description),
            logo_url = COALESCE(?, logo_url),
-           website_url = COALESCE(?, website_url),
-           twitter_handle = COALESCE(?, twitter_handle),
-           discord_url = COALESCE(?, discord_url),
+           website = COALESCE(?, website),
+           twitter = COALESCE(?, twitter),
+           discord = COALESCE(?, discord),
+           telegram = COALESCE(?, telegram),
+           wallet_address = COALESCE(?, wallet_address),
            updated_at = ?
        WHERE id = ?`,
     )
@@ -740,6 +750,8 @@ export async function handleSponsorsAPI(
         body.website || null,
         body.twitter || null,
         body.discord || null,
+        body.telegram || null,
+        body.wallet_address || null,
         now,
         id,
       )
