@@ -457,6 +457,9 @@ async function handleBountiesAPI(
         usd_equivalent: body.reward_usd_value || 0,
       });
 
+      // Normalize category to lowercase for CHECK constraint
+      const category = body.category ? body.category.toLowerCase() : null;
+
       await env.DB.prepare(
         `
         INSERT INTO bounties (
@@ -481,7 +484,7 @@ async function handleBountiesAPI(
           body.reward_type || "fixed",
           body.reward_usd_value || 0,
           body.tier_count || 5,
-          body.category,
+          category,
           body.dapp_name || null,
           body.start_date,
           body.end_date,
