@@ -681,20 +681,9 @@ export async function handleSponsorsAPI(
 
     // Get submissions for all bounties by this sponsor
     const { results: submissions } = await env.DB.prepare(
-      `SELECT s.*,
-              s.submitted_by as user_id,
-              b.title as bounty_name,
-              b.sponsor_id,
-              up.username as user_username,
-              u.name as user_name,
-              u.name as user_full_name,
-              u.image as user_avatar_url
-       FROM bounty_submissions s
-       JOIN bounties b ON s.bounty_id = b.id
-       LEFT JOIN user u ON s.submitted_by = u.id
-       LEFT JOIN user_profiles up ON u.id = up.user_id
-       WHERE b.sponsor_id = ?
-       ORDER BY s.created_at DESC`,
+      `SELECT * FROM bounty_submissions
+       WHERE sponsor_id = ?
+       ORDER BY created_at DESC`,
     )
       .bind(id)
       .all();
@@ -703,7 +692,7 @@ export async function handleSponsorsAPI(
     const total_bounties_count = bounties.length;
     const total_projects_count = 0; // TODO: Implement projects
     const total_reward_amount = bounties.reduce(
-      (sum: number, b: any) => sum + (parseFloat(b.reward_amount) || 0),
+      (sum: number, b: any) => sum + (parseFloat(b.reward_usd_value) || 0),
       0,
     );
 
