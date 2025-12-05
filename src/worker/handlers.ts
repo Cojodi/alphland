@@ -598,81 +598,28 @@ export async function handleSponsorsAPI(
     const id = crypto.randomUUID();
     const now = Math.floor(Date.now() / 1000);
 
-    // Check if is_banned column exists
-    let hasNewColumns = false;
-    try {
-      await env.DB.prepare(`SELECT is_banned FROM sponsors LIMIT 1`).first();
-      hasNewColumns = true;
-    } catch {
-      hasNewColumns = false;
-    }
-
-    if (hasNewColumns) {
-      await env.DB.prepare(
-        `INSERT INTO sponsors (
-          id, user_id, name, username, description, entity_name, industry,
-          logo_url, website, twitter, discord, telegram, wallet_address,
-          contact_first_name, contact_last_name, contact_username, contact_telegram,
-          status, approved_at, is_banned, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?, 0, ?, ?)`,
+    // Use the actual production database schema columns
+    // The production database uses: website_url, twitter_handle, discord_url, github_handle
+    await env.DB.prepare(
+      `INSERT INTO sponsors (
+        id, user_id, name, description,
+        logo_url, website_url, twitter_handle, discord_url,
+        created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+      .bind(
+        id,
+        body.user_id,
+        body.name,
+        body.description || null,
+        body.logo_url || null,
+        body.website || null,
+        body.twitter || null,
+        body.discord || null,
+        now, // created_at
+        now, // updated_at
       )
-        .bind(
-          id,
-          body.user_id,
-          body.name,
-          body.username || null,
-          body.description || null,
-          body.entity_name || null,
-          body.industry || null,
-          body.logo_url || null,
-          body.website || null,
-          body.twitter || null,
-          body.discord || null,
-          body.telegram || null,
-          body.wallet_address || null,
-          body.contact_first_name || null,
-          body.contact_last_name || null,
-          body.contact_username || null,
-          body.contact_telegram || null,
-          now, // approved_at
-          now, // created_at
-          now, // updated_at
-        )
-        .run();
-    } else {
-      // Legacy insert without is_banned column
-      await env.DB.prepare(
-        `INSERT INTO sponsors (
-          id, user_id, name, username, description, entity_name, industry,
-          logo_url, website, twitter, discord, telegram, wallet_address,
-          contact_first_name, contact_last_name, contact_username, contact_telegram,
-          status, approved_at, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?, ?, ?)`,
-      )
-        .bind(
-          id,
-          body.user_id,
-          body.name,
-          body.username || null,
-          body.description || null,
-          body.entity_name || null,
-          body.industry || null,
-          body.logo_url || null,
-          body.website || null,
-          body.twitter || null,
-          body.discord || null,
-          body.telegram || null,
-          body.wallet_address || null,
-          body.contact_first_name || null,
-          body.contact_last_name || null,
-          body.contact_username || null,
-          body.contact_telegram || null,
-          now, // approved_at
-          now, // created_at
-          now, // updated_at
-        )
-        .run();
-    }
+      .run();
 
     // Try to update user's is_sponsor flag (may fail if columns don't exist)
     try {
@@ -774,16 +721,15 @@ export async function handleSponsorsAPI(
     const body = (await request.json()) as any;
     const now = Math.floor(Date.now() / 1000);
 
+    // Use production schema column names
     await env.DB.prepare(
       `UPDATE sponsors
        SET name = COALESCE(?, name),
            description = COALESCE(?, description),
            logo_url = COALESCE(?, logo_url),
-           website = COALESCE(?, website),
-           twitter = COALESCE(?, twitter),
-           discord = COALESCE(?, discord),
-           telegram = COALESCE(?, telegram),
-           wallet_address = COALESCE(?, wallet_address),
+           website_url = COALESCE(?, website_url),
+           twitter_handle = COALESCE(?, twitter_handle),
+           discord_url = COALESCE(?, discord_url),
            updated_at = ?
        WHERE id = ?`,
     )
@@ -794,8 +740,6 @@ export async function handleSponsorsAPI(
         body.website || null,
         body.twitter || null,
         body.discord || null,
-        body.telegram || null,
-        body.wallet_address || null,
         now,
         id,
       )
@@ -810,335 +754,8 @@ export async function handleSponsorsAPI(
     });
   }
 
-  // PUT /api/sponsors/:id/approve - Approve sponsor
-  if (
-    request.method === "PUT" &&
-    pathname.match(/^\/api\/sponsors\/[^/]+\/approve$/)
-  ) {
-    const id = pathname.split("/").slice(-2)[0];
-    const now = Math.floor(Date.now() / 1000);
-
-    await env.DB.prepare(
-      `UPDATE sponsors
-       SET status = 'approved',
-           approved_at = ?,
-           rejected_at = NULL,
-           rejection_reason = NULL,
-           updated_at = ?
-       WHERE id = ?`,
-    )
-      .bind(now, now, id)
-      .run();
-
-    const sponsor = await env.DB.prepare(`SELECT * FROM sponsors WHERE id = ?`)
-      .bind(id)
-      .first();
-
-    if (!sponsor) {
-      return new Response(JSON.stringify({ error: "Sponsor not found" }), {
-        status: 404,
-        headers: corsHeaders,
-      });
-    }
-
-    return new Response(JSON.stringify({ sponsor }), {
-      headers: corsHeaders,
-    });
-  }
-
-  // PUT /api/sponsors/:id/reject - Reject sponsor
-  if (
-    request.method === "PUT" &&
-    pathname.match(/^\/api\/sponsors\/[^/]+\/reject$/)
-  ) {
-    const id = pathname.split("/").slice(-2)[0];
-    const body = (await request.json()) as any;
-    const now = Math.floor(Date.now() / 1000);
-
-    await env.DB.prepare(
-      `UPDATE sponsors
-       SET status = 'rejected',
-           rejected_at = ?,
-           rejection_reason = ?,
-           approved_at = NULL,
-           updated_at = ?
-       WHERE id = ?`,
-    )
-      .bind(now, body.reason || null, now, id)
-      .run();
-
-    const sponsor = await env.DB.prepare(`SELECT * FROM sponsors WHERE id = ?`)
-      .bind(id)
-      .first();
-
-    if (!sponsor) {
-      return new Response(JSON.stringify({ error: "Sponsor not found" }), {
-        status: 404,
-        headers: corsHeaders,
-      });
-    }
-
-    return new Response(JSON.stringify({ sponsor }), {
-      headers: corsHeaders,
-    });
-  }
-
-  // PUT /api/sponsors/:id/ban - Ban sponsor
-  if (
-    request.method === "PUT" &&
-    pathname.match(/^\/api\/sponsors\/[^/]+\/ban$/)
-  ) {
-    const id = pathname.split("/").slice(-2)[0];
-    const now = Math.floor(Date.now() / 1000);
-
-    // Get sponsor to find user_id
-    const sponsor = (await env.DB.prepare(`SELECT * FROM sponsors WHERE id = ?`)
-      .bind(id)
-      .first()) as any;
-
-    if (!sponsor) {
-      return new Response(JSON.stringify({ error: "Sponsor not found" }), {
-        status: 404,
-        headers: corsHeaders,
-      });
-    }
-
-    // Check if is_banned column exists
-    let hasNewColumns = false;
-    try {
-      await env.DB.prepare(`SELECT is_banned FROM sponsors LIMIT 1`).first();
-      hasNewColumns = true;
-    } catch {
-      hasNewColumns = false;
-    }
-
-    if (!hasNewColumns) {
-      return new Response(
-        JSON.stringify({
-          error:
-            "Ban feature requires database migration. Please run: sql/d1/15_sponsor_ban_fields.sql",
-        }),
-        {
-          status: 400,
-          headers: corsHeaders,
-        },
-      );
-    }
-
-    // Ban the sponsor
-    await env.DB.prepare(
-      `UPDATE sponsors
-       SET is_banned = 1,
-           banned_at = ?,
-           updated_at = ?
-       WHERE id = ?`,
-    )
-      .bind(now, now, id)
-      .run();
-
-    // Also ban the user (set is_banned on user table)
-    try {
-      await env.DB.prepare(`UPDATE user SET is_banned = 1 WHERE id = ?`)
-        .bind(sponsor.user_id)
-        .run();
-    } catch {
-      // User columns don't exist yet
-    }
-
-    const updatedSponsor = await env.DB.prepare(
-      `SELECT * FROM sponsors WHERE id = ?`,
-    )
-      .bind(id)
-      .first();
-
-    return new Response(JSON.stringify({ sponsor: updatedSponsor }), {
-      headers: corsHeaders,
-    });
-  }
-
-  // PUT /api/sponsors/:id/unban - Unban sponsor
-  if (
-    request.method === "PUT" &&
-    pathname.match(/^\/api\/sponsors\/[^/]+\/unban$/)
-  ) {
-    const id = pathname.split("/").slice(-2)[0];
-    const now = Math.floor(Date.now() / 1000);
-
-    // Get sponsor to find user_id
-    const sponsor = (await env.DB.prepare(`SELECT * FROM sponsors WHERE id = ?`)
-      .bind(id)
-      .first()) as any;
-
-    if (!sponsor) {
-      return new Response(JSON.stringify({ error: "Sponsor not found" }), {
-        status: 404,
-        headers: corsHeaders,
-      });
-    }
-
-    // Check if is_banned column exists
-    let hasNewColumns = false;
-    try {
-      await env.DB.prepare(`SELECT is_banned FROM sponsors LIMIT 1`).first();
-      hasNewColumns = true;
-    } catch {
-      hasNewColumns = false;
-    }
-
-    if (!hasNewColumns) {
-      return new Response(
-        JSON.stringify({
-          error:
-            "Unban feature requires database migration. Please run: sql/d1/15_sponsor_ban_fields.sql",
-        }),
-        {
-          status: 400,
-          headers: corsHeaders,
-        },
-      );
-    }
-
-    // Unban the sponsor
-    await env.DB.prepare(
-      `UPDATE sponsors
-       SET is_banned = 0,
-           banned_at = NULL,
-           updated_at = ?
-       WHERE id = ?`,
-    )
-      .bind(now, id)
-      .run();
-
-    // Also unban the user
-    try {
-      await env.DB.prepare(`UPDATE user SET is_banned = 0 WHERE id = ?`)
-        .bind(sponsor.user_id)
-        .run();
-    } catch {
-      // User columns don't exist yet
-    }
-
-    const updatedSponsor = await env.DB.prepare(
-      `SELECT * FROM sponsors WHERE id = ?`,
-    )
-      .bind(id)
-      .first();
-
-    return new Response(JSON.stringify({ sponsor: updatedSponsor }), {
-      headers: corsHeaders,
-    });
-  }
-
-  // PUT /api/sponsors/:id/verify - Verify sponsor
-  if (
-    request.method === "PUT" &&
-    pathname.match(/^\/api\/sponsors\/[^/]+\/verify$/)
-  ) {
-    const id = pathname.split("/").slice(-2)[0];
-    const now = Math.floor(Date.now() / 1000);
-
-    // Check if is_verified column exists
-    let hasVerifiedColumn = false;
-    try {
-      await env.DB.prepare(`SELECT is_verified FROM sponsors LIMIT 1`).first();
-      hasVerifiedColumn = true;
-    } catch {
-      hasVerifiedColumn = false;
-    }
-
-    if (!hasVerifiedColumn) {
-      return new Response(
-        JSON.stringify({
-          error:
-            "Verify feature requires database migration. Please add is_verified column to sponsors table.",
-        }),
-        {
-          status: 400,
-          headers: corsHeaders,
-        },
-      );
-    }
-
-    await env.DB.prepare(
-      `UPDATE sponsors
-       SET is_verified = 1,
-           updated_at = ?
-       WHERE id = ?`,
-    )
-      .bind(now, id)
-      .run();
-
-    const sponsor = await env.DB.prepare(`SELECT * FROM sponsors WHERE id = ?`)
-      .bind(id)
-      .first();
-
-    return new Response(JSON.stringify({ sponsor }), {
-      headers: corsHeaders,
-    });
-  }
-
-  // PUT /api/sponsors/:id/unverify - Unverify sponsor
-  if (
-    request.method === "PUT" &&
-    pathname.match(/^\/api\/sponsors\/[^/]+\/unverify$/)
-  ) {
-    const id = pathname.split("/").slice(-2)[0];
-    const now = Math.floor(Date.now() / 1000);
-
-    // Check if is_verified column exists
-    let hasVerifiedColumn = false;
-    try {
-      await env.DB.prepare(`SELECT is_verified FROM sponsors LIMIT 1`).first();
-      hasVerifiedColumn = true;
-    } catch {
-      hasVerifiedColumn = false;
-    }
-
-    if (!hasVerifiedColumn) {
-      return new Response(
-        JSON.stringify({
-          error:
-            "Unverify feature requires database migration. Please add is_verified column to sponsors table.",
-        }),
-        {
-          status: 400,
-          headers: corsHeaders,
-        },
-      );
-    }
-
-    await env.DB.prepare(
-      `UPDATE sponsors
-       SET is_verified = 0,
-           updated_at = ?
-       WHERE id = ?`,
-    )
-      .bind(now, id)
-      .run();
-
-    const sponsor = await env.DB.prepare(`SELECT * FROM sponsors WHERE id = ?`)
-      .bind(id)
-      .first();
-
-    return new Response(JSON.stringify({ sponsor }), {
-      headers: corsHeaders,
-    });
-  }
-
   // GET /api/sponsors - List all sponsors (for admin)
   if (request.method === "GET" && pathname === "/api/sponsors") {
-    const isBanned = url.searchParams.get("is_banned");
-    const status = url.searchParams.get("status");
-
-    // Check if is_banned column exists
-    let hasIsBannedColumn = false;
-    try {
-      await env.DB.prepare(`SELECT is_banned FROM sponsors LIMIT 1`).first();
-      hasIsBannedColumn = true;
-    } catch {
-      hasIsBannedColumn = false;
-    }
-
     let query = `SELECT s.*, b.bounty_count
                  FROM sponsors s
                  LEFT JOIN (
@@ -1146,29 +763,10 @@ export async function handleSponsorsAPI(
                    FROM bounties
                    GROUP BY sponsor_id
                  ) b ON s.id = b.sponsor_id`;
-    const params: (string | number)[] = [];
-    const conditions: string[] = [];
-
-    // Only filter by is_banned if column exists
-    if (isBanned !== null && hasIsBannedColumn) {
-      conditions.push(`s.is_banned = ?`);
-      params.push(isBanned === "true" ? 1 : 0);
-    }
-
-    if (status) {
-      conditions.push(`s.status = ?`);
-      params.push(status);
-    }
-
-    if (conditions.length > 0) {
-      query += ` WHERE ${conditions.join(" AND ")}`;
-    }
 
     query += ` ORDER BY s.created_at DESC`;
 
-    const stmt = env.DB.prepare(query);
-    const { results } =
-      params.length > 0 ? await stmt.bind(...params).all() : await stmt.all();
+    const { results } = await env.DB.prepare(query).all();
 
     return new Response(JSON.stringify({ sponsors: results }), {
       headers: corsHeaders,
