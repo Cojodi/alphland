@@ -27,14 +27,14 @@ export async function handleSubmissionsAPI(
 
     await env.DB.prepare(
       `INSERT INTO bounty_submissions (
-        id, bounty_id, submitted_by, submission_url, description,
+        id, bounty_id, user_id, submission_url, description,
         status, created_at, updated_at
       ) VALUES (?, ?, ?, ?, ?, 'pending', ?, ?)`,
     )
       .bind(
         id,
         body.bounty_id,
-        body.submitted_by,
+        body.submitted_by || body.user_id,
         body.submission_url,
         body.description || null,
         now,
@@ -90,7 +90,7 @@ export async function handleSubmissionsAPI(
       `SELECT s.*, b.title as bounty_title
        FROM bounty_submissions s
        JOIN bounties b ON s.bounty_id = b.id
-       WHERE s.submitted_by = ?
+       WHERE s.user_id = ?
        ORDER BY s.created_at DESC`,
     )
       .bind(userId)
@@ -110,13 +110,12 @@ export async function handleSubmissionsAPI(
 
     const { results } = await env.DB.prepare(
       `SELECT s.*,
-              s.submitted_by as user_id,
               up.username as user_username,
               u.name as user_full_name,
               u.image as user_avatar_url
        FROM bounty_submissions s
-       LEFT JOIN user u ON s.submitted_by = u.id
-       LEFT JOIN user_profiles up ON s.submitted_by = up.user_id
+       LEFT JOIN user u ON s.user_id = u.id
+       LEFT JOIN user_profiles up ON s.user_id = up.user_id
        WHERE s.bounty_id = ?
        ORDER BY s.created_at DESC`,
     )
@@ -137,7 +136,6 @@ export async function handleSubmissionsAPI(
 
     const { results } = await env.DB.prepare(
       `SELECT s.*,
-              s.submitted_by as user_id,
               b.title as bounty_title,
               b.title as bounty_name,
               b.sponsor_id,
@@ -149,8 +147,8 @@ export async function handleSubmissionsAPI(
        FROM bounty_submissions s
        JOIN bounties b ON s.bounty_id = b.id
        LEFT JOIN sponsors sp ON b.sponsor_id = sp.id
-       LEFT JOIN user u ON s.submitted_by = u.id
-       LEFT JOIN user_profiles up ON s.submitted_by = up.user_id
+       LEFT JOIN user u ON s.user_id = u.id
+       LEFT JOIN user_profiles up ON s.user_id = up.user_id
        WHERE b.sponsor_id = ?
        ORDER BY s.created_at DESC`,
     )
@@ -174,17 +172,19 @@ export async function handleSubmissionsAPI(
     await env.DB.prepare(
       `UPDATE bounty_submissions
        SET status = ?,
-           reviewer_notes = ?,
+           feedback = ?,
            transaction_hash = ?,
-           reviewed_at = ?,
+           review_started_at = ?,
+           completed_at = ?,
            updated_at = ?
        WHERE id = ?`,
     )
       .bind(
         body.status,
-        body.reviewer_notes || null,
+        body.reviewer_notes || body.feedback || null,
         body.transaction_hash || null,
-        now,
+        body.status === "in_review" ? now : null,
+        body.status === "approved" || body.status === "rejected" ? now : null,
         now,
         id,
       )
@@ -1202,7 +1202,7 @@ export async function handleNotificationsAPI(
 
     let query = `SELECT * FROM notifications WHERE user_id = ?`;
     if (unreadOnly) {
-      query += ` AND read = 0`;
+      query += ` AND is_read = 0`;
     }
     query += ` ORDER BY created_at DESC LIMIT ?`;
 
@@ -1210,7 +1210,7 @@ export async function handleNotificationsAPI(
 
     // Get unread count
     const unreadCount = await env.DB.prepare(
-      `SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND read = 0`,
+      `SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = 0`,
     )
       .bind(userId)
       .first();
@@ -1254,8 +1254,8 @@ export async function handleNotificationsAPI(
 
     await env.DB.prepare(
       `INSERT INTO notifications (
-        id, user_id, type, title, message, link, read, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, 0, ?)`,
+        id, user_id, type, title, message, related_bounty_id, related_submission_id, is_read, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)`,
     )
       .bind(
         id,
@@ -1263,7 +1263,8 @@ export async function handleNotificationsAPI(
         body.type,
         body.title,
         body.message,
-        body.link || null,
+        body.related_bounty_id || null,
+        body.related_submission_id || null,
         now,
       )
       .run();
@@ -1287,8 +1288,11 @@ export async function handleNotificationsAPI(
   ) {
     const id = pathname.split("/").slice(-2)[0];
 
-    await env.DB.prepare(`UPDATE notifications SET read = 1 WHERE id = ?`)
-      .bind(id)
+    const now = Math.floor(Date.now() / 1000);
+    await env.DB.prepare(
+      `UPDATE notifications SET is_read = 1, read_at = ? WHERE id = ?`,
+    )
+      .bind(now, id)
       .run();
 
     return new Response(JSON.stringify({ success: true }), {
@@ -1303,8 +1307,11 @@ export async function handleNotificationsAPI(
   ) {
     const userId = pathname.split("/").slice(-2)[0];
 
-    await env.DB.prepare(`UPDATE notifications SET read = 1 WHERE user_id = ?`)
-      .bind(userId)
+    const now = Math.floor(Date.now() / 1000);
+    await env.DB.prepare(
+      `UPDATE notifications SET is_read = 1, read_at = ? WHERE user_id = ?`,
+    )
+      .bind(now, userId)
       .run();
 
     return new Response(JSON.stringify({ success: true }), {
@@ -1637,8 +1644,9 @@ export async function handleBookmarksAPI(
           b.bounty_id,
           b.created_at,
           bo.title,
-          bo.reward_amount,
-          bo.reward_currency,
+          bo.reward,
+          bo.reward_type,
+          bo.reward_usd_value,
           bo.status,
           bo.end_date,
           s.name as sponsor_name,
@@ -2382,10 +2390,23 @@ export async function handleProofOfWorkAPI(
   ) {
     const username = pathname.split("/").pop();
 
-    const { results } = await env.DB.prepare(
-      `SELECT * FROM proof_of_work WHERE username = ? ORDER BY created_at DESC`,
+    // First, find user_id from username
+    const userProfile = await env.DB.prepare(
+      `SELECT user_id FROM user_profiles WHERE username = ?`,
     )
       .bind(username)
+      .first();
+
+    if (!userProfile) {
+      return new Response(JSON.stringify({ works: [] }), {
+        headers: corsHeaders,
+      });
+    }
+
+    const { results } = await env.DB.prepare(
+      `SELECT * FROM proof_of_work WHERE user_id = ? ORDER BY created_at DESC`,
+    )
+      .bind(userProfile.user_id)
       .all();
 
     // Parse skills JSON
@@ -2407,11 +2428,10 @@ export async function handleProofOfWorkAPI(
       // Validate required fields
       if (
         !body.user_id ||
-        !body.username ||
         !body.title ||
         !body.description ||
         !body.skills ||
-        !body.link
+        !body.project_url
       ) {
         return new Response(
           JSON.stringify({ error: "Missing required fields" }),
@@ -2427,17 +2447,17 @@ export async function handleProofOfWorkAPI(
 
       await env.DB.prepare(
         `INSERT INTO proof_of_work (
-          id, user_id, username, title, description, skills, link, created_at, updated_at
+          id, user_id, title, description, category, skills, project_url, created_at, updated_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
         .bind(
           id,
           body.user_id,
-          body.username,
           body.title,
           body.description,
+          body.category || null,
           JSON.stringify(body.skills),
-          body.link,
+          body.project_url,
           now,
           now,
         )

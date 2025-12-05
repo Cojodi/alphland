@@ -65,16 +65,50 @@ export default function CreateSponsorProfile() {
     company_bio: "",
   });
 
-  // Pre-fill user data from session
+  // Pre-fill user data from session and profile
   useEffect(() => {
-    if (session?.user) {
-      const nameParts = (session.user.name || "").split(" ");
-      setFormData((prev) => ({
-        ...prev,
-        first_name: nameParts[0] || "",
-        last_name: nameParts.slice(1).join(" ") || "",
-      }));
-    }
+    const fetchUserProfile = async () => {
+      if (session?.user) {
+        try {
+          // Fetch user profile to get username
+          const response = await fetch("/api/users/me");
+          if (response.ok) {
+            const data = await response.json();
+            const profile = data.user;
+
+            setFormData((prev) => ({
+              ...prev,
+              first_name:
+                profile?.first_name || session.user.name?.split(" ")[0] || "",
+              last_name:
+                profile?.last_name ||
+                session.user.name?.split(" ").slice(1).join(" ") ||
+                "",
+              username: profile?.username || "",
+            }));
+          } else {
+            // Fallback to session data only
+            const nameParts = (session.user.name || "").split(" ");
+            setFormData((prev) => ({
+              ...prev,
+              first_name: nameParts[0] || "",
+              last_name: nameParts.slice(1).join(" ") || "",
+            }));
+          }
+        } catch (error) {
+          console.error("Failed to fetch user profile:", error);
+          // Fallback to session data only
+          const nameParts = (session.user.name || "").split(" ");
+          setFormData((prev) => ({
+            ...prev,
+            first_name: nameParts[0] || "",
+            last_name: nameParts.slice(1).join(" ") || "",
+          }));
+        }
+      }
+    };
+
+    fetchUserProfile();
   }, [session]);
 
   const handleDrag = (e: React.DragEvent) => {

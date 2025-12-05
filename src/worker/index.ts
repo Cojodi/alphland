@@ -187,7 +187,7 @@ const worker = {
               u.image as avatar_url,
               COUNT(s.id) as submission_count
             FROM bounty_submissions s
-            JOIN user u ON s.submitted_by = u.id
+            JOIN user u ON s.user_id = u.id
             LEFT JOIN user_profiles up ON u.id = up.user_id
             WHERE s.created_at >= ?
             GROUP BY u.id, u.name, u.image, up.username
@@ -450,16 +450,23 @@ async function handleBountiesAPI(
       const deliverables = JSON.stringify(body.deliverables || []);
       const skills = JSON.stringify(body.skills || []);
 
+      // Build reward JSON
+      const reward = JSON.stringify({
+        token: body.reward_currency || "ALPH",
+        amount: body.reward_amount || 0,
+        usd_equivalent: body.reward_usd_value || 0,
+      });
+
       await env.DB.prepare(
         `
         INSERT INTO bounties (
           id, sponsor_id, title, description,
           requirements, deliverables, skills,
-          reward_amount, reward_currency, reward_type, tier_count,
+          reward, reward_type, reward_usd_value, tier_count,
           category, dapp_name,
           start_date, end_date,
-          status, created_by, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          status, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       )
         .bind(
@@ -470,16 +477,15 @@ async function handleBountiesAPI(
           requirements,
           deliverables,
           skills,
-          body.reward_amount,
-          body.reward_currency || "ALPH",
+          reward,
           body.reward_type || "fixed",
+          body.reward_usd_value || 0,
           body.tier_count || 5,
           body.category,
           body.dapp_name || null,
           body.start_date,
           body.end_date,
           "open",
-          created_by,
           now,
           now,
         )
@@ -496,13 +502,16 @@ async function handleBountiesAPI(
           "SELECT * FROM bounty_overview WHERE id = 1",
         ).first();
 
-        if (overview) {
-          // Calculate new totals
-          const rewardUsd =
-            body.reward_currency === "USD" ? body.reward_amount || 0 : 0;
-          const rewardAlph =
-            body.reward_currency === "ALPH" ? body.reward_amount || 0 : 0;
+        // Calculate reward value - use USD value or ALPH amount
+        const rewardCurrency = body.reward_currency || "ALPH";
+        const rewardAmount = body.reward_amount || 0;
+        const rewardUsdValue = body.reward_usd_value || 0;
 
+        const rewardUsd =
+          rewardCurrency === "USD" ? rewardAmount : rewardUsdValue;
+        const rewardAlph = rewardCurrency === "ALPH" ? rewardAmount : 0;
+
+        if (overview) {
           await env.DB.prepare(
             `UPDATE bounty_overview
              SET total_value_usd = total_value_usd + ?,
@@ -515,11 +524,6 @@ async function handleBountiesAPI(
             .run();
         } else {
           // Initialize overview if it doesn't exist
-          const rewardUsd =
-            body.reward_currency === "USD" ? body.reward_amount || 0 : 0;
-          const rewardAlph =
-            body.reward_currency === "ALPH" ? body.reward_amount || 0 : 0;
-
           await env.DB.prepare(
             `INSERT INTO bounty_overview (id, total_value_usd, total_value_alph, list_number, user_number, sponsor_number, updated_at)
              VALUES (1, ?, ?, 1, 0, 0, ?)`,
@@ -561,7 +565,7 @@ async function handleBountiesAPI(
 
       // Get the bounty before deleting to update overview
       const bounty = await env.DB.prepare(
-        "SELECT reward_amount, reward_currency, status FROM bounties WHERE id = ?",
+        "SELECT reward, reward_usd_value, status FROM bounties WHERE id = ?",
       )
         .bind(id)
         .first();
@@ -586,10 +590,18 @@ async function handleBountiesAPI(
 
         // Update bounty_overview statistics
         try {
+          // Parse reward JSON to get currency and amount
+          const rewardData = JSON.parse(
+            bounty.reward || '{"token":"ALPH","amount":0}',
+          );
+          const rewardCurrency = rewardData.token || "ALPH";
+          const rewardAmount = rewardData.amount || 0;
+
           const rewardUsd =
-            bounty.reward_currency === "USD" ? bounty.reward_amount || 0 : 0;
-          const rewardAlph =
-            bounty.reward_currency === "ALPH" ? bounty.reward_amount || 0 : 0;
+            rewardCurrency === "USD"
+              ? rewardAmount
+              : bounty.reward_usd_value || 0;
+          const rewardAlph = rewardCurrency === "ALPH" ? rewardAmount : 0;
 
           await env.DB.prepare(
             `UPDATE bounty_overview
@@ -652,7 +664,7 @@ async function handleBountiesAPI(
 
       // Get the old bounty data to calculate overview changes
       const oldBounty = await env.DB.prepare(
-        "SELECT reward_amount, reward_currency, status FROM bounties WHERE id = ?",
+        "SELECT reward, reward_usd_value, status FROM bounties WHERE id = ?",
       )
         .bind(id)
         .first();
@@ -676,13 +688,31 @@ async function handleBountiesAPI(
         updates.push("description = ?");
         values.push(body.description);
       }
-      if (body.reward_amount !== undefined) {
-        updates.push("reward_amount = ?");
-        values.push(body.reward_amount);
+      // Update reward JSON if reward fields provided
+      if (
+        body.reward_amount !== undefined ||
+        body.reward_currency !== undefined
+      ) {
+        const oldRewardData = JSON.parse(
+          oldBounty.reward || '{"token":"ALPH","amount":0}',
+        );
+        const newReward = JSON.stringify({
+          token: body.reward_currency || oldRewardData.token || "ALPH",
+          amount:
+            body.reward_amount !== undefined
+              ? body.reward_amount
+              : oldRewardData.amount || 0,
+          usd_equivalent:
+            body.reward_usd_value !== undefined
+              ? body.reward_usd_value
+              : oldRewardData.usd_equivalent || 0,
+        });
+        updates.push("reward = ?");
+        values.push(newReward);
       }
-      if (body.reward_currency !== undefined) {
-        updates.push("reward_currency = ?");
-        values.push(body.reward_currency);
+      if (body.reward_usd_value !== undefined) {
+        updates.push("reward_usd_value = ?");
+        values.push(body.reward_usd_value);
       }
       if (body.status !== undefined) {
         updates.push("status = ?");
@@ -708,26 +738,33 @@ async function handleBountiesAPI(
         // Update overview if reward changed
         if (
           body.reward_amount !== undefined ||
-          body.reward_currency !== undefined
+          body.reward_currency !== undefined ||
+          body.reward_usd_value !== undefined
         ) {
           try {
+            // Parse old reward
+            const oldRewardData = JSON.parse(
+              oldBounty.reward || '{"token":"ALPH","amount":0}',
+            );
+            const oldCurrency = oldRewardData.token || "ALPH";
+            const oldAmount = oldRewardData.amount || 0;
             const oldRewardUsd =
-              oldBounty.reward_currency === "USD"
-                ? oldBounty.reward_amount || 0
-                : 0;
-            const oldRewardAlph =
-              oldBounty.reward_currency === "ALPH"
-                ? oldBounty.reward_amount || 0
-                : 0;
+              oldCurrency === "USD"
+                ? oldAmount
+                : oldBounty.reward_usd_value || 0;
+            const oldRewardAlph = oldCurrency === "ALPH" ? oldAmount : 0;
 
+            // Calculate new reward
+            const newCurrency = body.reward_currency || oldCurrency;
+            const newAmount =
+              body.reward_amount !== undefined ? body.reward_amount : oldAmount;
+            const newUsdValue =
+              body.reward_usd_value !== undefined
+                ? body.reward_usd_value
+                : oldBounty.reward_usd_value || 0;
             const newRewardUsd =
-              (body.reward_currency || oldBounty.reward_currency) === "USD"
-                ? (body.reward_amount ?? oldBounty.reward_amount) || 0
-                : 0;
-            const newRewardAlph =
-              (body.reward_currency || oldBounty.reward_currency) === "ALPH"
-                ? (body.reward_amount ?? oldBounty.reward_amount) || 0
-                : 0;
+              newCurrency === "USD" ? newAmount : newUsdValue;
+            const newRewardAlph = newCurrency === "ALPH" ? newAmount : 0;
 
             const diffUsd = newRewardUsd - oldRewardUsd;
             const diffAlph = newRewardAlph - oldRewardAlph;
@@ -949,7 +986,7 @@ async function handleUsersAPI(
 
     // Get total submissions count
     const submissionsResult = await env.DB.prepare(
-      `SELECT COUNT(*) as count FROM bounty_submissions WHERE submitted_by = ?`,
+      `SELECT COUNT(*) as count FROM bounty_submissions WHERE user_id = ?`,
     )
       .bind(id)
       .first();
@@ -957,25 +994,43 @@ async function handleUsersAPI(
 
     // Get approved submissions count (won)
     const wonResult = await env.DB.prepare(
-      `SELECT COUNT(*) as count FROM bounty_submissions WHERE submitted_by = ? AND status = 'approved'`,
+      `SELECT COUNT(*) as count FROM bounty_submissions WHERE user_id = ? AND status = 'approved'`,
     )
       .bind(id)
       .first();
     const totalWon = (wonResult?.count as number) || 0;
 
-    // Get total earnings (sum of approved submission rewards in USD from reviewer_notes)
+    // Get total earnings (sum of approved submission rewards in USD from feedback/reward field)
     const { results: approvedSubmissions } = await env.DB.prepare(
-      `SELECT reviewer_notes FROM bounty_submissions WHERE submitted_by = ? AND status = 'approved'`,
+      `SELECT feedback, reward FROM bounty_submissions WHERE user_id = ? AND status = 'approved'`,
     )
       .bind(id)
       .all();
 
     let totalEarned = 0;
     for (const submission of approvedSubmissions) {
-      const notes = submission.reviewer_notes as string;
+      // Try to get reward from the reward field first (if it's a JSON or number)
+      if (submission.reward) {
+        try {
+          const rewardData =
+            typeof submission.reward === "string"
+              ? JSON.parse(submission.reward)
+              : submission.reward;
+          if (typeof rewardData === "object" && rewardData.usd_equivalent) {
+            totalEarned += parseFloat(rewardData.usd_equivalent);
+            continue;
+          } else if (typeof rewardData === "number") {
+            totalEarned += rewardData;
+            continue;
+          }
+        } catch (e) {
+          // Fall through to feedback parsing
+        }
+      }
+
+      // Fallback: Extract USD amount from feedback notes
+      const notes = submission.feedback as string;
       if (notes) {
-        // Extract USD amount from reviewer notes like "Reward: 999.96 ALPH (for 100 USD bounty)"
-        // Look for pattern like "for X USD bounty" or "for $X USD bounty"
         const usdMatch = notes.match(/for\s+\$?(\d+\.?\d*)\s*USD\s+bounty/i);
         if (usdMatch) {
           totalEarned += parseFloat(usdMatch[1]);
@@ -1044,41 +1099,51 @@ async function handleUsersAPI(
     await env.DB.prepare(
       `UPDATE user_profiles
        SET username = ?,
+           first_name = ?,
+           last_name = ?,
+           full_name = ?,
            bio = ?,
+           avatar_url = ?,
            wallet_address = ?,
-           github_username = ?,
-           twitter_username = ?,
-           discord_username = ?,
-           linkedin_username = ?,
-           telegram_username = ?,
-           website = ?,
+           github_url = ?,
+           twitter_url = ?,
+           linkedin_url = ?,
+           telegram_url = ?,
+           website_url = ?,
            location = ?,
-           work_preference = ?,
+           work_experience = ?,
            current_employer = ?,
-           web3_familiarity = ?,
-           skills = ?,
            web3_interests = ?,
-           projects = ?,
+           frontend_skills = ?,
+           backend_skills = ?,
+           blockchain_skills = ?,
+           design_skills = ?,
+           content_skills = ?,
            updated_at = ?
        WHERE user_id = ?`,
     )
       .bind(
         body.username || null,
+        body.first_name || null,
+        body.last_name || null,
+        body.full_name || null,
         body.bio || null,
+        body.avatar_url || null,
         body.wallet_address || null,
-        body.github_username || null,
-        body.twitter_username || null,
-        body.discord_username || null,
-        body.linkedin_username || null,
-        body.telegram_username || null,
-        body.website || null,
+        body.github_url || null,
+        body.twitter_url || null,
+        body.linkedin_url || null,
+        body.telegram_url || null,
+        body.website_url || null,
         body.location || null,
-        body.work_preference || null,
+        body.work_experience || null,
         body.current_employer || null,
-        body.web3_familiarity || null,
-        body.skills ? JSON.stringify(body.skills) : null,
         body.web3_interests ? JSON.stringify(body.web3_interests) : null,
-        body.projects ? JSON.stringify(body.projects) : null,
+        body.frontend_skills ? JSON.stringify(body.frontend_skills) : null,
+        body.backend_skills ? JSON.stringify(body.backend_skills) : null,
+        body.blockchain_skills ? JSON.stringify(body.blockchain_skills) : null,
+        body.design_skills ? JSON.stringify(body.design_skills) : null,
+        body.content_skills ? JSON.stringify(body.content_skills) : null,
         now,
         id,
       )
