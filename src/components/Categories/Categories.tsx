@@ -244,20 +244,31 @@ const Categories = ({
                       {category.isRating ? "" : category.name}
                     </p>
                   </div>
-                  <button
-                    role="button"
-                    className="p-0 m-0 outline-0 bg-none border-none flex"
-                    onClick={() => {}}
-                  >
-                    <Image
-                      width={16}
-                      height={16}
-                      alt="remove-button"
-                      src={
-                        currentTheme === "dark" ? crossCircleLight : crossCircle
-                      }
-                    />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <p className="text-light-charcoal dark:text-clay text-sm font-semibold leading-none">
+                      {category.key === selectedCategory
+                        ? renderCategoryCount(category.name, true)
+                        : category.isRating
+                          ? renderCategoryCount(category.name, false, true)
+                          : renderCategoryCount(category.name)}
+                    </p>
+                    <button
+                      role="button"
+                      className="p-0 m-0 outline-0 bg-none border-none flex"
+                      onClick={() => {}}
+                    >
+                      <Image
+                        width={16}
+                        height={16}
+                        alt="remove-button"
+                        src={
+                          currentTheme === "dark"
+                            ? crossCircleLight
+                            : crossCircle
+                        }
+                      />
+                    </button>
+                  </div>
                 </div>
               </li>
             ))}
