@@ -81,24 +81,26 @@ const Card = ({
               {short_description}
             </p>
 
-            {/* Tags */}
-            {remainingTags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {remainingTags.slice(0, 3).map((tag, index) => (
-                  <span
-                    key={index}
-                    className="inline-block text-xs font-medium text-light-charcoal dark:text-white bg-smoked-white dark:bg-tooltip-dark px-3 py-1 rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
-                {remainingTags.length > 3 && (
-                  <span className="inline-block text-xs font-medium text-light-charcoal dark:text-white px-2 py-1">
-                    +{remainingTags.length - 3}
-                  </span>
-                )}
-              </div>
-            )}
+            {/* Tags - Always render container to maintain consistent card height */}
+            <div className="flex flex-wrap gap-2 min-h-[28px]">
+              {remainingTags.length > 0 && (
+                <>
+                  {remainingTags.slice(0, 3).map((tag, index) => (
+                    <span
+                      key={index}
+                      className="inline-block text-xs font-medium text-light-charcoal dark:text-white bg-smoked-white dark:bg-tooltip-dark px-3 py-1 rounded-full"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                  {remainingTags.length > 3 && (
+                    <span className="inline-block text-xs font-medium text-light-charcoal dark:text-white px-2 py-1">
+                      +{remainingTags.length - 3}
+                    </span>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
 
