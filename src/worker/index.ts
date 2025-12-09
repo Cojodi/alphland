@@ -1111,18 +1111,18 @@ async function handleUsersAPI(
     const website_url = body.website_url || body.website || null;
 
     // Handle skills - accept either categorized skills or a single array
-    let frontend_skills = body.frontend_skills;
-    let backend_skills = body.backend_skills;
-    let blockchain_skills = body.blockchain_skills;
-    let design_skills = body.design_skills;
-    let content_skills = body.content_skills;
+    let frontend_skills = body.frontend_skills || null;
+    let backend_skills = body.backend_skills || null;
+    let blockchain_skills = body.blockchain_skills || null;
+    let design_skills = body.design_skills || null;
+    let content_skills = body.content_skills || null;
 
-    // If skills is provided as a single array, use it for all categories for now
-    if (body.skills && Array.isArray(body.skills)) {
+    // If skills is provided as a single array, use it for all skill categories
+    if (body.skills && Array.isArray(body.skills) && body.skills.length > 0) {
       const skillsJson = JSON.stringify(body.skills);
-      frontend_skills = frontend_skills || skillsJson;
-      backend_skills = backend_skills || skillsJson;
-      blockchain_skills = blockchain_skills || skillsJson;
+      frontend_skills = skillsJson;
+      backend_skills = skillsJson;
+      blockchain_skills = skillsJson;
     }
 
     // Update profile with all fields (allow clearing fields with empty strings)
