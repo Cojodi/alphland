@@ -274,8 +274,8 @@ interface FormData {
   web3Familiarity: string;
   workPreference: string;
   currentEmployer: string;
+  lookingFor: string;
   skills: string[];
-  keepPrivate: boolean;
 }
 
 export default function EditProfile() {
@@ -308,8 +308,8 @@ export default function EditProfile() {
     web3Familiarity: "",
     workPreference: "",
     currentEmployer: "",
+    lookingFor: "",
     skills: [],
-    keepPrivate: false,
   });
 
   const [isLoading, setIsLoading] = useState(true);
@@ -619,6 +619,7 @@ export default function EditProfile() {
         work_preference: formData.workPreference,
         current_employer: formData.currentEmployer,
         web3_familiarity: formData.web3Familiarity,
+        looking_for: formData.lookingFor,
         skills: formData.skills,
         web3_interests: formData.web3Interests,
       };

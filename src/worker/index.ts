@@ -1102,6 +1102,29 @@ async function handleUsersAPI(
       }
     }
 
+    // Map frontend field names to database column names
+    const github_url = body.github_url || body.github_username || null;
+    const twitter_url = body.twitter_url || body.twitter_username || null;
+    const linkedin_url = body.linkedin_url || body.linkedin_username || null;
+    const telegram_url = body.telegram_url || body.telegram_username || null;
+    const discord_url = body.discord_url || body.discord_username || null;
+    const website_url = body.website_url || body.website || null;
+
+    // Handle skills - accept either categorized skills or a single array
+    let frontend_skills = body.frontend_skills;
+    let backend_skills = body.backend_skills;
+    let blockchain_skills = body.blockchain_skills;
+    let design_skills = body.design_skills;
+    let content_skills = body.content_skills;
+
+    // If skills is provided as a single array, use it for all categories for now
+    if (body.skills && Array.isArray(body.skills)) {
+      const skillsJson = JSON.stringify(body.skills);
+      frontend_skills = frontend_skills || skillsJson;
+      backend_skills = backend_skills || skillsJson;
+      blockchain_skills = blockchain_skills || skillsJson;
+    }
+
     // Update profile with all fields (allow clearing fields with empty strings)
     await env.DB.prepare(
       `UPDATE user_profiles
@@ -1116,11 +1139,14 @@ async function handleUsersAPI(
            twitter_url = ?,
            linkedin_url = ?,
            telegram_url = ?,
+           discord_url = ?,
            website_url = ?,
            location = ?,
            work_experience = ?,
            current_employer = ?,
            web3_interests = ?,
+           web3_familiarity = ?,
+           looking_for = ?,
            frontend_skills = ?,
            backend_skills = ?,
            blockchain_skills = ?,
@@ -1137,20 +1163,23 @@ async function handleUsersAPI(
         body.bio || null,
         body.avatar_url || null,
         body.wallet_address || null,
-        body.github_url || null,
-        body.twitter_url || null,
-        body.linkedin_url || null,
-        body.telegram_url || null,
-        body.website_url || null,
+        github_url,
+        twitter_url,
+        linkedin_url,
+        telegram_url,
+        discord_url,
+        website_url,
         body.location || null,
-        body.work_experience || null,
+        body.work_experience || body.work_preference || null,
         body.current_employer || null,
         body.web3_interests ? JSON.stringify(body.web3_interests) : null,
-        body.frontend_skills ? JSON.stringify(body.frontend_skills) : null,
-        body.backend_skills ? JSON.stringify(body.backend_skills) : null,
-        body.blockchain_skills ? JSON.stringify(body.blockchain_skills) : null,
-        body.design_skills ? JSON.stringify(body.design_skills) : null,
-        body.content_skills ? JSON.stringify(body.content_skills) : null,
+        body.web3_familiarity || null,
+        body.looking_for || null,
+        frontend_skills,
+        backend_skills,
+        blockchain_skills,
+        design_skills,
+        content_skills,
         now,
         id,
       )
