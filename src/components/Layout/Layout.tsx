@@ -101,11 +101,7 @@ export const Layout = ({
 
         <link rel="manifest" href="/site.webmanifest" />
       </Head>
-      {!isHome || selectedFilters.length || selectedRatings.length ? (
-        <Header />
-      ) : (
-        <HomeHeader />
-      )}
+      <Header />
       <MainContainer>{children}</MainContainer>
       <Footer currentTheme={currentTheme} />
     </>

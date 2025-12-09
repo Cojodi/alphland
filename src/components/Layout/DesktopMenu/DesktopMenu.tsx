@@ -90,10 +90,18 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
     return "/bounty/sponsor";
   };
 
+  // Helper function to check if a path is active
+  const isActivePath = (path: string) => {
+    if (path === "/") {
+      return router.pathname === "/" || router.pathname.startsWith("/category");
+    }
+    return router.pathname.startsWith(path);
+  };
+
   return (
     <div className="hidden lg:block bg-white dark:bg-light-black">
       <div className="relative w-full flex justify-between items-center px-6 py-4 border-t border-b border-border-grey dark:border-white/10">
-        <div className="flex items-center gap-6 z-[2]">
+        <div className="flex items-center gap-4 z-[2]">
           <Link href="/">
             <span
               className="flex items-center hover:opacity-80 transition-opacity cursor-pointer"
@@ -107,22 +115,85 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
               <Image
                 src={currentTheme === "dark" ? logoLight : logo}
                 alt="Alphland logo"
-                width={133}
-                height={40}
+                width={120}
+                height={36}
                 style={{ height: "auto" }}
               />
             </span>
           </Link>
-          {isBountyPage && (
-            <>
-              <div className="h-8 w-px bg-border-grey dark:bg-white/10" />
-              <Link href="/bounty">
-                <span className="text-2xl font-black tracking-wider text-black dark:text-white hover:text-orange dark:hover:text-orange transition-colors cursor-pointer">
-                  BOUNTY
-                </span>
-              </Link>
-            </>
-          )}
+          <div className="h-8 w-px bg-border-grey dark:bg-white/10" />
+          <Link href="/">
+            <span
+              className={`px-4 py-2 text-sm font-medium uppercase transition-colors cursor-pointer ${
+                isActivePath("/")
+                  ? "text-orange dark:text-orange font-bold"
+                  : "text-black dark:text-white hover:text-orange dark:hover:text-orange"
+              }`}
+              onClick={() => {
+                setFilters([]);
+                setSort(null);
+                setRatings([]);
+                changeCategory("all");
+              }}
+            >
+              Explore dApps
+            </span>
+          </Link>
+          <Link href="/bounty">
+            <span
+              className={`px-4 py-2 text-sm font-medium uppercase transition-colors cursor-pointer ${
+                isActivePath("/bounty")
+                  ? "text-orange dark:text-orange font-bold"
+                  : "text-black dark:text-white hover:text-orange dark:hover:text-orange"
+              }`}
+            >
+              Bounties
+            </span>
+          </Link>
+          <Link href="/resources">
+            <span
+              className={`px-4 py-2 text-sm font-medium uppercase transition-colors cursor-pointer ${
+                isActivePath("/resources")
+                  ? "text-orange dark:text-orange font-bold"
+                  : "text-black dark:text-white hover:text-orange dark:hover:text-orange"
+              }`}
+            >
+              Resources
+            </span>
+          </Link>
+          <Link href="/forum">
+            <span
+              className={`px-4 py-2 text-sm font-medium uppercase transition-colors cursor-pointer ${
+                isActivePath("/forum")
+                  ? "text-orange dark:text-orange font-bold"
+                  : "text-black dark:text-white hover:text-orange dark:hover:text-orange"
+              }`}
+            >
+              Forum
+            </span>
+          </Link>
+          <Link href="/agenda">
+            <span
+              className={`px-4 py-2 text-sm font-medium uppercase transition-colors cursor-pointer ${
+                isActivePath("/agenda")
+                  ? "text-orange dark:text-orange font-bold"
+                  : "text-black dark:text-white hover:text-orange dark:hover:text-orange"
+              }`}
+            >
+              Agenda
+            </span>
+          </Link>
+          <Link href="/ecosystem-map">
+            <span
+              className={`px-4 py-2 text-sm font-medium uppercase transition-colors cursor-pointer ${
+                isActivePath("/ecosystem-map")
+                  ? "text-orange dark:text-orange font-bold"
+                  : "text-black dark:text-white hover:text-orange dark:hover:text-orange"
+              }`}
+            >
+              Ecosystem Map
+            </span>
+          </Link>
         </div>
         <div className="flex gap-3.5 z-[2] items-center">
           <button

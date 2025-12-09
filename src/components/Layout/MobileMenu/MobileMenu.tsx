@@ -1,3 +1,5 @@
+import home from "../../../assets/icons/home.svg";
+import homeDark from "../../../assets/icons/home_dark.svg";
 import moon from "../../../assets/icons/moon.svg";
 import sun from "../../../assets/icons/sun.svg";
 import logoLight from "../../../assets/logo-alphland-light.svg";
@@ -5,6 +7,7 @@ import logo from "../../../assets/logo-alphland.svg";
 import { useCategoryStore } from "../../../hooks/useCategoryStore";
 // import ConnectWallet from "../../Button/ConnectWallet";
 import AuthButton from "../../Button/AuthButton";
+import Button from "../../Button/Button";
 import { NotificationBell } from "@/features/bounty/components/NotificationBell";
 import { useSession } from "@/lib/auth-client";
 import { ChevronDown, LayoutDashboard, User, Edit } from "lucide-react";
@@ -44,16 +47,57 @@ interface MobileMenuProps {
   setTheme: (theme: string) => void;
 }
 
+type NavbarItem = {
+  name: string;
+  href: string;
+  icon: string;
+};
+
 const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
   const router = useRouter();
   const { data: session } = useSession();
   const [isNavbarScrolled, setIsNavbarScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [sponsorDropdownOpen, setSponsorDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isSponsor, setIsSponsor] = useState(false);
   const [sponsorId, setSponsorId] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   const nav = useRef<HTMLDivElement>(null);
+
+  const navbarItems: NavbarItem[] = [
+    {
+      name: "Explore dApps",
+      href: "/",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+    {
+      name: "Bounties",
+      href: "/bounty",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+    {
+      name: "Resources",
+      href: "/resources",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+    {
+      name: "Forum",
+      href: "/forum",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+    {
+      name: "Agenda",
+      href: "/agenda",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+    {
+      name: "Ecosystem Map",
+      href: "/ecosystem-map",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+  ];
 
   // Check if current page is bounty, sponsor, or user profile related
   const isBountyPage =
@@ -138,15 +182,28 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
   const setSort = useCategoryStore((state) => state.setSelectedSort);
   const setRatings = useCategoryStore((state) => state.setRatings);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Helper function to check if a path is active
+  const isActivePath = (path: string) => {
+    if (path === "/") {
+      return router.pathname === "/" || router.pathname.startsWith("/category");
+    }
+    return router.pathname.startsWith(path);
+  };
+
   return (
     <MenuContainer
       className={[
-        "lg:hidden z-[999] fixed top-0 left-0 w-full",
+        "lg:hidden z-[999] fixed top-0 left-0 w-full bg-white dark:bg-hero-dark shadow-[0_0_20px_0_rgba(0,0,0,0.3)]",
         isNavbarScrolled ? "navbar-scrolled" : "",
+        isMobileMenuOpen ? "is-active-menu" : "",
       ].join(" ")}
       ref={nav}
     >
-      <div className="flex justify-between items-center py-2 px-4 relative z-50 bg-smoked-white dark:bg-light-black">
+      <div className="flex justify-between items-center py-2 px-4 relative z-50">
         <div className="flex items-center gap-3">
           <Link href="/">
             <span
@@ -167,30 +224,8 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
               />
             </span>
           </Link>
-          {isBountyPage && (
-            <>
-              <div className="h-6 w-px bg-border-grey dark:bg-white/10" />
-              <Link href="/bounty">
-                <span className="text-lg font-black tracking-wider text-black dark:text-white hover:text-orange dark:hover:text-orange transition-colors cursor-pointer">
-                  BOUNTY
-                </span>
-              </Link>
-            </>
-          )}
         </div>
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="p-2 flex justify-center items-center"
-            onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
-          >
-            {currentTheme === "dark" ? (
-              <Image src={sun} alt="sun icon" />
-            ) : (
-              <Image src={moon} alt="moon icon" />
-            )}
-          </button>
-          {/* <ConnectWallet /> */}
           {isBountyPage && (
             <>
               {isSponsor ? (
@@ -257,6 +292,84 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
                 <AuthButton />
               </div>
             </>
+          )}
+          <div className="hamburger-wrapper">
+            <button
+              className={[
+                "hamburger",
+                isMobileMenuOpen ? "is-active" : "",
+                mounted && currentTheme === "dark" ? "is-dark" : "",
+              ].join(" ")}
+              type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              <span className="hamburger-box">
+                <span className="hamburger-inner"></span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        className={[
+          "absolute top-0 left-0 w-full h-screen hidden pt-[56px] bg-white dark:bg-light-black",
+          isMobileMenuOpen ? "is-active-menu" : "",
+        ].join(" ")}
+      >
+        <ul className="list-none mb-3">
+          {navbarItems.map((item) => (
+            <li key={item.name}>
+              <Link href={item.href}>
+                <a
+                  className={`flex items-center py-3 px-6 bg-white dark:bg-light-black uppercase font-medium font-base ${
+                    isActivePath(item.href)
+                      ? "text-orange dark:text-orange font-bold"
+                      : "text-black dark:text-white"
+                  }`}
+                  onClick={() => {
+                    if (item.href === "/") {
+                      setFilters([]);
+                      setSort(null);
+                      setRatings([]);
+                      changeCategory("all");
+                    }
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  <Image src={item.icon} alt={item.name} />
+                  <p>{item.name}</p>
+                </a>
+              </Link>
+            </li>
+          ))}
+          <li className="py-3 px-6 bg-white dark:bg-light-black">
+            <button
+              type="button"
+              onClick={() =>
+                setTheme(currentTheme === "dark" ? "light" : "dark")
+              }
+              className="flex items-center uppercase font-medium font-base"
+            >
+              <Image
+                src={currentTheme === "dark" ? sun : moon}
+                alt="dark mode icon"
+              />
+              <p>Dark mode</p>
+            </button>
+          </li>
+        </ul>
+        <div className="mx-7">
+          {isBountyPage ? (
+            <AuthButton />
+          ) : (
+            <Button
+              variant="primary"
+              className="w-full"
+              withoutMobile
+              href="/submit"
+            >
+              Add your Dapp
+            </Button>
           )}
         </div>
       </div>
