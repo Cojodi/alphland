@@ -77,7 +77,7 @@ const Card = ({
             </h3>
 
             {/* Description */}
-            <p className="text-sm text-light-charcoal dark:text-white leading-relaxed mb-4 line-clamp-2">
+            <p className="text-sm text-light-charcoal dark:text-white leading-relaxed mb-4 line-clamp-2 h-[46px]">
               {short_description}
             </p>
 
