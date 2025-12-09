@@ -54,6 +54,11 @@ const Categories = ({
 
   const selectedCategory = useCategoryStore((state) => state.selectedCategory);
   const changeCategory = useCategoryStore((state) => state.changeCategory);
+  const selectedCategories = useCategoryStore(
+    (state) => state.selectedCategories,
+  );
+  const addCategory = useCategoryStore((state) => state.addCategory);
+  const setCategories = useCategoryStore((state) => state.setCategories);
   const selectedSort = useCategoryStore((state) => state.selectedSort);
   const selectedFilters = useCategoryStore((state) => state.selectedFilters);
   const addFilter = useCategoryStore((state) => state.addFilter);
@@ -69,8 +74,10 @@ const Categories = ({
       const sortBy = router?.query?.sort as string;
       const category = (router?.query?.category as string) || "all";
       const ratings = (router?.query?.ratings as string)?.split(",") || [];
+      const cats = (router?.query?.categories as string)?.split(",") || [];
       setFilters(filters);
       setRatings(ratings);
+      setCategories(cats.filter((c) => c.length > 0));
       setSelectedSort(sortBy && sortBy.length ? sortBy : null);
       changeCategory(category);
     }
@@ -80,6 +87,7 @@ const Categories = ({
     router?.query?.sort,
     router?.query?.category,
     router?.query?.ratings,
+    router?.query?.categories,
   ]);
   const renderCategoryCount = (
     category: string,
@@ -145,11 +153,13 @@ const Categories = ({
         (category) =>
           selectedFilters.includes(category.key) ||
           selectedRatings.includes(category.key) ||
+          selectedCategories.includes(category.key) ||
           category.key === selectedCategory,
       )
       .map((category) => ({
         ...category,
         isRating: selectedRatings.includes(category.key),
+        isCategory: selectedCategories.includes(category.key),
       }));
   };
 
@@ -208,6 +218,8 @@ const Categories = ({
                   } else {
                     if (category.isRating) {
                       addRating(category.key);
+                    } else if (category.isCategory) {
+                      addCategory(category.key);
                     } else {
                       addFilter(category.key);
                     }
@@ -250,7 +262,9 @@ const Categories = ({
                         ? renderCategoryCount(category.name, true)
                         : category.isRating
                           ? renderCategoryCount(category.name, false, true)
-                          : renderCategoryCount(category.name)}
+                          : category.isCategory
+                            ? renderCategoryCount(category.name, true)
+                            : renderCategoryCount(category.name)}
                     </p>
                     <button
                       role="button"
@@ -288,53 +302,45 @@ const Categories = ({
         onMouseLeave={() => hovered && setHovered(false)}
       >
         {categories
-          .filter((category) => category.key !== selectedCategory)
+          .filter((category) => !selectedCategories.includes(category.key))
           .map(
             (category) =>
               (renderCategoryCount(category.name, true) > 0 ||
                 selectedFilters.length ||
                 selectedRatings.length ||
+                selectedCategories.length ||
                 selectedCategory !== "all") && (
-                <Link
-                  href={generateUrl({
-                    selectedCategory: category.key,
-                    selectedRatings,
-                    selectedSort,
-                    selectedFilters,
-                  })}
-                  key={category.key}
+                <li
+                  className={`flex flex-col items-center justify-center bg-white dark:bg-white/10 shadow-box-image-shadow rounded-lg mr-2 min-w-[108px] cursor-pointer lg:flex-row lg:mb-2 lg:justify-start ${
+                    selectedCategories.includes(category.key) ? "active" : ""
+                  } ${checkIfAnyCategoryIsActive() ? "with-blur" : ""}`}
+                  key={category.name}
+                  tabIndex={0}
+                  onClick={() => addCategory(category.key)}
                 >
-                  <a>
-                    <li
-                      className={`flex flex-col items-center justify-center bg-white dark:bg-white/10 shadow-box-image-shadow rounded-lg mr-2 min-w-[108px] cursor-pointer lg:flex-row lg:mb-2 lg:justify-start ${
-                        selectedCategory === category.key ? "active" : ""
-                      } ${checkIfAnyCategoryIsActive() ? "with-blur" : ""}`}
-                      key={category.name}
-                      tabIndex={0}
-                    >
-                      <div className="flex items-center justify-center w-full lg:justify-between py-4 px-4">
-                        <div className="flex items-center flex-col lg:flex-row">
-                          <Image
-                            src={
-                              currentTheme === "dark"
-                                ? category.iconDark
-                                : category.icon
-                            }
-                            alt={category.name}
-                          />
-                          <p className="mt-2 font-semibold leading-none text-sm lg:ml-3 lg:mt-0 text-black dark:text-white">
-                            {category.name}
-                          </p>
-                        </div>
-                        <p className="text-light-charcoal dark:text-clay text-sm font-semibold leading-none ml-auto hidden lg:block">
-                          {!selectedFilters.length && !selectedRatings.length
-                            ? renderCategoryCount(category.name, true)
-                            : ""}
-                        </p>
-                      </div>
-                    </li>
-                  </a>
-                </Link>
+                  <div className="flex items-center justify-center w-full lg:justify-between py-4 px-4">
+                    <div className="flex items-center flex-col lg:flex-row">
+                      <Image
+                        src={
+                          currentTheme === "dark"
+                            ? category.iconDark
+                            : category.icon
+                        }
+                        alt={category.name}
+                      />
+                      <p className="mt-2 font-semibold leading-none text-sm lg:ml-3 lg:mt-0 text-black dark:text-white">
+                        {category.name}
+                      </p>
+                    </div>
+                    <p className="text-light-charcoal dark:text-clay text-sm font-semibold leading-none ml-auto hidden lg:block">
+                      {!selectedFilters.length &&
+                      !selectedRatings.length &&
+                      !selectedCategories.length
+                        ? renderCategoryCount(category.name, true)
+                        : ""}
+                    </p>
+                  </div>
+                </li>
               ),
           )}
       </ul>

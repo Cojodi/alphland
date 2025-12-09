@@ -6,6 +6,7 @@ import DappOfTheMonth from "../components/FeaturedCard/DappOfTheMonth";
 import FilterMenu from "../components/FilterMenu/FilterMenu";
 import Layout from "../components/Layout";
 import Select from "../components/Select/Select";
+import { categories } from "../data/categories";
 import { getAllDapps } from "../data/getAllDapps";
 import { filterDappcardsByRating, getRatings } from "../helpers/rating";
 import sortByAttribute from "../helpers/sort";
@@ -44,6 +45,9 @@ const Home = ({
   const router = useRouter();
   const selectedFilters = useCategoryStore((state) => state.selectedFilters);
   const selectedRatings = useCategoryStore((state) => state.selectedRatings);
+  const selectedCategories = useCategoryStore(
+    (state) => state.selectedCategories,
+  );
   const selectedSort = useCategoryStore((state) => state.selectedSort);
   const selectedCategory = useCategoryStore((state) => state.selectedCategory);
   const setSelectedSort = useCategoryStore((state) => state.setSelectedSort);
@@ -60,23 +64,35 @@ const Home = ({
   useEffect(() => {
     const allFilters = selectedFilters.join(",");
     const allRatings = selectedRatings.join(",");
+    const allCategories = selectedCategories.join(",");
     const sortBy = selectedSort;
     let url = "/";
+    const params = [];
     if (allFilters.length) {
-      url += `?filters=${allFilters}`;
+      params.push(`filters=${allFilters}`);
     }
     if (sortBy && sortBy.length) {
-      url += `${allFilters.length ? "&" : "?"}sort=${sortBy}`;
+      params.push(`sort=${sortBy}`);
     }
     if (selectedRatings.length) {
-      url += `${
-        allFilters.length || (sortBy && sortBy.length) ? "&" : "?"
-      }ratings=${allRatings}`;
+      params.push(`ratings=${allRatings}`);
+    }
+    if (selectedCategories.length) {
+      params.push(`categories=${allCategories}`);
+    }
+    if (params.length > 0) {
+      url += `?${params.join("&")}`;
     }
     if (router.isReady && selectedCategory === "all") {
       router.push(url);
     }
-  }, [selectedFilters, selectedSort, selectedCategory, selectedRatings]);
+  }, [
+    selectedFilters,
+    selectedSort,
+    selectedCategory,
+    selectedRatings,
+    selectedCategories,
+  ]);
 
   const filteredDapps = dappCards.filter((dapp) => {
     // Filter by search query
@@ -87,10 +103,18 @@ const Home = ({
         ?.toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
       dapp.tags?.some((tag) =>
-        tag.toLowerCase().includes(searchQuery.toLowerCase())
+        tag.toLowerCase().includes(searchQuery.toLowerCase()),
       );
 
-    // Filter by selected filters
+    // Filter by selected categories (OR logic)
+    const matchesCategories =
+      selectedCategories.length === 0 ||
+      selectedCategories.some((cat) => {
+        const categoryName = categories.find((c) => c.key === cat)?.name;
+        return categoryName && dapp.tags?.includes(categoryName);
+      });
+
+    // Filter by selected filters (AND logic)
     const matchesFilters =
       selectedFilters.reduce((acc, val) => {
         if (val === "dotw" && dapp.featured) {
@@ -111,7 +135,7 @@ const Home = ({
         return acc;
       }, 0) === selectedFilters.length;
 
-    return matchesSearch && matchesFilters;
+    return matchesSearch && matchesCategories && matchesFilters;
   });
   const dappsByRating = filterDappcardsByRating({
     dappCards: filteredDapps,
