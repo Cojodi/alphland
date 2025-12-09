@@ -19,17 +19,20 @@ interface UserProfile {
   username: string | null;
   bio: string | null;
   wallet_address: string | null;
-  github_username: string | null;
-  twitter_username: string | null;
-  discord_username: string | null;
-  linkedin_username: string | null;
-  telegram_username: string | null;
-  website: string | null;
+  github_url: string | null;
+  twitter_url: string | null;
+  discord_url: string | null;
+  linkedin_url: string | null;
+  telegram_url: string | null;
+  website_url: string | null;
   location: string | null;
-  work_preference: string | null;
+  work_experience: string | null;
   current_employer: string | null;
   web3_familiarity: string | null;
-  skills: string | null;
+  looking_for: string | null;
+  frontend_skills: string | null;
+  backend_skills: string | null;
+  blockchain_skills: string | null;
   web3_interests: string | null;
   projects: string | null;
   // From user table join
@@ -174,34 +177,53 @@ export default function UserProfile() {
     );
   }
 
-  // Parse skills from JSON
-  const skills = parseJsonField<string[]>(userData.skills, []);
+  // Parse skills from JSON - combine all skill categories
+  const frontendSkills = parseJsonField<string[]>(userData.frontend_skills, []);
+  const backendSkills = parseJsonField<string[]>(userData.backend_skills, []);
+  const blockchainSkills = parseJsonField<string[]>(
+    userData.blockchain_skills,
+    [],
+  );
+
+  // Combine and deduplicate skills
+  const allSkills = Array.from(
+    new Set([...frontendSkills, ...backendSkills, ...blockchainSkills]),
+  );
   const skillsGrouped: Record<string, string[]> = {
-    SKILLS: skills,
+    SKILLS: allSkills,
   };
 
-  // Build socials object
+  // Build socials object - database stores full URLs
   const socials: Record<string, string> = {};
-  if (userData.github_username) {
-    socials.github = `https://github.com/${userData.github_username}`;
+  if (userData.github_url) {
+    socials.github = userData.github_url.startsWith("http")
+      ? userData.github_url
+      : `https://github.com/${userData.github_url}`;
   }
-  if (userData.twitter_username) {
-    socials.twitter = `https://x.com/${userData.twitter_username}`;
+  if (userData.twitter_url) {
+    socials.twitter = userData.twitter_url.startsWith("http")
+      ? userData.twitter_url
+      : `https://x.com/${userData.twitter_url}`;
   }
-  if (userData.linkedin_username) {
-    socials.linkedin = `https://linkedin.com/in/${userData.linkedin_username}`;
+  if (userData.linkedin_url) {
+    socials.linkedin = userData.linkedin_url.startsWith("http")
+      ? userData.linkedin_url
+      : `https://linkedin.com/in/${userData.linkedin_url}`;
   }
-  if (userData.telegram_username) {
-    socials.telegram = `https://t.me/${userData.telegram_username}`;
+  if (userData.telegram_url) {
+    socials.telegram = userData.telegram_url.startsWith("http")
+      ? userData.telegram_url
+      : `https://t.me/${userData.telegram_url}`;
   }
-  if (userData.discord_username) {
-    // Discord doesn't have profile URLs, so we just show the username
-    socials.discord = `https://discord.com/users/${userData.discord_username}`;
+  if (userData.discord_url) {
+    socials.discord = userData.discord_url.startsWith("http")
+      ? userData.discord_url
+      : `https://discord.com/users/${userData.discord_url}`;
   }
-  if (userData.website) {
-    socials.website = userData.website.startsWith("http")
-      ? userData.website
-      : `https://${userData.website}`;
+  if (userData.website_url) {
+    socials.website = userData.website_url.startsWith("http")
+      ? userData.website_url
+      : `https://${userData.website_url}`;
   }
 
   // Map work preference to display text
@@ -234,10 +256,11 @@ export default function UserProfile() {
             <div className="lg:col-span-1 space-y-8">
               <ProfileDetails
                 lookingFor={
-                  userData.work_preference
-                    ? workPreferenceMap[userData.work_preference] ||
-                      userData.work_preference
-                    : undefined
+                  userData.looking_for ||
+                  (userData.work_experience
+                    ? workPreferenceMap[userData.work_experience] ||
+                      userData.work_experience
+                    : undefined)
                 }
                 worksAt={userData.current_employer || undefined}
                 location={userData.location || undefined}
