@@ -1218,23 +1218,6 @@ export default function EditProfile() {
 
             {/* Submit Buttons */}
             <section className="space-y-6">
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  checked={formData.keepPrivate}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      keepPrivate: e.target.checked,
-                    }))
-                  }
-                  className="w-4 h-4 rounded border-border-grey dark:border-dark-charcoal"
-                />
-                <label className="text-sm text-black dark:text-white cursor-pointer">
-                  Keep my info private
-                </label>
-              </div>
-
               <div className="flex gap-3 pt-4">
                 <button
                   type="submit"

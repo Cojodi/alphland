@@ -54,3 +54,4 @@ next-env.d.ts
 *.png
 /d1-manager-main
 *.sh
+migrations/
