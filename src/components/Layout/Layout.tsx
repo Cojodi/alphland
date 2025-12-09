@@ -2,7 +2,6 @@ import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { useDarkMode } from "../../hooks/useDarkMode";
 import Footer from "./Footer";
 import Header from "./Header";
-import HomeHeader from "./HomeHeader";
 import Head from "next/head";
 import styled from "styled-components";
 
