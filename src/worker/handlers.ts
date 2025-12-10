@@ -2103,15 +2103,14 @@ export async function handleProofOfWorkAPI(
 
       await env.DB.prepare(
         `INSERT INTO proof_of_work (
-          id, user_id, title, description, category, skills, link, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          id, user_id, title, description, skills, link, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       )
         .bind(
           id,
           body.user_id,
           body.title,
           body.description,
-          body.category || null,
           JSON.stringify(body.skills),
           body.link,
           now,
