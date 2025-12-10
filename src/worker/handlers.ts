@@ -21,37 +21,79 @@ export async function handleSubmissionsAPI(
 
   // POST /api/submissions - Create submission
   if (request.method === "POST" && pathname === "/api/submissions") {
-    const body = (await request.json()) as any;
-    const id = crypto.randomUUID();
-    const now = Math.floor(Date.now() / 1000);
+    try {
+      const body = (await request.json()) as any;
 
-    await env.DB.prepare(
-      `INSERT INTO bounty_submissions (
-        id, bounty_id, user_id, submission_url, description,
-        status, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, 'pending', ?, ?)`,
-    )
-      .bind(
-        id,
-        body.bounty_id,
-        body.submitted_by || body.user_id,
-        body.submission_url,
-        body.description || null,
-        now,
-        now,
+      console.log("Creating submission:", {
+        bounty_id: body.bounty_id,
+        user_id: body.user_id || body.submitted_by,
+        submission_url: body.submission_url,
+        description: body.description,
+      });
+
+      // Validate required fields
+      if (
+        !body.bounty_id ||
+        !(body.user_id || body.submitted_by) ||
+        !body.submission_url
+      ) {
+        console.log("Missing required fields:", {
+          bounty_id: !!body.bounty_id,
+          user_id: !!(body.user_id || body.submitted_by),
+          submission_url: !!body.submission_url,
+        });
+        return new Response(
+          JSON.stringify({ error: "Missing required fields" }),
+          {
+            status: 400,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      const id = crypto.randomUUID();
+      const now = Math.floor(Date.now() / 1000);
+
+      await env.DB.prepare(
+        `INSERT INTO bounty_submissions (
+          id, bounty_id, user_id, submission_url, description,
+          status, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, 'pending', ?, ?)`,
       )
-      .run();
+        .bind(
+          id,
+          body.bounty_id,
+          body.submitted_by || body.user_id,
+          body.submission_url,
+          body.description || null,
+          now,
+          now,
+        )
+        .run();
 
-    const submission = await env.DB.prepare(
-      `SELECT * FROM bounty_submissions WHERE id = ?`,
-    )
-      .bind(id)
-      .first();
+      const submission = await env.DB.prepare(
+        `SELECT * FROM bounty_submissions WHERE id = ?`,
+      )
+        .bind(id)
+        .first();
 
-    return new Response(JSON.stringify({ submission }), {
-      status: 201,
-      headers: corsHeaders,
-    });
+      return new Response(JSON.stringify({ submission }), {
+        status: 201,
+        headers: corsHeaders,
+      });
+    } catch (error: any) {
+      console.error("Error creating submission:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to create submission",
+          details: error.message,
+        }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
   }
 
   // GET /api/submissions/:id - Get submission
