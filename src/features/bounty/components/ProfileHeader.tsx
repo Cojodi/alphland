@@ -95,7 +95,7 @@ export function ProfileHeader({
               href={socials.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors [&_svg_path]:fill-current"
+              className="w-12 h-12 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors overflow-visible [&_svg_path]:fill-current"
             >
               <GithubIcon className="w-5 h-5" />
             </a>
@@ -105,7 +105,7 @@ export function ProfileHeader({
               href={socials.twitter}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors [&_svg_path]:fill-current"
+              className="w-12 h-12 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors overflow-visible [&_svg_path]:fill-current"
             >
               <TwitterIcon className="w-5 h-5" />
             </a>
@@ -115,7 +115,7 @@ export function ProfileHeader({
               href={socials.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors [&_svg_path]:fill-current"
+              className="w-12 h-12 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors overflow-visible [&_svg_path]:fill-current"
             >
               <LinkedinIcon className="w-5 h-5" />
             </a>
@@ -125,7 +125,7 @@ export function ProfileHeader({
               href={socials.telegram}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors [&_svg_path]:fill-current"
+              className="w-12 h-12 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors overflow-visible [&_svg_path]:fill-current"
             >
               <TelegramIcon className="w-5 h-5" />
             </a>
@@ -135,7 +135,7 @@ export function ProfileHeader({
               href={socials.discord}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors [&_svg_path]:fill-current"
+              className="w-12 h-12 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors overflow-visible [&_svg_path]:fill-current"
             >
               <DiscordIcon className="w-5 h-5" />
             </a>
@@ -145,7 +145,7 @@ export function ProfileHeader({
               href={socials.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors"
+              className="w-12 h-12 rounded-full bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal flex items-center justify-center text-light-charcoal dark:text-lightgrey hover:border-orange hover:text-orange transition-colors overflow-visible"
             >
               <Globe className="w-5 h-5" />
             </a>
