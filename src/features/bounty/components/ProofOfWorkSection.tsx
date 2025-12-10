@@ -391,7 +391,7 @@ export function ProofOfWorkSection({
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="px-6 py-3 border border-border-grey dark:border-dark-charcoal text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black rounded-lg transition-colors"
+                className="px-6 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal text-black dark:text-white hover:bg-border-grey dark:hover:bg-dark-charcoal rounded-lg transition-colors font-semibold"
               >
                 Cancel
               </button>
