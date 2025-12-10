@@ -123,14 +123,21 @@ export function ProofOfWorkSection({
         : "/api/proof-of-work";
       const method = editingWork ? "PUT" : "POST";
 
+      const payload = {
+        user_id: userId,
+        username,
+        title: newWork.title,
+        description: newWork.description,
+        skills: newWork.skills,
+        link: newWork.link,
+      };
+
+      console.log("Submitting proof of work:", payload);
+
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: userId,
-          username,
-          ...newWork,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {

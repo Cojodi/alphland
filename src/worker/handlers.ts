@@ -2024,6 +2024,14 @@ export async function handleProofOfWorkAPI(
     try {
       const body = (await request.json()) as any;
 
+      console.log("Received proof of work data:", {
+        user_id: body.user_id,
+        title: body.title,
+        description: body.description,
+        skills: body.skills,
+        link: body.link,
+      });
+
       // Validate required fields
       if (
         !body.user_id ||
@@ -2032,6 +2040,13 @@ export async function handleProofOfWorkAPI(
         !body.skills ||
         !body.link
       ) {
+        console.log("Validation failed:", {
+          user_id: !!body.user_id,
+          title: !!body.title,
+          description: !!body.description,
+          skills: !!body.skills,
+          link: !!body.link,
+        });
         return new Response(
           JSON.stringify({ error: "Missing required fields" }),
           {
