@@ -2030,7 +2030,7 @@ export async function handleProofOfWorkAPI(
         !body.title ||
         !body.description ||
         !body.skills ||
-        !body.project_url
+        !body.link
       ) {
         return new Response(
           JSON.stringify({ error: "Missing required fields" }),
@@ -2046,7 +2046,7 @@ export async function handleProofOfWorkAPI(
 
       await env.DB.prepare(
         `INSERT INTO proof_of_work (
-          id, user_id, title, description, category, skills, project_url, created_at, updated_at
+          id, user_id, title, description, category, skills, link, created_at, updated_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
         .bind(
@@ -2056,7 +2056,7 @@ export async function handleProofOfWorkAPI(
           body.description,
           body.category || null,
           JSON.stringify(body.skills),
-          body.project_url,
+          body.link,
           now,
           now,
         )
