@@ -328,8 +328,22 @@ export default function EditProfile() {
           const data = await response.json();
           const profile = data.user;
 
-          // Parse JSON fields
-          const skills = profile.skills ? JSON.parse(profile.skills) : [];
+          // Parse JSON fields - combine skills from all categories
+          const frontendSkills = profile.frontend_skills
+            ? JSON.parse(profile.frontend_skills)
+            : [];
+          const backendSkills = profile.backend_skills
+            ? JSON.parse(profile.backend_skills)
+            : [];
+          const blockchainSkills = profile.blockchain_skills
+            ? JSON.parse(profile.blockchain_skills)
+            : [];
+
+          // Combine and deduplicate skills
+          const skills = Array.from(
+            new Set([...frontendSkills, ...backendSkills, ...blockchainSkills]),
+          );
+
           const web3Interests = profile.web3_interests
             ? JSON.parse(profile.web3_interests)
             : [];
@@ -345,6 +359,16 @@ export default function EditProfile() {
             lastName = nameParts.slice(1).join(" ") || "";
           }
 
+          // Extract username from URL fields (remove the URL part)
+          const extractUsername = (url: string) => {
+            if (!url) return "";
+            // If it's already just a username (no http), return it
+            if (!url.startsWith("http")) return url;
+            // Extract username from URL
+            const parts = url.split("/");
+            return parts[parts.length - 1] || "";
+          };
+
           setFormData((prev) => ({
             ...prev,
             username: profile.username || "",
@@ -357,17 +381,19 @@ export default function EditProfile() {
               ? prev.profilePicturePreview
               : profile.image || null,
             socials: {
-              discord: profile.discord_username || "",
-              twitter: profile.twitter_username || "",
-              github: profile.github_username || "",
-              linkedin: profile.linkedin_username || "",
-              telegram: profile.telegram_username || "",
-              website: profile.website || "",
+              discord: extractUsername(profile.discord_url || ""),
+              twitter: extractUsername(profile.twitter_url || ""),
+              github: extractUsername(profile.github_url || ""),
+              linkedin: extractUsername(profile.linkedin_url || ""),
+              telegram: extractUsername(profile.telegram_url || ""),
+              website: profile.website_url || "",
             },
             location: profile.location || "",
             web3Familiarity: profile.web3_familiarity || "",
-            workPreference: profile.work_preference || "",
+            workPreference:
+              profile.work_experience || profile.looking_for || "",
             currentEmployer: profile.current_employer || "",
+            lookingFor: profile.looking_for || "",
             skills,
             web3Interests,
           }));

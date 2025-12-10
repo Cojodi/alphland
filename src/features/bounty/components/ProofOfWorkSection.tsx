@@ -380,18 +380,19 @@ export function ProofOfWorkSection({
                 type="button"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex-1 bg-orange hover:bg-orange/90 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50"
+                className="flex-1 bg-orange hover:bg-orange/90 font-bold py-3 rounded-lg transition-colors disabled:opacity-50 shadow-sm"
+                style={{ color: "#FFFFFF" }}
               >
                 {isSubmitting
                   ? "Saving..."
                   : editingWork
-                    ? "Update"
+                    ? "Update Proof of Work"
                     : "Add Proof of Work"}
               </button>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="px-6 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal text-black dark:text-white hover:bg-border-grey dark:hover:bg-dark-charcoal rounded-lg transition-colors font-semibold"
+                className="px-6 py-3 bg-smoked-white dark:bg-light-black border-2 border-border-grey dark:border-dark-charcoal text-black dark:text-white hover:bg-border-grey dark:hover:bg-dark-charcoal rounded-lg transition-colors font-semibold"
               >
                 Cancel
               </button>
