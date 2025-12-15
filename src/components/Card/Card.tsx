@@ -19,14 +19,8 @@ const Card = ({
   tags,
   url,
 }: CardProps) => {
-  // Check if "Spotlight" is in the tags
-  const hasSpotlight = tags.includes("Spotlight");
-  // Get the badge text - show "Spotlight" if it exists, otherwise show first tag
-  const badgeText = hasSpotlight ? "Spotlight" : tags[0];
-  // Get remaining tags (excluding the badge tag)
-  const remainingTags = hasSpotlight
-    ? tags.filter((tag) => tag !== "Spotlight")
-    : tags.slice(1);
+  // Show all tags at the bottom
+  const displayTags = tags;
   return (
     <Link href={url || "/"}>
       <a className="block w-full cursor-pointer group">
@@ -44,15 +38,6 @@ const Card = ({
               {/* Overlay for better readability */}
               <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/40" />
             </div>
-
-            {/* Top Right Badge */}
-            {tags.length > 0 && (
-              <div className="absolute top-4 right-4 z-10">
-                <span className="inline-block bg-white/95 dark:bg-white text-light-black dark:text-light-black text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm">
-                  {badgeText}
-                </span>
-              </div>
-            )}
           </div>
 
           {/* Bottom Left Logo Circle - Overlapping both sections */}
@@ -83,9 +68,9 @@ const Card = ({
 
             {/* Tags - Always render container to maintain consistent card height */}
             <div className="flex flex-wrap gap-2 min-h-[28px]">
-              {remainingTags.length > 0 && (
+              {displayTags.length > 0 && (
                 <>
-                  {remainingTags.slice(0, 3).map((tag, index) => (
+                  {displayTags.slice(0, 3).map((tag, index) => (
                     <span
                       key={index}
                       className="inline-block text-xs font-medium text-light-charcoal dark:text-white bg-smoked-white dark:bg-tooltip-dark px-3 py-1 rounded-full"
@@ -93,9 +78,9 @@ const Card = ({
                       {tag}
                     </span>
                   ))}
-                  {remainingTags.length > 3 && (
+                  {displayTags.length > 3 && (
                     <span className="inline-block text-xs font-medium text-light-charcoal dark:text-white px-2 py-1">
-                      +{remainingTags.length - 3}
+                      +{displayTags.length - 3}
                     </span>
                   )}
                 </>
