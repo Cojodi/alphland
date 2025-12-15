@@ -1,6 +1,30 @@
 import Layout from "../components/Layout";
+import { getAllDapps } from "../data/getAllDapps";
+import Image from "next/image";
+import Link from "next/link";
 
-const EcosystemMapPage = () => {
+interface DappsByCategory {
+  [category: string]: Array<{
+    name: string;
+    url: string;
+    logo: string;
+  }>;
+}
+
+interface EcosystemMapProps {
+  dappsByCategory: DappsByCategory;
+  totalDapps: number;
+  categoryCount: number;
+}
+
+const EcosystemMapPage = ({
+  dappsByCategory,
+  totalDapps,
+  categoryCount,
+}: EcosystemMapProps) => {
+  // Sort categories alphabetically
+  const sortedCategories = Object.keys(dappsByCategory).sort();
+
   return (
     <Layout
       title="Ecosystem Map"
@@ -12,199 +36,108 @@ const EcosystemMapPage = () => {
           <h1 className="text-4xl lg:text-5xl font-bold mb-6 dark:text-white">
             Ecosystem Map
           </h1>
-          <p className="text-xl text-light-charcoal dark:text-lightgrey max-w-2xl mx-auto">
+          <p className="text-xl text-light-charcoal dark:text-lightgrey max-w-2xl mx-auto mb-8">
             A comprehensive view of the Alephium ecosystem and its components
           </p>
-        </section>
-
-        {/* Ecosystem Categories */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {/* DeFi */}
-          <div className="bg-white dark:bg-hero-dark rounded-lg p-6 shadow-box-image-shadow">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-orange rounded-lg flex items-center justify-center mr-4">
-                <span className="text-white text-2xl font-bold">D</span>
-              </div>
-              <h3 className="text-xl font-semibold dark:text-white">DeFi</h3>
-            </div>
-            <p className="text-light-charcoal dark:text-lightgrey mb-4">
-              Decentralized finance protocols and platforms
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                DEXes
-              </span>
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                Lending
-              </span>
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                Staking
-              </span>
-            </div>
-          </div>
-
-          {/* Infrastructure */}
-          <div className="bg-white dark:bg-hero-dark rounded-lg p-6 shadow-box-image-shadow">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-accessible-green rounded-lg flex items-center justify-center mr-4">
-                <span className="text-white text-2xl font-bold">I</span>
-              </div>
-              <h3 className="text-xl font-semibold dark:text-white">
-                Infrastructure
-              </h3>
-            </div>
-            <p className="text-light-charcoal dark:text-lightgrey mb-4">
-              Core infrastructure and developer tools
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                Explorers
-              </span>
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                APIs
-              </span>
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                Tools
-              </span>
-            </div>
-          </div>
-
-          {/* NFTs */}
-          <div className="bg-white dark:bg-hero-dark rounded-lg p-6 shadow-box-image-shadow">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-orange rounded-lg flex items-center justify-center mr-4">
-                <span className="text-white text-2xl font-bold">N</span>
-              </div>
-              <h3 className="text-xl font-semibold dark:text-white">NFTs</h3>
-            </div>
-            <p className="text-light-charcoal dark:text-lightgrey mb-4">
-              NFT marketplaces and collections
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                Marketplaces
-              </span>
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                Art
-              </span>
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                Gaming
-              </span>
-            </div>
-          </div>
-
-          {/* Wallets */}
-          <div className="bg-white dark:bg-hero-dark rounded-lg p-6 shadow-box-image-shadow">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-accessible-green rounded-lg flex items-center justify-center mr-4">
-                <span className="text-white text-2xl font-bold">W</span>
-              </div>
-              <h3 className="text-xl font-semibold dark:text-white">Wallets</h3>
-            </div>
-            <p className="text-light-charcoal dark:text-lightgrey mb-4">
-              Secure wallet solutions for managing assets
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                Desktop
-              </span>
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                Mobile
-              </span>
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                Hardware
-              </span>
-            </div>
-          </div>
-
-          {/* Games */}
-          <div className="bg-white dark:bg-hero-dark rounded-lg p-6 shadow-box-image-shadow">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-orange rounded-lg flex items-center justify-center mr-4">
-                <span className="text-white text-2xl font-bold">G</span>
-              </div>
-              <h3 className="text-xl font-semibold dark:text-white">Games</h3>
-            </div>
-            <p className="text-light-charcoal dark:text-lightgrey mb-4">
-              Gaming and entertainment applications
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                P2E
-              </span>
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                Casual
-              </span>
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                Strategy
-              </span>
-            </div>
-          </div>
-
-          {/* Social */}
-          <div className="bg-white dark:bg-hero-dark rounded-lg p-6 shadow-box-image-shadow">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-accessible-green rounded-lg flex items-center justify-center mr-4">
-                <span className="text-white text-2xl font-bold">S</span>
-              </div>
-              <h3 className="text-xl font-semibold dark:text-white">Social</h3>
-            </div>
-            <p className="text-light-charcoal dark:text-lightgrey mb-4">
-              Social and community platforms
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                DAOs
-              </span>
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                Forums
-              </span>
-              <span className="text-xs bg-smoked-white dark:bg-light-black px-2 py-1 rounded dark:text-white">
-                Governance
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Statistics */}
-        <section className="bg-white dark:bg-hero-dark rounded-lg p-8 lg:p-12">
-          <h2 className="text-3xl font-bold mb-8 dark:text-white">
-            Ecosystem Overview
-          </h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-orange mb-2">50+</div>
-              <div className="text-light-charcoal dark:text-lightgrey">
+          <div className="flex justify-center gap-8 text-center">
+            <div>
+              <div className="text-3xl font-bold text-orange">{totalDapps}</div>
+              <div className="text-sm text-light-charcoal dark:text-lightgrey">
                 Total dApps
               </div>
             </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-accessible-green mb-2">
-                15+
+            <div>
+              <div className="text-3xl font-bold text-accessible-green">
+                {categoryCount}
               </div>
-              <div className="text-light-charcoal dark:text-lightgrey">
+              <div className="text-sm text-light-charcoal dark:text-lightgrey">
                 Categories
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-orange mb-2">100K+</div>
-              <div className="text-light-charcoal dark:text-lightgrey">
-                Active Users
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-accessible-green mb-2">
-                Growing
-              </div>
-              <div className="text-light-charcoal dark:text-lightgrey">
-                Daily
               </div>
             </div>
           </div>
         </section>
+
+        {/* Ecosystem Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {sortedCategories.map((category) => (
+            <div
+              key={category}
+              className="bg-white dark:bg-hero-dark rounded-lg p-6 shadow-lg border border-border-grey dark:border-tooltip-dark"
+            >
+              {/* Category Header */}
+              <div className="mb-4 pb-3 border-b border-border-grey dark:border-tooltip-dark">
+                <h3 className="text-lg font-semibold dark:text-white">
+                  {category}
+                </h3>
+                <p className="text-xs text-light-charcoal dark:text-lightgrey mt-1">
+                  {dappsByCategory[category].length}{" "}
+                  {dappsByCategory[category].length === 1 ? "dApp" : "dApps"}
+                </p>
+              </div>
+
+              {/* Dapp Grid */}
+              <div className="grid grid-cols-3 gap-3">
+                {dappsByCategory[category].map((dapp) => (
+                  <Link key={dapp.url} href={`/${dapp.url}`}>
+                    <a
+                      className="group aspect-square relative rounded-lg overflow-hidden bg-smoked-white dark:bg-light-black hover:shadow-lg transition-all duration-200 border border-transparent hover:border-orange flex items-center justify-center p-2"
+                      title={dapp.name}
+                    >
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={dapp.logo}
+                          alt={dapp.name}
+                          layout="fill"
+                          objectFit="contain"
+                          className="transition-transform duration-200 group-hover:scale-110"
+                        />
+                      </div>
+                    </a>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </Layout>
   );
+};
+
+export const getStaticProps = async () => {
+  const dapps = await getAllDapps();
+
+  // Group dapps by their first tag
+  const dappsByCategory: DappsByCategory = {};
+
+  dapps.forEach((dapp) => {
+    // Get the first tag or use "Uncategorized" if no tags
+    const category =
+      dapp.tags && dapp.tags.length > 0 ? dapp.tags[0] : "Uncategorized";
+
+    if (!dappsByCategory[category]) {
+      dappsByCategory[category] = [];
+    }
+
+    dappsByCategory[category].push({
+      name: dapp.name,
+      url: dapp.url,
+      logo: dapp.media?.logoUrl || "/default-logo.png",
+    });
+  });
+
+  // Sort dapps within each category alphabetically
+  Object.keys(dappsByCategory).forEach((category) => {
+    dappsByCategory[category].sort((a, b) => a.name.localeCompare(b.name));
+  });
+
+  return {
+    props: {
+      dappsByCategory,
+      totalDapps: dapps.length,
+      categoryCount: Object.keys(dappsByCategory).length,
+    },
+  };
 };
 
 export default EcosystemMapPage;
