@@ -150,7 +150,7 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo, nftData }) => {
 };
 
 export const getStaticProps: GetStaticProps<DappPageProps> = async (
-  context
+  context,
 ) => {
   const name = context.params?.name;
 
@@ -195,7 +195,7 @@ export const getStaticPaths: GetStaticPaths<{ name: string }> = async () => {
           name: filename.replace(/\.json$/, ""),
         },
       })),
-    fallback: false,
+    fallback: "blocking",
   };
 };
 
