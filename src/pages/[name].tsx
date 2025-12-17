@@ -437,7 +437,7 @@ export const getStaticPaths: GetStaticPaths<{ name: string }> = async () => {
           name: filename.replace(/\.json$/, ""),
         },
       })),
-    fallback: false,
+    fallback: "blocking",
   };
 };
 
