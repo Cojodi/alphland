@@ -110,7 +110,7 @@ Special thanks to [Argentlabs](https://github.com/argentlabs/dappland). We're de
 
 We are immensely grateful to [Alephium](https://alephium.org/) and the [Blockflow Alliance DAO](https://twitter.com/Blockflow_DAO) for their generous support and sponsorship of this project.
 
-For more information about our sponsors:
+For more information about our sponsors :
 <div align="center">
 <a href="https://alephium.org/">
 <img src="src/assets/alephium-logos/grey/Logo-Icon-Grey.png" alt="Alephium" title="Alephium" style="width: 100px;">
