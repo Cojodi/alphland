@@ -1,6 +1,6 @@
 {
   "name": "AlphIQ",
-  "description": "Unified platform for blockchain analytics, quests, and learning empowering users to explore, engage, and educate through real time insights and gamified onchain experiences.",
+  "description": "AlphIQ is a platform combining analytics, quests, and educational modules. It provides real time data alongside gamified learning activities.",
   "short_description": "AlphIQ: Making sense of Alephium so you can spend less time staring at charts.",
   "tags": ["Quests", "Analytics", "Education", "Social", "Stats", "Games"],
   "contracts": [],
