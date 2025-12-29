@@ -1,6 +1,6 @@
 {
   "name": "Alephium Richlist",
-  "description": "Explore real-time insights into the Alephium ecosystem with detailed metrics and statistics on address distribution and network activity.",
+  "description": "Alephium Richlist is an analytics tool that displays address distribution, large holder rankings, and concentration metrics. It helps users understand wealth dispersion within the network.",
   "short_description": "Explore real-time insights into the Alephium ecosystem.",
   "tags": ["Stats"],
   "contracts": [],
