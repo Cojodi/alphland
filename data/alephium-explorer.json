@@ -1,6 +1,6 @@
 {
   "name": "Alephium Explorer",
-  "description": "This explorer leverages onchain data to showcase $ALPH development",
+  "description": "Alephium Explorer is a block explorer showing blocks, transactions, addresses, and network metrics. It helps users view onchain activity and follow ALPH usage across the network.",
   "short_description": "Explore detailled stats about Alephium network",
   "tags": ["Stats"],
   "contracts": [],
