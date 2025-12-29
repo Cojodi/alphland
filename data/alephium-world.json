@@ -1,6 +1,6 @@
 {
   "name": "Alephium.World",
-  "description": "Embark on your Alephium journey today. Access the tools, insights, and community support to unlock the full potential of your blockchain endeavors.",
+  "description": "Alephium.World is a dashboard that displays real time information about a subset of nodes connected to the Alephium network. It shows their locations on a map along with connection details and basic network metrics.",
   "short_description": "Vizualize fullnodes all around the world!",
   "tags": ["Infrastructure", "Stats"],
   "councils_choice": true,
