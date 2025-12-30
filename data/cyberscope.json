@@ -1,6 +1,6 @@
 {
   "name": "Cyberscope",
-  "description": "Cyberscope provides smart contract audit and cybersecurity services, helping projects secure their blockchain infrastructure. By enhancing trust and transparency, Cyberscope contributes to a safer and more reliable web3 ecosystem.",
+  "description": "Cyberscope is a cybersecurity and smart contract auditing firm analyzing codebases and infrastructure for vulnerabilities. It provides assessments and reports to help projects improve safety.",
   "short_description": "Smart Contract Audits",
   "tags": ["Security"],
   "contracts": [],
