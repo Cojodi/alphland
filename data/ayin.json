@@ -1,6 +1,6 @@
 {
   "name": "AYIN",
-  "description": "Welcome to Ayin: Bringing liquidity to life on Alephium. Seamlessly swap Alephium native token pairs, earn, and explore our ecosystem. Enter app to explore the different options for trading, staking, utility functions and more.",
+  "description": "AYIN is a decentralized exchange enabling swaps for native Alephium token pairs. It provides liquidity pools, staking incentives, and related DeFi utilities.",
   "short_description": "DEX",
   "tags": ["DeFi", "Infrastructure", "Bridges"],
   "councils_choice": true,
