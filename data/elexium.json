@@ -1,6 +1,6 @@
 {
   "name": "Elexium Finance",
-  "description": "Welcome to Elexium: The People\u0027s Choice. Enter the arena to explore what aims to be Alephium\u0027s liquidity centre, steeped in Ancient Greek wisdom and Demokratia. Utilising a vote escrowed model, we are for the people, by the people, and your Elexium NFT locks serve as your ticket to the ecosystem.",
+  "description": "Elexium Finance is a decentralized exchange on Alephium that operates as a veDEX (vote-escrowed DEX), using locked tokens to manage governance and incentives. It supports token swaps, liquidity provision, and governance participation through the EX locking system. The platform also enables bribe-based voting incentives and offers both standard and stable liquidity pools.",
   "short_description": "Elexium: The People\u0027s Choice",
   "tags": ["DeFi"],
   "contracts": [],
