@@ -1,6 +1,6 @@
 {
   "name": "Dappnode",
-  "description": "Run decentralized networks like Ethereum and Bitcoin and earn rewards.",
+  "description": "Dappnode is a platform for hosting decentralized infrastructure such as full nodes and validators. It allows users to operate blockchain services and earn associated rewards.",
   "short_description": "Zero hassle, it just works",
   "tags": ["Infrastructure"],
   "contracts": [],
