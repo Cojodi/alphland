@@ -1,6 +1,6 @@
 {
   "name": "Aura",
-  "description": "Aura is your gateway to decentralized prediction markets built on Alephium, empowering users to predict future events across diverse categories, including real-world occurrences and crypto market movements. Aura leverages a robust, transparent, and scalable system designed to reward accurate predictions, incentivize market creation, and encourage active community governance.",
+  "description": "Aura is a decentralized prediction market protocol allowing users to create and trade event based markets. It rewards correct predictions and supports community governed market creation.",
   "short_description": "Predict on Alephium",
   "tags": ["DeFi", "ComingSoon"],
   "contracts": [],

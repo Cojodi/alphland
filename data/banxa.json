@@ -1,6 +1,6 @@
 {
   "name": "Banxa",
-  "description": "Banxa provides a fully compliant fiat-to-crypto on/off-ramp with support for bank transfers, cards, and local payment options, ensuring high conversion rates and low friction.",
+  "description": "Banxa is a fiat to crypto onramp supporting card payments, bank transfers, and regional methods. It enables simple cryptocurrency purchases across many countries.",
   "short_description": "Global fiat-to-crypto gateway with local payment methods.",
   "tags": ["Onramps"],
   "councils_choice": false,
