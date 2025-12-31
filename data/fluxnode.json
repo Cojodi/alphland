@@ -1,6 +1,6 @@
 {
   "name": "Flux",
-  "description": "Flux is a decentralized Web3 cloud infrastructure comprised of user-operated, scalable and globally distributed computational nodes.",
+  "description": "Flux is a decentralized cloud infrastructure network using user operated nodes to provide compute resources. It enables deployment of applications and distributed services.",
   "short_description": "Host your Alephium Full Node on the Flux Cloud!",
   "tags": ["Infrastructure"],
   "councils_choice": false,
