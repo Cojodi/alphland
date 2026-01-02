@@ -1,6 +1,6 @@
 {
   "name": "Godex",
-  "description": "Godex is an online crypto exchange that enables fast, secure, and anonymous swaps of over 300 coins without requiring registration or personal data.",
+  "description": "Godex is a non custodial exchange that performs anonymous swaps across more than 300 assets. It does not require registration and offers fast conversion routes.",
   "short_description": "Anonymous crypto swap service for 300+ coins.",
   "tags": ["Bridges"],
   "councils_choice": false,
