@@ -1,7 +1,6 @@
 {
   "name": "Hashlock",
-  "description": "Hashlock was born with the vision of conducting the most comprehensive blockchain security research possible and applying it with our clients to boost safe innovation. The founders and team quickly learned that this learning process will never end. Hashlock aims to influence blockchain innovation, regulation and usage to best reflect web3s original core values.",
-  "short_description": "We are on a mission to ensure that all stakeholders in blockchain innovation can utilise web3 securely.",
+  "description": "Hashlock is a smart contract security auditor performing detailed code reviews and security research. It focuses on identifying vulnerabilities and strengthening protocol safety through structured audit reports.",
   "tags": ["Security"],
   "group": "",
   "contracts": [],
