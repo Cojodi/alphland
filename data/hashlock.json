@@ -1,6 +1,7 @@
 {
   "name": "Hashlock",
   "description": "Hashlock is a smart contract security auditor performing detailed code reviews and security research. It focuses on identifying vulnerabilities and strengthening protocol safety through structured audit reports.",
+  "short_description": "We are on a mission to ensure that all stakeholders in blockchain innovation can utilise web3 securely.",
   "tags": ["Security"],
   "group": "",
   "contracts": [],
