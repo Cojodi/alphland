@@ -1,6 +1,6 @@
 {
   "name": "HenryCoder",
-  "description": "HenryCoder opens the door to Alephium for EVM developers, providing an AI service specifically trained for translation to Ralph. With Henry's help you can save more than 80% of work and cost when moving your EVM project to Alephium. HenryCoder is your number one assistant in moving from EVM based chain to Alephium.",
+  "description": "HenryCoder is an AI powered development assistant that translates EVM based code into Ralph. It helps developers migrate applications to Alephium by reducing manual rewriting and improving development efficiency.",
   "short_description": "Your number one assistant in moving from EVM to Alephium.",
   "tags": ["Utility", "Infrastructure"],
   "contracts": [],
