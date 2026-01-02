@@ -1,6 +1,6 @@
 {
   "name": "Grumpy Fortunes",
-  "description": "Grumpy is a meme token launched on the Alephium blockchain in May. With a fair launch, Grumpy introduced a series of unique Video NFTs that captured attention. But the innovation didn\u0027t stop there—Grumpy also developed \u0027The First AI-Powered Oracle on Alephium\u0027 through its exciting new dApp, Grumpy Fortunes. This interactive platform offers users a fun and creative way to get AI-driven price predictions for the future value of Alephium, blending technology and entertainment.",
+  "description": "Grumpy Fortunes is an onchain application that generates AI based price prediction messages for ALPH. It offers an interactive interface combining entertainment with experimental forecasting features. It is part of the broader Grumpy ecosystem.",
   "short_description": "The First AI Powered Oracle on Alephium",
   "tags": ["DeFi", "NFTs", "Games"],
   "group": "",

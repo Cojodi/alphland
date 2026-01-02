@@ -1,6 +1,6 @@
 {
   "name": "Grumpy Ralph",
-  "description": "Grumpy is a meme token launched on the Alephium blockchain in May of 2024. Grumpy is a very active and productive cat.  Grumpy created a series of unique Video NFTs that captured Alephium\u0027s attention. Then Grumpy created Grumpy Fortunes, \u0027The First AI-Powered Oracle on Alephium\u0027. Our latest innovation is Grumpy Ralph \u0027The first AI Contract Creation Tool on Alephium\u0027.",
+  "description": "Grumpy Ralph is an AI assisted contract creation tool that helps users generate and deploy basic smart contracts. It automates portions of Ralph code creation and simplifies deployment steps for non technical users.",
   "short_description": "The First AI Contract Creation Tool on Alephium",
   "tags": ["DeFi", "NFTs", "Infrastructure"],
   "group": "",
