@@ -1,6 +1,6 @@
 {
   "name": "K1Pool",
-  "description": "K1Pool.com aims to make access to the mining easier for miners, providing a friendly interface that allows to choose algorithms or coins easier and in more efficient and with organized way.",
+  "description": "K1Pool is a mining pool supporting multiple mining algorithms and streamlined miner setup. It provides organized dashboards and simplified access to multi asset mining operations.",
   "short_description": "Easy to join, easy to get started",
   "tags": ["Hashrate"],
   "contracts": [],
