@@ -1,6 +1,6 @@
 {
   "name": "Inference",
-  "description": "Inference (https://inference.ag) delivers thorough and high quality smart contract audits to ensure the integrity and security of your blockchain applications. With deep expertise in Alephium, Tezos and EVM based ecosystems, we conduct comprehensive assessments ranging from simple token contracts to complex systems such as DEXs, AMMs, bridge protocols, and routing aggregators. Our detailed reports provide actionable insights to help you secure your code, minimize risk, and build trust with your users. Whether you are launching a new project or scaling an existing one, our tailored approach strengthens the safety and performance of your decentralized platform.",
+  "description": "Inference is a smart contract auditing service that conducts in depth security evaluations for blockchain applications. It covers token contracts, DEXs, AMMs, bridging protocols, and complex systems with detailed vulnerability reporting.",
   "short_description": "Security assessments for the decentralised world.",
   "tags": ["Security"],
   "group": "",
