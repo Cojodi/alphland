@@ -1,6 +1,6 @@
 {
   "name": "Ledger Wallet",
-  "description": "We believe in a world where users, creators and enterprises manage their value with ownership and freedom.",
+  "description": "Ledger is a hardware wallet used for offline storage of digital assets. It supports a wide range of cryptocurrencies and connects to companion applications for transaction signing and portfolio management.",
   "short_description": "We Are Ledger",
   "tags": ["Wallets"],
   "contracts": [],
