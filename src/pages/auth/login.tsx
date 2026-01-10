@@ -1,40 +1,28 @@
 import Button from "@/components/Button/Button";
 import Layout from "@/components/Layout";
-import {
-  authClient,
-  signInWithEmail,
-  signUpWithEmail,
-  useSession,
-} from "@/lib/auth-client";
+import { authClient, useSession } from "@/lib/auth-client";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 
 /**
- * Login/Sign Up Page for Bounty System
+ * Login Page - Google OAuth Only
  *
- * Authentication Flow:
- * 1. User submits form → authClient sends request to /api/auth/*
- * 2. Next.js rewrites proxy the request to Cloudflare Worker (localhost:8787)
- * 3. Worker handles auth with Better Auth → writes to D1 database
- * 4. Cookie is set on localhost:3000 domain (via proxy)
- * 5. User is redirected to /bounty/profile/edit
+ * Simplified login page supporting only Google authentication.
+ * Email/Password authentication has been moved to /auth/email-login for future use.
  *
- * Google OAuth Flow:
- * 1. User clicks Google button → redirect to Google
- * 2. Google redirects to /api/auth/callback/google (on localhost:3000)
- * 3. Next.js proxies to worker → worker validates token → creates session
- * 4. Worker redirects to callbackURL (/bounty)
+ * Flow:
+ * 1. User clicks "Continue with Google"
+ * 2. Redirects to Google OAuth
+ * 3. Google returns user info
+ * 4. Better Auth auto-creates user if first time
+ * 5. User is redirected to the app
  */
 export default function LoginPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [name, setName] = useState("");
 
   // Get redirect URL from query params, default to /bounty
   const redirectUrl = (router.query.redirect as string) || "/bounty";
@@ -42,88 +30,18 @@ export default function LoginPage() {
   // Redirect if already logged in
   useEffect(() => {
     if (session?.user && !isPending) {
-      // Redirect to the specified URL or default
       router.push(redirectUrl);
     }
   }, [session, isPending, router, redirectUrl]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      if (isSignUp) {
-        // Sign up with email/password
-        const result = await signUpWithEmail(email, password, name);
-
-        if (!result.success) {
-          throw new Error((result.error as any)?.message || "Sign up failed");
-        }
-
-        // Show success message and keep user on signup mode
-        setError(
-          "✅ Account created successfully! Please check your email inbox (and spam folder) to verify your account. After verification, you can sign in.",
-        );
-        // Clear form fields
-        setEmail("");
-        setPassword("");
-        setName("");
-        // Don't switch to sign in yet, let user read the message
-        return;
-      } else {
-        // Sign in with email/password
-        const result = await signInWithEmail(email, password);
-
-        if (!result.success) {
-          const errorMsg = (result.error as any)?.message || "";
-
-          // Provide helpful error messages
-          if (
-            errorMsg.includes("not found") ||
-            errorMsg.includes("User not found")
-          ) {
-            throw new Error(
-              "Account not found. Please sign up first or check your email address.",
-            );
-          } else if (
-            errorMsg.includes("verified") ||
-            errorMsg.includes("verification")
-          ) {
-            throw new Error(
-              "Please verify your email address before signing in. Check your inbox (and spam folder) for the verification email.",
-            );
-          } else if (errorMsg.includes("password")) {
-            throw new Error("Incorrect password. Please try again.");
-          } else {
-            throw new Error(
-              errorMsg || "Sign in failed. Please check your credentials.",
-            );
-          }
-        }
-
-        // Redirect will happen via useEffect when session updates
-        // Or force redirect after successful login
-        router.push(redirectUrl);
-      }
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleGoogleLogin = async () => {
     setLoading(true);
     setError("");
 
     try {
-      // Use authClient.signIn.social - this will redirect to Google
-      // After Google auth, it will callback to /api/auth/callback/google
-      // which gets proxied to the worker, then redirects to callbackURL
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: redirectUrl, // Final redirect after successful auth
+        callbackURL: redirectUrl,
       });
     } catch (err: any) {
       setError(err.message || "Google sign in failed");
@@ -144,138 +62,48 @@ export default function LoginPage() {
 
   return (
     <Layout
-      title={isSignUp ? "Sign Up" : "Login"}
-      description="Login or sign up to access bounties"
+      title="Sign In"
+      description="Sign in to access Alphland bounties and features"
     >
       <div className="min-h-screen bg-smoked-white dark:bg-light-black flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
-          <div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-black dark:text-white">
-              {isSignUp ? "Create your account" : "Sign in to your account"}
+          {/* Header */}
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-black dark:text-white">
+              Welcome to Alphland
             </h2>
-            <p className="mt-2 text-center text-sm text-light-charcoal dark:text-lightgrey">
-              {isSignUp
-                ? "Already have an account? "
-                : "Don't have an account? "}
-              <button
-                onClick={() => {
-                  setIsSignUp(!isSignUp);
-                  setError("");
-                }}
-                className="font-medium text-orange hover:text-orange/80"
-              >
-                {isSignUp ? "Sign in" : "Sign up"}
-              </button>
+            <p className="mt-2 text-sm text-light-charcoal dark:text-lightgrey">
+              Sign in to access bounties and participate in the Alephium
+              ecosystem
             </p>
           </div>
 
+          {/* Login Card */}
           <div className="bg-white dark:bg-hero-dark rounded-xl p-8 border border-border-grey dark:border-dark-charcoal">
+            {/* Error Message */}
             {error && (
-              <div
-                className={`mb-4 p-3 rounded ${
-                  error.includes("check your email")
-                    ? "bg-accessible-green/10 text-accessible-green border border-accessible-green"
-                    : "bg-red-500/10 text-red-500 border border-red-500"
-                }`}
-              >
+              <div className="mb-6 p-3 rounded bg-red-500/10 text-red-500 border border-red-500 text-sm">
                 {error}
               </div>
             )}
 
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              {isSignUp && (
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-black dark:text-white mb-2"
-                  >
-                    Name
-                  </label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    required={isSignUp}
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="appearance-none relative block w-full px-3 py-2 border border-border-grey dark:border-dark-charcoal rounded-lg bg-smoked-white dark:bg-light-black text-black dark:text-white placeholder-light-charcoal dark:placeholder-lightgrey focus:outline-none focus:ring-2 focus:ring-orange focus:border-transparent"
-                    placeholder="John Doe"
-                  />
-                </div>
-              )}
-
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-black dark:text-white mb-2"
-                >
-                  Email address
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none relative block w-full px-3 py-2 border border-border-grey dark:border-dark-charcoal rounded-lg bg-smoked-white dark:bg-light-black text-black dark:text-white placeholder-light-charcoal dark:placeholder-lightgrey focus:outline-none focus:ring-2 focus:ring-orange focus:border-transparent"
-                  placeholder="you@example.com"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-black dark:text-white mb-2"
-                >
-                  Password
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none relative block w-full px-3 py-2 border border-border-grey dark:border-dark-charcoal rounded-lg bg-smoked-white dark:bg-light-black text-black dark:text-white placeholder-light-charcoal dark:placeholder-lightgrey focus:outline-none focus:ring-2 focus:ring-orange focus:border-transparent"
-                  placeholder="••••••••"
-                />
-              </div>
-
-              <div>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  className="w-full"
-                  disabled={loading}
-                >
-                  {loading ? "Loading..." : isSignUp ? "Sign up" : "Sign in"}
-                </Button>
-              </div>
-            </form>
-
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-border-grey dark:border-dark-charcoal"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white dark:bg-hero-dark text-light-charcoal dark:text-lightgrey">
-                    Or continue with
+            {/* Google Sign In Button */}
+            <button
+              onClick={handleGoogleLogin}
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-border-grey dark:border-dark-charcoal rounded-lg bg-white dark:bg-light-black hover:bg-smoked-white dark:hover:bg-hero-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 border-2 border-black dark:border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-black dark:text-white">
+                    Connecting...
                   </span>
                 </div>
-              </div>
-
-              <div className="mt-6">
-                <button
-                  onClick={handleGoogleLogin}
-                  disabled={loading}
-                  className="w-full flex items-center justify-center px-4 py-2 border border-border-grey dark:border-dark-charcoal rounded-lg bg-white dark:bg-light-black hover:bg-smoked-white dark:hover:bg-hero-dark transition-colors disabled:opacity-50"
-                >
+              ) : (
+                <>
                   <svg
-                    className="w-5 h-5 mr-2"
+                    className="w-5 h-5"
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
                   >
@@ -296,10 +124,46 @@ export default function LoginPage() {
                       fill="#EA4335"
                     />
                   </svg>
-                  <span className="text-black dark:text-white">Google</span>
+                  <span className="text-black dark:text-white font-medium">
+                    Continue with Google
+                  </span>
+                </>
+              )}
+            </button>
+
+            {/* Info Text */}
+            <p className="mt-6 text-center text-xs text-light-charcoal dark:text-lightgrey">
+              By continuing, you agree to our Terms of Service and Privacy
+              Policy
+            </p>
+
+            {/* Divider - Optional Email Login Link */}
+            {process.env.NODE_ENV === "development" && (
+              <>
+                <div className="my-6 flex items-center">
+                  <div className="flex-1 border-t border-border-grey dark:border-dark-charcoal"></div>
+                  <span className="px-4 text-xs text-light-charcoal dark:text-lightgrey">
+                    Development Only
+                  </span>
+                  <div className="flex-1 border-t border-border-grey dark:border-dark-charcoal"></div>
+                </div>
+
+                <button
+                  onClick={() => router.push("/auth/email-login")}
+                  className="w-full text-sm text-orange hover:text-orange/80 font-medium"
+                >
+                  Email/Password Login (Coming Soon)
                 </button>
-              </div>
-            </div>
+              </>
+            )}
+          </div>
+
+          {/* Additional Info */}
+          <div className="text-center">
+            <p className="text-xs text-light-charcoal dark:text-lightgrey">
+              New to Alphland? Your account will be created automatically when
+              you sign in with Google.
+            </p>
           </div>
         </div>
       </div>

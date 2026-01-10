@@ -74,15 +74,19 @@ const worker = {
         console.log(`[AUTH] BETTER_AUTH_URL: ${env.BETTER_AUTH_URL}`);
 
         try {
-          const auth = createAuth(env.DB, {
-            GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
-            GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
-            BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
-            BETTER_AUTH_URL: env.BETTER_AUTH_URL,
-            APP_URL: env.APP_URL,
-            RESEND_API_KEY: env.RESEND_API_KEY,
-            FROM_EMAIL: env.FROM_EMAIL,
-          });
+          const auth = createAuth(
+            env.DB,
+            {
+              GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
+              GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
+              BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
+              BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+              APP_URL: env.APP_URL,
+              RESEND_API_KEY: env.RESEND_API_KEY,
+              FROM_EMAIL: env.FROM_EMAIL,
+            },
+            _ctx, // Pass ExecutionContext for background email sending
+          );
 
           console.log("[AUTH] Auth instance created successfully");
 
@@ -875,15 +879,19 @@ async function handleUsersAPI(
   // GET /api/users/me - Get current user's profile (requires auth)
   if (request.method === "GET" && pathname === "/api/users/me") {
     // Get session from cookie
-    const auth = createAuth(env.DB, {
-      GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
-      GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
-      BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
-      BETTER_AUTH_URL: env.BETTER_AUTH_URL,
-      APP_URL: env.APP_URL,
-      RESEND_API_KEY: env.RESEND_API_KEY,
-      FROM_EMAIL: env.FROM_EMAIL,
-    });
+    const auth = createAuth(
+      env.DB,
+      {
+        GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
+        GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
+        BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
+        BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+        APP_URL: env.APP_URL,
+        RESEND_API_KEY: env.RESEND_API_KEY,
+        FROM_EMAIL: env.FROM_EMAIL,
+      },
+      _ctx, // Pass ExecutionContext for background tasks
+    );
 
     const session = await auth.api.getSession({ headers: request.headers });
 

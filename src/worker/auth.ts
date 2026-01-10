@@ -36,8 +36,13 @@ export interface AuthEnv {
 /**
  * Create auth instance with D1 database
  * Must be called within request context where D1 binding is available
+ * @param ctx - ExecutionContext for background tasks (email sending)
  */
-export function createAuth(db: D1Database, env: AuthEnv) {
+export function createAuth(
+  db: D1Database,
+  env: AuthEnv,
+  ctx?: ExecutionContext,
+) {
   // Use APP_URL or BETTER_AUTH_URL as the public-facing URL
   const publicUrl = env.APP_URL || env.BETTER_AUTH_URL;
 
@@ -59,89 +64,101 @@ export function createAuth(db: D1Database, env: AuthEnv) {
 
     emailAndPassword: {
       enabled: true,
-      requireEmailVerification: false, // Temporarily disabled due to CPU limits on free tier
-      sendResetPassword: async ({ user, url }) => {
-        if (!resend) {
-          console.error("RESEND_API_KEY not configured");
-          return; // Don't block if email service not configured
+      requireEmailVerification: false, // Must be false for free tier (CPU limit)
+      sendResetPassword: ({ user, url }) => {
+        // CRITICAL: NOT an async function - returns immediately
+        if (!resend || !ctx) {
+          console.error("RESEND_API_KEY or ctx not configured");
+          return; // Return immediately
         }
 
-        // Send email without blocking - log errors but don't throw
-        try {
-          const { error } = await resend.emails.send({
-            from: fromEmail,
-            to: user.email,
-            subject: "Reset your password - Alphland",
-            html: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2>Reset Your Password</h2>
-                <p>Hello ${user.name || "there"},</p>
-                <p>We received a request to reset your password for your Alphland account.</p>
-                <p>Click the button below to reset your password:</p>
-                <a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 16px 0;">Reset Password</a>
-                <p>Or copy and paste this link into your browser:</p>
-                <p style="color: #666; word-break: break-all;">${url}</p>
-                <p>If you didn't request this password reset, you can safely ignore this email.</p>
-                <p>This link will expire in 1 hour.</p>
-                <hr style="border: none; border-top: 1px solid #ddd; margin: 24px 0;">
-                <p style="color: #666; font-size: 12px;">This email was sent by Alphland</p>
-              </div>
-            `,
-          });
+        // Fire and forget: ctx.waitUntil handles background execution
+        ctx.waitUntil(
+          resend.emails
+            .send({
+              from: fromEmail,
+              to: user.email,
+              subject: "Reset your password - Alphland",
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                  <h2>Reset Your Password</h2>
+                  <p>Hello ${user.name || "there"},</p>
+                  <p>We received a request to reset your password for your Alphland account.</p>
+                  <p>Click the button below to reset your password:</p>
+                  <a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 16px 0;">Reset Password</a>
+                  <p>Or copy and paste this link into your browser:</p>
+                  <p style="color: #666; word-break: break-all;">${url}</p>
+                  <p>If you didn't request this password reset, you can safely ignore this email.</p>
+                  <p>This link will expire in 1 hour.</p>
+                  <hr style="border: none; border-top: 1px solid #ddd; margin: 24px 0;">
+                  <p style="color: #666; font-size: 12px;">This email was sent by Alphland</p>
+                </div>
+              `,
+            })
+            .then(({ error }) => {
+              if (error) {
+                console.error("Failed to send password reset email:", error);
+              } else {
+                console.log(`Password reset email sent to ${user.email}`);
+              }
+            })
+            .catch((err) => {
+              console.error("Password reset email error:", err);
+            }),
+        );
 
-          if (error) {
-            console.error("Failed to send password reset email:", error);
-            // Don't throw - allow request to complete
-          } else {
-            console.log(`Password reset email sent to ${user.email}`);
-          }
-        } catch (err) {
-          console.error("Password reset email error:", err);
-          // Don't throw - allow request to complete
-        }
+        // Return immediately - Better Auth thinks the task is done
+        return;
       },
     },
 
     emailVerification: {
-      sendOnSignUp: true, // Try to send, but won't block registration if fails
-      sendVerificationEmail: async ({ user, url }) => {
-        if (!resend) {
-          console.error("RESEND_API_KEY not configured");
-          return; // Don't block registration if email service not configured
+      sendOnSignUp: true, // Enable automatic email sending on signup
+      sendVerificationEmail: ({ user, url }) => {
+        // CRITICAL: This is NOT an async function - returns immediately
+        // No await anywhere in this function
+
+        if (!resend || !ctx) {
+          console.error("RESEND_API_KEY or ctx not configured");
+          return; // Return immediately
         }
 
-        // Send email without blocking - log errors but don't throw
-        try {
-          const { error } = await resend.emails.send({
-            from: fromEmail,
-            to: user.email,
-            subject: "Verify your email - Alphland",
-            html: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2>Welcome to Alphland!</h2>
-                <p>Hello ${user.name || "there"},</p>
-                <p>Thank you for signing up! Please verify your email address to complete your registration.</p>
-                <p>Click the button below to verify your email:</p>
-                <a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 16px 0;">Verify Email</a>
-                <p>Or copy and paste this link into your browser:</p>
-                <p style="color: #666; word-break: break-all;">${url}</p>
-                <p>If you didn't create an account with Alphland, you can safely ignore this email.</p>
-                <hr style="border: none; border-top: 1px solid #ddd; margin: 24px 0;">
-                <p style="color: #666; font-size: 12px;">This email was sent by Alphland</p>
-              </div>
-            `,
-          });
+        // Fire and forget: ctx.waitUntil handles the Promise in background
+        // Better Auth won't wait because we're not returning a Promise
+        ctx.waitUntil(
+          resend.emails
+            .send({
+              from: fromEmail,
+              to: user.email,
+              subject: "Verify your email - Alphland",
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                  <h2>Welcome to Alphland!</h2>
+                  <p>Hello ${user.name || "there"},</p>
+                  <p>Thank you for signing up! Please verify your email address to complete your registration.</p>
+                  <p>Click the button below to verify your email:</p>
+                  <a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 16px 0;">Verify Email</a>
+                  <p>Or copy and paste this link into your browser:</p>
+                  <p style="color: #666; word-break: break-all;">${url}</p>
+                  <p>If you didn't create an account with Alphland, you can safely ignore this email.</p>
+                  <hr style="border: none; border-top: 1px solid #ddd; margin: 24px 0;">
+                  <p style="color: #666; font-size: 12px;">This email was sent by Alphland</p>
+                </div>
+              `,
+            })
+            .then(({ error }) => {
+              if (error) {
+                console.error("Failed to send verification email:", error);
+              } else {
+                console.log(`Verification email sent to ${user.email}`);
+              }
+            })
+            .catch((err) => {
+              console.error("Email sending error:", err);
+            }),
+        );
 
-          if (error) {
-            console.error("Failed to send verification email:", error);
-            // Don't throw - allow registration to complete even if email fails
-          } else {
-            console.log(`Verification email sent to ${user.email}`);
-          }
-        } catch (err) {
-          console.error("Email sending error:", err);
-          // Don't throw - allow registration to complete
-        }
+        // Return undefined immediately - Better Auth continues without waiting
       },
     },
 
