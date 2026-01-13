@@ -17,6 +17,7 @@ export default function BountyList() {
     "all" | "bounties" | "projects"
   >("all");
   const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [activeStatus, setActiveStatus] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [showVerificationSuccess, setShowVerificationSuccess] = useState(false);
   const [isSponsor, setIsSponsor] = useState(false);
@@ -113,7 +114,14 @@ export default function BountyList() {
     "Other",
   ];
 
-  // Filter bounties based on active category and search query
+  const statuses = [
+    { label: "All Status", value: "all" },
+    { label: "Open", value: "open" },
+    { label: "Closed", value: "closed" },
+    { label: "Completed", value: "completed" },
+  ];
+
+  // Filter bounties based on active category, status, and search query
   const filteredBounties = bounties.filter((bounty) => {
     // Filter by search query
     const matchesSearch =
@@ -122,6 +130,11 @@ export default function BountyList() {
       bounty.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
     if (!matchesSearch) {
+      return false;
+    }
+
+    // Filter by status
+    if (activeStatus !== "all" && bounty.status !== activeStatus) {
       return false;
     }
 
@@ -202,6 +215,31 @@ export default function BountyList() {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="w-full pl-10 pr-4 py-3 rounded-lg bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50"
                     />
+                  </div>
+
+                  {/* Status Filter */}
+                  <div className="mb-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Filter className="w-4 h-4 text-light-charcoal dark:text-lightgrey" />
+                      <span className="text-sm font-medium text-light-charcoal dark:text-lightgrey">
+                        Status
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {statuses.map((status) => (
+                        <button
+                          key={status.value}
+                          onClick={() => setActiveStatus(status.value)}
+                          className={`px-4 py-2 rounded-full font-medium text-sm transition ${
+                            activeStatus === status.value
+                              ? "bg-orange text-white"
+                              : "bg-white dark:bg-hero-dark text-light-charcoal dark:text-lightgrey border border-border-grey dark:border-dark-charcoal hover:bg-smoked-white dark:hover:bg-light-black"
+                          }`}
+                        >
+                          {status.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Filter Tabs */}
