@@ -1,6 +1,6 @@
 {
   "name": "Okminer Pool",
-  "description": "Integrated services for workers, mine owners, and operators, facilitating the integration and upgrade of the mining ecosystem",
+  "description": "Okminer Pool is an operational service for miners offering management tools, monitoring dashboards, and support for mining farms.",
   "short_description": "Leader of Next Mining Era",
   "tags": ["Hashrate"],
   "contracts": [],
