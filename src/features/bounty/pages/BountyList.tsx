@@ -364,7 +364,7 @@ export default function BountyList() {
                   <p className="text-sm text-light-charcoal dark:text-lightgrey mb-4">
                     {isSponsor
                       ? "Manage your bounties and track submissions."
-                      : "Launch bounties and engage with talented developers in the Alephium ecosystem."}
+                      : "Launch bounties and engage directly with talented developers and creators across the Alephium ecosystem."}
                   </p>
                   <Link
                     href={
@@ -384,9 +384,9 @@ export default function BountyList() {
                     How It Works
                   </h3>
                   <div className="space-y-3 text-sm text-light-charcoal dark:text-lightgrey">
-                    <p>1. Browse available bounties</p>
-                    <p>2. Submit your work</p>
-                    <p>3. Get rewarded</p>
+                    <p>1. Join bounties from ecosystem projects</p>
+                    <p>2. Deliver high-quality work</p>
+                    <p>3. Earn ALPH and unlock new opportunities</p>
                   </div>
                 </div>
 
