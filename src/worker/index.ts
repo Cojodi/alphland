@@ -232,7 +232,7 @@ const worker = {
 
       // User profile endpoints
       if (url.pathname.startsWith("/api/users")) {
-        return handleUsersAPI(request, env, url);
+        return handleUsersAPI(request, env, url, _ctx);
       }
 
       // Submission endpoints
@@ -835,6 +835,7 @@ async function handleUsersAPI(
   request: Request,
   env: Env,
   url: URL,
+  ctx?: any,
 ): Promise<Response> {
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -890,7 +891,7 @@ async function handleUsersAPI(
         RESEND_API_KEY: env.RESEND_API_KEY,
         FROM_EMAIL: env.FROM_EMAIL,
       },
-      _ctx, // Pass ExecutionContext for background tasks
+      ctx, // Pass ExecutionContext for background tasks
     );
 
     const session = await auth.api.getSession({ headers: request.headers });

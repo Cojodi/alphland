@@ -70,10 +70,10 @@ export function createAuth(
       enabled: true,
       requireEmailVerification: false, // Must be false for free tier (CPU limit)
       sendResetPassword: ({ user, url }) => {
-        // CRITICAL: NOT an async function - returns immediately
+        // CRITICAL: Returns immediately with resolved promise
         if (!resend || !ctx) {
           console.error("RESEND_API_KEY or ctx not configured");
-          return; // Return immediately
+          return Promise.resolve(); // Return resolved promise immediately
         }
 
         // Fire and forget: ctx.waitUntil handles background execution
@@ -111,24 +111,24 @@ export function createAuth(
             }),
         );
 
-        // Return immediately - Better Auth thinks the task is done
-        return;
+        // Return resolved promise immediately - Better Auth continues without waiting
+        return Promise.resolve();
       },
     },
 
     emailVerification: {
       sendOnSignUp: true, // Enable automatic email sending on signup
       sendVerificationEmail: ({ user, url }) => {
-        // CRITICAL: This is NOT an async function - returns immediately
+        // CRITICAL: Returns immediately with resolved promise
         // No await anywhere in this function
 
         if (!resend || !ctx) {
           console.error("RESEND_API_KEY or ctx not configured");
-          return; // Return immediately
+          return Promise.resolve(); // Return resolved promise immediately
         }
 
         // Fire and forget: ctx.waitUntil handles the Promise in background
-        // Better Auth won't wait because we're not returning a Promise
+        // Better Auth won't wait because we return immediately
         ctx.waitUntil(
           resend.emails
             .send({
@@ -162,7 +162,8 @@ export function createAuth(
             }),
         );
 
-        // Return undefined immediately - Better Auth continues without waiting
+        // Return resolved promise immediately - Better Auth continues without waiting
+        return Promise.resolve();
       },
     },
 
