@@ -84,7 +84,7 @@ const Home = ({
       url += `?${params.join("&")}`;
     }
     if (router.isReady && selectedCategory === "all") {
-      router.push(url);
+      router.push(url, undefined, { scroll: false });
     }
   }, [
     selectedFilters,

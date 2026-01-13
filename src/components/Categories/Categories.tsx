@@ -214,6 +214,8 @@ const Categories = ({
                         selectedRatings: selectedRatings,
                         selectedCategory: "all",
                       }),
+                      undefined,
+                      { scroll: false },
                     );
                   } else {
                     if (category.isRating) {

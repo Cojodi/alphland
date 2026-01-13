@@ -51,7 +51,7 @@ const CategoryPage = ({
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [dappRatings, setDappRatings] = useState<{ [key: string]: string[] }>(
-    {}
+    {},
   );
   const selectedCategory = useCategoryStore((state) => state.selectedCategory);
   const changeCategory = useCategoryStore((state) => state.changeCategory);
@@ -76,7 +76,7 @@ const CategoryPage = ({
       selectedRatings,
     });
     if (router.isReady && selectedCategory !== "all" && router.asPath !== url) {
-      router.push(url);
+      router.push(url, undefined, { scroll: false });
     }
   }, [selectedFilters, selectedSort, selectedRatings]);
 
@@ -101,7 +101,7 @@ const CategoryPage = ({
         ?.toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
       dapp.tags?.some((tag) =>
-        tag.toLowerCase().includes(searchQuery.toLowerCase())
+        tag.toLowerCase().includes(searchQuery.toLowerCase()),
       )
     );
   });
@@ -184,7 +184,7 @@ const CategoryPage = ({
 };
 
 export const getStaticProps: GetStaticProps<{ dappCards: DappCard[] }> = async (
-  context
+  context,
 ) => {
   const category = context?.params?.category as string;
 
