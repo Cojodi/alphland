@@ -1,6 +1,6 @@
 {
   "name": "LinxOTC",
-  "description": "LinxOTC facilitates secure over-the-counter trades without any escrow needed and P2P loans.",
+  "description": "LinxOTC is a peer to peer trading platform enabling direct asset swaps without escrow. It also supports user defined lending agreements with crypto collateral between individuals.",
   "short_description": "Escrow-free OTC trades and secure peer-to-peer loans.",
   "tags": ["DeFi"],
   "contracts": [],

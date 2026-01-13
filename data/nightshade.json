@@ -1,6 +1,6 @@
 {
   "name": "Nightshade",
-  "description": "The Orderbook DEX on the Alephium Blockchain",
+  "description": "Nightshade is an orderbook based decentralized exchange supporting trades through limit and market orders. It enables token trading without centralized custody or order matching.",
   "short_description": "The Orderbook DEX on the Alephium Blockchain",
   "tags": ["DeFi"],
   "tokens": [],

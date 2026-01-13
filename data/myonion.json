@@ -1,6 +1,6 @@
 {
   "name": "Myonion",
-  "description": "myOnion.fun is a groundbreaking platform built on the Alephium blockchain, inspired by the popular pump.fun. It offers users the ability to create their own meme tokens, trade them instantly, and graduate them to a fully integrated mini-DEX within the platform for long-term trading and growth. With its user-friendly interface and playful community, myOnion.fun redefines meme token creation and trading by combining creativity, accessibility, and its very own decentralized exchange.",
+  "description": "Myonion is a meme token creation and trading platform inspired by pump.fun. It allows users to generate tokens, trade them instantly, and migrate them into a built in mini DEX for long term liquidity. It combines token creation and trading within one interface.",
   "short_description": "myOnion.fun is a groundbreaking platform built on the Alephium blockchain, inspired by the popular pump.fun.",
   "tags": ["DeFi"],
   "contracts": [],
