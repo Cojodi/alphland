@@ -1070,142 +1070,128 @@ async function handleUsersAPI(
 
   // PUT /api/users/:id - Update user profile
   if (request.method === "PUT" && pathname.match(/^\/api\/users\/[^/]+$/)) {
-    const id = pathname.split("/").pop();
-    const body = (await request.json()) as any;
-    const now = Math.floor(Date.now() / 1000);
+    try {
+      const id = pathname.split("/").pop();
+      const body = (await request.json()) as any;
+      const now = Math.floor(Date.now() / 1000);
 
-    // Check if username is taken (if provided and changed)
-    if (body.username) {
-      const existing = await env.DB.prepare(
-        `SELECT id FROM user_profiles WHERE username = ? AND user_id != ?`,
-      )
-        .bind(body.username, id)
-        .first();
+      // Check if username is taken (if provided and changed)
+      if (body.username) {
+        const existing = await env.DB.prepare(
+          `SELECT id FROM user_profiles WHERE username = ? AND user_id != ?`,
+        )
+          .bind(body.username, id)
+          .first();
 
-      if (existing) {
-        return new Response(
-          JSON.stringify({ error: "Username already taken" }),
-          {
-            status: 400,
-            headers: corsHeaders,
-          },
-        );
+        if (existing) {
+          return new Response(
+            JSON.stringify({ error: "Username already taken" }),
+            {
+              status: 400,
+              headers: corsHeaders,
+            },
+          );
+        }
       }
-    }
 
-    // Update profile image in user table if provided
-    if (body.image) {
-      await env.DB.prepare(`UPDATE user SET image = ? WHERE id = ?`)
-        .bind(body.image, id)
-        .run();
-    }
-
-    // Update user name in user table if first/last name provided
-    if (body.first_name || body.last_name) {
-      const fullName =
-        `${body.first_name || ""} ${body.last_name || ""}`.trim();
-      if (fullName) {
-        await env.DB.prepare(`UPDATE user SET name = ? WHERE id = ?`)
-          .bind(fullName, id)
+      // Update profile image in user table if provided
+      if (body.image) {
+        await env.DB.prepare(`UPDATE user SET image = ? WHERE id = ?`)
+          .bind(body.image, id)
           .run();
       }
-    }
 
-    // Map frontend field names to database column names
-    const github_url = body.github_url || body.github_username || null;
-    const twitter_url = body.twitter_url || body.twitter_username || null;
-    const linkedin_url = body.linkedin_url || body.linkedin_username || null;
-    const telegram_url = body.telegram_url || body.telegram_username || null;
-    const discord_url = body.discord_url || body.discord_username || null;
-    const website_url = body.website_url || body.website || null;
+      // Update user name in user table if first/last name provided
+      if (body.first_name || body.last_name) {
+        const fullName =
+          `${body.first_name || ""} ${body.last_name || ""}`.trim();
+        if (fullName) {
+          await env.DB.prepare(`UPDATE user SET name = ? WHERE id = ?`)
+            .bind(fullName, id)
+            .run();
+        }
+      }
 
-    // Handle skills - accept either categorized skills or a single array
-    let frontend_skills = body.frontend_skills || null;
-    let backend_skills = body.backend_skills || null;
-    let blockchain_skills = body.blockchain_skills || null;
-    let design_skills = body.design_skills || null;
-    let content_skills = body.content_skills || null;
+      // Handle discord_url separately (it's the only social field that has a _url column)
+      const discord_url = body.discord_url || null;
 
-    // If skills is provided as a single array, use it for all skill categories
-    if (body.skills && Array.isArray(body.skills) && body.skills.length > 0) {
-      const skillsJson = JSON.stringify(body.skills);
-      frontend_skills = skillsJson;
-      backend_skills = skillsJson;
-      blockchain_skills = skillsJson;
-    }
+      // Combine skills into single JSON field (DB only has one 'skills' column)
+      let skillsJson = null;
+      if (body.skills && Array.isArray(body.skills) && body.skills.length > 0) {
+        skillsJson = JSON.stringify(body.skills);
+      }
 
-    // Update profile with all fields (allow clearing fields with empty strings)
-    await env.DB.prepare(
-      `UPDATE user_profiles
-       SET username = ?,
-           first_name = ?,
-           last_name = ?,
-           full_name = ?,
-           bio = ?,
-           avatar_url = ?,
-           wallet_address = ?,
-           github_url = ?,
-           twitter_url = ?,
-           linkedin_url = ?,
-           telegram_url = ?,
-           discord_url = ?,
-           website_url = ?,
-           location = ?,
-           work_experience = ?,
-           current_employer = ?,
-           web3_interests = ?,
-           web3_familiarity = ?,
-           looking_for = ?,
-           frontend_skills = ?,
-           backend_skills = ?,
-           blockchain_skills = ?,
-           design_skills = ?,
-           content_skills = ?,
-           updated_at = ?
-       WHERE user_id = ?`,
-    )
-      .bind(
-        body.username || null,
-        body.first_name || null,
-        body.last_name || null,
-        body.full_name || null,
-        body.bio || null,
-        body.avatar_url || null,
-        body.wallet_address || null,
-        github_url,
-        twitter_url,
-        linkedin_url,
-        telegram_url,
-        discord_url,
-        website_url,
-        body.location || null,
-        body.work_experience || body.work_preference || null,
-        body.current_employer || null,
-        body.web3_interests ? JSON.stringify(body.web3_interests) : null,
-        body.web3_familiarity || null,
-        body.looking_for || null,
-        frontend_skills,
-        backend_skills,
-        blockchain_skills,
-        design_skills,
-        content_skills,
-        now,
-        id,
+      // Update profile with fields that match the actual database schema
+      await env.DB.prepare(
+        `UPDATE user_profiles
+         SET username = ?,
+             bio = ?,
+             wallet_address = ?,
+             github_username = ?,
+             twitter_username = ?,
+             linkedin_username = ?,
+             telegram_username = ?,
+             discord_username = ?,
+             discord_url = ?,
+             website = ?,
+             location = ?,
+             work_preference = ?,
+             current_employer = ?,
+             web3_interests = ?,
+             web3_familiarity = ?,
+             looking_for = ?,
+             skills = ?,
+             updated_at = ?
+         WHERE user_id = ?`,
       )
-      .run();
+        .bind(
+          body.username || null,
+          body.bio || null,
+          body.wallet_address || null,
+          body.github_username || null,
+          body.twitter_username || null,
+          body.linkedin_username || null,
+          body.telegram_username || null,
+          body.discord_username || null,
+          discord_url,
+          body.website || null,
+          body.location || null,
+          body.work_preference || null,
+          body.current_employer || null,
+          body.web3_interests ? JSON.stringify(body.web3_interests) : null,
+          body.web3_familiarity || null,
+          body.looking_for || null,
+          skillsJson,
+          now,
+          id,
+        )
+        .run();
 
-    // Get updated user with image from user table
-    const user = await env.DB.prepare(
-      `SELECT up.*, u.image FROM user_profiles up
-       JOIN user u ON up.user_id = u.id
-       WHERE up.user_id = ?`,
-    )
-      .bind(id)
-      .first();
+      // Get updated user with image from user table
+      const user = await env.DB.prepare(
+        `SELECT up.*, u.image FROM user_profiles up
+         JOIN user u ON up.user_id = u.id
+         WHERE up.user_id = ?`,
+      )
+        .bind(id)
+        .first();
 
-    return new Response(JSON.stringify({ user }), {
-      headers: corsHeaders,
-    });
+      return new Response(JSON.stringify({ user }), {
+        headers: corsHeaders,
+      });
+    } catch (error: any) {
+      console.error("Error updating user profile:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to update profile",
+          message: error.message || "Unknown error",
+        }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
   }
 
   return new Response(JSON.stringify({ error: "Method not allowed" }), {
