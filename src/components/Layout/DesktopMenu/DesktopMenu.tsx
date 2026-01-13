@@ -172,7 +172,7 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
               Forum
             </span>
           </Link>
-          <Link href="/agenda">
+          {/* <Link href="/agenda">
             <span
               className={`px-4 py-2 text-sm font-medium uppercase transition-colors cursor-pointer ${
                 isActivePath("/agenda")
@@ -182,7 +182,7 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
             >
               Agenda
             </span>
-          </Link>
+          </Link> */}
           <Link href="/ecosystem-map">
             <span
               className={`px-4 py-2 text-sm font-medium uppercase transition-colors cursor-pointer ${

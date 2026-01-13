@@ -87,11 +87,11 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
       href: "/forum",
       icon: currentTheme === "dark" ? homeDark : home,
     },
-    {
-      name: "Agenda",
-      href: "/agenda",
-      icon: currentTheme === "dark" ? homeDark : home,
-    },
+    // {
+    //   name: "Agenda",
+    //   href: "/agenda",
+    //   icon: currentTheme === "dark" ? homeDark : home,
+    // },
     {
       name: "Ecosystem Map",
       href: "/ecosystem-map",
