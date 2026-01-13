@@ -4,7 +4,7 @@ import { BountyCard } from "../components/BountyCard";
 import Layout from "@/components/Layout";
 import { useSession } from "@/lib/auth-client";
 import { apiClient, Bounty } from "@/lib/api-client";
-import { Filter, Rocket, CheckCircle, X } from "lucide-react";
+import { Filter, Rocket, CheckCircle, X, Search } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
@@ -16,7 +16,8 @@ export default function BountyList() {
   const [activeFilter, setActiveFilter] = useState<
     "all" | "bounties" | "projects"
   >("all");
-  const [activeCategory, setActiveCategory] = useState<string>("for-you");
+  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [showVerificationSuccess, setShowVerificationSuccess] = useState(false);
   const [isSponsor, setIsSponsor] = useState(false);
   const [checkingSponsor, setCheckingSponsor] = useState(true);
@@ -104,22 +105,33 @@ export default function BountyList() {
   }, [router.query, session]);
 
   const categories = [
-    "For You",
     "All",
+    "Active",
     "Content",
     "Design",
     "Development",
     "Other",
   ];
 
-  // Filter bounties based on active category
+  // Filter bounties based on active category and search query
   const filteredBounties = bounties.filter((bounty) => {
+    // Filter by search query
+    const matchesSearch =
+      searchQuery === "" ||
+      bounty.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      bounty.description?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    if (!matchesSearch) {
+      return false;
+    }
+
+    // Filter by category
     if (activeCategory === "all") {
       return true;
     }
-    if (activeCategory === "for-you") {
-      // For now, show all bounties. Later can be personalized based on user skills/interests
-      return true;
+    if (activeCategory === "active") {
+      // Show only active/open bounties
+      return bounty.status === "open";
     }
     // Match the bounty category with the active category
     // Categories in DB are stored as "Content", "Design", etc. (capitalized)
@@ -179,6 +191,18 @@ export default function BountyList() {
                   <h2 className="text-3xl font-bold text-black dark:text-white mb-6">
                     Browse Opportunities
                   </h2>
+
+                  {/* Search Bar */}
+                  <div className="relative mb-6">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-light-charcoal dark:text-lightgrey" />
+                    <input
+                      type="text"
+                      placeholder="Search bounties..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 rounded-lg bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50"
+                    />
+                  </div>
 
                   {/* Filter Tabs */}
                   {/* <div className="flex flex-wrap gap-3 mb-6">
