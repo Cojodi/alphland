@@ -1,6 +1,6 @@
 {
   "name": "No Trust Verify Dune dashboard",
-  "description": "This Dashboard leverages onchain data to showcase $ALPH development and usage on Ethereum",
+  "description": "No Trust Verify Dune Dashboard is an analytics page on Ethereum showing wrapped ALPH usage and related metrics. It helps users understand ALPH activity outside the native chain.",
   "short_description": "Explore detailled stats about Alephium network on Ethereum side.",
   "tags": ["Stats"],
   "contracts": [],
