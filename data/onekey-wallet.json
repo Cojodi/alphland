@@ -1,6 +1,6 @@
 {
   "name": "OneKey Wallet",
-  "description": "OneKey is a open source project of a decentralized wallet that allows users to self-custody their own digital assets. ",
+  "description": "OneKey is an open source wallet offering hardware and software products for secure asset management. It enables users to self custody cryptocurrencies through offline signing and multi platform support.",
   "short_description": "Open source crypto wallet. Trusted by millions.",
   "tags": ["Wallets"],
   "contracts": [],
