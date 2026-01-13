@@ -1,6 +1,6 @@
 {
   "name": "Linx Wallet",
-  "description": "Experience the first and only chainless, gas-free and non-custodial wallet for Alephium blockchains. Easily transfer, manage, swap your assets and interact with protocols from the Kadena and Alephium ecosystems.",
+  "description": "Linx Wallet is a non custodial wallet operating in a chainless and gas free environment. It supports transfers, swaps, and dApp interactions.",
   "short_description": "A truly smart wallet",
   "tags": ["Wallets"],
   "verified": false,
