@@ -1,6 +1,6 @@
 {
   "name": "NiceHash",
-  "description": "NiceHash is the world’s leading hashrate marketplace, connecting sellers (miners) with buyers of hashrate. Our platform offers a comprehensive toolkit for miners at every scale, streamlining operations and maximizing efficiency. Everything you need in one place. Based and regulated in Switzerland.",
+  "description": "NiceHash is a hashrate marketplace connecting miners with buyers of computing power. It offers mining tools, marketplace listings, performance analytics, and hashpower purchasing options.",
   "short_description": "The world’s largest hashrate marketplace, connecting buyers and miners",
   "tags": ["Hashrate", "Infrastructure"],
   "contracts": [],
