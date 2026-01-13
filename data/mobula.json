@@ -1,6 +1,6 @@
 {
   "name": "Mobula",
-  "description": "Mobula is the premier indexer crypto website, offering comprehensive blockchain data, analytics, and indexing services. Our data is fully open-source and maintained by a dedicated team of experts.",
+  "description": "Mobula is a blockchain data indexer and analytics platform providing open source market and onchain information. It aggregates data across many networks and offers tools for developers and analysts.",
   "short_description": "Comprehensive crypto indexing and analytics.",
   "tags": ["Stats", "Infrastructure"],
   "contracts": [],
