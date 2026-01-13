@@ -20,8 +20,12 @@ import { Kysely } from "kysely";
 import { D1Dialect } from "kysely-d1";
 import { Resend } from "resend";
 
-// Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
+// Import Cloudflare Worker types
 type D1Database = any;
+type ExecutionContext = {
+  waitUntil(promise: Promise<any>): void;
+  passThroughOnException(): void;
+};
 
 export interface AuthEnv {
   GOOGLE_CLIENT_ID?: string;
