@@ -143,15 +143,18 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
                 {dappInfo.description}
               </p>
               {dappInfo.links?.website && (
-                <Link href={dappInfo.links.website} passHref>
-                  <Button
-                    variant="primary"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Launch Dapp
-                  </Button>
-                </Link>
+                <div className="flex justify-center md:justify-start">
+                  <Link href={dappInfo.links.website} passHref>
+                    <Button
+                      variant="primary"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-8"
+                    >
+                      Launch Dapp
+                    </Button>
+                  </Link>
+                </div>
               )}
             </section>
 
