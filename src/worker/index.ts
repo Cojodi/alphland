@@ -849,32 +849,46 @@ async function handleUsersAPI(
     request.method === "GET" &&
     pathname.match(/^\/api\/users\/username\/[^/]+$/)
   ) {
-    const username = pathname.split("/").pop();
+    try {
+      const username = pathname.split("/").pop();
 
-    // Join with user table to get email, name, image
-    const user = await env.DB.prepare(
-      `SELECT
-        up.*,
-        u.email,
-        u.name,
-        u.image
-       FROM user_profiles up
-       JOIN user u ON up.user_id = u.id
-       WHERE up.username = ?`,
-    )
-      .bind(username)
-      .first();
+      // Join with user table to get email, name, image
+      const user = await env.DB.prepare(
+        `SELECT
+          up.*,
+          u.email,
+          u.name,
+          u.image
+         FROM user_profiles up
+         JOIN user u ON up.user_id = u.id
+         WHERE up.username = ?`,
+      )
+        .bind(username)
+        .first();
 
-    if (!user) {
-      return new Response(JSON.stringify({ error: "User not found" }), {
-        status: 404,
+      if (!user) {
+        return new Response(JSON.stringify({ error: "User not found" }), {
+          status: 404,
+          headers: corsHeaders,
+        });
+      }
+
+      return new Response(JSON.stringify({ user }), {
         headers: corsHeaders,
       });
+    } catch (error: any) {
+      console.error("Error fetching user by username:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to fetch user",
+          message: error.message || "Unknown error",
+        }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
     }
-
-    return new Response(JSON.stringify({ user }), {
-      headers: corsHeaders,
-    });
   }
 
   // GET /api/users/me - Get current user's profile (requires auth)
@@ -961,34 +975,10 @@ async function handleUsersAPI(
 
   // GET /api/users/:id - Get user profile by user_id
   if (request.method === "GET" && pathname.match(/^\/api\/users\/[^/]+$/)) {
-    const id = pathname.split("/").pop();
+    try {
+      const id = pathname.split("/").pop();
 
-    let user = await env.DB.prepare(
-      `SELECT
-        up.*,
-        u.email,
-        u.name,
-        u.image
-       FROM user_profiles up
-       JOIN user u ON up.user_id = u.id
-       WHERE up.user_id = ?`,
-    )
-      .bind(id)
-      .first();
-
-    // If user profile doesn't exist, create it
-    if (!user) {
-      const profileId = crypto.randomUUID();
-      const now = Math.floor(Date.now() / 1000);
-
-      await env.DB.prepare(
-        `INSERT INTO user_profiles (id, user_id, created_at, updated_at)
-         VALUES (?, ?, ?, ?)`,
-      )
-        .bind(profileId, id, now, now)
-        .run();
-
-      user = await env.DB.prepare(
+      let user = await env.DB.prepare(
         `SELECT
           up.*,
           u.email,
@@ -1000,11 +990,49 @@ async function handleUsersAPI(
       )
         .bind(id)
         .first();
-    }
 
-    return new Response(JSON.stringify({ user }), {
-      headers: corsHeaders,
-    });
+      // If user profile doesn't exist, create it
+      if (!user) {
+        const profileId = crypto.randomUUID();
+        const now = Math.floor(Date.now() / 1000);
+
+        await env.DB.prepare(
+          `INSERT INTO user_profiles (id, user_id, created_at, updated_at)
+           VALUES (?, ?, ?, ?)`,
+        )
+          .bind(profileId, id, now, now)
+          .run();
+
+        user = await env.DB.prepare(
+          `SELECT
+            up.*,
+            u.email,
+            u.name,
+            u.image
+           FROM user_profiles up
+           JOIN user u ON up.user_id = u.id
+           WHERE up.user_id = ?`,
+        )
+          .bind(id)
+          .first();
+      }
+
+      return new Response(JSON.stringify({ user }), {
+        headers: corsHeaders,
+      });
+    } catch (error: any) {
+      console.error("Error fetching user by id:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to fetch user",
+          message: error.message || "Unknown error",
+        }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
   }
 
   // GET /api/users/:id/stats - Get user public statistics
@@ -1012,74 +1040,88 @@ async function handleUsersAPI(
     request.method === "GET" &&
     pathname.match(/^\/api\/users\/[^/]+\/stats$/)
   ) {
-    const id = pathname.split("/")[3]; // Extract user ID from /api/users/:id/stats
+    try {
+      const id = pathname.split("/")[3]; // Extract user ID from /api/users/:id/stats
 
-    // Get total submissions count
-    const submissionsResult = await env.DB.prepare(
-      `SELECT COUNT(*) as count FROM bounty_submissions WHERE user_id = ?`,
-    )
-      .bind(id)
-      .first();
-    const totalSubmissions = (submissionsResult?.count as number) || 0;
+      // Get total submissions count
+      const submissionsResult = await env.DB.prepare(
+        `SELECT COUNT(*) as count FROM bounty_submissions WHERE user_id = ?`,
+      )
+        .bind(id)
+        .first();
+      const totalSubmissions = (submissionsResult?.count as number) || 0;
 
-    // Get approved submissions count (won)
-    const wonResult = await env.DB.prepare(
-      `SELECT COUNT(*) as count FROM bounty_submissions WHERE user_id = ? AND status = 'approved'`,
-    )
-      .bind(id)
-      .first();
-    const totalWon = (wonResult?.count as number) || 0;
+      // Get approved submissions count (won)
+      const wonResult = await env.DB.prepare(
+        `SELECT COUNT(*) as count FROM bounty_submissions WHERE user_id = ? AND status = 'approved'`,
+      )
+        .bind(id)
+        .first();
+      const totalWon = (wonResult?.count as number) || 0;
 
-    // Get total earnings (sum of approved submission rewards in USD from feedback/reward field)
-    const { results: approvedSubmissions } = await env.DB.prepare(
-      `SELECT feedback, reward FROM bounty_submissions WHERE user_id = ? AND status = 'approved'`,
-    )
-      .bind(id)
-      .all();
+      // Get total earnings (sum of approved submission rewards in USD from feedback/reward field)
+      const { results: approvedSubmissions } = await env.DB.prepare(
+        `SELECT feedback, reward FROM bounty_submissions WHERE user_id = ? AND status = 'approved'`,
+      )
+        .bind(id)
+        .all();
 
-    let totalEarned = 0;
-    for (const submission of approvedSubmissions) {
-      // Try to get reward from the reward field first (if it's a JSON or number)
-      if (submission.reward) {
-        try {
-          const rewardData =
-            typeof submission.reward === "string"
-              ? JSON.parse(submission.reward)
-              : submission.reward;
-          if (typeof rewardData === "object" && rewardData.usd_equivalent) {
-            totalEarned += parseFloat(rewardData.usd_equivalent);
-            continue;
-          } else if (typeof rewardData === "number") {
-            totalEarned += rewardData;
-            continue;
+      let totalEarned = 0;
+      for (const submission of approvedSubmissions) {
+        // Try to get reward from the reward field first (if it's a JSON or number)
+        if (submission.reward) {
+          try {
+            const rewardData =
+              typeof submission.reward === "string"
+                ? JSON.parse(submission.reward)
+                : submission.reward;
+            if (typeof rewardData === "object" && rewardData.usd_equivalent) {
+              totalEarned += parseFloat(rewardData.usd_equivalent);
+              continue;
+            } else if (typeof rewardData === "number") {
+              totalEarned += rewardData;
+              continue;
+            }
+          } catch (e) {
+            // Fall through to feedback parsing
           }
-        } catch (e) {
-          // Fall through to feedback parsing
+        }
+
+        // Fallback: Extract USD amount from feedback notes
+        const notes = submission.feedback as string;
+        if (notes) {
+          const usdMatch = notes.match(/for\s+\$?(\d+\.?\d*)\s*USD\s+bounty/i);
+          if (usdMatch) {
+            totalEarned += parseFloat(usdMatch[1]);
+          }
         }
       }
 
-      // Fallback: Extract USD amount from feedback notes
-      const notes = submission.feedback as string;
-      if (notes) {
-        const usdMatch = notes.match(/for\s+\$?(\d+\.?\d*)\s*USD\s+bounty/i);
-        if (usdMatch) {
-          totalEarned += parseFloat(usdMatch[1]);
-        }
-      }
-    }
-
-    return new Response(
-      JSON.stringify({
-        stats: {
-          submissions: totalSubmissions,
-          won: totalWon,
-          earned: totalEarned,
+      return new Response(
+        JSON.stringify({
+          stats: {
+            submissions: totalSubmissions,
+            won: totalWon,
+            earned: totalEarned,
+          },
+        }),
+        {
+          headers: corsHeaders,
         },
-      }),
-      {
-        headers: corsHeaders,
-      },
-    );
+      );
+    } catch (error: any) {
+      console.error("Error fetching user stats:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to fetch user stats",
+          message: error.message || "Unknown error",
+        }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
   }
 
   // PUT /api/users/:id - Update user profile

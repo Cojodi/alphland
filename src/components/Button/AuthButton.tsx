@@ -85,8 +85,8 @@ const AuthButton = () => {
 
   const handleViewProfile = () => {
     setIsDropdownOpen(false);
-    // Always go to /me route to view own profile
-    router.push("/bounty/profile/me");
+    // Go to /bounty/profile which will redirect based on username
+    router.push("/bounty/profile");
   };
 
   const handleEditProfile = () => {
