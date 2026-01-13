@@ -879,70 +879,84 @@ async function handleUsersAPI(
 
   // GET /api/users/me - Get current user's profile (requires auth)
   if (request.method === "GET" && pathname === "/api/users/me") {
-    // Get session from cookie
-    const auth = createAuth(
-      env.DB,
-      {
-        GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
-        GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
-        BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
-        BETTER_AUTH_URL: env.BETTER_AUTH_URL,
-        APP_URL: env.APP_URL,
-        RESEND_API_KEY: env.RESEND_API_KEY,
-        FROM_EMAIL: env.FROM_EMAIL,
-      },
-      ctx, // Pass ExecutionContext for background tasks
-    );
+    try {
+      // Get session from cookie
+      const auth = createAuth(
+        env.DB,
+        {
+          GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
+          GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
+          BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
+          BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+          APP_URL: env.APP_URL,
+          RESEND_API_KEY: env.RESEND_API_KEY,
+          FROM_EMAIL: env.FROM_EMAIL,
+        },
+        ctx, // Pass ExecutionContext for background tasks
+      );
 
-    const session = await auth.api.getSession({ headers: request.headers });
+      const session = await auth.api.getSession({ headers: request.headers });
 
-    if (!session?.user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: corsHeaders,
-      });
-    }
+      if (!session?.user) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: corsHeaders,
+        });
+      }
 
-    const userId = session.user.id;
+      const userId = session.user.id;
 
-    // Get or create user profile
-    let profile = await env.DB.prepare(
-      `SELECT * FROM user_profiles WHERE user_id = ?`,
-    )
-      .bind(userId)
-      .first();
-
-    if (!profile) {
-      const profileId = crypto.randomUUID();
-      const now = Math.floor(Date.now() / 1000);
-
-      await env.DB.prepare(
-        `INSERT INTO user_profiles (id, user_id, created_at, updated_at)
-         VALUES (?, ?, ?, ?)`,
-      )
-        .bind(profileId, userId, now, now)
-        .run();
-
-      profile = await env.DB.prepare(
+      // Get or create user profile
+      let profile = await env.DB.prepare(
         `SELECT * FROM user_profiles WHERE user_id = ?`,
       )
         .bind(userId)
         .first();
-    }
 
-    return new Response(
-      JSON.stringify({
-        user: {
-          ...profile,
-          email: session.user.email,
-          name: session.user.name,
-          image: session.user.image,
+      if (!profile) {
+        const profileId = crypto.randomUUID();
+        const now = Math.floor(Date.now() / 1000);
+
+        await env.DB.prepare(
+          `INSERT INTO user_profiles (id, user_id, created_at, updated_at)
+           VALUES (?, ?, ?, ?)`,
+        )
+          .bind(profileId, userId, now, now)
+          .run();
+
+        profile = await env.DB.prepare(
+          `SELECT * FROM user_profiles WHERE user_id = ?`,
+        )
+          .bind(userId)
+          .first();
+      }
+
+      return new Response(
+        JSON.stringify({
+          user: {
+            ...profile,
+            email: session.user.email,
+            name: session.user.name,
+            image: session.user.image,
+          },
+        }),
+        {
+          headers: corsHeaders,
         },
-      }),
-      {
-        headers: corsHeaders,
-      },
-    );
+      );
+    } catch (error: any) {
+      console.error("Error fetching user profile:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to fetch profile",
+          message: error.message || "Unknown error",
+        }),
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
   }
 
   // GET /api/users/:id - Get user profile by user_id
