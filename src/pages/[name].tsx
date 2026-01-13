@@ -211,18 +211,6 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
                 </div>
                 <div className="p-4 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5">
                   <p className="text-sm text-light-charcoal dark:text-clay mb-1">
-                    Verified
-                  </p>
-                  <p className="font-semibold dark:text-white">
-                    {dappInfo.verified ? (
-                      <span className="text-accessible-green">Yes</span>
-                    ) : (
-                      "No"
-                    )}
-                  </p>
-                </div>
-                <div className="p-4 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5">
-                  <p className="text-sm text-light-charcoal dark:text-clay mb-1">
                     Smart Contract
                   </p>
                   <p className="font-semibold dark:text-white">
