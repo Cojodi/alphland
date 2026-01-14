@@ -10,6 +10,21 @@ const corsHeaders = {
 };
 
 /**
+ * Transform bounty object to include computed reward field for backwards compatibility
+ */
+function transformBounty(bounty: any) {
+  if (!bounty) return bounty;
+  return {
+    ...bounty,
+    reward: {
+      amount: bounty.reward_amount || 0,
+      token: bounty.reward_currency || "ALPH",
+      usd_equivalent: bounty.reward_usd_value || 0,
+    },
+  };
+}
+
+/**
  * Handle Submissions API requests
  */
 export async function handleSubmissionsAPI(
@@ -1285,7 +1300,8 @@ export async function handleBookmarksAPI(
           b.bounty_id,
           b.created_at,
           bo.title,
-          bo.reward,
+          bo.reward_amount,
+          bo.reward_currency,
           bo.reward_type,
           bo.reward_usd_value,
           bo.status,
@@ -1301,12 +1317,19 @@ export async function handleBookmarksAPI(
         .bind(userId)
         .all();
 
-      return new Response(
-        JSON.stringify({ bookmarks: bookmarks.results || [] }),
-        {
-          headers: corsHeaders,
+      // Transform bookmarks to include computed reward field
+      const transformedBookmarks = (bookmarks.results || []).map((b: any) => ({
+        ...b,
+        reward: {
+          amount: b.reward_amount || 0,
+          token: b.reward_currency || "ALPH",
+          usd_equivalent: b.reward_usd_value || 0,
         },
-      );
+      }));
+
+      return new Response(JSON.stringify({ bookmarks: transformedBookmarks }), {
+        headers: corsHeaders,
+      });
     } catch (error) {
       console.error("Error fetching bookmarks:", error);
       return new Response(

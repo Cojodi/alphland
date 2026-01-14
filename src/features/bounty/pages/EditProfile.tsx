@@ -337,7 +337,7 @@ export default function EditProfile() {
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
           console.error("API returned non-JSON response");
-          alert("服务暂时不可用，请稍后重试");
+          alert("Service temporarily unavailable, please try again later");
           setIsLoading(false);
           return;
         }

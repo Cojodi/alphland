@@ -317,6 +317,21 @@ const worker = {
 export default worker;
 
 /**
+ * Transform bounty object to include computed reward field for backwards compatibility
+ */
+function transformBounty(bounty: any) {
+  if (!bounty) return bounty;
+  return {
+    ...bounty,
+    reward: {
+      amount: bounty.reward_amount || 0,
+      token: bounty.reward_currency || "ALPH",
+      usd_equivalent: bounty.reward_usd_value || 0,
+    },
+  };
+}
+
+/**
  * Handle Bounties API requests
  */
 async function handleBountiesAPI(
@@ -343,9 +358,12 @@ async function handleBountiesAPI(
     `,
     ).all();
 
-    return new Response(JSON.stringify({ bounties: results }), {
-      headers: corsHeaders,
-    });
+    return new Response(
+      JSON.stringify({ bounties: results.map(transformBounty) }),
+      {
+        headers: corsHeaders,
+      },
+    );
   }
 
   // GET /api/bounties/:id - Get single bounty
@@ -372,7 +390,7 @@ async function handleBountiesAPI(
       });
     }
 
-    return new Response(JSON.stringify({ bounty }), {
+    return new Response(JSON.stringify({ bounty: transformBounty(bounty) }), {
       headers: corsHeaders,
     });
   }
@@ -454,13 +472,6 @@ async function handleBountiesAPI(
       const deliverables = JSON.stringify(body.deliverables || []);
       const skills = JSON.stringify(body.skills || []);
 
-      // Build reward JSON
-      const reward = JSON.stringify({
-        token: body.reward_currency || "ALPH",
-        amount: body.reward_amount || 0,
-        usd_equivalent: body.reward_usd_value || 0,
-      });
-
       // Normalize category and difficulty_level to lowercase for CHECK constraint
       const category = body.category ? body.category.toLowerCase() : null;
       const difficulty_level = body.difficulty_level
@@ -472,11 +483,11 @@ async function handleBountiesAPI(
         INSERT INTO bounties (
           id, sponsor_id, title, description,
           requirements, deliverables, skills,
-          reward, reward_type, reward_usd_value, tier_count,
+          reward_amount, reward_currency, reward_type, reward_usd_value, tier_count,
           category, difficulty_level, dapp_name,
           start_date, end_date,
-          status, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          status, created_by, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       )
         .bind(
@@ -487,7 +498,8 @@ async function handleBountiesAPI(
           requirements,
           deliverables,
           skills,
-          reward,
+          body.reward_amount || 0,
+          body.reward_currency || "ALPH",
           body.reward_type || "fixed",
           body.reward_usd_value || 0,
           body.tier_count || 5,
@@ -497,6 +509,7 @@ async function handleBountiesAPI(
           body.start_date,
           body.end_date,
           "open",
+          created_by,
           now,
           now,
         )
@@ -547,7 +560,7 @@ async function handleBountiesAPI(
         // Don't fail the bounty creation if overview update fails
       }
 
-      return new Response(JSON.stringify({ bounty }), {
+      return new Response(JSON.stringify({ bounty: transformBounty(bounty) }), {
         status: 201,
         headers: corsHeaders,
       });
@@ -576,7 +589,7 @@ async function handleBountiesAPI(
 
       // Get the bounty before deleting to update overview
       const bounty = await env.DB.prepare(
-        "SELECT reward, reward_usd_value, status FROM bounties WHERE id = ?",
+        "SELECT reward_amount, reward_currency, reward_usd_value, status FROM bounties WHERE id = ?",
       )
         .bind(id)
         .first();
@@ -601,12 +614,9 @@ async function handleBountiesAPI(
 
         // Update bounty_overview statistics
         try {
-          // Parse reward JSON to get currency and amount
-          const rewardData = JSON.parse(
-            bounty.reward || '{"token":"ALPH","amount":0}',
-          );
-          const rewardCurrency = rewardData.token || "ALPH";
-          const rewardAmount = rewardData.amount || 0;
+          // Get reward values from actual columns
+          const rewardCurrency = bounty.reward_currency || "ALPH";
+          const rewardAmount = bounty.reward_amount || 0;
 
           const rewardUsd =
             rewardCurrency === "USD"
@@ -675,7 +685,7 @@ async function handleBountiesAPI(
 
       // Get the old bounty data to calculate overview changes
       const oldBounty = await env.DB.prepare(
-        "SELECT reward, reward_usd_value, status FROM bounties WHERE id = ?",
+        "SELECT reward_amount, reward_currency, reward_usd_value, status FROM bounties WHERE id = ?",
       )
         .bind(id)
         .first();
@@ -699,27 +709,14 @@ async function handleBountiesAPI(
         updates.push("description = ?");
         values.push(body.description);
       }
-      // Update reward JSON if reward fields provided
-      if (
-        body.reward_amount !== undefined ||
-        body.reward_currency !== undefined
-      ) {
-        const oldRewardData = JSON.parse(
-          oldBounty.reward || '{"token":"ALPH","amount":0}',
-        );
-        const newReward = JSON.stringify({
-          token: body.reward_currency || oldRewardData.token || "ALPH",
-          amount:
-            body.reward_amount !== undefined
-              ? body.reward_amount
-              : oldRewardData.amount || 0,
-          usd_equivalent:
-            body.reward_usd_value !== undefined
-              ? body.reward_usd_value
-              : oldRewardData.usd_equivalent || 0,
-        });
-        updates.push("reward = ?");
-        values.push(newReward);
+      // Update reward fields if provided
+      if (body.reward_amount !== undefined) {
+        updates.push("reward_amount = ?");
+        values.push(body.reward_amount);
+      }
+      if (body.reward_currency !== undefined) {
+        updates.push("reward_currency = ?");
+        values.push(body.reward_currency);
       }
       if (body.reward_usd_value !== undefined) {
         updates.push("reward_usd_value = ?");
@@ -753,12 +750,9 @@ async function handleBountiesAPI(
           body.reward_usd_value !== undefined
         ) {
           try {
-            // Parse old reward
-            const oldRewardData = JSON.parse(
-              oldBounty.reward || '{"token":"ALPH","amount":0}',
-            );
-            const oldCurrency = oldRewardData.token || "ALPH";
-            const oldAmount = oldRewardData.amount || 0;
+            // Get old reward values from actual columns
+            const oldCurrency = oldBounty.reward_currency || "ALPH";
+            const oldAmount = oldBounty.reward_amount || 0;
             const oldRewardUsd =
               oldCurrency === "USD"
                 ? oldAmount
@@ -804,9 +798,12 @@ async function handleBountiesAPI(
         .bind(id)
         .first();
 
-      return new Response(JSON.stringify({ bounty: updatedBounty }), {
-        headers: corsHeaders,
-      });
+      return new Response(
+        JSON.stringify({ bounty: transformBounty(updatedBounty) }),
+        {
+          headers: corsHeaders,
+        },
+      );
     } catch (error: any) {
       console.error("Error updating bounty:", error);
       return new Response(
@@ -1088,36 +1085,17 @@ async function handleUsersAPI(
         .first();
       const totalWon = (wonResult?.count as number) || 0;
 
-      // Get total earnings (sum of approved submission rewards in USD from feedback/reward field)
+      // Get total earnings (sum of approved submission rewards in USD from reviewer_notes field)
       const { results: approvedSubmissions } = await env.DB.prepare(
-        `SELECT feedback, reward FROM bounty_submissions WHERE user_id = ? AND status = 'approved'`,
+        `SELECT reviewer_notes FROM bounty_submissions WHERE user_id = ? AND status = 'approved'`,
       )
         .bind(id)
         .all();
 
       let totalEarned = 0;
       for (const submission of approvedSubmissions) {
-        // Try to get reward from the reward field first (if it's a JSON or number)
-        if (submission.reward) {
-          try {
-            const rewardData =
-              typeof submission.reward === "string"
-                ? JSON.parse(submission.reward)
-                : submission.reward;
-            if (typeof rewardData === "object" && rewardData.usd_equivalent) {
-              totalEarned += parseFloat(rewardData.usd_equivalent);
-              continue;
-            } else if (typeof rewardData === "number") {
-              totalEarned += rewardData;
-              continue;
-            }
-          } catch (e) {
-            // Fall through to feedback parsing
-          }
-        }
-
-        // Fallback: Extract USD amount from feedback notes
-        const notes = submission.feedback as string;
+        // Extract USD amount from reviewer_notes
+        const notes = submission.reviewer_notes as string;
         if (notes) {
           const usdMatch = notes.match(/for\s+\$?(\d+\.?\d*)\s*USD\s+bounty/i);
           if (usdMatch) {

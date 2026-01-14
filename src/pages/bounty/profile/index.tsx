@@ -41,11 +41,11 @@ export default function ProfileIndex() {
           const contentType = response.headers.get("content-type");
           if (!contentType || !contentType.includes("application/json")) {
             console.error("API returned non-JSON response:", response.status);
-            setError("服务暂时不可用，请稍后重试");
+            setError("Service temporarily unavailable, please try again later");
             setLoading(false);
             return;
           }
-          setError("无法加载用户信息");
+          setError("Failed to load user information");
           setLoading(false);
           return;
         }
@@ -54,7 +54,7 @@ export default function ProfileIndex() {
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
           console.error("API returned non-JSON response");
-          setError("服务暂时不可用，请稍后重试");
+          setError("Service temporarily unavailable, please try again later");
           setLoading(false);
           return;
         }
@@ -70,7 +70,7 @@ export default function ProfileIndex() {
         }
       } catch (err) {
         console.error("Error checking username:", err);
-        setError("加载失败，请稍后重试");
+        setError("Failed to load, please try again later");
         setLoading(false);
       }
     };
@@ -80,11 +80,13 @@ export default function ProfileIndex() {
 
   if (loading || isPending) {
     return (
-      <Layout title="加载中... | Alphland" description="正在加载个人资料">
+      <Layout title="Loading... | Alphland" description="Loading your profile">
         <div className="min-h-screen bg-smoked-white dark:bg-light-black flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange mx-auto mb-4"></div>
-            <p className="text-light-charcoal dark:text-lightgrey">加载中...</p>
+            <p className="text-light-charcoal dark:text-lightgrey">
+              Loading...
+            </p>
           </div>
         </div>
       </Layout>
@@ -93,7 +95,7 @@ export default function ProfileIndex() {
 
   if (error) {
     return (
-      <Layout title="错误 | Alphland" description="加载错误">
+      <Layout title="Error | Alphland" description="Loading error">
         <div className="min-h-screen bg-smoked-white dark:bg-light-black flex items-center justify-center">
           <div className="text-center max-w-md mx-auto px-4">
             <div className="mb-6">
@@ -118,7 +120,7 @@ export default function ProfileIndex() {
               onClick={() => router.push("/bounty")}
               className="px-6 py-3 bg-orange text-white rounded-lg hover:bg-orange/90 transition-colors font-medium"
             >
-              返回首页
+              Back to Home
             </button>
           </div>
         </div>
@@ -129,8 +131,8 @@ export default function ProfileIndex() {
   // Show prompt to create username
   return (
     <Layout
-      title="创建个人资料 | Alphland"
-      description="创建你的Alphland个人资料"
+      title="Create Profile | Alphland"
+      description="Create your Alphland profile"
     >
       <div className="min-h-screen bg-smoked-white dark:bg-light-black flex items-center justify-center">
         <div className="max-w-md mx-auto px-4">
@@ -153,10 +155,10 @@ export default function ProfileIndex() {
                 </svg>
               </div>
               <h1 className="text-2xl font-bold text-black dark:text-white mb-2">
-                需要先创建用户名
+                You need to create a username first.
               </h1>
               <p className="text-light-charcoal dark:text-lightgrey">
-                设置一个唯一的用户名，让其他人可以查看您的公开个人资料
+                Set a unique username so others can view your public profile.
               </p>
             </div>
 
@@ -175,7 +177,7 @@ export default function ProfileIndex() {
                   />
                 </svg>
                 <span className="text-sm text-black dark:text-white">
-                  展示您的技能和项目经验
+                  Showcase your skills and project experience
                 </span>
               </div>
               <div className="flex items-start gap-3">
@@ -191,7 +193,7 @@ export default function ProfileIndex() {
                   />
                 </svg>
                 <span className="text-sm text-black dark:text-white">
-                  追踪您的赏金任务完成记录
+                  Track your bounty completion records
                 </span>
               </div>
               <div className="flex items-start gap-3">
@@ -207,7 +209,7 @@ export default function ProfileIndex() {
                   />
                 </svg>
                 <span className="text-sm text-black dark:text-white">
-                  让赏金发布者更容易找到您
+                  Make it easier for sponsors to find you
                 </span>
               </div>
             </div>
@@ -218,13 +220,13 @@ export default function ProfileIndex() {
                 onClick={() => router.push("/bounty/profile/edit")}
                 className="w-full px-6 py-3 bg-orange text-white rounded-lg hover:bg-orange/90 transition-colors font-medium"
               >
-                立即创建个人资料
+                Create Profile Now
               </button>
               <button
                 onClick={() => router.push("/bounty")}
                 className="w-full px-6 py-3 bg-smoked-white dark:bg-light-black text-black dark:text-white rounded-lg hover:bg-border-grey dark:hover:bg-dark-charcoal transition-colors font-medium"
               >
-                稍后再说
+                Maybe Later
               </button>
             </div>
           </div>
