@@ -177,7 +177,7 @@ const worker = {
         );
       }
 
-      // Recent earners endpoint - users with >1 submission in past week
+      // Recent earners endpoint - users with submissions in past week
       if (url.pathname === "/api/recent-earners") {
         try {
           const oneWeekAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;
@@ -195,7 +195,7 @@ const worker = {
             LEFT JOIN user_profiles up ON u.id = up.user_id
             WHERE s.created_at >= ?
             GROUP BY u.id, u.name, u.image, up.username
-            HAVING COUNT(s.id) > 1
+            HAVING COUNT(s.id) >= 1
             ORDER BY submission_count DESC
             LIMIT 10`,
           )
