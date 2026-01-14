@@ -323,9 +323,28 @@ export default function EditProfile() {
       }
 
       try {
-        const response = await fetch("/api/users/me");
-        if (response.ok) {
-          const data = await response.json();
+        const response = await fetch("/api/users/me", {
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          console.error("Failed to load profile:", response.status);
+          setIsLoading(false);
+          return;
+        }
+
+        // Validate JSON response
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          console.error("API returned non-JSON response");
+          alert("服务暂时不可用，请稍后重试");
+          setIsLoading(false);
+          return;
+        }
+
+        const data = await response.json();
+
+        if (data.user) {
           const profile = data.user;
 
           // Parse JSON fields - combine skills from all categories

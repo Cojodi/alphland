@@ -28,14 +28,34 @@ export default function ProfileIndex() {
     const checkUsername = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/api/users/me");
+        const response = await fetch("/api/users/me", {
+          credentials: "include",
+        });
 
         if (!response.ok) {
           if (response.status === 401) {
             router.push("/auth/login");
             return;
           }
+          // Handle non-JSON responses
+          const contentType = response.headers.get("content-type");
+          if (!contentType || !contentType.includes("application/json")) {
+            console.error("API returned non-JSON response:", response.status);
+            setError("服务暂时不可用，请稍后重试");
+            setLoading(false);
+            return;
+          }
           setError("无法加载用户信息");
+          setLoading(false);
+          return;
+        }
+
+        // Validate JSON response
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          console.error("API returned non-JSON response");
+          setError("服务暂时不可用，请稍后重试");
+          setLoading(false);
           return;
         }
 

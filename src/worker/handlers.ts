@@ -843,7 +843,7 @@ export async function handleNotificationsAPI(
 
     let query = `SELECT * FROM notifications WHERE user_id = ?`;
     if (unreadOnly) {
-      query += ` AND is_read = 0`;
+      query += ` AND read = 0`;
     }
     query += ` ORDER BY created_at DESC LIMIT ?`;
 
@@ -851,7 +851,7 @@ export async function handleNotificationsAPI(
 
     // Get unread count
     const unreadCount = await env.DB.prepare(
-      `SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = 0`,
+      `SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND read = 0`,
     )
       .bind(userId)
       .first();
@@ -895,7 +895,7 @@ export async function handleNotificationsAPI(
 
     await env.DB.prepare(
       `INSERT INTO notifications (
-        id, user_id, type, title, message, related_bounty_id, related_submission_id, is_read, created_at
+        id, user_id, type, title, message, related_bounty_id, related_submission_id, read, created_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)`,
     )
       .bind(
@@ -931,7 +931,7 @@ export async function handleNotificationsAPI(
 
     const now = Math.floor(Date.now() / 1000);
     await env.DB.prepare(
-      `UPDATE notifications SET is_read = 1, read_at = ? WHERE id = ?`,
+      `UPDATE notifications SET read = 1, read_at = ? WHERE id = ?`,
     )
       .bind(now, id)
       .run();
@@ -950,7 +950,7 @@ export async function handleNotificationsAPI(
 
     const now = Math.floor(Date.now() / 1000);
     await env.DB.prepare(
-      `UPDATE notifications SET is_read = 1, read_at = ? WHERE user_id = ?`,
+      `UPDATE notifications SET read = 1, read_at = ? WHERE user_id = ?`,
     )
       .bind(now, userId)
       .run();

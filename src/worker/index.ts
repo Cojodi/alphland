@@ -837,8 +837,17 @@ async function handleUsersAPI(
   url: URL,
   ctx?: any,
 ): Promise<Response> {
+  // Get the origin from the request for CORS
+  const requestOrigin = request.headers.get("Origin");
+  const allowedOrigin =
+    requestOrigin ||
+    env.APP_URL ||
+    env.BETTER_AUTH_URL ||
+    "http://localhost:3000";
+
   const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Credentials": "true",
     "Content-Type": "application/json",
   };
 
@@ -894,6 +903,12 @@ async function handleUsersAPI(
   // GET /api/users/me - Get current user's profile (requires auth)
   if (request.method === "GET" && pathname === "/api/users/me") {
     try {
+      console.log("[GET /api/users/me] Request received");
+      console.log(
+        "[GET /api/users/me] Cookie header:",
+        request.headers.get("Cookie")?.substring(0, 100),
+      );
+
       // Get session from cookie
       const auth = createAuth(
         env.DB,
@@ -910,8 +925,13 @@ async function handleUsersAPI(
       );
 
       const session = await auth.api.getSession({ headers: request.headers });
+      console.log(
+        "[GET /api/users/me] Session found:",
+        session?.user ? "yes" : "no",
+      );
 
       if (!session?.user) {
+        console.log("[GET /api/users/me] No session, returning 401");
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
           status: 401,
           headers: corsHeaders,
@@ -919,6 +939,7 @@ async function handleUsersAPI(
       }
 
       const userId = session.user.id;
+      console.log("[GET /api/users/me] User ID:", userId);
 
       // Get or create user profile
       let profile = await env.DB.prepare(
@@ -928,6 +949,7 @@ async function handleUsersAPI(
         .first();
 
       if (!profile) {
+        console.log("[GET /api/users/me] Profile not found, creating new one");
         const profileId = crypto.randomUUID();
         const now = Math.floor(Date.now() / 1000);
 
@@ -943,7 +965,14 @@ async function handleUsersAPI(
         )
           .bind(userId)
           .first();
+        console.log("[GET /api/users/me] New profile created");
       }
+
+      console.log(
+        "[GET /api/users/me] Profile found, username:",
+        profile?.username || "none",
+      );
+      console.log("[GET /api/users/me] Returning user data");
 
       return new Response(
         JSON.stringify({
