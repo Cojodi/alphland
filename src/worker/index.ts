@@ -472,11 +472,12 @@ async function handleBountiesAPI(
       const deliverables = JSON.stringify(body.deliverables || []);
       const skills = JSON.stringify(body.skills || []);
 
-      // Normalize category and difficulty_level to lowercase for CHECK constraint
+      // Normalize category and difficulty to lowercase for CHECK constraint
       const category = body.category ? body.category.toLowerCase() : null;
-      const difficulty_level = body.difficulty_level
-        ? body.difficulty_level.toLowerCase()
-        : null;
+      const difficulty =
+        body.difficulty || body.difficulty_level
+          ? (body.difficulty || body.difficulty_level).toLowerCase()
+          : null;
 
       await env.DB.prepare(
         `
@@ -484,7 +485,7 @@ async function handleBountiesAPI(
           id, sponsor_id, title, description,
           requirements, deliverables, skills,
           reward_amount, reward_currency, reward_type, reward_usd_value, tier_count,
-          category, difficulty_level, dapp_name,
+          category, difficulty, dapp_name,
           start_date, end_date,
           status, created_by, created_at, updated_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -504,7 +505,7 @@ async function handleBountiesAPI(
           body.reward_usd_value || 0,
           body.tier_count || 5,
           category,
-          difficulty_level,
+          difficulty,
           body.dapp_name || null,
           body.start_date,
           body.end_date,
@@ -1138,6 +1139,26 @@ async function handleUsersAPI(
       const body = (await request.json()) as any;
       const now = Math.floor(Date.now() / 1000);
 
+      // Check if profile exists, create if it doesn't (fail-safe in case trigger didn't run)
+      const profile = await env.DB.prepare(
+        `SELECT id FROM user_profiles WHERE user_id = ?`,
+      )
+        .bind(id)
+        .first();
+
+      if (!profile) {
+        console.log(
+          `[PUT /api/users/${id}] Profile not found, creating new one`,
+        );
+        const profileId = crypto.randomUUID();
+        await env.DB.prepare(
+          `INSERT INTO user_profiles (id, user_id, created_at, updated_at)
+           VALUES (?, ?, ?, ?)`,
+        )
+          .bind(profileId, id, now, now)
+          .run();
+      }
+
       // Check if username is taken (if provided and changed)
       if (body.username) {
         const existing = await env.DB.prepare(
@@ -1184,8 +1205,34 @@ async function handleUsersAPI(
         skillsJson = JSON.stringify(body.skills);
       }
 
+      // Prepare web3_interests JSON
+      const web3InterestsJson =
+        body.web3_interests && Array.isArray(body.web3_interests)
+          ? JSON.stringify(body.web3_interests)
+          : null;
+
+      console.log(
+        `[PUT /api/users/${id}] Updating profile with skills:`,
+        skillsJson,
+      );
+      console.log(
+        `[PUT /api/users/${id}] Updating profile with web3_interests:`,
+        web3InterestsJson,
+      );
+      console.log(
+        `[PUT /api/users/${id}] Updating profile with social links:`,
+        {
+          github: body.github_username,
+          twitter: body.twitter_username,
+          discord: body.discord_username,
+          linkedin: body.linkedin_username,
+          telegram: body.telegram_username,
+          website: body.website,
+        },
+      );
+
       // Update profile with fields that match the actual database schema
-      await env.DB.prepare(
+      const updateResult = await env.DB.prepare(
         `UPDATE user_profiles
          SET username = ?,
              bio = ?,
@@ -1221,7 +1268,7 @@ async function handleUsersAPI(
           body.location || null,
           body.work_preference || null,
           body.current_employer || null,
-          body.web3_interests ? JSON.stringify(body.web3_interests) : null,
+          web3InterestsJson,
           body.web3_familiarity || null,
           body.looking_for || null,
           skillsJson,
@@ -1229,6 +1276,17 @@ async function handleUsersAPI(
           id,
         )
         .run();
+
+      console.log(
+        `[PUT /api/users/${id}] Update result:`,
+        updateResult.meta.changes,
+        "rows affected",
+      );
+
+      // Verify the update was successful
+      if (updateResult.meta.changes === 0) {
+        console.error(`[PUT /api/users/${id}] WARNING: Update affected 0 rows`);
+      }
 
       // Get updated user with image from user table
       const user = await env.DB.prepare(
@@ -1238,6 +1296,11 @@ async function handleUsersAPI(
       )
         .bind(id)
         .first();
+
+      console.log(
+        `[PUT /api/users/${id}] Profile updated successfully for user:`,
+        user?.username,
+      );
 
       return new Response(JSON.stringify({ user }), {
         headers: corsHeaders,

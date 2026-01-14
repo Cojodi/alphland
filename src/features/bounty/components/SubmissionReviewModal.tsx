@@ -47,7 +47,7 @@ export function SubmissionReviewModal({
 
   // Calculate tiered rewards if applicable
   const tieredRewards: TieredReward[] | undefined =
-    bounty?.reward_type === "tiered" && bounty.tier_count
+    bounty?.reward_type === "tiered" && bounty.tier_count && bounty.reward
       ? generateTieredRewards(bounty.reward, bounty.tier_count)
       : undefined;
 
@@ -57,11 +57,11 @@ export function SubmissionReviewModal({
       const tier = tieredRewards.find((t) => t.position === selectedTier);
       return tier
         ? { amount: tier.amount, token: tier.token }
-        : { amount: 0, token: bounty?.reward.token || "ALPH" };
+        : { amount: 0, token: bounty?.reward?.token || "ALPH" };
     }
     return {
-      amount: bounty?.reward.amount || 0,
-      token: bounty?.reward.token || "ALPH",
+      amount: bounty?.reward?.amount || 0,
+      token: bounty?.reward?.token || "ALPH",
     };
   };
 
@@ -174,7 +174,7 @@ export function SubmissionReviewModal({
           submission.bounty_id,
           bounty.title,
           parseFloat(rewardAmount),
-          bounty.reward.token,
+          bounty.reward?.token || "ALPH",
         );
       } else if (reviewAction === "rejected") {
         await notificationService.notifySubmissionRejected(
@@ -210,7 +210,7 @@ export function SubmissionReviewModal({
     }
   };
 
-  if (!isOpen || !submission) return null;
+  if (!isOpen || !submission || !bounty) return null;
 
   const extractTitle = (description: string | null): string => {
     if (!description) return "Submission";
@@ -487,8 +487,8 @@ export function SubmissionReviewModal({
                     </span>{" "}
                     bounty with a total of{" "}
                     <span className="text-accessible-green font-bold">
-                      {bounty.reward.amount.toLocaleString()}{" "}
-                      {bounty.reward.token}
+                      {bounty.reward?.amount?.toLocaleString() || "0"}{" "}
+                      {bounty.reward?.token || "ALPH"}
                     </span>
                   </p>
                   <p className="text-xs text-light-charcoal dark:text-lightgrey mb-4">
