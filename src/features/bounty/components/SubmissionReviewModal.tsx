@@ -223,6 +223,7 @@ export function SubmissionReviewModal({
 
     // Fallback to first line
     const firstLine = description.split("\n")[0];
+    if (!firstLine) return "Submission";
     return firstLine.substring(0, 50) + (firstLine.length > 50 ? "..." : "");
   };
 
@@ -282,7 +283,7 @@ export function SubmissionReviewModal({
                 ) : (
                   <span className="font-medium text-light-charcoal">
                     {submission.user_full_name ||
-                      `Anonymous (ID: ${submission.user_id.substring(0, 8)}...)`}
+                      `Anonymous (ID: ${submission.user_id?.substring(0, 8) || "unknown"}...)`}
                   </span>
                 )}
               </div>

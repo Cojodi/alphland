@@ -880,7 +880,23 @@ async function handleUsersAPI(
         });
       }
 
-      return new Response(JSON.stringify({ user }), {
+      // Transform data to match frontend expectations
+      const transformedUser = {
+        ...user,
+        // Map username fields to URL fields for frontend compatibility
+        github_url: user.github_username || null,
+        twitter_url: user.twitter_username || null,
+        discord_url: user.discord_url || user.discord_username || null, // Keep discord_url as is
+        linkedin_url: user.linkedin_username || null,
+        telegram_url: user.telegram_username || null,
+        website_url: user.website || null,
+        // Map skills field to frontend_skills for backward compatibility
+        frontend_skills: user.skills || null,
+        backend_skills: null, // These are no longer separate in the DB
+        blockchain_skills: null,
+      };
+
+      return new Response(JSON.stringify({ user: transformedUser }), {
         headers: corsHeaders,
       });
     } catch (error: any) {
@@ -972,14 +988,28 @@ async function handleUsersAPI(
       );
       console.log("[GET /api/users/me] Returning user data");
 
+      // Transform data to match frontend expectations
+      const transformedProfile = {
+        ...profile,
+        email: session.user.email,
+        name: session.user.name,
+        image: session.user.image,
+        // Map username fields to URL fields for frontend compatibility
+        github_url: profile.github_username || null,
+        twitter_url: profile.twitter_username || null,
+        discord_url: profile.discord_url || profile.discord_username || null,
+        linkedin_url: profile.linkedin_username || null,
+        telegram_url: profile.telegram_username || null,
+        website_url: profile.website || null,
+        // Map skills field to individual skill categories for EditProfile
+        frontend_skills: profile.skills || null,
+        backend_skills: null,
+        blockchain_skills: null,
+      };
+
       return new Response(
         JSON.stringify({
-          user: {
-            ...profile,
-            email: session.user.email,
-            name: session.user.name,
-            image: session.user.image,
-          },
+          user: transformedProfile,
         }),
         {
           headers: corsHeaders,
@@ -1044,7 +1074,23 @@ async function handleUsersAPI(
           .first();
       }
 
-      return new Response(JSON.stringify({ user }), {
+      // Transform data to match frontend expectations
+      const transformedUser = {
+        ...user,
+        // Map username fields to URL fields for frontend compatibility
+        github_url: user.github_username || null,
+        twitter_url: user.twitter_username || null,
+        discord_url: user.discord_url || user.discord_username || null,
+        linkedin_url: user.linkedin_username || null,
+        telegram_url: user.telegram_username || null,
+        website_url: user.website || null,
+        // Map skills field to individual skill categories
+        frontend_skills: user.skills || null,
+        backend_skills: null,
+        blockchain_skills: null,
+      };
+
+      return new Response(JSON.stringify({ user: transformedUser }), {
         headers: corsHeaders,
       });
     } catch (error: any) {
