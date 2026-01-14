@@ -296,9 +296,14 @@ export default function ManualCreateBounty() {
                   name="dapp_name"
                   value={formData.dapp_name}
                   onChange={handleInputChange}
-                  placeholder="e.g., AlphDeFi"
+                  placeholder="e.g., Alphbanx, Linx, Ayin"
                   className="w-full px-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
                 />
+                <p className="text-xs text-light-charcoal dark:text-lightgrey mt-2 font-barlow">
+                  If this bounty is for a specific dApp (e.g., Alphbanx), enter
+                  its name here. The bounty will appear on that dApp&apos;s page
+                  if the name matches exactly.
+                </p>
               </div>
             </div>
 

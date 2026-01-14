@@ -346,17 +346,33 @@ async function handleBountiesAPI(
 
   const pathname = url.pathname;
 
-  // GET /api/bounties - List all bounties
+  // GET /api/bounties - List all bounties (with optional dapp_name filter)
   if (request.method === "GET" && pathname === "/api/bounties") {
-    const { results } = await env.DB.prepare(
-      `
+    const dappName = url.searchParams.get("dapp_name");
+
+    let query = `
       SELECT b.*, s.name as sponsor_name, s.logo_url as sponsor_logo_url
       FROM bounties b
       LEFT JOIN sponsors s ON b.sponsor_id = s.id
       WHERE b.status != 'deleted'
-      ORDER BY b.created_at DESC
-    `,
-    ).all();
+    `;
+
+    const params: string[] = [];
+
+    // Filter by dapp_name if provided (case-insensitive)
+    if (dappName) {
+      query += ` AND LOWER(b.dapp_name) = LOWER(?)`;
+      params.push(dappName);
+    }
+
+    query += ` ORDER BY b.created_at DESC`;
+
+    const { results } =
+      params.length > 0
+        ? await env.DB.prepare(query)
+            .bind(...params)
+            .all()
+        : await env.DB.prepare(query).all();
 
     return new Response(
       JSON.stringify({ bounties: results.map(transformBounty) }),

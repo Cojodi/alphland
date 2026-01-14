@@ -21,6 +21,8 @@ interface DappPageProps {
 
 const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
   const [showPrev, setShowPrev] = useState(false);
+  const [bounties, setBounties] = useState<any[]>([]);
+  const [loadingBounties, setLoadingBounties] = useState(true);
   const router = useRouter();
   const name = (router?.query?.name as string) || "";
 
@@ -30,6 +32,29 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
     }, 40);
     return () => clearTimeout(pid);
   }, []);
+
+  // Fetch bounties for this dapp
+  useEffect(() => {
+    async function fetchDappBounties() {
+      try {
+        setLoadingBounties(true);
+        const response = await fetch(
+          `/api/bounties?dapp_name=${encodeURIComponent(dappInfo.name)}`,
+        );
+        const data = await response.json();
+        setBounties(data.bounties || []);
+      } catch (error) {
+        console.error("Failed to fetch bounties:", error);
+        setBounties([]);
+      } finally {
+        setLoadingBounties(false);
+      }
+    }
+
+    if (dappInfo.name) {
+      fetchDappBounties();
+    }
+  }, [dappInfo.name]);
 
   const linkOrder = [
     "website",
@@ -57,36 +82,8 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
     return orderedLinks;
   };
 
-  // Sample bounties data (in real app, this would come from API/database)
-  const sampleBounties = [
-    {
-      id: "integrate-api",
-      title: "Integrate our API",
-      description:
-        "Build a frontend integration using our public API endpoints",
-      reward: "$500",
-      status: "Active",
-      dueDate: "Due in 15 days",
-    },
-    {
-      id: "find-bug",
-      title: "Find a smart contract bug",
-      description:
-        "Security audit and vulnerability assessment of our main contracts",
-      reward: "up to $5,000",
-      status: "Active",
-      dueDate: "Due in 30 days",
-    },
-    {
-      id: "video-tutorial",
-      title: "Create a video tutorial",
-      description:
-        "Produce educational content explaining our protocol features",
-      reward: "$1,500",
-      status: "Overdue",
-      dueDate: "Overdue by 5 days",
-    },
-  ];
+  // Filter only open/active bounties for display
+  const activeBounties = bounties.filter((b) => b.status === "open");
 
   return (
     <Layout
@@ -280,37 +277,70 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
                 </h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {sampleBounties.map((bounty) => (
-                  <Link key={bounty.id} href={`/bounty/${name}/${bounty.id}`}>
-                    <a className="block p-6 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow">
-                      <div className="flex items-start justify-between mb-4">
-                        <h3 className="font-semibold dark:text-white flex-1">
-                          {bounty.title}
-                        </h3>
-                        <span
-                          className={`px-2 py-1 rounded text-xs font-semibold whitespace-nowrap ml-2 ${
-                            bounty.status === "Active"
-                              ? "bg-accessible-green/20 text-accessible-green"
-                              : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
-                          }`}
-                        >
-                          {bounty.status}
-                        </span>
-                      </div>
-                      <p className="text-sm text-light-charcoal dark:text-lightgrey mb-6">
-                        {bounty.description}
-                      </p>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-accessible-green font-semibold">
-                          {bounty.reward}
-                        </span>
-                        <span className="text-light-charcoal dark:text-clay text-xs">
-                          {bounty.dueDate}
-                        </span>
-                      </div>
-                    </a>
-                  </Link>
-                ))}
+                {loadingBounties ? (
+                  <div className="col-span-3 text-center py-8">
+                    <p className="text-light-charcoal dark:text-lightgrey">
+                      Loading bounties...
+                    </p>
+                  </div>
+                ) : activeBounties.length === 0 ? (
+                  <div className="col-span-3 text-center py-8">
+                    <p className="text-light-charcoal dark:text-lightgrey mb-2">
+                      No active bounties for {dappInfo.name} yet.
+                    </p>
+                    <Link href="/bounty">
+                      <a className="text-orange hover:underline text-sm">
+                        View all bounties →
+                      </a>
+                    </Link>
+                  </div>
+                ) : (
+                  activeBounties.map((bounty) => {
+                    // Calculate days remaining
+                    const daysRemaining = bounty.end_date
+                      ? Math.ceil(
+                          (new Date(bounty.end_date * 1000).getTime() -
+                            Date.now()) /
+                            (1000 * 60 * 60 * 24),
+                        )
+                      : null;
+
+                    // Format due date display
+                    const dueDateText =
+                      daysRemaining !== null && daysRemaining > 0
+                        ? `Due in ${daysRemaining}d`
+                        : daysRemaining === 0
+                          ? "Due today"
+                          : "Ended";
+
+                    return (
+                      <Link key={bounty.id} href={`/bounty/${bounty.id}`}>
+                        <a className="block p-6 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow">
+                          <div className="flex items-start justify-between mb-4">
+                            <h3 className="font-semibold dark:text-white flex-1">
+                              {bounty.title}
+                            </h3>
+                            <span className="px-2 py-1 rounded text-xs font-semibold whitespace-nowrap ml-2 bg-accessible-green/20 text-accessible-green">
+                              Active
+                            </span>
+                          </div>
+                          <p className="text-sm text-light-charcoal dark:text-lightgrey mb-6 line-clamp-2">
+                            {bounty.description}
+                          </p>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-accessible-green font-semibold">
+                              {bounty.reward_amount}{" "}
+                              {bounty.reward_currency || "ALPH"}
+                            </span>
+                            <span className="text-light-charcoal dark:text-clay text-xs">
+                              {dueDateText}
+                            </span>
+                          </div>
+                        </a>
+                      </Link>
+                    );
+                  })
+                )}
               </div>
             </section>
 
