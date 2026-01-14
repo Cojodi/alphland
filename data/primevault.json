@@ -1,6 +1,6 @@
 {
   "name": "PrimeVault",
-  "description": "The new age financial stack: wallet, liquidity and market connectivity infrastructure on blockchain rails",
+  "description": "PrimeVault is an institutional grade infrastructure layer combining wallet services, liquidity access, and market connectivity. It enables users to interact with blockchain financial systems from a unified environment.",
   "short_description": "Powerful infrastructure to build onchain",
   "tags": ["Wallets", "Infrastructure"],
   "contracts": [],
