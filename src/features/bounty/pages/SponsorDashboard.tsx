@@ -344,7 +344,7 @@ export default function SponsorDashboard() {
             </div>
 
             {/* Total Projects Card */}
-            <div className="bg-white dark:bg-hero-dark rounded-xl border border-accessible-green/10 dark:border-accessible-green/20 p-6 hover:border-accessible-green/30 transition-all duration-300 hover:shadow-lg">
+            {/* <div className="bg-white dark:bg-hero-dark rounded-xl border border-accessible-green/10 dark:border-accessible-green/20 p-6 hover:border-accessible-green/30 transition-all duration-300 hover:shadow-lg">
               <div className="flex items-start justify-between">
                 <div className="space-y-2">
                   <p className="text-light-charcoal dark:text-lightgrey font-barlow font-medium text-sm uppercase tracking-wide">
@@ -361,7 +361,7 @@ export default function SponsorDashboard() {
               <p className="text-xs text-light-charcoal dark:text-lightgrey mt-3 font-barlow">
                 Connected projects
               </p>
-            </div>
+            </div> */}
 
             {/* Total Rewards Card */}
             <div className="bg-white dark:bg-hero-dark rounded-xl border border-orange/10 dark:border-orange/20 p-6 hover:border-orange/30 transition-all duration-300 hover:shadow-lg">

@@ -747,10 +747,15 @@ export async function handleSponsorsAPI(
     // Calculate stats
     const total_bounties_count = bounties.length;
     const total_projects_count = 0; // TODO: Implement projects
-    const total_reward_amount = bounties.reduce(
-      (sum: number, b: any) => sum + (parseFloat(b.reward_usd_value) || 0),
-      0,
-    );
+    const total_reward_amount = bounties.reduce((sum: number, b: any) => {
+      // If reward_currency is USD, use reward_amount
+      // Otherwise, use reward_usd_value if available, else use reward_amount
+      const rewardValue =
+        b.reward_currency === "USD"
+          ? parseFloat(b.reward_amount) || 0
+          : parseFloat(b.reward_usd_value) || parseFloat(b.reward_amount) || 0;
+      return sum + rewardValue;
+    }, 0);
 
     return new Response(
       JSON.stringify({
