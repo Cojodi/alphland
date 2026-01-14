@@ -229,10 +229,9 @@ export async function handleSubmissionsAPI(
     await env.DB.prepare(
       `UPDATE bounty_submissions
        SET status = ?,
-           feedback = ?,
+           reviewer_notes = ?,
            transaction_hash = ?,
-           review_started_at = ?,
-           completed_at = ?,
+           reviewed_at = ?,
            updated_at = ?
        WHERE id = ?`,
     )
@@ -240,7 +239,6 @@ export async function handleSubmissionsAPI(
         body.status,
         body.reviewer_notes || body.feedback || null,
         body.transaction_hash || null,
-        body.status === "in_review" ? now : null,
         body.status === "approved" || body.status === "rejected" ? now : null,
         now,
         id,
@@ -738,9 +736,10 @@ export async function handleSponsorsAPI(
 
     // Get submissions for all bounties by this sponsor
     const { results: submissions } = await env.DB.prepare(
-      `SELECT * FROM bounty_submissions
-       WHERE sponsor_id = ?
-       ORDER BY created_at DESC`,
+      `SELECT bs.* FROM bounty_submissions bs
+       JOIN bounties b ON bs.bounty_id = b.id
+       WHERE b.sponsor_id = ?
+       ORDER BY bs.created_at DESC`,
     )
       .bind(id)
       .all();
@@ -761,7 +760,7 @@ export async function handleSponsorsAPI(
           total_projects_count,
           total_reward_amount,
         },
-        bounties,
+        bounties: bounties.map(transformBounty),
         submissions,
       }),
       {
@@ -1226,8 +1225,8 @@ export async function handleUserDeletionAPI(
       // We keep submission records for sponsor's reference but anonymize the user
       await env.DB.prepare(
         `UPDATE bounty_submissions
-         SET submitted_by = 'deleted-user'
-         WHERE submitted_by = ?`,
+         SET user_id = 'deleted-user'
+         WHERE user_id = ?`,
       )
         .bind(userId)
         .run();
