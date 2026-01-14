@@ -8,13 +8,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-// Logos for trusted sponsors (you can add actual sponsor logos here)
-const TRUSTED_SPONSORS = [
-  { name: "Alephium", logo: "/images/sponsors/alephium.svg" },
-  { name: "Sezame", logo: "/images/sponsors/sezame.svg" },
-  { name: "Ayin", logo: "/images/sponsors/ayin.svg" },
-];
-
 const FEATURES = [
   {
     icon: Users,
@@ -132,24 +125,6 @@ export default function SponsorLanding() {
             <p className="mt-6 text-sm text-light-charcoal dark:text-lightgrey">
               Trusted by Top Teams on Alephium
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Trusted Sponsors Logos */}
-      <section className="bg-white dark:bg-hero-dark border-y border-border-grey dark:border-dark-charcoal py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-12 opacity-70">
-            {TRUSTED_SPONSORS.map((sponsor) => (
-              <div
-                key={sponsor.name}
-                className="flex items-center gap-2 text-light-charcoal dark:text-lightgrey"
-              >
-                <span className="font-medium text-sm sm:text-base">
-                  {sponsor.name}
-                </span>
-              </div>
-            ))}
           </div>
         </div>
       </section>
