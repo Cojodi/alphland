@@ -66,11 +66,11 @@ const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
               Resources
             </a>
           </Link>
-          <Link href="/forum">
+          {/* <Link href="/forum">
             <a className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10 hover:bg-smoked-white dark:hover:bg-white/5 transition-colors">
               Forum
             </a>
-          </Link>
+          </Link> */}
           {/* <Link href="/agenda">
             <a className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10 hover:bg-smoked-white dark:hover:bg-white/5 transition-colors">
               Agenda

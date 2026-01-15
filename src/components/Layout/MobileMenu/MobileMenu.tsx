@@ -82,11 +82,11 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
       href: "/resources",
       icon: currentTheme === "dark" ? homeDark : home,
     },
-    {
-      name: "Forum",
-      href: "/forum",
-      icon: currentTheme === "dark" ? homeDark : home,
-    },
+    // {
+    //   name: "Forum",
+    //   href: "/forum",
+    //   icon: currentTheme === "dark" ? homeDark : home,
+    // },
     // {
     //   name: "Agenda",
     //   href: "/agenda",
