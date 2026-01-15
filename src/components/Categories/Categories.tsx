@@ -335,11 +335,7 @@ const Categories = ({
                       </p>
                     </div>
                     <p className="text-light-charcoal dark:text-clay text-sm font-semibold leading-none ml-auto hidden lg:block">
-                      {!selectedFilters.length &&
-                      !selectedRatings.length &&
-                      !selectedCategories.length
-                        ? renderCategoryCount(category.name, true)
-                        : ""}
+                      {renderCategoryCount(category.name, true)}
                     </p>
                   </div>
                 </li>
