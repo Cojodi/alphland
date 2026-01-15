@@ -1,4 +1,6 @@
-import featuredDappImage from "../../public/dapps/elexium/elexium-banner.webp";
+import elexiumImage from "../../public/dapps/elexium/elexium-banner.webp";
+import linxImage from "../../public/dapps/linx-app/banner.webp";
+import auraImage from "../../public/dapps/aura/banner.webp";
 import FilterButton from "../components/Button/FilterButton";
 import Card from "../components/Card/Card";
 import Categories from "../components/Categories/Categories";
@@ -42,7 +44,23 @@ const Home = ({
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [ratings, setRatings] = useState<{ [key: string]: string[] }>({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentSpotlight, setCurrentSpotlight] = useState(0);
   const router = useRouter();
+
+  // Featured dapps rotation
+  const featuredDapps = [
+    { name: "Linx App", image: linxImage, url: "/linx-app" },
+    { name: "Elexium Finance", image: elexiumImage, url: "/elexium" },
+    { name: "Aura", image: auraImage, url: "/aura" },
+  ];
+
+  // Auto-rotate spotlight every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSpotlight((prev) => (prev + 1) % featuredDapps.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [featuredDapps.length]);
   const selectedFilters = useCategoryStore((state) => state.selectedFilters);
   const selectedRatings = useCategoryStore((state) => state.selectedRatings);
   const selectedCategories = useCategoryStore(
@@ -158,12 +176,29 @@ const Home = ({
             onSearchChange={setSearchQuery}
           />
           <div className="cards">
-            <DappOfTheMonth
-              name="Elexium Finance"
-              image={featuredDappImage}
-              url="/elexium"
-              className="featured"
-            />
+            <div className="relative">
+              <DappOfTheMonth
+                name={featuredDapps[currentSpotlight].name}
+                image={featuredDapps[currentSpotlight].image}
+                url={featuredDapps[currentSpotlight].url}
+                className="featured"
+              />
+              {/* Spotlight Indicators */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
+                {featuredDapps.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSpotlight(index)}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      index === currentSpotlight
+                        ? "bg-orange w-6"
+                        : "bg-white/50 hover:bg-white/80"
+                    }`}
+                    aria-label={`Go to spotlight ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
             <h3 className="lg:hidden font-semibold text-xl leading-none mb-5">
               All projects
             </h3>
