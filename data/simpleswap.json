@@ -1,6 +1,6 @@
 {
   "name": "SimpleSwap",
-  "description": "SimpleSwap is a non-custodial cryptocurrency exchange that enables instant swaps of over 1,500 cryptocurrencies without registration.",
+  "description": "SimpleSwap is a non custodial exchange supporting instant swaps for more than fifteen hundred assets. It performs conversions without requiring user registration.",
   "short_description": "Instant, registration-free crypto exchange with 1500+ coins.",
   "tags": ["Bridges"],
   "councils_choice": false,
