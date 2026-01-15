@@ -220,7 +220,7 @@ export default function BountyList() {
                   {/* Status Filter */}
                   <div className="mb-6">
                     <div className="flex items-center gap-2 mb-3">
-                      <Filter className="w-4 h-4 text-light-charcoal dark:text-lightgrey" />
+                      <Filter className="w-5 h-5 text-light-charcoal dark:text-lightgrey" />
                       <span className="text-sm font-medium text-light-charcoal dark:text-lightgrey">
                         Status
                       </span>

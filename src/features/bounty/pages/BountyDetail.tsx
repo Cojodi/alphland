@@ -144,7 +144,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
               onClick={() => router.push("/bounty")}
               className="flex items-center gap-2 text-orange hover:text-orange/80 mb-4 transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-5 h-5" />
               Back to Bounties
             </button>
 
@@ -194,7 +194,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                     <span>🌐 Global</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4" />
+                    <Users className="w-5 h-5" />
                     <span>{bounty.current_submissions} participants</span>
                   </div>
                 </div>
@@ -214,7 +214,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                   }
                 >
                   <Bookmark
-                    className="w-4 h-4"
+                    className="w-5 h-5"
                     fill={isBookmarked ? "currentColor" : "none"}
                   />
                 </button>
@@ -231,7 +231,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                     }`}
                     title="Notification settings"
                   >
-                    <Bell className="w-4 h-4" />
+                    <Bell className="w-5 h-5" />
                   </button>
                 )}
               </div>
