@@ -1,6 +1,6 @@
 {
   "name": "Tin.network",
-  "description": "Your one stop for #Defi. Easily track and visualize all your Assets, Liabilities and NFTs in one simple interface.",
+  "description": "Tin Network is a DeFi dashboard that tracks assets, liabilities, and NFT holdings in a single unified view. It helps users monitor portfolio health and onchain activity.",
   "short_description": "Easily track and visualize all your Assets.",
   "tags": ["Stats", "DeFi"],
   "contracts": [],
