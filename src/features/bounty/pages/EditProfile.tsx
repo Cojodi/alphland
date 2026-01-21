@@ -313,12 +313,18 @@ export default function EditProfile() {
   });
 
   const [isLoading, setIsLoading] = useState(true);
+  const [hasLoadedProfile, setHasLoadedProfile] = useState(false);
 
   // Load existing profile data
   useEffect(() => {
     const loadProfile = async () => {
       if (!session?.user) {
         setIsLoading(false);
+        return;
+      }
+
+      // Only load profile once to prevent overwriting user input
+      if (hasLoadedProfile) {
         return;
       }
 
@@ -420,6 +426,8 @@ export default function EditProfile() {
           if (profile.location) {
             setLocationSearch(profile.location);
           }
+
+          setHasLoadedProfile(true);
         }
       } catch (error) {
         console.error("Error loading profile:", error);
@@ -429,7 +437,7 @@ export default function EditProfile() {
     };
 
     loadProfile();
-  }, [session]);
+  }, [session, hasLoadedProfile]);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -582,12 +590,7 @@ export default function EditProfile() {
     }
 
     // Validate required fields
-    if (
-      !formData.username ||
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.alphWalletAddress
-    ) {
+    if (!formData.username || !formData.alphWalletAddress) {
       alert("Please fill in all required fields");
       return;
     }
@@ -877,7 +880,7 @@ export default function EditProfile() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-black dark:text-white mb-2">
-                      First Name <span className="text-red-500">*</span>
+                      First Name
                     </label>
                     <input
                       type="text"
@@ -885,13 +888,12 @@ export default function EditProfile() {
                       value={formData.firstName}
                       onChange={handleInputChange}
                       placeholder="Enter your first name"
-                      required
                       className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-black dark:text-white mb-2">
-                      Last Name <span className="text-red-500">*</span>
+                      Last Name
                     </label>
                     <input
                       type="text"
@@ -899,7 +901,6 @@ export default function EditProfile() {
                       value={formData.lastName}
                       onChange={handleInputChange}
                       placeholder="Enter your last name"
-                      required
                       className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
                     />
                   </div>
