@@ -1,6 +1,6 @@
 {
   "name": "SafePal Wallet",
-  "description": "SafePal is a comprehensive crypto wallet suite with hardware wallet, mobile app, and browser extension wallet solutions empowering 20M+ users to manage and secure their assets across 100+ blockchains",
+  "description": "SafePal is a suite of crypto wallets including hardware devices, mobile apps, and browser extensions. It supports more than one hundred blockchains and offers secure asset management tools.",
   "short_description": "SafePal is a comprehensive crypto wallet suite",
   "tags": ["Wallets", "NFTs", "DeFi"],
   "group": "Group 0",

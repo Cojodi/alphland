@@ -1,6 +1,6 @@
 {
   "name": "StealthEX",
-  "description": "StealthEX is a non-custodial instant crypto exchange supporting over 700 assets, enabling secure and anonymous swaps without registration or limits.",
+  "description": "StealthEX is a swap service enabling anonymous and registration free exchanges between more than 700 cryptocurrencies. It supports fast conversions without user accounts.",
   "short_description": "Non-custodial crypto exchange with 700+ assets.",
   "tags": ["Bridges"],
   "councils_choice": false,

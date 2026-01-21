@@ -1,6 +1,6 @@
 {
   "name": "Linx swap",
-  "description": "Frontend implementation of a DEX aggregator for the Alephium blockchain. This interface connects to the Linx Labs API to provide optimal token swaps across multiple DEXs.",
+  "description": "Linx Swap is a frontend for a DEX aggregator that finds the optimal swap route across multiple decentralized exchanges. It uses the Linx Labs API to source the best available prices.",
   "short_description": "No BS. Just smooth swaps.",
   "tags": ["DeFi"],
   "contracts": [],

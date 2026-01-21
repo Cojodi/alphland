@@ -1,6 +1,6 @@
 {
   "name": "Onramper",
-  "description": "Onramper connects users to multiple fiat-to-crypto onramps through a single integration, offering seamless access to crypto purchases across 190+ countries.",
+  "description": "Onramper is a fiat to crypto aggregator connecting users to multiple onramps through a single integration. It supports global payment methods and offers fast crypto purchasing flows.",
   "short_description": "Aggregated fiat-to-crypto onramp with 130+ payment methods.",
   "tags": ["Onramps"],
   "councils_choice": false,

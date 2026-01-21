@@ -1,6 +1,6 @@
 {
   "name": "Presence Protocol",
-  "description": "Presence Protocol is built on the foundation of POAP, designed to leverage the power of the Alephium blockchain to provide verifiable proof of event attendance, known as a Presence.",
+  "description": "Presence Protocol is an attendance verification system issuing event based proof of presence tokens. It records participation data onchain for both digital and in person events.",
   "short_description": "Proof You Were There. Powered by Alephium.",
   "tags": ["NFTs", "Social"],
   "group": "Group 0",

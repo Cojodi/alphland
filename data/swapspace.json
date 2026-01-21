@@ -1,6 +1,6 @@
 {
   "name": "SwapSpace",
-  "description": "SwapSpace is a crypto exchange aggregator that connects 38 swap services and over 2,200 coins, providing fast and optimal swaps without any registration or KYC.",
+  "description": "SwapSpace is a crypto swap aggregator connecting dozens of exchange services and routing the best available conversion path. It supports more than two thousand assets and performs swaps seamlessly.",
   "short_description": "Exchange aggregator for 38 services and 2,200+ coins.",
   "tags": ["Bridges"],
   "councils_choice": false,

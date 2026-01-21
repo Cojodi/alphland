@@ -1,6 +1,6 @@
 {
   "name": "SoloPool",
-  "description": "SoloPool is a solo mining platform designed for professional miners who prefer to work independently and claim full block rewards.",
+  "description": "SoloPool is a solo mining platform that allows miners to earn full block rewards. It offers independent mining infrastructure without reward sharing.",
   "short_description": "Solo Mining Pools For Professional Miners",
   "tags": ["Hashrate"],
   "contracts": [],
