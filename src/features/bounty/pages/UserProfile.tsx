@@ -1,6 +1,6 @@
 "use client";
 
-import { ActivityFeed } from "../components/ActivityFeed";
+// import { ActivityFeed } from "../components/ActivityFeed";
 import { BookmarksSection } from "../components/BookmarksSection";
 import { ProfileDetails } from "../components/ProfileDetails";
 import { ProfileHeader } from "../components/ProfileHeader";
@@ -300,7 +300,7 @@ export default function UserProfile() {
                   }
                 }}
               />
-              <ActivityFeed />
+              {/* <ActivityFeed /> */}
             </div>
           </div>
         </main>

@@ -17,4 +17,4 @@ export { ProfileDetails } from "./ProfileDetails";
 export { SkillsSection } from "./SkillsSection";
 export { StatsSection } from "./StatsSection";
 export { ProofOfWorkSection } from "./ProofOfWorkSection";
-export { ActivityFeed } from "./ActivityFeed";
+// export { ActivityFeed } from "./ActivityFeed";
