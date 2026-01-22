@@ -203,11 +203,6 @@ export default function CreateSponsorProfile() {
           console.log("Logo uploaded successfully:", logoUrl);
         }
 
-        // Format website URL with https://
-        const websiteUrl = formData.company_url.startsWith("http")
-          ? formData.company_url
-          : `https://${formData.company_url}`;
-
         // Create sponsor application via API
         const response = await fetch("/api/sponsors", {
           method: "POST",
@@ -217,7 +212,7 @@ export default function CreateSponsorProfile() {
             name: formData.company_name,
             description: formData.company_bio,
             industry: formData.industry,
-            website: websiteUrl,
+            website: formData.company_url,
             twitter: formData.company_twitter,
             contact_first_name: formData.first_name,
             contact_last_name: formData.last_name,

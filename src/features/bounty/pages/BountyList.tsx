@@ -105,14 +105,7 @@ export default function BountyList() {
     }
   }, [router.query, session]);
 
-  const categories = [
-    "All",
-    "Active",
-    "Content",
-    "Design",
-    "Development",
-    "Other",
-  ];
+  const categories = ["All", "Content", "Design", "Development", "Other"];
 
   const statuses = [
     { label: "All Status", value: "all" },
