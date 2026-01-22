@@ -4,7 +4,7 @@ import { BountyCard } from "../components/BountyCard";
 import Layout from "@/components/Layout";
 import { useSession } from "@/lib/auth-client";
 import { apiClient, Bounty } from "@/lib/api-client";
-import { Filter, Rocket, CheckCircle, X, Search } from "lucide-react";
+import { Rocket, CheckCircle, X, Search } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
@@ -13,11 +13,6 @@ import { useRouter } from "next/router";
 export default function BountyList() {
   const router = useRouter();
   const { data: session } = useSession();
-  const [activeFilter, setActiveFilter] = useState<
-    "all" | "bounties" | "projects"
-  >("all");
-  const [activeCategory, setActiveCategory] = useState<string>("all");
-  const [activeStatus, setActiveStatus] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [showVerificationSuccess, setShowVerificationSuccess] = useState(false);
   const [isSponsor, setIsSponsor] = useState(false);
@@ -105,44 +100,13 @@ export default function BountyList() {
     }
   }, [router.query, session]);
 
-  const categories = ["All", "Content", "Design", "Development", "Other"];
-
-  const statuses = [
-    { label: "All Status", value: "all" },
-    { label: "Open", value: "open" },
-    { label: "Closed", value: "closed" },
-    { label: "Completed", value: "completed" },
-  ];
-
-  // Filter bounties based on active category, status, and search query
+  // Filter bounties based on search query only
   const filteredBounties = bounties.filter((bounty) => {
-    // Filter by search query
-    const matchesSearch =
-      searchQuery === "" ||
+    if (searchQuery === "") return true;
+    return (
       bounty.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      bounty.description?.toLowerCase().includes(searchQuery.toLowerCase());
-
-    if (!matchesSearch) {
-      return false;
-    }
-
-    // Filter by status
-    if (activeStatus !== "all" && bounty.status !== activeStatus) {
-      return false;
-    }
-
-    // Filter by category
-    if (activeCategory === "all") {
-      return true;
-    }
-    if (activeCategory === "active") {
-      // Show only active/open bounties
-      return bounty.status === "open";
-    }
-    // Match the bounty category with the active category
-    // Categories in DB are stored as "Content", "Design", etc. (capitalized)
-    // activeCategory is like "content", "design" (lowercase)
-    return bounty.category?.toLowerCase() === activeCategory.toLowerCase();
+      bounty.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   });
 
   return (
@@ -199,7 +163,7 @@ export default function BountyList() {
                   </h2>
 
                   {/* Search Bar */}
-                  <div className="relative mb-6">
+                  <div className="relative pb-6 border-b border-border-grey dark:border-dark-charcoal mb-6">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-light-charcoal dark:text-lightgrey" />
                     <input
                       type="text"
@@ -210,89 +174,8 @@ export default function BountyList() {
                     />
                   </div>
 
-                  {/* Status Filter */}
-                  <div className="mb-6">
-                    {/* <div className="flex items-center gap-2 mb-3">
-                      <Filter className="w-5 h-5 text-light-charcoal dark:text-lightgrey" />
-                      <span className="text-sm font-medium text-light-charcoal dark:text-lightgrey">
-                        Status
-                      </span>
-                    </div> */}
-                    <div className="flex flex-wrap gap-2">
-                      {statuses.map((status) => (
-                        <button
-                          key={status.value}
-                          onClick={() => setActiveStatus(status.value)}
-                          className={`px-4 py-2 rounded-full font-medium text-sm transition ${
-                            activeStatus === status.value
-                              ? "bg-orange text-white"
-                              : "bg-white dark:bg-hero-dark text-light-charcoal dark:text-lightgrey border border-border-grey dark:border-dark-charcoal hover:bg-smoked-white dark:hover:bg-light-black"
-                          }`}
-                        >
-                          {status.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Filter Tabs */}
-                  {/* <div className="flex flex-wrap gap-3 mb-6">
-                    <button
-                      onClick={() => setActiveFilter("all")}
-                      className={`px-4 py-2 rounded-lg font-medium text-sm transition ${
-                        activeFilter === "all"
-                          ? "bg-orange text-white"
-                          : "bg-white dark:bg-hero-dark text-black dark:text-white border border-border-grey dark:border-dark-charcoal hover:bg-smoked-white dark:hover:bg-light-black"
-                      }`}
-                    >
-                      All
-                    </button>
-                    <button
-                      onClick={() => setActiveFilter("bounties")}
-                      className={`px-4 py-2 rounded-lg font-medium text-sm transition ${
-                        activeFilter === "bounties"
-                          ? "bg-orange text-white"
-                          : "bg-white dark:bg-hero-dark text-black dark:text-white border border-border-grey dark:border-dark-charcoal hover:bg-smoked-white dark:hover:bg-light-black"
-                      }`}
-                    >
-                      Bounties
-                    </button>
-                    <button
-                      onClick={() => setActiveFilter("projects")}
-                      className={`px-4 py-2 rounded-lg font-medium text-sm transition ${
-                        activeFilter === "projects"
-                          ? "bg-orange text-white"
-                          : "bg-white dark:bg-hero-dark text-black dark:text-white border border-border-grey dark:border-dark-charcoal hover:bg-smoked-white dark:hover:bg-light-black"
-                      }`}
-                    >
-                      Projects
-                    </button>
-                  </div> */}
-
-                  {/* Category Pills */}
-                  <div className="flex flex-wrap gap-2 pb-6 border-b border-border-grey dark:border-dark-charcoal mb-6">
-                    {categories.map((category) => {
-                      const categoryKey = category
-                        .toLowerCase()
-                        .replace(" ", "-");
-                      return (
-                        <button
-                          key={categoryKey}
-                          onClick={() => setActiveCategory(categoryKey)}
-                          className={`px-4 py-2 rounded-full font-medium text-sm transition ${
-                            activeCategory === categoryKey
-                              ? "bg-orange/10 text-orange dark:bg-orange/20"
-                              : "bg-smoked-white dark:bg-light-black text-light-charcoal dark:text-lightgrey hover:bg-border-grey dark:hover:bg-dark-charcoal"
-                          }`}
-                        >
-                          {category}
-                        </button>
-                      );
-                    })}
-                  </div>
-
                   {/* Stats */}
-                  <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-1">
                       <p className="text-2xl font-bold text-black dark:text-white">
                         {overview.total_value_usd > 0
@@ -306,11 +189,26 @@ export default function BountyList() {
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-2xl font-bold text-black dark:text-white">
-                        {overview.list_number.toLocaleString()}
+                      <p className="text-2xl font-bold text-accessible-green">
+                        {bounties.filter((b) => b.status === "open").length}
                       </p>
                       <p className="text-sm text-light-charcoal dark:text-lightgrey">
-                        Opportunities Listed
+                        Opportunities Open
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-2xl font-bold text-light-charcoal dark:text-lightgrey">
+                        {
+                          bounties.filter(
+                            (b) =>
+                              b.status === "closed" ||
+                              b.status === "completed" ||
+                              b.status === "cancelled",
+                          ).length
+                        }
+                      </p>
+                      <p className="text-sm text-light-charcoal dark:text-lightgrey">
+                        Opportunities Closed
                       </p>
                     </div>
                   </div>
@@ -329,7 +227,7 @@ export default function BountyList() {
                       <p className="text-light-charcoal dark:text-lightgrey">
                         {bounties.length === 0
                           ? "No bounties available at the moment."
-                          : `No bounties found in the "${categories.find((c) => c.toLowerCase().replace(" ", "-") === activeCategory)}" category.`}
+                          : "No bounties found matching your search."}
                       </p>
                     </div>
                   ) : (
