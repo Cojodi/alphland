@@ -1178,6 +1178,25 @@ export default function EditProfile() {
                   </select>
                 </div>
 
+                {/* Looking For */}
+                <div>
+                  <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                    Looking For
+                  </label>
+                  <input
+                    type="text"
+                    name="lookingFor"
+                    value={formData.lookingFor}
+                    onChange={handleInputChange}
+                    placeholder="e.g., Smart contract development opportunities"
+                    className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                  />
+                  <p className="text-xs text-light-charcoal dark:text-lightgrey mt-1">
+                    Describe what kind of work or opportunities you&apos;re
+                    looking for
+                  </p>
+                </div>
+
                 {/* Current Employer */}
                 <div>
                   <label className="block text-sm font-semibold text-black dark:text-white mb-2">

@@ -27,6 +27,7 @@ interface UserProfile {
   website_url: string | null;
   location: string | null;
   work_experience: string | null;
+  work_preference: string | null;
   current_employer: string | null;
   web3_familiarity: string | null;
   looking_for: string | null;
@@ -257,10 +258,17 @@ export default function UserProfile() {
               <ProfileDetails
                 lookingFor={
                   userData.looking_for ||
-                  (userData.work_experience
-                    ? workPreferenceMap[userData.work_experience] ||
-                      userData.work_experience
-                    : undefined)
+                  (userData.work_preference || userData.work_experience
+                    ? workPreferenceMap[
+                        userData.work_preference ||
+                          userData.work_experience ||
+                          ""
+                      ] ||
+                      userData.work_preference ||
+                      userData.work_experience ||
+                      undefined
+                    : undefined) ||
+                  undefined
                 }
                 worksAt={userData.current_employer || undefined}
                 location={userData.location || undefined}

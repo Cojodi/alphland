@@ -449,26 +449,19 @@ export default function CreateSponsorProfile() {
                       <label className="block text-sm font-medium text-black dark:text-white">
                         Company Website <span className="text-orange">*</span>
                       </label>
-                      <div className="flex">
-                        <span className="inline-flex items-center px-3 bg-smoked-white dark:bg-light-black border border-r-0 border-border-grey dark:border-dark-charcoal rounded-l-lg text-light-charcoal dark:text-lightgrey text-sm">
-                          https://
-                        </span>
-                        <input
-                          type="text"
-                          value={formData.company_url}
-                          onChange={(e) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              company_url: e.target.value
-                                .replace(/^https?:\/\//, "")
-                                .replace(/^www\./, ""),
-                            }))
-                          }
-                          className="flex-1 px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
-                          placeholder="example.com or www.example.com"
-                          required
-                        />
-                      </div>
+                      <input
+                        type="text"
+                        value={formData.company_url}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            company_url: e.target.value,
+                          }))
+                        }
+                        className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                        placeholder="https://example.com"
+                        required
+                      />
                     </div>
 
                     <div className="space-y-2">
