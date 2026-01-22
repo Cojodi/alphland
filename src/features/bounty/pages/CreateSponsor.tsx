@@ -232,8 +232,8 @@ export default function CreateSponsorProfile() {
           throw new Error("Failed to create sponsor profile");
         }
 
-        // Redirect to dashboard (auto-approved)
-        router.push("/bounty/sponsor/dashboard");
+        // Redirect to success page
+        router.push("/bounty/sponsor/success");
       } catch (error) {
         console.error("Error submitting sponsor application:", error);
       } finally {
