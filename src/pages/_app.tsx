@@ -68,32 +68,34 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider attribute="class">
       <AlephiumWalletProvider network="mainnet">
-        <ToastContainer
-          position="bottom-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark"
-        />
-        <Script
-          strategy="afterInteractive"
-          defer
-          data-domain="alph.land"
-          data-api="/x/api/event"
-          src="/x/js/script.js"
-        />
-        <Script
-          strategy="afterInteractive"
-          src="https://identity.netlify.com/v1/netlify-identity-widget.js"
-        />
-        <CookieConsent />
-        <Component {...pageProps} />
-        <Analytics />
+        <>
+          <ToastContainer
+            position="bottom-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="dark"
+          />
+          <Script
+            strategy="afterInteractive"
+            defer
+            data-domain="alph.land"
+            data-api="/x/api/event"
+            src="/x/js/script.js"
+          />
+          <Script
+            strategy="afterInteractive"
+            src="https://identity.netlify.com/v1/netlify-identity-widget.js"
+          />
+          <CookieConsent />
+          <Component {...pageProps} />
+          <Analytics />
+        </>
       </AlephiumWalletProvider>
     </ThemeProvider>
   );
