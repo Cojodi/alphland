@@ -1,6 +1,6 @@
 {
   "name": "Voltpay",
-  "description": "Convert Cryptocurrency to Gift Cards & Prepaid Cards and Pay with Crypto",
+  "description": "Voltpay is a service that converts cryptocurrency into gift cards and prepaid cards. It allows users to spend digital assets through conventional retail channels.",
   "short_description": "voltpay: One stop solution for DeFi payments",
   "tags": ["DeFi"],
   "contracts": [],
