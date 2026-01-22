@@ -39,6 +39,64 @@ Complete design system documentation for the Alphland project, including all sty
 ### Other
 ```css
 --tooltip-dark: #333333    /* Tooltip background */
+--error-red: #dc2626       /* Error/negative state color */
+```
+
+## 🏷️ Semantic Status Colors
+
+Use colors intentionally based on the semantic meaning of the status:
+
+### Positive States (Green: `accessible-green`)
+Use green for validated, verified, or positive states:
+- "Active" - bounty is accepting submissions
+- "Open" - bounty status is open
+- "Verified" - sponsor or contract is verified
+- "Audited: Yes" - project has been audited
+- "Smart Contract: Verified" - contract is verified
+
+```tsx
+// Positive state tag
+<span className="bg-accessible-green/10 text-accessible-green px-2 py-1 rounded">
+  Active
+</span>
+```
+
+### Neutral States (Default text color)
+Use neutral colors for informational labels that don't indicate positive/negative:
+- "Public" - team visibility (not a positive state, just informational)
+- Category names (Design, Development, Content, etc.)
+- Difficulty levels (Beginner, Intermediate, Advanced)
+
+```tsx
+// Neutral state tag
+<span className="bg-smoked-white dark:bg-light-black text-light-charcoal dark:text-lightgrey px-2 py-1 rounded">
+  Public
+</span>
+```
+
+### Negative States (Red: `error-red`)
+Use red for negative, warning, or overdue states:
+- "Overdue" - bounty deadline has passed
+- "Ended" - bounty has ended
+- "Closed" - bounty is no longer accepting submissions
+
+```tsx
+// Negative state tag
+<span className="bg-red-500/10 text-red-500 px-2 py-1 rounded">
+  Overdue
+</span>
+```
+
+### Featured/Highlighted (Orange)
+Use orange for featured or highlighted items:
+- "Featured" - featured bounty
+- "Completed" - successfully completed (achievement-like)
+
+```tsx
+// Featured tag
+<span className="bg-orange/10 text-orange px-2 py-1 rounded">
+  Featured
+</span>
 ```
 
 ## 📝 Typography

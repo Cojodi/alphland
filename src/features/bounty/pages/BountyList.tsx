@@ -350,19 +350,27 @@ export default function BountyList() {
 
                       // Determine status tag based on bounty status and date
                       const getStatusTag = () => {
-                        if (
-                          bounty.status === "completed" ||
-                          bounty.status === "cancelled"
-                        ) {
+                        if (bounty.status === "completed") {
                           return "Closed";
                         }
+                        if (bounty.status === "cancelled") {
+                          return "Closed";
+                        }
+                        if (bounty.status === "closed") {
+                          return "Closed";
+                        }
+                        // For open bounties, check deadline
                         if (daysRemaining !== null && daysRemaining > 0) {
                           return `Due in ${daysRemaining}d`;
                         }
                         if (daysRemaining === 0) {
                           return "Due today";
                         }
-                        return "Ended";
+                        // Deadline has passed but bounty is still open
+                        if (daysRemaining !== null && daysRemaining < 0) {
+                          return "Overdue";
+                        }
+                        return "Active";
                       };
 
                       return (

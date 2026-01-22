@@ -2,7 +2,7 @@
 
 import Layout from "@/components/Layout";
 import { useSession } from "@/lib/auth-client";
-import { Upload, X, Info } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -14,12 +14,11 @@ interface FormData {
   last_name: string;
   username: string;
   telegram: string;
+  email: string;
   // About Your Company
   company_name: string;
-  company_username: string;
   company_url: string;
   company_twitter: string;
-  entity_name: string;
   industry: string;
   company_bio: string;
 }
@@ -51,65 +50,72 @@ export default function CreateSponsorProfile() {
   const [logoFile, setLogoFile] = useState<LogoFile | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const [hasLoadedProfile, setHasLoadedProfile] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     first_name: "",
     last_name: "",
     username: "",
     telegram: "",
+    email: "",
     company_name: "",
-    company_username: "",
     company_url: "",
     company_twitter: "",
-    entity_name: "",
     industry: "",
     company_bio: "",
   });
 
-  // Pre-fill user data from session and profile
+  // Pre-fill user data from session and profile (only once)
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (session?.user) {
-        try {
-          // Fetch user profile to get username
-          const response = await fetch("/api/users/me");
-          if (response.ok) {
-            const data = await response.json();
-            const profile = data.user;
+      if (!session?.user || hasLoadedProfile) {
+        return;
+      }
 
-            setFormData((prev) => ({
-              ...prev,
-              first_name:
-                profile?.first_name || session.user.name?.split(" ")[0] || "",
-              last_name:
-                profile?.last_name ||
-                session.user.name?.split(" ").slice(1).join(" ") ||
-                "",
-              username: profile?.username || "",
-            }));
-          } else {
-            // Fallback to session data only
-            const nameParts = (session.user.name || "").split(" ");
-            setFormData((prev) => ({
-              ...prev,
-              first_name: nameParts[0] || "",
-              last_name: nameParts.slice(1).join(" ") || "",
-            }));
-          }
-        } catch (error) {
-          console.error("Failed to fetch user profile:", error);
+      try {
+        // Fetch user profile to get username
+        const response = await fetch("/api/users/me");
+        if (response.ok) {
+          const data = await response.json();
+          const profile = data.user;
+
+          setFormData((prev) => ({
+            ...prev,
+            first_name:
+              profile?.first_name || session.user.name?.split(" ")[0] || "",
+            last_name:
+              profile?.last_name ||
+              session.user.name?.split(" ").slice(1).join(" ") ||
+              "",
+            username: profile?.username || "",
+            email: session.user.email || "",
+          }));
+        } else {
           // Fallback to session data only
           const nameParts = (session.user.name || "").split(" ");
           setFormData((prev) => ({
             ...prev,
             first_name: nameParts[0] || "",
             last_name: nameParts.slice(1).join(" ") || "",
+            email: session.user.email || "",
           }));
         }
+        setHasLoadedProfile(true);
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error);
+        // Fallback to session data only
+        const nameParts = (session.user.name || "").split(" ");
+        setFormData((prev) => ({
+          ...prev,
+          first_name: nameParts[0] || "",
+          last_name: nameParts.slice(1).join(" ") || "",
+          email: session.user.email || "",
+        }));
+        setHasLoadedProfile(true);
       }
     };
 
     fetchUserProfile();
-  }, [session]);
+  }, [session, hasLoadedProfile]);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -197,6 +203,11 @@ export default function CreateSponsorProfile() {
           console.log("Logo uploaded successfully:", logoUrl);
         }
 
+        // Format website URL with https://
+        const websiteUrl = formData.company_url.startsWith("http")
+          ? formData.company_url
+          : `https://${formData.company_url}`;
+
         // Create sponsor application via API
         const response = await fetch("/api/sponsors", {
           method: "POST",
@@ -204,16 +215,15 @@ export default function CreateSponsorProfile() {
           body: JSON.stringify({
             user_id: session.user.id,
             name: formData.company_name,
-            username: formData.company_username,
             description: formData.company_bio,
-            entity_name: formData.entity_name,
             industry: formData.industry,
-            website: formData.company_url,
+            website: websiteUrl,
             twitter: formData.company_twitter,
             contact_first_name: formData.first_name,
             contact_last_name: formData.last_name,
             contact_username: formData.username,
-            contact_telegram: formData.telegram,
+            contact_telegram: formData.telegram || null,
+            contact_email: formData.email || null,
             logo_url: logoUrl,
           }),
         });
@@ -338,29 +348,53 @@ export default function CreateSponsorProfile() {
                     </div>
                   </div>
 
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-black dark:text-white">
+                      Username <span className="text-orange">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.username}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          username: e.target.value,
+                        }))
+                      }
+                      className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                      placeholder="username"
+                      required
+                    />
+                  </div>
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="block text-sm font-medium text-black dark:text-white">
-                        Username <span className="text-orange">*</span>
+                        Email{" "}
+                        <span className="text-light-charcoal dark:text-lightgrey text-xs">
+                          (optional)
+                        </span>
                       </label>
                       <input
-                        type="text"
-                        value={formData.username}
+                        type="email"
+                        value={formData.email}
                         onChange={(e) =>
                           setFormData((prev) => ({
                             ...prev,
-                            username: e.target.value,
+                            email: e.target.value,
                           }))
                         }
                         className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
-                        placeholder="username"
-                        required
+                        placeholder="email@example.com"
                       />
                     </div>
 
                     <div className="space-y-2">
                       <label className="block text-sm font-medium text-black dark:text-white">
-                        Telegram <span className="text-orange">*</span>
+                        Telegram{" "}
+                        <span className="text-light-charcoal dark:text-lightgrey text-xs">
+                          (optional)
+                        </span>
                       </label>
                       <div className="flex">
                         <span className="inline-flex items-center px-3 bg-smoked-white dark:bg-light-black border border-r-0 border-border-grey dark:border-dark-charcoal rounded-l-lg text-light-charcoal dark:text-lightgrey text-sm">
@@ -377,7 +411,6 @@ export default function CreateSponsorProfile() {
                           }
                           className="flex-1 px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
                           placeholder="username"
-                          required
                         />
                       </div>
                     </div>
@@ -392,66 +425,50 @@ export default function CreateSponsorProfile() {
                     About Your Company
                   </h2>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="block text-sm font-medium text-black dark:text-white">
-                        Company Name <span className="text-orange">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.company_name}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            company_name: e.target.value,
-                          }))
-                        }
-                        className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
-                        placeholder="Company Name"
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="block text-sm font-medium text-black dark:text-white">
-                        Company Username <span className="text-orange">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.company_username}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            company_username: e.target.value
-                              .toLowerCase()
-                              .replace(/[^a-z0-9_]/g, ""),
-                          }))
-                        }
-                        className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
-                        placeholder="companyname"
-                        required
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-black dark:text-white">
+                      Company Name <span className="text-orange">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.company_name}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          company_name: e.target.value,
+                        }))
+                      }
+                      className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                      placeholder="Company Name"
+                      required
+                    />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="block text-sm font-medium text-black dark:text-white">
-                        Company URL <span className="text-orange">*</span>
+                        Company Website <span className="text-orange">*</span>
                       </label>
-                      <input
-                        type="url"
-                        value={formData.company_url}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            company_url: e.target.value,
-                          }))
-                        }
-                        className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
-                        placeholder="https://example.com"
-                        required
-                      />
+                      <div className="flex">
+                        <span className="inline-flex items-center px-3 bg-smoked-white dark:bg-light-black border border-r-0 border-border-grey dark:border-dark-charcoal rounded-l-lg text-light-charcoal dark:text-lightgrey text-sm">
+                          https://
+                        </span>
+                        <input
+                          type="text"
+                          value={formData.company_url}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              company_url: e.target.value
+                                .replace(/^https?:\/\//, "")
+                                .replace(/^www\./, ""),
+                            }))
+                          }
+                          className="flex-1 px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                          placeholder="example.com or www.example.com"
+                          required
+                        />
+                      </div>
                     </div>
 
                     <div className="space-y-2">
@@ -479,34 +496,14 @@ export default function CreateSponsorProfile() {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-black dark:text-white">
-                      Entity Name{" "}
-                      <span className="inline-flex items-center">
-                        <Info className="w-3.5 h-3.5 text-light-charcoal dark:text-lightgrey ml-1" />
-                      </span>{" "}
-                      <span className="text-orange">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.entity_name}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          entity_name: e.target.value,
-                        }))
-                      }
-                      className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
-                      placeholder="Full Entity Name"
-                      required
-                    />
-                  </div>
-
                   {/* Company Logo */}
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-black dark:text-white">
                       Company Logo <span className="text-orange">*</span>
                     </label>
+                    <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                      Recommended size: 200x200 pixels (square format)
+                    </p>
 
                     {logoFile ? (
                       <div className="flex items-center gap-4 p-4 border border-border-grey dark:border-dark-charcoal rounded-lg bg-smoked-white dark:bg-light-black">
@@ -654,12 +651,9 @@ export default function CreateSponsorProfile() {
                       !formData.first_name ||
                       !formData.last_name ||
                       !formData.username ||
-                      !formData.telegram ||
                       !formData.company_name ||
-                      !formData.company_username ||
                       !formData.company_url ||
                       !formData.company_twitter ||
-                      !formData.entity_name ||
                       !formData.industry ||
                       !formData.company_bio ||
                       !logoFile

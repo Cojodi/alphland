@@ -10,6 +10,29 @@ interface BountyCardProps {
   tags: string[];
 }
 
+// Helper function to determine tag style based on semantic meaning
+const getTagStyle = (tag: string): string => {
+  const tagLower = tag.toLowerCase();
+
+  // Featured/highlighted - orange
+  if (tag === "FEATURED") {
+    return "bg-orange/10 text-orange dark:bg-orange/20";
+  }
+
+  // Positive states - green
+  if (tagLower === "active" || tagLower === "open" || tagLower === "verified") {
+    return "bg-accessible-green/10 text-accessible-green dark:bg-accessible-green/20";
+  }
+
+  // Negative/warning states - red
+  if (tagLower === "overdue" || tagLower === "ended" || tagLower === "closed") {
+    return "bg-red-500/10 text-red-500 dark:bg-red-500/20";
+  }
+
+  // Neutral states - default styling (categories, difficulty, due dates, etc.)
+  return "bg-smoked-white dark:bg-light-black text-light-charcoal dark:text-lightgrey";
+};
+
 export function BountyCard({
   id,
   logo,
@@ -59,11 +82,7 @@ export function BountyCard({
               {tags.map((tag, idx) => (
                 <span
                   key={idx}
-                  className={`text-xs font-medium px-2 py-1 rounded ${
-                    tag === "FEATURED"
-                      ? "bg-orange/10 text-orange dark:bg-orange/20"
-                      : "bg-smoked-white dark:bg-light-black text-light-charcoal dark:text-lightgrey"
-                  }`}
+                  className={`text-xs font-medium px-2 py-1 rounded ${getTagStyle(tag)}`}
                 >
                   {tag}
                 </span>

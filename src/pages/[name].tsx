@@ -181,7 +181,7 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
                   <p className="text-sm text-light-charcoal dark:text-clay mb-1">
                     Team
                   </p>
-                  <p className="font-semibold text-accessible-green dark:text-accessible-green">
+                  <p className="font-semibold dark:text-white">
                     {dappInfo.teamInfo.anonymous ? "Anonymous" : "Public"}
                   </p>
                 </div>
@@ -311,7 +311,13 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
                         ? `Due in ${daysRemaining}d`
                         : daysRemaining === 0
                           ? "Due today"
-                          : "Ended";
+                          : daysRemaining !== null && daysRemaining < 0
+                            ? "Overdue"
+                            : "Active";
+
+                    // Determine if overdue for styling
+                    const isOverdue =
+                      daysRemaining !== null && daysRemaining < 0;
 
                     return (
                       <Link key={bounty.id} href={`/bounty/${bounty.id}`}>
@@ -332,7 +338,9 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
                               {bounty.reward_amount}{" "}
                               {bounty.reward_currency || "ALPH"}
                             </span>
-                            <span className="text-light-charcoal dark:text-clay text-xs">
+                            <span
+                              className={`text-xs ${isOverdue ? "text-red-500 font-medium" : "text-light-charcoal dark:text-clay"}`}
+                            >
                               {dueDateText}
                             </span>
                           </div>

@@ -657,9 +657,9 @@ export async function handleSponsorsAPI(
       `INSERT INTO sponsors (
         id, user_id, name, username, description, entity_name, industry,
         logo_url, website, twitter, discord, telegram, wallet_address,
-        contact_first_name, contact_last_name, contact_username, contact_telegram,
+        contact_first_name, contact_last_name, contact_username, contact_telegram, contact_email,
         status, approved_at, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?, ?, ?)`,
     )
       .bind(
         id,
@@ -679,6 +679,7 @@ export async function handleSponsorsAPI(
         body.contact_last_name || null,
         body.contact_username || null,
         body.contact_telegram || null,
+        body.contact_email || null,
         now, // approved_at
         now, // created_at
         now, // updated_at
@@ -2095,6 +2096,7 @@ export async function handleProofOfWorkAPI(
 
       console.log("Received proof of work data:", {
         user_id: body.user_id,
+        username: body.username,
         title: body.title,
         description: body.description,
         skills: body.skills,
@@ -2104,6 +2106,7 @@ export async function handleProofOfWorkAPI(
       // Validate required fields
       if (
         !body.user_id ||
+        !body.username ||
         !body.title ||
         !body.description ||
         !body.skills ||
@@ -2111,6 +2114,7 @@ export async function handleProofOfWorkAPI(
       ) {
         console.log("Validation failed:", {
           user_id: !!body.user_id,
+          username: !!body.username,
           title: !!body.title,
           description: !!body.description,
           skills: !!body.skills,
@@ -2130,12 +2134,13 @@ export async function handleProofOfWorkAPI(
 
       await env.DB.prepare(
         `INSERT INTO proof_of_work (
-          id, user_id, title, description, skills, link, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          id, user_id, username, title, description, skills, link, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
         .bind(
           id,
           body.user_id,
+          body.username,
           body.title,
           body.description,
           JSON.stringify(body.skills),

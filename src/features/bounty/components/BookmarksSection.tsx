@@ -93,7 +93,8 @@ export function BookmarksSection({ userId }: BookmarksSectionProps) {
       case "open":
         return "bg-accessible-green/10 text-accessible-green";
       case "closed":
-        return "bg-light-charcoal/10 text-light-charcoal";
+      case "cancelled":
+        return "bg-red-500/10 text-red-500";
       case "completed":
         return "bg-orange/10 text-orange";
       default:
