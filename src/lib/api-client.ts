@@ -25,6 +25,7 @@ export interface Bounty {
     | "review"
     | "completed"
     | "cancelled"
+    | "closed"
     | "deleted";
   created_by: string;
   assigned_to: string | null;
