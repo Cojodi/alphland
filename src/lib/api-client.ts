@@ -361,6 +361,15 @@ class ApiClient {
     return this.request(`/api/submissions/user/${userId}`);
   }
 
+  async checkUserSubmission(
+    userId: string,
+    bountyId: string,
+  ): Promise<{ hasSubmitted: boolean; submission: BountySubmission | null }> {
+    return this.request(
+      `/api/submissions/check?user_id=${userId}&bounty_id=${bountyId}`,
+    );
+  }
+
   async updateSubmission(
     id: string,
     data: UpdateSubmissionInput,

@@ -158,6 +158,43 @@ export async function handleSubmissionsAPI(
     });
   }
 
+  // GET /api/submissions/check - Check if user has submitted to a bounty
+  if (request.method === "GET" && pathname === "/api/submissions/check") {
+    const userId = url.searchParams.get("user_id");
+    const bountyId = url.searchParams.get("bounty_id");
+
+    if (!userId || !bountyId) {
+      return new Response(
+        JSON.stringify({ error: "user_id and bounty_id are required" }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        },
+      );
+    }
+
+    const submission = await env.DB.prepare(
+      `SELECT s.*, b.title as bounty_title
+       FROM bounty_submissions s
+       JOIN bounties b ON s.bounty_id = b.id
+       WHERE s.user_id = ? AND s.bounty_id = ?
+       ORDER BY s.created_at DESC
+       LIMIT 1`,
+    )
+      .bind(userId, bountyId)
+      .first();
+
+    return new Response(
+      JSON.stringify({
+        hasSubmitted: !!submission,
+        submission: submission || null,
+      }),
+      {
+        headers: corsHeaders,
+      },
+    );
+  }
+
   // GET /api/submissions/bounty/:bountyId - Get bounty's submissions
   if (
     request.method === "GET" &&

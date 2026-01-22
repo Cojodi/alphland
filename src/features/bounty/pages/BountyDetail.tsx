@@ -33,6 +33,8 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
   const [sponsorUserId, setSponsorUserId] = useState<string | null>(null);
   const [isSponsor, setIsSponsor] = useState(false);
   const [showSubmissionModal, setShowSubmissionModal] = useState(false);
+  const [userSubmission, setUserSubmission] = useState<any>(null);
+  const [checkingSubmission, setCheckingSubmission] = useState(true);
 
   // Smooth scroll to section
   const scrollToSection = (sectionId: string) => {
@@ -100,6 +102,29 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
       }
     };
     checkBookmarkStatus();
+  }, [session?.user?.id, bounty.id]);
+
+  // Check if user has already submitted to this bounty
+  useEffect(() => {
+    const checkUserSubmission = async () => {
+      if (!session?.user?.id) {
+        setUserSubmission(null);
+        setCheckingSubmission(false);
+        return;
+      }
+      try {
+        const result = await apiClient.checkUserSubmission(
+          session.user.id,
+          bounty.id,
+        );
+        setUserSubmission(result.submission);
+      } catch (error) {
+        console.error("Error checking user submission:", error);
+      } finally {
+        setCheckingSubmission(false);
+      }
+    };
+    checkUserSubmission();
   }, [session?.user?.id, bounty.id]);
 
   // Handle bookmark toggle
@@ -285,13 +310,19 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                     submissions={bounty.current_submissions}
                     timeRemaining={timeRemaining}
                     skills={bounty.skills}
-                    onSubmit={() => {
-                      if (!session?.user?.id) {
-                        alert("Please sign in to submit your work");
-                        return;
-                      }
-                      setShowSubmissionModal(true);
-                    }}
+                    userSubmission={userSubmission}
+                    isLoggedIn={!!session?.user?.id}
+                    onSubmit={
+                      userSubmission
+                        ? undefined
+                        : () => {
+                            if (!session?.user?.id) {
+                              alert("Please sign in to submit your work");
+                              return;
+                            }
+                            setShowSubmissionModal(true);
+                          }
+                    }
                   />
 
                   {/* Notification Settings for Sponsor */}
@@ -466,8 +497,17 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
             userId={session.user.id}
             username={userProfile?.username || session.user.name || undefined}
             sponsorUserId={sponsorUserId || undefined}
-            onSuccess={() => {
-              // Optionally refresh submissions count or show success message
+            onSuccess={async () => {
+              // Refresh submission status
+              try {
+                const result = await apiClient.checkUserSubmission(
+                  session.user.id,
+                  bounty.id,
+                );
+                setUserSubmission(result.submission);
+              } catch (error) {
+                console.error("Error refreshing submission:", error);
+              }
               alert("Submission successful! The sponsor has been notified.");
             }}
           />
