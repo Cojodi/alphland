@@ -1,4 +1,4 @@
-import elexiumImage from "../../public/dapps/elexium/elexium-banner.webp";
+import elexiumImage from "../../public/dapps/elexium/banner.webp";
 import linxImage from "../../public/dapps/linx-app/banner.webp";
 import auraImage from "../../public/dapps/aura/banner.webp";
 import FilterButton from "../components/Button/FilterButton";
