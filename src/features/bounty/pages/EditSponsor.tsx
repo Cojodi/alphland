@@ -22,7 +22,7 @@ interface FormData {
   contact_telegram: string;
 }
 
-interface LogoFile {
+interface ImageFile {
   file: File | null;
   preview: string;
 }
@@ -48,8 +48,10 @@ export default function EditSponsorProfile() {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [sponsorId, setSponsorId] = useState<string | null>(null);
-  const [logoFile, setLogoFile] = useState<LogoFile | null>(null);
+  const [logoFile, setLogoFile] = useState<ImageFile | null>(null);
+  const [bannerFile, setBannerFile] = useState<ImageFile | null>(null);
   const [dragActive, setDragActive] = useState(false);
+  const [bannerDragActive, setBannerDragActive] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     username: "",
@@ -95,6 +97,12 @@ export default function EditSponsorProfile() {
               setLogoFile({
                 file: null,
                 preview: data.sponsor.logo_url,
+              });
+            }
+            if (data.sponsor.banner_url) {
+              setBannerFile({
+                file: null,
+                preview: data.sponsor.banner_url,
               });
             }
           }
@@ -153,6 +161,49 @@ export default function EditSponsorProfile() {
     setLogoFile(null);
   }, [logoFile]);
 
+  // Banner handlers
+  const handleBannerDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setBannerDragActive(true);
+    } else if (e.type === "dragleave") {
+      setBannerDragActive(false);
+    }
+  };
+
+  const handleBannerDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setBannerDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleBannerFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleBannerFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      handleBannerFile(e.target.files[0]);
+    }
+  };
+
+  const handleBannerFile = (file: File) => {
+    if (file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024) {
+      setBannerFile({
+        file,
+        preview: URL.createObjectURL(file),
+      });
+    }
+  };
+
+  const removeBanner = useCallback(() => {
+    if (bannerFile?.file) {
+      URL.revokeObjectURL(bannerFile.preview);
+    }
+    setBannerFile(null);
+  }, [bannerFile]);
+
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
@@ -198,6 +249,39 @@ export default function EditSponsorProfile() {
           console.log("Logo uploaded successfully:", logoUrl);
         }
 
+        // Upload banner to R2 if a new one was selected
+        let bannerUrl = null;
+        if (bannerFile?.file) {
+          console.log("Uploading sponsor banner to R2...");
+          const file = bannerFile.file;
+          const reader = new FileReader();
+          const bannerDataUrl = await new Promise<string>((resolve, reject) => {
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+
+          const uploadResponse = await fetch("/api/upload/image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              image: bannerDataUrl,
+              fileName: file.name,
+              type: "sponsor-banner",
+            }),
+          });
+
+          if (!uploadResponse.ok) {
+            const errorText = await uploadResponse.text();
+            console.error("Banner upload failed:", errorText);
+            // Don't fail the whole submission, banner is optional
+          } else {
+            const uploadData = await uploadResponse.json();
+            bannerUrl = uploadData.url;
+            console.log("Banner uploaded successfully:", bannerUrl);
+          }
+        }
+
         const response = await fetch(`/api/sponsors/${sponsorId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -205,6 +289,7 @@ export default function EditSponsorProfile() {
             name: formData.name,
             description: formData.description,
             logo_url: logoUrl,
+            banner_url: bannerUrl,
             website: formData.website,
             twitter: formData.twitter,
           }),
@@ -223,7 +308,7 @@ export default function EditSponsorProfile() {
         setLoading(false);
       }
     },
-    [formData, logoFile, router, session?.user?.id, sponsorId],
+    [formData, logoFile, bannerFile, router, session?.user?.id, sponsorId],
   );
 
   const bioCharactersLeft = MAX_BIO_LENGTH - formData.description.length;
@@ -463,6 +548,87 @@ export default function EditSponsorProfile() {
                             </p>
                             <p className="text-xs text-light-charcoal dark:text-lightgrey">
                               Maximum size 5 MB
+                            </p>
+                          </div>
+                        </label>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Profile Banner (Optional) */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-black dark:text-white">
+                      Profile Banner{" "}
+                      <span className="text-light-charcoal dark:text-lightgrey text-xs">
+                        (optional)
+                      </span>
+                    </label>
+                    <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                      Recommended size: 1200x300 pixels (4:1 aspect ratio)
+                    </p>
+
+                    {bannerFile ? (
+                      <div className="relative border border-border-grey dark:border-dark-charcoal rounded-lg overflow-hidden bg-smoked-white dark:bg-light-black">
+                        <Image
+                          src={bannerFile.preview}
+                          alt="Company banner"
+                          width={600}
+                          height={150}
+                          className="w-full h-32 object-cover"
+                        />
+                        <div className="absolute top-2 right-2">
+                          <button
+                            type="button"
+                            onClick={removeBanner}
+                            className="p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="p-3">
+                          <p className="text-sm font-medium text-black dark:text-white">
+                            {bannerFile.file?.name || "Current banner"}
+                          </p>
+                          {bannerFile.file && (
+                            <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                              {Math.round(bannerFile.file.size / 1024)} KB
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        onDragEnter={handleBannerDrag}
+                        onDragLeave={handleBannerDrag}
+                        onDragOver={handleBannerDrag}
+                        onDrop={handleBannerDrop}
+                        className={`border-2 border-dashed rounded-lg p-6 text-center transition-all cursor-pointer ${
+                          bannerDragActive
+                            ? "border-orange bg-orange/5"
+                            : "border-border-grey dark:border-dark-charcoal hover:border-orange/50"
+                        }`}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleBannerFileInput}
+                          className="hidden"
+                          id="banner-upload"
+                        />
+                        <label
+                          htmlFor="banner-upload"
+                          className="cursor-pointer flex items-center gap-4"
+                        >
+                          <div className="w-12 h-12 bg-smoked-white dark:bg-light-black rounded-lg flex items-center justify-center">
+                            <Upload className="w-5 h-5 text-light-charcoal dark:text-lightgrey" />
+                          </div>
+                          <div className="text-left">
+                            <p className="text-sm font-medium text-orange">
+                              Choose or drag and drop banner image
+                            </p>
+                            <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                              Maximum size 5 MB (Leave empty for default
+                              gradient)
                             </p>
                           </div>
                         </label>
