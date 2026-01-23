@@ -259,7 +259,7 @@ export default function BountyList() {
                         }
                         // Deadline has passed but bounty is still open
                         if (daysRemaining !== null && daysRemaining < 0) {
-                          return "Overdue";
+                          return "Ended";
                         }
                         return "Active";
                       };

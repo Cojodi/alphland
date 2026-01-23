@@ -19,8 +19,14 @@ const getTagStyle = (tag: string): string => {
     return "bg-orange/10 text-orange dark:bg-orange/20";
   }
 
-  // Positive states - green
-  if (tagLower === "active" || tagLower === "open" || tagLower === "verified") {
+  // Positive states - green (including "due in Xd")
+  if (
+    tagLower === "active" ||
+    tagLower === "open" ||
+    tagLower === "verified" ||
+    tagLower.startsWith("due in") ||
+    tagLower === "due today"
+  ) {
     return "bg-accessible-green/10 text-accessible-green dark:bg-accessible-green/20";
   }
 
