@@ -10,6 +10,7 @@ import {
   Edit,
   TrendingUp,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect, useCallback } from "react";
@@ -316,8 +317,23 @@ export default function SponsorDashboard() {
     <Layout title="Sponsor Dashboard - Alphland">
       <div className="min-h-screen bg-smoked-white dark:bg-light-black">
         {/* Hero Header */}
-        <section className="bg-gradient-to-r from-orange to-orange/80 text-white py-12 px-6 sm:px-8">
-          <div className="max-w-7xl mx-auto">
+        <section className="relative text-white py-12 px-6 sm:px-8 overflow-hidden">
+          {/* Background - Custom banner or default gradient */}
+          {sponsor.banner_url ? (
+            <Image
+              src={sponsor.banner_url}
+              alt={`${sponsor.name} banner`}
+              layout="fill"
+              objectFit="cover"
+              priority
+              className="absolute inset-0"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-r from-orange to-orange/80" />
+          )}
+          {/* Overlay for better text readability */}
+          <div className="absolute inset-0 bg-black/20" />
+          <div className="max-w-7xl mx-auto relative z-10">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-6">
               <div className="space-y-2">
                 <h1 className="text-4xl sm:text-5xl font-bold font-barlow">
