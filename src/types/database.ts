@@ -119,6 +119,7 @@ export interface Sponsor {
   entity_name: string | null;
   industry: string | null;
   logo_url: string | null;
+  banner_url: string | null;
   website: string | null;
   twitter: string | null;
   discord: string | null;

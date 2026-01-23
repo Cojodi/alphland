@@ -13,6 +13,7 @@ export interface Sponsor {
   entity_name: string; // Full legal entity name
   industry: string;
   logo_url?: string;
+  banner_url?: string;
   website?: string;
   twitter?: string;
   discord?: string;
@@ -62,6 +63,7 @@ export interface SponsorApplication {
 
   // Logo file (for form submission)
   logo?: File;
+  banner?: File;
 }
 
 export interface SponsorStats {

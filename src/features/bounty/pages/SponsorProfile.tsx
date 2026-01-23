@@ -77,7 +77,18 @@ export default function SponsorProfile({
     >
       <div className="min-h-screen bg-smoked-white dark:bg-light-black">
         {/* Header Banner */}
-        <div className="h-48 bg-gradient-to-r from-orange to-orange/80 relative overflow-hidden">
+        <div className="h-48 relative overflow-hidden">
+          {sponsor.banner_url ? (
+            <Image
+              src={sponsor.banner_url}
+              alt={`${sponsor.name} banner`}
+              fill
+              className="object-cover"
+              priority
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-r from-orange to-orange/80" />
+          )}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10"></div>
         </div>
 

@@ -693,10 +693,10 @@ export async function handleSponsorsAPI(
     await env.DB.prepare(
       `INSERT INTO sponsors (
         id, user_id, name, username, description, entity_name, industry,
-        logo_url, website, twitter, discord, telegram, wallet_address,
+        logo_url, banner_url, website, twitter, discord, telegram, wallet_address,
         contact_first_name, contact_last_name, contact_username, contact_telegram, contact_email,
         status, approved_at, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?, ?, ?)`,
     )
       .bind(
         id,
@@ -707,6 +707,7 @@ export async function handleSponsorsAPI(
         body.entity_name || null,
         body.industry || null,
         body.logo_url || null,
+        body.banner_url || null,
         body.website || null,
         body.twitter || null,
         body.discord || null,
@@ -823,6 +824,7 @@ export async function handleSponsorsAPI(
        SET name = COALESCE(?, name),
            description = COALESCE(?, description),
            logo_url = COALESCE(?, logo_url),
+           banner_url = COALESCE(?, banner_url),
            website = COALESCE(?, website),
            twitter = COALESCE(?, twitter),
            discord = COALESCE(?, discord),
@@ -835,6 +837,7 @@ export async function handleSponsorsAPI(
         body.name || null,
         body.description || null,
         body.logo_url || null,
+        body.banner_url || null,
         body.website || null,
         body.twitter || null,
         body.discord || null,
