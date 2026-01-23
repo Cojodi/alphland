@@ -1,6 +1,6 @@
 import type { Sponsor } from "../types/sponsor.types";
 import Layout from "@/components/Layout";
-import { Globe, CircleDollarSign, BarChart3 } from "lucide-react";
+import { Globe, CircleDollarSign, BarChart3, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -90,6 +90,15 @@ export default function SponsorProfile({
             <div className="w-full h-full bg-gradient-to-r from-orange to-orange/80" />
           )}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10"></div>
+
+          {/* Back Button */}
+          <button
+            onClick={() => router.push("/bounty/sponsor/dashboard")}
+            className="absolute top-4 left-4 flex items-center gap-2 px-3 py-2 bg-white/90 dark:bg-hero-dark/90 hover:bg-white dark:hover:bg-hero-dark text-black dark:text-white rounded-lg shadow-md transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm font-medium">Dashboard</span>
+          </button>
         </div>
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 pb-12">
