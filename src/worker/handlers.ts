@@ -111,54 +111,8 @@ export async function handleSubmissionsAPI(
     }
   }
 
-  // GET /api/submissions/:id - Get submission
-  if (
-    request.method === "GET" &&
-    pathname.match(/^\/api\/submissions\/[^/]+$/)
-  ) {
-    const id = pathname.split("/").pop();
-
-    const submission = await env.DB.prepare(
-      `SELECT * FROM bounty_submissions WHERE id = ?`,
-    )
-      .bind(id)
-      .first();
-
-    if (!submission) {
-      return new Response(JSON.stringify({ error: "Submission not found" }), {
-        status: 404,
-        headers: corsHeaders,
-      });
-    }
-
-    return new Response(JSON.stringify({ submission }), {
-      headers: corsHeaders,
-    });
-  }
-
-  // GET /api/submissions/user/:userId - Get user's submissions
-  if (
-    request.method === "GET" &&
-    pathname.match(/^\/api\/submissions\/user\/[^/]+$/)
-  ) {
-    const userId = pathname.split("/").pop();
-
-    const { results } = await env.DB.prepare(
-      `SELECT s.*, b.title as bounty_title
-       FROM bounty_submissions s
-       JOIN bounties b ON s.bounty_id = b.id
-       WHERE s.user_id = ?
-       ORDER BY s.created_at DESC`,
-    )
-      .bind(userId)
-      .all();
-
-    return new Response(JSON.stringify({ submissions: results }), {
-      headers: corsHeaders,
-    });
-  }
-
   // GET /api/submissions/check - Check if user has submitted to a bounty
+  // NOTE: This must come BEFORE /api/submissions/:id to avoid "check" matching as an ID
   if (request.method === "GET" && pathname === "/api/submissions/check") {
     const userId = url.searchParams.get("user_id");
     const bountyId = url.searchParams.get("bounty_id");
@@ -193,6 +147,54 @@ export async function handleSubmissionsAPI(
         headers: corsHeaders,
       },
     );
+  }
+
+  // GET /api/submissions/user/:userId - Get user's submissions
+  if (
+    request.method === "GET" &&
+    pathname.match(/^\/api\/submissions\/user\/[^/]+$/)
+  ) {
+    const userId = pathname.split("/").pop();
+
+    const { results } = await env.DB.prepare(
+      `SELECT s.*, b.title as bounty_title
+       FROM bounty_submissions s
+       JOIN bounties b ON s.bounty_id = b.id
+       WHERE s.user_id = ?
+       ORDER BY s.created_at DESC`,
+    )
+      .bind(userId)
+      .all();
+
+    return new Response(JSON.stringify({ submissions: results }), {
+      headers: corsHeaders,
+    });
+  }
+
+  // GET /api/submissions/:id - Get submission
+  // NOTE: This must come AFTER specific routes like /check, /user/:id, /bounty/:id
+  if (
+    request.method === "GET" &&
+    pathname.match(/^\/api\/submissions\/[^/]+$/)
+  ) {
+    const id = pathname.split("/").pop();
+
+    const submission = await env.DB.prepare(
+      `SELECT * FROM bounty_submissions WHERE id = ?`,
+    )
+      .bind(id)
+      .first();
+
+    if (!submission) {
+      return new Response(JSON.stringify({ error: "Submission not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    return new Response(JSON.stringify({ submission }), {
+      headers: corsHeaders,
+    });
   }
 
   // GET /api/submissions/bounty/:bountyId - Get bounty's submissions
