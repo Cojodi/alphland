@@ -957,8 +957,8 @@ export async function handleNotificationsAPI(
 
     await env.DB.prepare(
       `INSERT INTO notifications (
-        id, user_id, type, title, message, related_bounty_id, related_submission_id, read, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)`,
+        id, user_id, type, title, message, link, related_bounty_id, related_submission_id, read, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?)`,
     )
       .bind(
         id,
@@ -966,6 +966,7 @@ export async function handleNotificationsAPI(
         body.type,
         body.title,
         body.message,
+        body.link || null,
         body.related_bounty_id || null,
         body.related_submission_id || null,
         now,
