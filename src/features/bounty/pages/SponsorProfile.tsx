@@ -82,8 +82,8 @@ export default function SponsorProfile({
             <Image
               src={sponsor.banner_url}
               alt={`${sponsor.name} banner`}
-              fill
-              className="object-cover"
+              layout="fill"
+              objectFit="cover"
               priority
             />
           ) : (
