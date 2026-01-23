@@ -1,0 +1,11 @@
+{
+  "name": "Beast Forgers",
+  "description": "Forge your destiny, craft your legacy in this epic Alephium game.",
+  "website": "https://votre-site-web.com",
+  "category": "Games",
+  "media": {
+    "logoUrl": "/dapps/beastForgers/logo.webp",
+    "bannerUrl": "/dapps/beastForgers/banner.webp",
+    "previewUrl": "/dapps/beastForgers/preview.webp"
+  }
+}
