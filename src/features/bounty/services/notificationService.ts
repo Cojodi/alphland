@@ -123,14 +123,18 @@ export async function notifyNewSubmission(
   bountyId: string,
   bountyTitle: string,
   submitterUsername?: string,
+  submissionId?: string,
 ) {
   const submitterText = submitterUsername ? ` from ${submitterUsername}` : "";
+  const link = submissionId
+    ? `/bounty/sponsor/dashboard?submission=${submissionId}`
+    : "/bounty/sponsor/dashboard";
   await createNotification({
     user_id: sponsorUserId,
     type: "new_submission",
     title: "New Submission",
     message: `Your bounty "${bountyTitle}" received a new submission${submitterText}.`,
-    link: "/bounty/sponsor/dashboard",
+    link,
   });
 }
 

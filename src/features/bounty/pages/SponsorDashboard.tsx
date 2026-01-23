@@ -145,6 +145,27 @@ export default function SponsorDashboard() {
     }
   }, [sponsor]);
 
+  // Handle submission query parameter to open specific submission
+  useEffect(() => {
+    const submissionId = router.query.submission as string;
+    if (submissionId && allSubmissions.length > 0 && !loading) {
+      const submission = allSubmissions.find((s) => s.id === submissionId);
+      if (submission) {
+        viewSubmission(submission, submission.bounty_id);
+        // Clear the query parameter
+        router.replace("/bounty/sponsor/dashboard", undefined, {
+          shallow: true,
+        });
+      }
+    }
+  }, [
+    router.query.submission,
+    allSubmissions,
+    loading,
+    viewSubmission,
+    router,
+  ]);
+
   useEffect(() => {
     async function fetchSponsorData() {
       if (!session?.user?.id) {

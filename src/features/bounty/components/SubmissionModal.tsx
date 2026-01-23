@@ -73,7 +73,7 @@ export function SubmissionModal({
         ? `${formData.description}\n\n**Notes:**\n${formData.notes}`
         : formData.description;
 
-      await apiClient.createSubmission({
+      const result = await apiClient.createSubmission({
         bounty_id: bountyId,
         submitted_by: userId,
         submission_url: formData.submission_url,
@@ -87,6 +87,7 @@ export function SubmissionModal({
           bountyId,
           bountyTitle,
           username,
+          result.submission?.id,
         );
       }
 
