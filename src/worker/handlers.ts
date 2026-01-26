@@ -180,7 +180,14 @@ export async function handleSubmissionsAPI(
     const id = pathname.split("/").pop();
 
     const submission = await env.DB.prepare(
-      `SELECT * FROM bounty_submissions WHERE id = ?`,
+      `SELECT s.*,
+              COALESCE(up.username, u.name, u.email) as user_username,
+              u.name as user_full_name,
+              u.image as user_avatar_url
+       FROM bounty_submissions s
+       LEFT JOIN user u ON s.user_id = u.id
+       LEFT JOIN user_profiles up ON s.user_id = up.user_id
+       WHERE s.id = ?`,
     )
       .bind(id)
       .first();
@@ -206,7 +213,7 @@ export async function handleSubmissionsAPI(
 
     const { results } = await env.DB.prepare(
       `SELECT s.*,
-              up.username as user_username,
+              COALESCE(up.username, u.name, u.email) as user_username,
               u.name as user_full_name,
               u.image as user_avatar_url
        FROM bounty_submissions s
@@ -237,7 +244,7 @@ export async function handleSubmissionsAPI(
               b.sponsor_id,
               sp.name as sponsor_name,
               sp.logo_url as sponsor_logo_url,
-              up.username as user_username,
+              COALESCE(up.username, u.name, u.email) as user_username,
               u.name as user_full_name,
               u.image as user_avatar_url
        FROM bounty_submissions s
