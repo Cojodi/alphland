@@ -4,6 +4,7 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import { apiClient } from "@/lib/api-client";
 import { notificationService } from "../services/notificationService";
+import { normalizeUrl } from "../utils/validators";
 
 interface SubmissionModalProps {
   isOpen: boolean;
@@ -195,11 +196,17 @@ export function SubmissionModal({
               Submission URL <span className="text-red-500">*</span>
             </label>
             <input
-              type="url"
+              type="text"
               id="submission_url"
               name="submission_url"
               value={formData.submission_url}
               onChange={handleChange}
+              onBlur={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  submission_url: normalizeUrl(e.target.value),
+                }))
+              }
               placeholder="https://github.com/username/repo or https://demo.example.com"
               className="w-full px-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder-light-charcoal dark:placeholder-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50"
               required

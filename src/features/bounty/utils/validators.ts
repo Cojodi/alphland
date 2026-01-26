@@ -9,6 +9,24 @@ export function isValidUrl(url: string): boolean {
   }
 }
 
+/**
+ * Normalizes a URL by adding https:// prefix if missing.
+ * Accepts formats: https://example.com, http://example.com, www.example.com, example.com
+ * Returns the URL with proper protocol prefix.
+ */
+export function normalizeUrl(url: string): string {
+  const trimmed = url.trim();
+  if (!trimmed) return trimmed;
+
+  // Already has http:// or https://
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+
+  // Add https:// prefix
+  return `https://${trimmed}`;
+}
+
 export function isValidWalletAddress(address: string): boolean {
   // Basic validation - adjust based on your blockchain
   // This is a generic check for non-empty alphanumeric strings

@@ -3,6 +3,7 @@
 import Modal from "@/components/Modal/Modal";
 import { X, Plus, Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { normalizeUrl } from "../utils/validators";
 
 interface Work {
   id: string;
@@ -371,10 +372,16 @@ export function ProofOfWorkSection({
                 Link <span className="text-red-500">*</span>
               </label>
               <input
-                type="url"
+                type="text"
                 value={newWork.link}
                 onChange={(e) =>
                   setNewWork((prev) => ({ ...prev, link: e.target.value }))
+                }
+                onBlur={(e) =>
+                  setNewWork((prev) => ({
+                    ...prev,
+                    link: normalizeUrl(e.target.value),
+                  }))
                 }
                 placeholder="https://example.com"
                 className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"

@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useCallback, useEffect } from "react";
+import { normalizeUrl } from "../utils/validators";
 
 interface FormData {
   name: string;
@@ -446,12 +447,18 @@ export default function EditSponsorProfile() {
                         Website
                       </label>
                       <input
-                        type="url"
+                        type="text"
                         value={formData.website}
                         onChange={(e) =>
                           setFormData((prev) => ({
                             ...prev,
                             website: e.target.value,
+                          }))
+                        }
+                        onBlur={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            website: normalizeUrl(e.target.value),
                           }))
                         }
                         className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
