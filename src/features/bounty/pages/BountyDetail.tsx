@@ -210,14 +210,26 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                   </div>
                   <div className="flex items-center gap-1">
                     <span className="inline-block w-2 h-2 rounded-full bg-orange"></span>
-                    <span>
-                      {bounty.reward_type === "tiered" ? "Bounty" : "Project"}
-                    </span>
+                    <span>Bounty</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className="inline-block w-2 h-2 rounded-full bg-accessible-green"></span>
-                    <span className="text-accessible-green font-medium">
-                      {bounty.status === "open" ? "Submissions Open" : "Closed"}
+                    <span
+                      className={`inline-block w-2 h-2 rounded-full ${
+                        bounty.status === "open" && !isBountyEnded
+                          ? "bg-accessible-green"
+                          : "bg-danger-red"
+                      }`}
+                    ></span>
+                    <span
+                      className={`font-medium ${
+                        bounty.status === "open" && !isBountyEnded
+                          ? "text-accessible-green"
+                          : "text-danger-red"
+                      }`}
+                    >
+                      {bounty.status === "open" && !isBountyEnded
+                        ? "Submissions Open"
+                        : "Submissions Closed"}
                     </span>
                   </div>
                   <div className="flex items-center gap-1">
