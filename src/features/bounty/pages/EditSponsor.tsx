@@ -430,13 +430,16 @@ export default function EditSponsorProfile() {
 
                     <div className="space-y-2">
                       <label className="block text-sm font-medium text-black dark:text-white">
-                        Username
+                        Username{" "}
+                        <span className="text-xs font-normal text-light-charcoal dark:text-lightgrey">
+                          (read-only)
+                        </span>
                       </label>
                       <input
                         type="text"
-                        value={formData.username}
+                        value={formData.username || "Not set"}
                         disabled
-                        className="w-full px-4 py-2.5 bg-smoked-white/50 dark:bg-light-black/50 border border-border-grey dark:border-dark-charcoal rounded-lg text-light-charcoal dark:text-lightgrey cursor-not-allowed"
+                        className="w-full px-4 py-2.5 bg-gray-200 dark:bg-gray-700 border border-border-grey dark:border-dark-charcoal rounded-lg text-light-charcoal dark:text-lightgrey cursor-not-allowed"
                       />
                     </div>
                   </div>

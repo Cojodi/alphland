@@ -468,6 +468,14 @@ export default function SponsorDashboard() {
                   </h2>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="sm:col-span-2">
+                      <p className="text-sm font-barlow font-semibold text-light-charcoal dark:text-lightgrey mb-2">
+                        Company Name
+                      </p>
+                      <p className="text-black dark:text-white font-barlow font-semibold text-lg">
+                        {sponsor.name || "Not set"}
+                      </p>
+                    </div>
                     <div>
                       <p className="text-sm font-barlow font-semibold text-light-charcoal dark:text-lightgrey mb-2">
                         Description
