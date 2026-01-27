@@ -111,6 +111,16 @@ export default function BountyList() {
     { label: "Completed", value: "completed" },
   ];
 
+  // Helper to check if bounty has ended based on end_date
+  const isBountyEnded = (bounty: Bounty) => {
+    if (!bounty.end_date) return false;
+    const daysRemaining = Math.ceil(
+      (new Date(bounty.end_date).getTime() - Date.now()) /
+        (1000 * 60 * 60 * 24),
+    );
+    return daysRemaining < 0;
+  };
+
   // Filter bounties based on active category, status, and search query
   const filteredBounties = bounties.filter((bounty) => {
     // Filter by search query
@@ -124,8 +134,34 @@ export default function BountyList() {
     }
 
     // Filter by status
-    if (activeStatus !== "all" && bounty.status !== activeStatus) {
-      return false;
+    if (activeStatus !== "all") {
+      const hasEnded = isBountyEnded(bounty);
+      const hasSubmissions = (bounty.submission_count || 0) > 0;
+
+      if (activeStatus === "closed") {
+        // Show: bounties with status "closed" OR ended bounties with submissions
+        if (
+          bounty.status !== "closed" &&
+          !(bounty.status === "open" && hasEnded && hasSubmissions)
+        ) {
+          return false;
+        }
+      } else if (activeStatus === "completed") {
+        // Show: bounties with status "completed" OR ended bounties without submissions
+        if (
+          bounty.status !== "completed" &&
+          !(bounty.status === "open" && hasEnded && !hasSubmissions)
+        ) {
+          return false;
+        }
+      } else if (activeStatus === "open") {
+        // Show: bounties with status "open" that have NOT ended
+        if (bounty.status !== "open" || hasEnded) {
+          return false;
+        }
+      } else if (bounty.status !== activeStatus) {
+        return false;
+      }
     }
 
     // Filter by category
@@ -254,7 +290,11 @@ export default function BountyList() {
                     </div>
                     <div className="space-y-1">
                       <p className="text-2xl font-bold text-accessible-green">
-                        {bounties.filter((b) => b.status === "open").length}
+                        {
+                          bounties.filter(
+                            (b) => b.status === "open" && !isBountyEnded(b),
+                          ).length
+                        }
                       </p>
                       <p className="text-sm text-light-charcoal dark:text-lightgrey">
                         Opportunities Open
@@ -267,7 +307,8 @@ export default function BountyList() {
                             (b) =>
                               b.status === "closed" ||
                               b.status === "completed" ||
-                              b.status === "cancelled",
+                              b.status === "cancelled" ||
+                              (b.status === "open" && isBountyEnded(b)),
                           ).length
                         }
                       </p>

@@ -351,7 +351,8 @@ async function handleBountiesAPI(
     const dappName = url.searchParams.get("dapp_name");
 
     let query = `
-      SELECT b.*, s.name as sponsor_name, s.logo_url as sponsor_logo_url
+      SELECT b.*, s.name as sponsor_name, s.logo_url as sponsor_logo_url,
+             (SELECT COUNT(*) FROM bounty_submissions WHERE bounty_id = b.id) as submission_count
       FROM bounties b
       LEFT JOIN sponsors s ON b.sponsor_id = s.id
       WHERE b.status != 'deleted'

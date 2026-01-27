@@ -39,6 +39,7 @@ export interface Bounty {
   completed_at: string | null;
   sponsor_name?: string;
   sponsor_logo_url?: string | null;
+  submission_count?: number;
 }
 
 export interface CreateBountyInput {

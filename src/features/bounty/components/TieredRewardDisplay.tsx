@@ -2,7 +2,7 @@
 
 import { TieredReward } from "../types";
 import { formatRewardAmount } from "../utils/rewardCalculator";
-import { DollarSign, Clock, CheckCircle, User } from "lucide-react";
+import { DollarSign, Clock, CheckCircle, User, XCircle } from "lucide-react";
 import Link from "next/link";
 
 interface UserSubmission {
@@ -24,6 +24,7 @@ interface TieredRewardDisplayProps {
   onSubmit?: () => void;
   userSubmission?: UserSubmission | null;
   isLoggedIn?: boolean;
+  isBountyEnded?: boolean;
 }
 
 export function TieredRewardDisplay({
@@ -37,6 +38,7 @@ export function TieredRewardDisplay({
   onSubmit,
   userSubmission,
   isLoggedIn = false,
+  isBountyEnded = false,
 }: TieredRewardDisplayProps) {
   return (
     <div className="space-y-6">
@@ -133,15 +135,29 @@ export function TieredRewardDisplay({
             Profile
           </Link>
         </div>
+      ) : isBountyEnded ? (
+        <div className="bg-white dark:bg-hero-dark rounded-lg p-6 border border-danger-red/20 dark:border-danger-red/30">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-danger-red/10 rounded-full flex items-center justify-center">
+              <XCircle className="w-5 h-5 text-danger-red" />
+            </div>
+            <div>
+              <h4 className="font-semibold text-black dark:text-white">
+                Submissions Closed
+              </h4>
+              <p className="text-sm text-light-charcoal dark:text-lightgrey">
+                This bounty has ended and is no longer accepting submissions
+              </p>
+            </div>
+          </div>
+        </div>
       ) : onSubmit ? (
-        <>
-          <button
-            onClick={onSubmit}
-            className="w-full bg-accessible-green hover:bg-accessible-green/90 text-white py-6 text-base font-semibold rounded-lg transition-colors"
-          >
-            Submit Now
-          </button>
-        </>
+        <button
+          onClick={onSubmit}
+          className="w-full bg-accessible-green hover:bg-accessible-green/90 text-white py-6 text-base font-semibold rounded-lg transition-colors"
+        >
+          Submit Now
+        </button>
       ) : null}
 
       {/* Skills */}

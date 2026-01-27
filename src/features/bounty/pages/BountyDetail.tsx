@@ -158,6 +158,11 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
 
   const timeRemaining = calculateTimeRemaining(bounty.end_date);
 
+  // Check if bounty has ended
+  const isBountyEnded = bounty.end_date
+    ? new Date(bounty.end_date).getTime() < Date.now()
+    : false;
+
   return (
     <Layout title={`${bounty.title} - Bounty`} description={bounty.description}>
       <div className="min-h-screen bg-smoked-white dark:bg-light-black">
@@ -312,8 +317,9 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                     skills={bounty.skills}
                     userSubmission={userSubmission}
                     isLoggedIn={!!session?.user?.id}
+                    isBountyEnded={isBountyEnded}
                     onSubmit={
-                      userSubmission
+                      userSubmission || isBountyEnded
                         ? undefined
                         : () => {
                             if (!session?.user?.id) {
