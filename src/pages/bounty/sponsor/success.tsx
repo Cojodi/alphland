@@ -62,11 +62,10 @@ export default function SponsorSuccess() {
             <p className="text-light-charcoal dark:text-lightgrey">
               No sponsor profile found. Please create one first.
             </p>
-            <Link
-              href="/bounty/new/sponsor"
-              className="inline-block bg-orange hover:bg-orange/90 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
-            >
-              Create Sponsor Profile
+            <Link href="/bounty/new/sponsor">
+              <a className="inline-block bg-orange hover:bg-orange/90 text-white font-semibold px-8 py-3 rounded-lg transition-colors">
+                Create Sponsor Profile
+              </a>
             </Link>
           </div>
         </div>
@@ -102,20 +101,18 @@ export default function SponsorSuccess() {
 
             {/* Action Buttons */}
             <div className="space-y-4">
-              <Link
-                href="/bounty/sponsor/dashboard"
-                className="w-full bg-orange hover:bg-orange/90 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 font-barlow"
-              >
-                Go to Sponsor Dashboard
-                <ArrowRight className="w-5 h-5" />
+              <Link href="/bounty/sponsor/dashboard">
+                <a className="w-full bg-orange hover:bg-orange/90 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 font-barlow">
+                  Go to Sponsor Dashboard
+                  <ArrowRight className="w-5 h-5" />
+                </a>
               </Link>
 
-              <Link
-                href="/bounty/create"
-                className="w-full border-2 border-orange text-orange hover:bg-orange/5 font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 font-barlow"
-              >
-                <Plus className="w-5 h-5" />
-                Create Your First Bounty
+              <Link href="/bounty/create">
+                <a className="w-full border-2 border-orange text-orange hover:bg-orange/5 font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 font-barlow">
+                  <Plus className="w-5 h-5" />
+                  Create Your First Bounty
+                </a>
               </Link>
             </div>
 
@@ -123,8 +120,10 @@ export default function SponsorSuccess() {
             <div className="mt-8 pt-6 border-t border-border-grey dark:border-dark-charcoal">
               <p className="text-sm text-light-charcoal dark:text-lightgrey font-barlow">
                 Need help getting started?{" "}
-                <Link href="/bounty" className="text-orange hover:underline">
-                  Browse existing bounties
+                <Link href="/bounty">
+                  <a className="text-orange hover:underline">
+                    Browse existing bounties
+                  </a>
                 </Link>{" "}
                 for inspiration.
               </p>
