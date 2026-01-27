@@ -131,8 +131,10 @@ export function TieredRewardDisplay({
             href="/bounty/profile"
             className="w-full flex items-center justify-center gap-2 bg-orange hover:bg-orange/90 text-white py-3 text-base font-semibold rounded-lg transition-colors"
           >
-            <User className="w-5 h-5" />
-            Profile
+            <span className="flex items-center gap-2">
+              <User className="w-5 h-5" />
+              Profile
+            </span>
           </Link>
         </div>
       ) : isBountyEnded ? (
