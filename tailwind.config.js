@@ -33,6 +33,7 @@ module.exports = {
       "accessible-green": "#02A697",
       "tooltip-dark": "#333333",
       "hero-dark": "#1F1F1F",
+      "danger-red": "#ef4444",
     },
     extend: {
       gridTemplateColumns: {

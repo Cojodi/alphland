@@ -32,7 +32,7 @@ const getTagStyle = (tag: string): string => {
 
   // Negative/warning states - red
   if (tagLower === "overdue" || tagLower === "ended" || tagLower === "closed") {
-    return "bg-red-500/10 text-red-500 dark:bg-red-500/20";
+    return "bg-danger-red/10 text-danger-red dark:bg-danger-red/20";
   }
 
   // Neutral states - default styling (categories, difficulty, due dates, etc.)
