@@ -1,8 +1,9 @@
 "use client";
 
 import { TieredReward } from "../types";
-import { formatRewardAmount, formatUSDAmount } from "../utils/rewardCalculator";
-import { DollarSign, Clock, CheckCircle, ExternalLink } from "lucide-react";
+import { formatRewardAmount } from "../utils/rewardCalculator";
+import { DollarSign, Clock, CheckCircle, User } from "lucide-react";
+import Link from "next/link";
 
 interface UserSubmission {
   id: string;
@@ -37,31 +38,6 @@ export function TieredRewardDisplay({
   userSubmission,
   isLoggedIn = false,
 }: TieredRewardDisplayProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "accepted":
-      case "approved":
-        return "text-accessible-green bg-accessible-green/10";
-      case "rejected":
-        return "text-red-500 bg-red-500/10";
-      case "pending":
-      default:
-        return "text-yellow-600 bg-yellow-500/10";
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "accepted":
-      case "approved":
-        return "Approved";
-      case "rejected":
-        return "Rejected";
-      case "pending":
-      default:
-        return "Under Review";
-    }
-  };
   return (
     <div className="space-y-6">
       {/* Total Prize */}
@@ -143,29 +119,19 @@ export function TieredRewardDisplay({
               <CheckCircle className="w-5 h-5 text-accessible-green" />
             </div>
             <div>
-              <h4 className="font-semibold text-black dark:text-white">
-                You&apos;ve Submitted
-              </h4>
-              <span
-                className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${getStatusColor(userSubmission.status)}`}
-              >
-                {getStatusLabel(userSubmission.status)}
-              </span>
+              <p className="text-sm text-light-charcoal dark:text-lightgrey">
+                You already submitted, please check your profile to see your
+                application
+              </p>
             </div>
           </div>
-          <a
-            href={userSubmission.submission_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-sm text-orange hover:text-orange/80 transition-colors"
+          <Link
+            href="/bounty/profile"
+            className="w-full flex items-center justify-center gap-2 bg-orange hover:bg-orange/90 text-white py-3 text-base font-semibold rounded-lg transition-colors"
           >
-            <ExternalLink className="w-4 h-4" />
-            View your submission
-          </a>
-          <p className="text-xs text-light-charcoal dark:text-lightgrey mt-3">
-            Submitted on{" "}
-            {new Date(userSubmission.created_at * 1000).toLocaleDateString()}
-          </p>
+            <User className="w-5 h-5" />
+            Profile
+          </Link>
         </div>
       ) : onSubmit ? (
         <>
