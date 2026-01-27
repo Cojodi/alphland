@@ -53,6 +53,7 @@ export default function EditSponsorProfile() {
   const [bannerFile, setBannerFile] = useState<ImageFile | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [bannerDragActive, setBannerDragActive] = useState(false);
+  const [userPersonalUsername, setUserPersonalUsername] = useState<string>("");
   const [formData, setFormData] = useState<FormData>({
     name: "",
     username: "",
@@ -67,18 +68,30 @@ export default function EditSponsorProfile() {
     contact_telegram: "",
   });
 
-  // Fetch existing sponsor data
+  // Fetch existing sponsor data and user profile
   useEffect(() => {
-    const fetchSponsor = async () => {
+    const fetchData = async () => {
       if (!session?.user?.id) {
         setFetching(false);
         return;
       }
 
       try {
-        const response = await fetch(`/api/sponsors/user/${session.user.id}`);
-        if (response.ok) {
-          const data = await response.json();
+        // Fetch both sponsor data and user profile in parallel
+        const [sponsorResponse, profileResponse] = await Promise.all([
+          fetch(`/api/sponsors/user/${session.user.id}`),
+          fetch("/api/users/me"),
+        ]);
+
+        // Handle user profile response
+        if (profileResponse.ok) {
+          const profileData = await profileResponse.json();
+          setUserPersonalUsername(profileData.user?.username || "");
+        }
+
+        // Handle sponsor response
+        if (sponsorResponse.ok) {
+          const data = await sponsorResponse.json();
           if (data.sponsor) {
             setSponsorId(data.sponsor.id);
             setFormData({
@@ -109,14 +122,14 @@ export default function EditSponsorProfile() {
           }
         }
       } catch (error) {
-        console.error("Error fetching sponsor:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setFetching(false);
       }
     };
 
     if (!isPending) {
-      fetchSponsor();
+      fetchData();
     }
   }, [session?.user?.id, isPending]);
 
@@ -430,14 +443,14 @@ export default function EditSponsorProfile() {
 
                     <div className="space-y-2">
                       <label className="block text-sm font-medium text-black dark:text-white">
-                        Username{" "}
+                        Your Username{" "}
                         <span className="text-xs font-normal text-light-charcoal dark:text-lightgrey">
-                          (read-only)
+                          (from your profile)
                         </span>
                       </label>
                       <input
                         type="text"
-                        value={formData.username || "Not set"}
+                        value={userPersonalUsername || "Not set"}
                         disabled
                         className="w-full px-4 py-2.5 bg-gray-200 dark:bg-gray-700 border border-border-grey dark:border-dark-charcoal rounded-lg text-light-charcoal dark:text-lightgrey cursor-not-allowed"
                       />

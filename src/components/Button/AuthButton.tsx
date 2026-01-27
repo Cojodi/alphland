@@ -22,6 +22,7 @@ const AuthButton = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [isProfileLoading, setIsProfileLoading] = useState(false);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -43,9 +44,11 @@ const AuthButton = () => {
     const fetchUserProfile = async () => {
       if (!session?.user) {
         setUserProfile(null);
+        setIsProfileLoading(false);
         return;
       }
 
+      setIsProfileLoading(true);
       try {
         const response = await fetch("/api/users/me");
         if (response.ok) {
@@ -57,6 +60,8 @@ const AuthButton = () => {
         }
       } catch (error) {
         console.error("Failed to fetch user profile:", error);
+      } finally {
+        setIsProfileLoading(false);
       }
     };
 
@@ -110,7 +115,10 @@ const AuthButton = () => {
   if (session?.user) {
     // Use profile image if available, fallback to session image
     const displayImage = userProfile?.image || session.user.image;
-    const displayName = userProfile?.username || session.user.name || "User";
+    // Always prefer username. While loading, show "..." to avoid flicker between Google name and username
+    const displayName = isProfileLoading
+      ? "..."
+      : userProfile?.username || session.user.name || "User";
 
     return (
       <div className="relative" ref={dropdownRef}>
