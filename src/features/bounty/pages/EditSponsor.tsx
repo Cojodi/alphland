@@ -21,6 +21,7 @@ interface FormData {
   contact_last_name: string;
   contact_username: string;
   contact_telegram: string;
+  contact_email: string;
 }
 
 interface ImageFile {
@@ -66,6 +67,7 @@ export default function EditSponsorProfile() {
     contact_last_name: "",
     contact_username: "",
     contact_telegram: "",
+    contact_email: "",
   });
 
   // Fetch existing sponsor data and user profile
@@ -106,6 +108,7 @@ export default function EditSponsorProfile() {
               contact_last_name: data.sponsor.contact_last_name || "",
               contact_username: data.sponsor.contact_username || "",
               contact_telegram: data.sponsor.contact_telegram || "",
+              contact_email: data.sponsor.contact_email || "",
             });
             if (data.sponsor.logo_url) {
               setLogoFile({
@@ -306,6 +309,8 @@ export default function EditSponsorProfile() {
             banner_url: bannerUrl,
             website: formData.website,
             twitter: formData.twitter,
+            contact_email: formData.contact_email || null,
+            contact_telegram: formData.contact_telegram || null,
           }),
         });
 
@@ -681,6 +686,64 @@ export default function EditSponsorProfile() {
                     <p className="text-xs text-light-charcoal dark:text-lightgrey text-right">
                       {bioCharactersLeft} characters left
                     </p>
+                  </div>
+                </div>
+
+                <hr className="border-border-grey dark:border-dark-charcoal" />
+
+                {/* Contact Information */}
+                <div className="space-y-6">
+                  <h2 className="text-xl font-bold text-black dark:text-white">
+                    Contact Information
+                  </h2>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        Email{" "}
+                        <span className="text-light-charcoal dark:text-lightgrey text-xs">
+                          (optional)
+                        </span>
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.contact_email}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            contact_email: e.target.value,
+                          }))
+                        }
+                        className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                        placeholder="email@example.com"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        Telegram{" "}
+                        <span className="text-light-charcoal dark:text-lightgrey text-xs">
+                          (optional)
+                        </span>
+                      </label>
+                      <div className="flex">
+                        <span className="inline-flex items-center px-3 bg-smoked-white dark:bg-light-black border border-r-0 border-border-grey dark:border-dark-charcoal rounded-l-lg text-light-charcoal dark:text-lightgrey text-sm">
+                          t.me/
+                        </span>
+                        <input
+                          type="text"
+                          value={formData.contact_telegram}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              contact_telegram: e.target.value,
+                            }))
+                          }
+                          className="flex-1 px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                          placeholder="username"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
 

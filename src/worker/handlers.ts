@@ -839,6 +839,8 @@ export async function handleSponsorsAPI(
            discord = COALESCE(?, discord),
            telegram = COALESCE(?, telegram),
            wallet_address = COALESCE(?, wallet_address),
+           contact_email = COALESCE(?, contact_email),
+           contact_telegram = COALESCE(?, contact_telegram),
            updated_at = ?
        WHERE id = ?`,
     )
@@ -852,6 +854,8 @@ export async function handleSponsorsAPI(
         body.discord || null,
         body.telegram || null,
         body.wallet_address || null,
+        body.contact_email || null,
+        body.contact_telegram || null,
         now,
         id,
       )
