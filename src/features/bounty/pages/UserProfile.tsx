@@ -235,19 +235,24 @@ export default function UserProfile() {
     internship: "Internship Opportunities",
   };
 
+  // Determine if using Google name fallback (no custom username set)
+  const isUsingGoogleNameFallback = !userData.username && !!userData.name;
+  const displayUsername =
+    userData.username || userData.name || userData.user_id.slice(0, 8);
   const displayName = userData.name || userData.username || "Anonymous";
 
   return (
     <Layout
-      title={`${displayName} | Alphland`}
-      description={userData.bio || `${displayName}'s profile on Alphland`}
+      title={`${displayUsername} | Alphland`}
+      description={userData.bio || `${displayUsername}'s profile on Alphland`}
     >
       <div className="min-h-screen bg-smoked-white dark:bg-light-black">
         <ProfileHeader
-          username={userData.username || userData.user_id.slice(0, 8)}
+          username={displayUsername}
           fullName={displayName}
           avatarUrl={userData.image || undefined}
           isOwnProfile={isOwnProfile || false}
+          isUsingGoogleNameFallback={isUsingGoogleNameFallback}
           socials={socials}
         />
 

@@ -1004,6 +1004,13 @@ async function handleUsersAPI(
       );
       console.log("[GET /api/users/me] Returning user data");
 
+      // Check if user has a Google account linked
+      const googleAccount = await env.DB.prepare(
+        `SELECT id, accountId FROM account WHERE userId = ? AND providerId = 'google'`,
+      )
+        .bind(userId)
+        .first();
+
       // Transform data to match frontend expectations
       const transformedProfile = {
         ...profile,
@@ -1021,6 +1028,9 @@ async function handleUsersAPI(
         frontend_skills: profile.skills || null,
         backend_skills: null,
         blockchain_skills: null,
+        // Google linked account info
+        isGoogleLinked: !!googleAccount,
+        googleName: googleAccount ? session.user.name : null,
       };
 
       return new Response(

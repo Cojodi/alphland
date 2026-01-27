@@ -14,6 +14,7 @@ interface ProfileHeaderProps {
   fullName: string;
   avatarUrl?: string;
   isOwnProfile?: boolean;
+  isUsingGoogleNameFallback?: boolean;
   socials?: {
     twitter?: string;
     linkedin?: string;
@@ -29,11 +30,28 @@ export function ProfileHeader({
   fullName,
   avatarUrl,
   isOwnProfile = false,
+  isUsingGoogleNameFallback = false,
   socials = {},
 }: ProfileHeaderProps) {
   return (
     <div className="bg-gradient-to-r from-orange/10 to-accessible-green/10 dark:from-orange/5 dark:to-accessible-green/5 pt-12 pb-8">
       <div className="max-w-6xl mx-auto px-4">
+        {/* Username Setup Prompt */}
+        {isOwnProfile && isUsingGoogleNameFallback && (
+          <div className="mb-6 bg-orange/10 dark:bg-orange/20 border border-orange/30 rounded-lg p-4">
+            <p className="text-sm text-orange-800 dark:text-orange-200">
+              <span className="font-semibold">Tip:</span> You are currently
+              displaying your Google name. Set a unique username to personalize
+              your profile!
+            </p>
+            <Link href="/bounty/profile/edit">
+              <span className="inline-block mt-2 text-sm font-medium text-orange hover:underline cursor-pointer">
+                Set Username →
+              </span>
+            </Link>
+          </div>
+        )}
+
         <div className="flex flex-col sm:flex-row sm:items-end gap-6 mb-6">
           {/* Avatar */}
           <div className="relative">
@@ -55,14 +73,16 @@ export function ProfileHeader({
             </div>
           </div>
 
-          {/* User Info */}
+          {/* User Info - Username is the primary identifier */}
           <div className="flex-1">
             <h1 className="text-3xl font-bold text-black dark:text-white mb-1">
-              {fullName}
-            </h1>
-            <p className="text-light-charcoal dark:text-lightgrey text-lg">
               @{username}
-            </p>
+            </h1>
+            {fullName !== username && (
+              <p className="text-light-charcoal dark:text-lightgrey text-lg">
+                {fullName}
+              </p>
+            )}
           </div>
 
           {/* Action Buttons */}

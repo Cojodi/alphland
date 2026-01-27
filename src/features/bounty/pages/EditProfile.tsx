@@ -314,6 +314,8 @@ export default function EditProfile() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [hasLoadedProfile, setHasLoadedProfile] = useState(false);
+  const [isGoogleLinked, setIsGoogleLinked] = useState(false);
+  const [googleName, setGoogleName] = useState<string | null>(null);
 
   // Load existing profile data
   useEffect(() => {
@@ -393,6 +395,10 @@ export default function EditProfile() {
             const parts = url.split("/");
             return parts[parts.length - 1] || "";
           };
+
+          // Set Google linked info
+          setIsGoogleLinked(!!profile.isGoogleLinked);
+          setGoogleName(profile.googleName || null);
 
           setFormData((prev) => ({
             ...prev,
@@ -817,6 +823,56 @@ export default function EditProfile() {
               </h2>
 
               <div className="space-y-6">
+                {/* Google Linked Account Info */}
+                {isGoogleLinked && googleName && (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <div className="flex items-center gap-3">
+                      <svg
+                        className="w-5 h-5 flex-shrink-0"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                          fill="#4285F4"
+                        />
+                        <path
+                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                          fill="#34A853"
+                        />
+                        <path
+                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                          fill="#FBBC05"
+                        />
+                        <path
+                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                          fill="#EA4335"
+                        />
+                      </svg>
+                      <div className="flex-1">
+                        <p className="text-sm text-blue-800 dark:text-blue-200 font-medium">
+                          Linked via Google: {googleName}
+                        </p>
+                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">
+                          This name is synced from your Google account and
+                          cannot be edited here.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Username Prompt - show if no username set */}
+                {!formData.username && hasLoadedProfile && (
+                  <div className="bg-orange/10 dark:bg-orange/20 border border-orange/30 rounded-lg p-4">
+                    <p className="text-sm text-orange-800 dark:text-orange-200 font-medium">
+                      You are currently using your Google name for display. Set
+                      a unique username below to personalize your profile.
+                    </p>
+                  </div>
+                )}
+
                 {/* Profile Picture */}
                 <div>
                   <label className="block text-sm font-semibold text-black dark:text-white mb-3">
@@ -876,35 +932,68 @@ export default function EditProfile() {
                   />
                 </div>
 
-                {/* First and Last Name */}
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-black dark:text-white mb-2">
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      placeholder="Enter your first name"
-                      className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
-                    />
+                {/* First and Last Name - Read-only for Google-linked accounts */}
+                {isGoogleLinked ? (
+                  <div className="grid sm:grid-cols-2 gap-4 opacity-60">
+                    <div>
+                      <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                        First Name
+                        <span className="ml-2 text-xs font-normal text-light-charcoal dark:text-lightgrey">
+                          (from Google)
+                        </span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.firstName}
+                        disabled
+                        className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 border border-border-grey dark:border-dark-charcoal rounded-lg text-light-charcoal dark:text-lightgrey cursor-not-allowed"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                        Last Name
+                        <span className="ml-2 text-xs font-normal text-light-charcoal dark:text-lightgrey">
+                          (from Google)
+                        </span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.lastName}
+                        disabled
+                        className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 border border-border-grey dark:border-dark-charcoal rounded-lg text-light-charcoal dark:text-lightgrey cursor-not-allowed"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-black dark:text-white mb-2">
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      placeholder="Enter your last name"
-                      className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
-                    />
+                ) : (
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                        First Name
+                      </label>
+                      <input
+                        type="text"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                        placeholder="Enter your first name"
+                        className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-black dark:text-white mb-2">
+                        Last Name
+                      </label>
+                      <input
+                        type="text"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleInputChange}
+                        placeholder="Enter your last name"
+                        className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Bio */}
                 <div>
