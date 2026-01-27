@@ -617,7 +617,10 @@ export default function CreateSponsorProfile() {
 
                     <div className="space-y-2">
                       <label className="block text-sm font-medium text-black dark:text-white">
-                        Company X <span className="text-orange">*</span>
+                        Company X{" "}
+                        <span className="text-light-charcoal dark:text-lightgrey text-xs">
+                          (optional)
+                        </span>
                       </label>
                       <div className="flex">
                         <span className="inline-flex items-center px-3 bg-smoked-white dark:bg-light-black border border-r-0 border-border-grey dark:border-dark-charcoal rounded-l-lg text-light-charcoal dark:text-lightgrey text-sm">
@@ -634,7 +637,6 @@ export default function CreateSponsorProfile() {
                           }
                           className="flex-1 px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
                           placeholder="companyname"
-                          required
                         />
                       </div>
                     </div>
@@ -875,7 +877,6 @@ export default function CreateSponsorProfile() {
                       !formData.last_name ||
                       !formData.company_name ||
                       !formData.company_url ||
-                      !formData.company_twitter ||
                       !formData.industry ||
                       !formData.company_bio ||
                       !logoFile
