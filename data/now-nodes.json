@@ -1,6 +1,6 @@
 {
   "name": "NOWNodes",
-  "description": "NOWNodes is a blockchain infrastructure that provides access to Full Nodes and Block Explorers via API. It provides access to over 100 popular blockchain networks including ALPH, BTC, ETH, DOGE, and BSC, which practically means almost every single coin and token from TOP100 CoinMarketCap.",
+  "description": "NOWNodes is an API provider giving access to full nodes and block explorers for over one hundred blockchains. It lets developers query chain data and interact with networks without self hosting nodes.",
   "short_description": "Instant access to 100+ RPC nodes for all your Web3 development needs. Get an API key and start building!",
   "tags": ["Infrastructure"],
   "councils_choice": true,

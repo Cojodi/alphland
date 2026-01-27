@@ -1,6 +1,6 @@
 {
   "name": "Trocador",
-  "description": "Trocador is a privacy-focused crypto exchange aggregator offering anonymous, account-free swaps at competitive rates.",
+  "description": "Trocador is a privacy focused cryptocurrency exchange aggregator offering anonymous swaps without accounts. It provides routing across multiple swap providers for optimal rates.",
   "short_description": "Privacy-focused crypto exchange aggregator.",
   "tags": ["Bridges"],
   "councils_choice": false,

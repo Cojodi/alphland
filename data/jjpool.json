@@ -1,6 +1,6 @@
 {
   "name": "JJPool",
-  "description": "JJPool is a French mining pool using the PPLNS reward system, designed to provide fair payouts and a straightforward mining experience.",
+  "description": "JJPool is a mining pool using the PPLNS payout method. It offers predictable rewards and simple configuration for miners seeking steady distribution.",
   "short_description": "PPLNS French mining pool made for makers",
   "tags": ["Hashrate"],
   "contracts": [],

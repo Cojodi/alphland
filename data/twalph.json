@@ -1,6 +1,6 @@
 {
   "name": "TWAlph",
-  "description": "Claim testnet $ALPH directly to your wallet via web or Telegram.",
+  "description": "TWAlph is a tool allowing users to claim testnet ALPH through a web interface or Telegram bot. It supports developers and testers by providing token access for experimentation.",
   "short_description": "Claim testnet $ALPH directly to your wallet via web or Telegram.",
   "tags": ["Infrastructure"],
   "contracts": [],

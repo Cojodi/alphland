@@ -1,11 +1,8 @@
 {
   "name": "ALPH Tracker",
-  "description": "A dashboard that tracks $ALPH investor groups over time, helping users analyze trends and movements in the ecosystem.",
+  "description": " ALPH Tracker is an analytics dashboard that categorizes ALPH holders and tracks investor group movements over time. It helps users observe behavioral trends and distribution shifts.",
   "short_description": "$ALPH investor tracker",
-  "tags": [
-    "Infrastructure",
-    "Stats"
-  ],
+  "tags": ["Infrastructure", "Stats"],
   "verified": false,
   "dotw": false,
   "councils_choice": true,

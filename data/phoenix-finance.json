@@ -1,6 +1,6 @@
 {
   "name": "Phoenix Finance",
-  "description": "Platform for degen finance",
+  "description": "Phoenix Finance is a DeFi platform on the ALPH blockchain that lets users deposit ALPH to receive hodlALPH, a token whose value is designed to increase over time as more ALPH is claimed.",
   "short_description": "DeFi Games",
   "tags": ["DeFi"],
   "contracts": [

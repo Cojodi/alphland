@@ -1,6 +1,6 @@
 {
   "name": "$exy Pixels",
-  "description": "$EXY PIXELS is a social experiment and game for the Alephium Community in which users paint a picture on the same canvas pixel by pixel. It's purpose is to make the act of burning tokens fun. Users burn $EXY to mint pixels and claim their territory on the canvas. It draws inspiration from the iconic r/place experiment, where communities collaborated pixel by pixel to create art.",
+  "description": "$exy Pixels is an onchain collaborative pixel canvas where users burn EXY to place pixels. It lets participants contribute pixel art to a shared grid. The project turns token burning into a collective creative activity.",
   "short_description": "Burn to Play",
   "tags": ["Games"],
   "group": "0",

@@ -1,6 +1,6 @@
 {
   "name": "Alchemypay",
-  "description": "Alchemy Pay bridges fiat and crypto with support for 170+ countries, enabling purchases via cards, mobile wallets, and local bank transfers, especially in developing regions.",
+  "description": "Alchemypay is a fiat to crypto gateway that supports cards, mobile wallets, and bank transfers in more than 170 countries. It enables users to buy and sell cryptocurrency using familiar payment methods.",
   "short_description": "Fiat-crypto gateway with strong emerging markets focus.",
   "tags": ["Onramps"],
   "councils_choice": false,

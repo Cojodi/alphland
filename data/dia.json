@@ -1,6 +1,6 @@
 {
   "name": "DIA Oracle",
-  "description": "DIA is an open-source, cross-chain oracle provider that sources granular market data from diverse exchanges, including CEXs and DEXs. Its data sourcing is thorough, enabling unparalleled transparency and customizability for resilient price feeds for 20,000+ assets. Its versatile data processing and delivery ensures adaptability and reliability for any decentralized application.",
+  "description": "DIA Oracle is a cross-chain oracle system that provides token price feeds, verifiable randomness, and real-world asset data. It aggregates information from multiple sources and delivers customizable oracles for applications requiring external inputs.",
   "short_description": "Cross-chain oracles for Web3",
   "tags": ["Infrastructure"],
   "councils_choice": true,

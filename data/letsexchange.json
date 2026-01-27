@@ -1,6 +1,6 @@
 {
   "name": "LetsExchange",
-  "description": "LetsExchange is an instant multi-currency exchange service that requires no registration, offering fast swaps across thousands of cryptocurrencies.",
+  "description": "LetsExchange is an instant multi asset exchange service that performs fast swaps without requiring user registration. It supports thousands of trading pairs and automated routing.",
   "short_description": "Instant, registration-free crypto exchange.",
   "tags": ["Bridges"],
   "councils_choice": false,

@@ -1,6 +1,6 @@
 {
   "name": "Alephium Official Wallets",
-  "description": "Stay in control of Alephium assets and connect to dApps of the Alephium ecosystem. Designed with simplicity and usability in mind, even complex actions are easy to perform. The Alephium wallets are fully self-custodial, only you have access to your seeds and private keys.",
+  "description": "Alephium Official Wallets are self custodial applications that allow users to store, send, and receive Alephium assets. They support dApp interactions while keeping private keys under user control.",
   "short_description": "The Alephium wallets are your keys to the Alephium ecosystem",
   "tags": ["Wallets"],
   "councils_choice": true,

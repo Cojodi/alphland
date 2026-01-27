@@ -1,6 +1,6 @@
 {
   "name": "Blockflow Visualizer",
-  "description": "This app visualizes Blockflow, Alephiums sharding algorithm in 3D and exposes a websocket stream for other developers.",
+  "description": "Blockflow Visualizer is a 3D tool showing Alephium’s sharding algorithm and real time chain activity. It also exposes a websocket stream for developer integrations.",
   "short_description": "Blockflow 3D visualizer \u0026 public block stream websocket",
   "tags": ["Stats"],
   "contracts": [],

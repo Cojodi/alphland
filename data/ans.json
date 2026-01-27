@@ -1,6 +1,6 @@
 {
   "name": "ANS",
-  "description": "ANS aims to provide a pivotal solution designed to enhance accessibility within the Alephium DeFi ecosystem for users across all proficiency levels. ANS simplifies this process by replacing lengthy and intricate public addresses with concise, user-friendly names.",
+  "description": "ANS is a naming system that replaces long wallet addresses with short readable names. It enhances usability by simplifying address sharing across the ecosystem.",
   "short_description": "The Alephium name service.",
   "tags": ["Infrastructure", "Social"],
   "contracts": [],

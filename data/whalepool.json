@@ -1,6 +1,6 @@
 {
   "name": "WhalePool",
-  "description": "WhalePool, the most efficient mining pool with low fees and high rewards.",
+  "description": "WhalePool is a mining pool offering low fees and consistent block rewards. It supports miners with performance tracking and a variety of proof of work coins.",
   "short_description": "The Global Leading Mining Service Provider",
   "tags": ["Hashrate"],
   "contracts": [],

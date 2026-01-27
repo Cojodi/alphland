@@ -1,6 +1,6 @@
 {
   "name": "Transfi",
-  "description": "TransFi enables crypto purchases using region-specific payment methods like mobile apps and QR codes, maximizing accessibility and conversion in high-growth regions.",
+  "description": "Transfi is a fiat to crypto purchase solution supporting region specific methods such as QR code payments and mobile apps. It focuses on improving accessibility in emerging markets.",
   "short_description": "Localized fiat-to-crypto onramp for emerging markets.",
   "tags": ["Onramps"],
   "councils_choice": false,

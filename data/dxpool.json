@@ -1,6 +1,6 @@
 {
   "name": "DxPool",
-  "description": "DxPool is a mining pool built on stability, transparency, and innovation. Its distributed infrastructure delivers 24/7 reliable service, while detailed statistics ensure miners have full visibility into hash rate, income, and block data. By supporting innovative projects, DxPool continuously evolves to meet the real needs of miners.",
+  "description": "DxPool is a mining pool offering distributed infrastructure, stable uptime, and detailed mining statistics. It supports multiple mining algorithms and transparent performance reporting.",
   "short_description": "Worry-free mining on DxPool",
   "tags": ["Hashrate"],
   "contracts": [],

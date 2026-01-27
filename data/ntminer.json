@@ -1,6 +1,6 @@
 {
   "name": "NTMiner Pool",
-  "description": "NTMiner Pool is a global mining pool from the Open-Source Miner family, offering low-latency infrastructure, 24/7 technical monitoring, and a PPS+ payout model for stable and optimized returns. With years of blockchain R&D, it provides consistent hashrate performance and supports a wide range of GPU- and ASIC-minable coins.",
+  "description": "NTMiner Pool is a mining pool using the PPS+ reward system. It provides low latency infrastructure, 24 hour monitoring, and consistent payouts for GPU and ASIC miners.",
   "short_description": "NTMiner Pool delivers stable PPS+ mining with global infrastructure and 24/7 monitoring",
   "tags": ["Hashrate"],
   "contracts": [],

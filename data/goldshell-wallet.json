@@ -1,6 +1,6 @@
 {
   "name": "Goldshell Wallet",
-  "description": "Air-gapped, open-source, and ultra-secure with QR transactions, fingerprint unlock, and light-triggered protection—your crypto, your control.",
+  "description": "Goldshell Wallet is an air gapped hardware wallet supporting offline signing and QR based transactions. It uses biometric and hardware based protection for secure asset storage.",
   "short_description": "Your Bedrock of Crypto",
   "tags": ["Wallets"],
   "contracts": [],

@@ -1,6 +1,6 @@
 {
   "name": "Sezame Wallet",
-  "description": "Alph first mobile wallet. Fully open source, non custodial wallet and multi-asset. Its simple UI makes it ideal for everyday usage.",
+  "description": "Sezame Wallet is a non custodial mobile wallet for managing multiple crypto assets. It provides simple interfaces for transfers, balance tracking, and everyday usage.",
   "short_description": "A non custodial wallet for digital assets",
   "tags": ["Wallets"],
   "contracts": [],

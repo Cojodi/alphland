@@ -1,6 +1,6 @@
 {
   "name": "Hermes",
-  "description": "Hermes is a fun dApp that lets you generate and mint unique crypto-themed compliments or punchlines, then send them to your friends for a laugh. Customize each punchline, turn it into an NFT, and share crypto humor on the Alephium blockchain!",
+  "description": "Hermes is a dApp that lets users create short crypto themed messages and mint them as NFTs. It provides lightweight creative tools for collectible message minting and sharing.",
   "short_description": "Generate, mint, and share crypto-themed punchlines as NFTs!",
   "tags": ["NFTs", "ComingSoon"],
   "group": "Group 0",

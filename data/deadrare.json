@@ -1,6 +1,6 @@
 {
   "name": "Deadrare",
-  "description": "DeadRare is an NFT marketplace for the Alephium blockchain, allowing anyone to buy and sell Alephium NFTs. DeadRare aims to promote innovation within the NFT space such as AI, dynamic NFTs, and DeFi Gaming.",
+  "description": "Deadrare is an NFT marketplace enabling users to mint, buy, and sell NFTs. It supports dynamic NFTs and offers secondary market trading and collection management.",
   "short_description": "NFT Marketplace",
   "tags": ["NFTs"],
   "contracts": [],

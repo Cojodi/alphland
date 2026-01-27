@@ -1,6 +1,6 @@
 {
   "name": "F2Pool",
-  "description": "Proudly securing Bitcoin and other PoW blockchains since 2013. 1,300,000 BTC mined and counting…",
+  "description": "F2Pool is a long running mining pool supporting Bitcoin and other proof of work networks. It provides mining payouts, hashpower distribution, and statistical dashboards.",
   "short_description": "Join the world’s leading mining pool to secure a decentralized future",
   "tags": ["Hashrate"],
   "contracts": [],
