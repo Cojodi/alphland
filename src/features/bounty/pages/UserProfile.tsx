@@ -289,7 +289,12 @@ export default function UserProfile() {
             {/* Right Column */}
             <div className="lg:col-span-2 space-y-8">
               {/* Show Bookmarks section only on own profile */}
-              {isOwnProfile && <BookmarksSection userId={userData.user_id} />}
+              {isOwnProfile && (
+                <BookmarksSection
+                  userId={userData.user_id}
+                  isOwnProfile={isOwnProfile}
+                />
+              )}
 
               {/* Show Submissions section only on own profile */}
               {isOwnProfile && <SubmissionsSection userId={userData.user_id} />}
