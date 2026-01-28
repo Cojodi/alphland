@@ -872,6 +872,8 @@ export async function handleSponsorsAPI(
 
   // GET /api/sponsors - List all sponsors (for admin)
   if (request.method === "GET" && pathname === "/api/sponsors") {
+    const isBanned = url.searchParams.get("is_banned");
+
     let query = `SELECT s.*, b.bounty_count
                  FROM sponsors s
                  LEFT JOIN (
@@ -880,11 +882,127 @@ export async function handleSponsorsAPI(
                    GROUP BY sponsor_id
                  ) b ON s.id = b.sponsor_id`;
 
+    if (isBanned === "true") {
+      query += ` WHERE s.is_banned = 1`;
+    } else if (isBanned === "false") {
+      query += ` WHERE s.is_banned = 0`;
+    }
+
     query += ` ORDER BY s.created_at DESC`;
 
     const { results } = await env.DB.prepare(query).all();
 
     return new Response(JSON.stringify({ sponsors: results }), {
+      headers: corsHeaders,
+    });
+  }
+
+  // PUT /api/sponsors/:id/verify - Verify sponsor
+  if (
+    request.method === "PUT" &&
+    pathname.match(/^\/api\/sponsors\/[^/]+\/verify$/)
+  ) {
+    const id = pathname.split("/")[3];
+    const now = Math.floor(Date.now() / 1000);
+
+    await env.DB.prepare(
+      `UPDATE sponsors SET is_verified = 1, updated_at = ? WHERE id = ?`,
+    )
+      .bind(now, id)
+      .run();
+
+    return new Response(JSON.stringify({ success: true }), {
+      headers: corsHeaders,
+    });
+  }
+
+  // PUT /api/sponsors/:id/unverify - Unverify sponsor
+  if (
+    request.method === "PUT" &&
+    pathname.match(/^\/api\/sponsors\/[^/]+\/unverify$/)
+  ) {
+    const id = pathname.split("/")[3];
+    const now = Math.floor(Date.now() / 1000);
+
+    await env.DB.prepare(
+      `UPDATE sponsors SET is_verified = 0, updated_at = ? WHERE id = ?`,
+    )
+      .bind(now, id)
+      .run();
+
+    return new Response(JSON.stringify({ success: true }), {
+      headers: corsHeaders,
+    });
+  }
+
+  // PUT /api/sponsors/:id/ban - Ban sponsor
+  if (
+    request.method === "PUT" &&
+    pathname.match(/^\/api\/sponsors\/[^/]+\/ban$/)
+  ) {
+    const id = pathname.split("/")[3];
+    const now = Math.floor(Date.now() / 1000);
+
+    // Get sponsor to find user_id
+    const sponsor = await env.DB.prepare(
+      `SELECT user_id FROM sponsors WHERE id = ?`,
+    )
+      .bind(id)
+      .first();
+
+    if (sponsor) {
+      // Ban the sponsor
+      await env.DB.prepare(
+        `UPDATE sponsors SET is_banned = 1, banned_at = ?, updated_at = ? WHERE id = ?`,
+      )
+        .bind(now, now, id)
+        .run();
+
+      // Also ban the associated user
+      await env.DB.prepare(
+        `UPDATE user SET banned = 1, bannedAt = ? WHERE id = ?`,
+      )
+        .bind(now * 1000, sponsor.user_id)
+        .run();
+    }
+
+    return new Response(JSON.stringify({ success: true }), {
+      headers: corsHeaders,
+    });
+  }
+
+  // PUT /api/sponsors/:id/unban - Unban sponsor
+  if (
+    request.method === "PUT" &&
+    pathname.match(/^\/api\/sponsors\/[^/]+\/unban$/)
+  ) {
+    const id = pathname.split("/")[3];
+    const now = Math.floor(Date.now() / 1000);
+
+    // Get sponsor to find user_id
+    const sponsor = await env.DB.prepare(
+      `SELECT user_id FROM sponsors WHERE id = ?`,
+    )
+      .bind(id)
+      .first();
+
+    if (sponsor) {
+      // Unban the sponsor
+      await env.DB.prepare(
+        `UPDATE sponsors SET is_banned = 0, banned_at = NULL, updated_at = ? WHERE id = ?`,
+      )
+        .bind(now, id)
+        .run();
+
+      // Also unban the associated user
+      await env.DB.prepare(
+        `UPDATE user SET banned = 0, bannedAt = NULL WHERE id = ?`,
+      )
+        .bind(sponsor.user_id)
+        .run();
+    }
+
+    return new Response(JSON.stringify({ success: true }), {
       headers: corsHeaders,
     });
   }

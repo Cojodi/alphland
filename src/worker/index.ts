@@ -155,26 +155,405 @@ const worker = {
         });
       }
 
-      // Bounty overview stats endpoint
-      if (url.pathname === "/api/bounty-overview") {
-        const overview = await env.DB.prepare(
-          "SELECT * FROM bounty_overview WHERE id = 1",
+      // ==========================================
+      // Admin Analytics APIs
+      // ==========================================
+
+      // GET /api/admin/user-stats - User statistics overview
+      if (url.pathname === "/api/admin/user-stats") {
+        const now = Math.floor(Date.now() / 1000);
+        const todayStart = now - (now % 86400); // Start of today (UTC)
+        const weekAgo = now - 7 * 86400;
+        const monthAgo = now - 30 * 86400;
+
+        // Total users
+        const totalUsers = await env.DB.prepare(
+          `SELECT COUNT(*) as count FROM user`,
+        ).first();
+
+        // New users today (createdAt is in milliseconds)
+        const newToday = await env.DB.prepare(
+          `SELECT COUNT(*) as count FROM user WHERE createdAt >= ?`,
+        )
+          .bind(todayStart * 1000)
+          .first();
+
+        // New users this week
+        const newThisWeek = await env.DB.prepare(
+          `SELECT COUNT(*) as count FROM user WHERE createdAt >= ?`,
+        )
+          .bind(weekAgo * 1000)
+          .first();
+
+        // New users this month
+        const newThisMonth = await env.DB.prepare(
+          `SELECT COUNT(*) as count FROM user WHERE createdAt >= ?`,
+        )
+          .bind(monthAgo * 1000)
+          .first();
+
+        // WAU - users with sessions in last 7 days
+        const wau = await env.DB.prepare(
+          `SELECT COUNT(DISTINCT userId) as count FROM session WHERE createdAt >= ?`,
+        )
+          .bind(weekAgo * 1000)
+          .first();
+
+        // MAU - users with sessions in last 30 days
+        const mau = await env.DB.prepare(
+          `SELECT COUNT(DISTINCT userId) as count FROM session WHERE createdAt >= ?`,
+        )
+          .bind(monthAgo * 1000)
+          .first();
+
+        // Daily new users for last 14 days (for trend chart)
+        const { results: dailyTrend } = await env.DB.prepare(
+          `SELECT
+            DATE(createdAt / 1000, 'unixepoch') as date,
+            COUNT(*) as count
+          FROM user
+          WHERE createdAt >= ?
+          GROUP BY DATE(createdAt / 1000, 'unixepoch')
+          ORDER BY date ASC`,
+        )
+          .bind((now - 14 * 86400) * 1000)
+          .all();
+
+        return new Response(
+          JSON.stringify({
+            total_users: totalUsers?.count || 0,
+            new_today: newToday?.count || 0,
+            new_this_week: newThisWeek?.count || 0,
+            new_this_month: newThisMonth?.count || 0,
+            wau: wau?.count || 0,
+            mau: mau?.count || 0,
+            daily_trend: dailyTrend || [],
+          }),
+          { headers: { "Content-Type": "application/json", ...corsHeaders } },
+        );
+      }
+
+      // GET /api/admin/users - User list with search
+      if (url.pathname === "/api/admin/users") {
+        const search = url.searchParams.get("search") || "";
+        const limit = parseInt(url.searchParams.get("limit") || "50");
+        const offset = parseInt(url.searchParams.get("offset") || "0");
+
+        let query = `
+          SELECT
+            u.id, u.email, u.name, u.image, u.is_banned, u.createdAt,
+            up.username, up.wallet_address,
+            (SELECT COUNT(*) FROM bounty_submissions WHERE user_id = u.id) as submission_count,
+            (SELECT COUNT(*) FROM bounty_submissions WHERE user_id = u.id AND status = 'approved') as approved_count,
+            (SELECT COUNT(*) FROM bookmarks WHERE user_id = u.id) as bookmark_count
+          FROM user u
+          LEFT JOIN user_profiles up ON u.id = up.user_id
+        `;
+
+        const params: any[] = [];
+        if (search) {
+          query += ` WHERE u.email LIKE ? OR u.name LIKE ? OR up.username LIKE ?`;
+          params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+        }
+
+        query += ` ORDER BY u.createdAt DESC LIMIT ? OFFSET ?`;
+        params.push(limit, offset);
+
+        const { results } = await env.DB.prepare(query)
+          .bind(...params)
+          .all();
+
+        // Get total count
+        let countQuery = `SELECT COUNT(*) as count FROM user u LEFT JOIN user_profiles up ON u.id = up.user_id`;
+        if (search) {
+          countQuery += ` WHERE u.email LIKE ? OR u.name LIKE ? OR up.username LIKE ?`;
+          const countResult = await env.DB.prepare(countQuery)
+            .bind(`%${search}%`, `%${search}%`, `%${search}%`)
+            .first();
+          return new Response(
+            JSON.stringify({ users: results, total: countResult?.count || 0 }),
+            { headers: { "Content-Type": "application/json", ...corsHeaders } },
+          );
+        }
+
+        const countResult = await env.DB.prepare(countQuery).first();
+        return new Response(
+          JSON.stringify({ users: results, total: countResult?.count || 0 }),
+          { headers: { "Content-Type": "application/json", ...corsHeaders } },
+        );
+      }
+
+      // GET /api/admin/users/:id - User details
+      if (url.pathname.match(/^\/api\/admin\/users\/[^/]+$/)) {
+        const userId = url.pathname.split("/").pop();
+
+        const user = await env.DB.prepare(
+          `SELECT u.*, up.username, up.bio, up.wallet_address, up.location
+           FROM user u
+           LEFT JOIN user_profiles up ON u.id = up.user_id
+           WHERE u.id = ?`,
+        )
+          .bind(userId)
+          .first();
+
+        if (!user) {
+          return new Response(JSON.stringify({ error: "User not found" }), {
+            status: 404,
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        }
+
+        // Recent sessions (last 10)
+        const { results: sessions } = await env.DB.prepare(
+          `SELECT ipAddress, userAgent, createdAt
+           FROM session
+           WHERE userId = ?
+           ORDER BY createdAt DESC
+           LIMIT 10`,
+        )
+          .bind(userId)
+          .all();
+
+        // User submissions
+        const { results: submissions } = await env.DB.prepare(
+          `SELECT s.*, b.title as bounty_title
+           FROM bounty_submissions s
+           JOIN bounties b ON s.bounty_id = b.id
+           WHERE s.user_id = ?
+           ORDER BY s.created_at DESC
+           LIMIT 20`,
+        )
+          .bind(userId)
+          .all();
+
+        // User bookmarks
+        const { results: bookmarks } = await env.DB.prepare(
+          `SELECT bm.*, b.title, b.status
+           FROM bookmarks bm
+           JOIN bounties b ON bm.bounty_id = b.id
+           WHERE bm.user_id = ?
+           ORDER BY bm.created_at DESC
+           LIMIT 20`,
+        )
+          .bind(userId)
+          .all();
+
+        return new Response(
+          JSON.stringify({ user, sessions, submissions, bookmarks }),
+          { headers: { "Content-Type": "application/json", ...corsHeaders } },
+        );
+      }
+
+      // PUT /api/admin/users/:id/ban - Ban user
+      if (
+        request.method === "PUT" &&
+        url.pathname.match(/^\/api\/admin\/users\/[^/]+\/ban$/)
+      ) {
+        const userId = url.pathname.split("/")[4];
+        const now = Date.now();
+
+        await env.DB.prepare(
+          `UPDATE user SET is_banned = 1, updatedAt = ? WHERE id = ?`,
+        )
+          .bind(now, userId)
+          .run();
+
+        // Also ban their sponsor if they have one
+        await env.DB.prepare(
+          `UPDATE sponsors SET is_banned = 1, banned_at = ?, updated_at = ? WHERE user_id = ?`,
+        )
+          .bind(Math.floor(now / 1000), Math.floor(now / 1000), userId)
+          .run();
+
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+
+      // PUT /api/admin/users/:id/unban - Unban user
+      if (
+        request.method === "PUT" &&
+        url.pathname.match(/^\/api\/admin\/users\/[^/]+\/unban$/)
+      ) {
+        const userId = url.pathname.split("/")[4];
+        const now = Date.now();
+
+        await env.DB.prepare(
+          `UPDATE user SET is_banned = 0, updatedAt = ? WHERE id = ?`,
+        )
+          .bind(now, userId)
+          .run();
+
+        // Also unban their sponsor if they have one
+        await env.DB.prepare(
+          `UPDATE sponsors SET is_banned = 0, banned_at = NULL, updated_at = ? WHERE user_id = ?`,
+        )
+          .bind(Math.floor(now / 1000), userId)
+          .run();
+
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+
+      // GET /api/admin/submission-stats - Submission analysis
+      if (url.pathname === "/api/admin/submission-stats") {
+        // Total submissions and approved
+        const totals = await env.DB.prepare(
+          `SELECT
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved
+          FROM bounty_submissions`,
+        ).first();
+
+        // Users who have submitted
+        const usersWithSubmissions = await env.DB.prepare(
+          `SELECT COUNT(DISTINCT user_id) as count FROM bounty_submissions`,
+        ).first();
+
+        // Average submissions per user (who submitted)
+        const avgSubmissions = usersWithSubmissions?.count
+          ? (totals?.total || 0) / (usersWithSubmissions.count as number)
+          : 0;
+
+        // Global acceptance rate
+        const acceptanceRate = totals?.total
+          ? ((totals.approved as number) / (totals.total as number)) * 100
+          : 0;
+
+        // Top success rate users (min 2 submissions)
+        const { results: topUsers } = await env.DB.prepare(
+          `SELECT
+            s.user_id,
+            u.name,
+            u.email,
+            up.username,
+            COUNT(*) as total_submissions,
+            SUM(CASE WHEN s.status = 'approved' THEN 1 ELSE 0 END) as approved,
+            ROUND(SUM(CASE WHEN s.status = 'approved' THEN 1.0 ELSE 0 END) / COUNT(*) * 100, 1) as success_rate
+          FROM bounty_submissions s
+          JOIN user u ON s.user_id = u.id
+          LEFT JOIN user_profiles up ON s.user_id = up.user_id
+          GROUP BY s.user_id
+          HAVING COUNT(*) >= 2
+          ORDER BY success_rate DESC, approved DESC
+          LIMIT 10`,
+        ).all();
+
+        // Average reward for approved submissions (assuming reward is stored)
+        // This is complex as rewards are JSON - simplified version
+        const avgReward = await env.DB.prepare(
+          `SELECT AVG(CAST(json_extract(reward, '$.amount') AS REAL)) as avg_amount
+           FROM bounty_submissions
+           WHERE status = 'approved' AND reward IS NOT NULL`,
         ).first();
 
         return new Response(
           JSON.stringify({
-            overview: overview || {
-              total_value_usd: 0,
-              total_value_alph: 0,
-              list_number: 0,
-              user_number: 0,
-              sponsor_number: 0,
-            },
+            total_submissions: totals?.total || 0,
+            approved_submissions: totals?.approved || 0,
+            users_with_submissions: usersWithSubmissions?.count || 0,
+            avg_submissions_per_user: Math.round(avgSubmissions * 10) / 10,
+            acceptance_rate: Math.round(acceptanceRate * 10) / 10,
+            avg_reward: avgReward?.avg_amount || 0,
+            top_users: topUsers || [],
           }),
-          {
-            headers: { "Content-Type": "application/json", ...corsHeaders },
-          },
+          { headers: { "Content-Type": "application/json", ...corsHeaders } },
         );
+      }
+
+      // GET /api/admin/bounty-popularity - Bounty popularity stats
+      if (url.pathname === "/api/admin/bounty-popularity") {
+        // Most bookmarked bounties
+        const { results: mostBookmarked } = await env.DB.prepare(
+          `SELECT
+            b.id, b.title, b.status,
+            sp.name as sponsor_name,
+            COUNT(bm.id) as bookmark_count
+          FROM bounties b
+          JOIN sponsors sp ON b.sponsor_id = sp.id
+          LEFT JOIN bookmarks bm ON b.id = bm.bounty_id
+          GROUP BY b.id
+          ORDER BY bookmark_count DESC
+          LIMIT 10`,
+        ).all();
+
+        // Most submissions bounties
+        const { results: mostSubmissions } = await env.DB.prepare(
+          `SELECT
+            b.id, b.title, b.status,
+            sp.name as sponsor_name,
+            COUNT(s.id) as submission_count
+          FROM bounties b
+          JOIN sponsors sp ON b.sponsor_id = sp.id
+          LEFT JOIN bounty_submissions s ON b.id = s.bounty_id
+          GROUP BY b.id
+          ORDER BY submission_count DESC
+          LIMIT 10`,
+        ).all();
+
+        // Most comments bounties
+        const { results: mostComments } = await env.DB.prepare(
+          `SELECT
+            b.id, b.title, b.status,
+            sp.name as sponsor_name,
+            COUNT(c.id) as comment_count
+          FROM bounties b
+          JOIN sponsors sp ON b.sponsor_id = sp.id
+          LEFT JOIN bounty_comments c ON b.id = c.bounty_id AND c.deleted_at IS NULL
+          GROUP BY b.id
+          ORDER BY comment_count DESC
+          LIMIT 10`,
+        ).all();
+
+        return new Response(
+          JSON.stringify({
+            most_bookmarked: mostBookmarked || [],
+            most_submissions: mostSubmissions || [],
+            most_comments: mostComments || [],
+          }),
+          { headers: { "Content-Type": "application/json", ...corsHeaders } },
+        );
+      }
+
+      // ==========================================
+      // End Admin Analytics APIs
+      // ==========================================
+
+      // Bounty overview stats endpoint - compute dynamically
+      if (url.pathname === "/api/bounty-overview") {
+        // Get bounty stats
+        const bountyStats = await env.DB.prepare(
+          `SELECT
+            COUNT(*) as list_number,
+            COALESCE(SUM(CASE WHEN reward_currency = 'USD' THEN reward_amount ELSE 0 END), 0) as total_value_usd,
+            COALESCE(SUM(CASE WHEN reward_currency = 'ALPH' THEN reward_amount ELSE 0 END), 0) as total_value_alph
+          FROM bounties`,
+        ).first();
+
+        // Get user count
+        const userCount = await env.DB.prepare(
+          `SELECT COUNT(*) as count FROM user`,
+        ).first();
+
+        // Get sponsor count (non-banned)
+        const sponsorCount = await env.DB.prepare(
+          `SELECT COUNT(*) as count FROM sponsors WHERE is_banned = 0`,
+        ).first();
+
+        const overview = {
+          id: 1,
+          total_value_usd: bountyStats?.total_value_usd || 0,
+          total_value_alph: bountyStats?.total_value_alph || 0,
+          list_number: bountyStats?.list_number || 0,
+          user_number: userCount?.count || 0,
+          sponsor_number: sponsorCount?.count || 0,
+          updated_at: Math.floor(Date.now() / 1000),
+        };
+
+        return new Response(JSON.stringify({ overview }), {
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
       }
 
       // Recent earners endpoint - users with submissions in past week
