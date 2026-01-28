@@ -217,7 +217,10 @@ const WEB3_INTERESTS = [
   "Other",
 ];
 
+const MAX_SKILLS = 10;
+
 const SKILL_OPTIONS = [
+  // Development
   "Frontend",
   "Backend",
   "Full-stack",
@@ -241,7 +244,16 @@ const SKILL_OPTIONS = [
   "AWS",
   "Docker",
   "Kubernetes",
+  // Design
   "UI/UX Design",
+  "Graphic Design",
+  "Video Editing",
+  "Motion Graphics",
+  // Content
+  "Content Writing",
+  "Social Media",
+  "Copywriting",
+  // Other
   "Product Management",
   "Marketing",
   "Community Management",
@@ -549,7 +561,11 @@ export default function EditProfile() {
 
   const addSkill = (skill: string) => {
     const trimmedSkill = skill.trim();
-    if (trimmedSkill && !formData.skills.includes(trimmedSkill)) {
+    if (
+      trimmedSkill &&
+      !formData.skills.includes(trimmedSkill) &&
+      formData.skills.length < MAX_SKILLS
+    ) {
       setFormData((prev) => ({
         ...prev,
         skills: [...prev.skills, trimmedSkill],
@@ -1313,6 +1329,9 @@ export default function EditProfile() {
               <div>
                 <label className="block text-sm font-semibold text-black dark:text-white mb-3">
                   Skills Needed <span className="text-red-500">*</span>
+                  <span className="ml-2 text-xs font-normal text-light-charcoal dark:text-lightgrey">
+                    ({formData.skills.length}/{MAX_SKILLS})
+                  </span>
                 </label>
                 <p className="text-xs text-light-charcoal dark:text-lightgrey mb-4">
                   We will send notifications about new listings for your
@@ -1320,22 +1339,29 @@ export default function EditProfile() {
                 </p>
 
                 {/* Skill suggestions */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {SKILL_OPTIONS.filter(
-                    (skill) => !formData.skills.includes(skill),
-                  )
-                    .slice(0, 10)
-                    .map((skill) => (
-                      <button
-                        key={skill}
-                        type="button"
-                        onClick={() => addSkill(skill)}
-                        className="px-3 py-1.5 bg-smoked-white dark:bg-light-black text-black dark:text-white border border-border-grey dark:border-dark-charcoal rounded-full text-sm hover:border-orange transition-colors"
-                      >
-                        + {skill}
-                      </button>
-                    ))}
-                </div>
+                {formData.skills.length < MAX_SKILLS && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {SKILL_OPTIONS.filter(
+                      (skill) => !formData.skills.includes(skill),
+                    )
+                      .slice(0, 10)
+                      .map((skill) => (
+                        <button
+                          key={skill}
+                          type="button"
+                          onClick={() => addSkill(skill)}
+                          className="px-3 py-1.5 bg-smoked-white dark:bg-light-black text-black dark:text-white border border-border-grey dark:border-dark-charcoal rounded-full text-sm hover:border-orange transition-colors"
+                        >
+                          + {skill}
+                        </button>
+                      ))}
+                  </div>
+                )}
+                {formData.skills.length >= MAX_SKILLS && (
+                  <p className="text-sm text-orange mb-4">
+                    Maximum {MAX_SKILLS} skills reached
+                  </p>
+                )}
 
                 {/* Selected skills */}
                 {formData.skills.length > 0 && (
@@ -1364,8 +1390,13 @@ export default function EditProfile() {
                   value={newSkillInput}
                   onChange={(e) => setNewSkillInput(e.target.value)}
                   onKeyDown={handleSkillKeyDown}
-                  placeholder="Type a skill and press Enter to add"
-                  className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                  placeholder={
+                    formData.skills.length >= MAX_SKILLS
+                      ? `Maximum ${MAX_SKILLS} skills reached`
+                      : "Type a skill and press Enter to add"
+                  }
+                  disabled={formData.skills.length >= MAX_SKILLS}
+                  className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
             </section>

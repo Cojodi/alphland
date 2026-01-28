@@ -8,8 +8,12 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
+
+const SUBMISSIONS_PER_PAGE = 10;
 
 interface SubmissionsSectionProps {
   userId: string;
@@ -19,6 +23,7 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
   const [submissions, setSubmissions] = useState<BountySubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchSubmissions = async () => {
@@ -26,7 +31,12 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
         setLoading(true);
         const { submissions: data } =
           await apiClient.getSubmissionsByUser(userId);
-        setSubmissions(data);
+        // Sort by created_at descending (newest first)
+        const sorted = data.sort(
+          (a: BountySubmission, b: BountySubmission) =>
+            Number(b.created_at) - Number(a.created_at),
+        );
+        setSubmissions(sorted);
       } catch (err) {
         console.error("Failed to fetch submissions:", err);
         setError("Failed to load submissions");
@@ -37,6 +47,14 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
 
     fetchSubmissions();
   }, [userId]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(submissions.length / SUBMISSIONS_PER_PAGE);
+  const startIndex = (currentPage - 1) * SUBMISSIONS_PER_PAGE;
+  const paginatedSubmissions = submissions.slice(
+    startIndex,
+    startIndex + SUBMISSIONS_PER_PAGE,
+  );
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -153,80 +171,107 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
-          {submissions.map((submission) => (
-            <div
-              key={submission.id}
-              className="border border-border-grey dark:border-dark-charcoal rounded-lg p-4 hover:border-orange transition-colors"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-black dark:text-white mb-2">
-                    {extractTitle(submission.description)}
-                  </h3>
+        <>
+          <div className="space-y-4">
+            {paginatedSubmissions.map((submission) => (
+              <div
+                key={submission.id}
+                className="border border-border-grey dark:border-dark-charcoal rounded-lg p-4 hover:border-orange transition-colors"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-black dark:text-white mb-2">
+                      {extractTitle(submission.description)}
+                    </h3>
 
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-light-charcoal dark:text-lightgrey mb-3">
-                    <span>Bounty: {submission.bounty_id}</span>
-                    <span>•</span>
-                    <span>{formatDate(submission.created_at)}</span>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(
-                        submission.status,
-                      )}`}
-                    >
-                      {getStatusIcon(submission.status)}
-                      {getStatusText(submission.status)}
+                    <div className="flex flex-wrap items-center gap-3 text-sm text-light-charcoal dark:text-lightgrey mb-3">
+                      <span>Bounty: {submission.bounty_id}</span>
+                      <span>•</span>
+                      <span>{formatDate(submission.created_at)}</span>
                     </div>
 
-                    {submission.submission_url && (
-                      <a
-                        href={submission.submission_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-sm text-orange hover:text-orange/80 transition-colors"
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(
+                          submission.status,
+                        )}`}
                       >
-                        View Work
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
+                        {getStatusIcon(submission.status)}
+                        {getStatusText(submission.status)}
+                      </div>
+
+                      {submission.submission_url && (
+                        <a
+                          href={submission.submission_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-sm text-orange hover:text-orange/80 transition-colors"
+                        >
+                          View Work
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      )}
+                    </div>
+
+                    {submission.feedback && (
+                      <div className="mt-3 p-3 bg-smoked-white dark:bg-light-black rounded-lg">
+                        <p className="text-xs font-semibold text-black dark:text-white mb-1">
+                          Reviewer Notes:
+                        </p>
+                        <p className="text-sm text-light-charcoal dark:text-lightgrey">
+                          {submission.feedback}
+                        </p>
+                      </div>
+                    )}
+
+                    {submission.transaction_hash && (
+                      <div className="mt-3 p-3 bg-accessible-green/5 border border-accessible-green/20 rounded-lg">
+                        <p className="text-xs font-semibold text-accessible-green mb-1">
+                          Payment Transaction:
+                        </p>
+                        <a
+                          href={`https://explorer.alephium.org/transactions/${submission.transaction_hash}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-accessible-green hover:text-accessible-green/80 transition-colors font-mono break-all flex items-center gap-1"
+                        >
+                          {submission.transaction_hash.slice(0, 16)}...
+                          {submission.transaction_hash.slice(-16)}
+                          <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                        </a>
+                      </div>
                     )}
                   </div>
-
-                  {submission.feedback && (
-                    <div className="mt-3 p-3 bg-smoked-white dark:bg-light-black rounded-lg">
-                      <p className="text-xs font-semibold text-black dark:text-white mb-1">
-                        Reviewer Notes:
-                      </p>
-                      <p className="text-sm text-light-charcoal dark:text-lightgrey">
-                        {submission.feedback}
-                      </p>
-                    </div>
-                  )}
-
-                  {submission.transaction_hash && (
-                    <div className="mt-3 p-3 bg-accessible-green/5 border border-accessible-green/20 rounded-lg">
-                      <p className="text-xs font-semibold text-accessible-green mb-1">
-                        Payment Transaction:
-                      </p>
-                      <a
-                        href={`https://explorer.alephium.org/transactions/${submission.transaction_hash}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-accessible-green hover:text-accessible-green/80 transition-colors font-mono break-all flex items-center gap-1"
-                      >
-                        {submission.transaction_hash.slice(0, 16)}...
-                        {submission.transaction_hash.slice(-16)}
-                        <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                      </a>
-                    </div>
-                  )}
                 </div>
               </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-6 pt-4 border-t border-border-grey dark:border-dark-charcoal">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="p-2 rounded-lg border border-border-grey dark:border-dark-charcoal hover:border-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <span className="text-sm text-light-charcoal dark:text-lightgrey px-4">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-lg border border-border-grey dark:border-dark-charcoal hover:border-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </section>
   );

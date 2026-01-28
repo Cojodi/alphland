@@ -21,6 +21,8 @@ interface ProofOfWorkSectionProps {
   onUpdate?: () => void;
 }
 
+const MAX_PROOF_OF_WORK = 5;
+
 const SKILL_OPTIONS = [
   "Frontend",
   "Backend",
@@ -185,7 +187,7 @@ export function ProofOfWorkSection({
         <h2 className="text-xl font-semibold text-black dark:text-white">
           Proof of Work
         </h2>
-        {isOwnProfile && (
+        {isOwnProfile && works.length < MAX_PROOF_OF_WORK && (
           <button
             onClick={openAddModal}
             className="flex items-center gap-2 px-4 py-2 bg-orange text-white rounded-lg font-medium hover:bg-orange/90 transition-colors"
@@ -193,6 +195,11 @@ export function ProofOfWorkSection({
             <Plus size={18} />
             Add
           </button>
+        )}
+        {isOwnProfile && works.length >= MAX_PROOF_OF_WORK && (
+          <span className="text-sm text-light-charcoal dark:text-lightgrey">
+            Max {MAX_PROOF_OF_WORK} items
+          </span>
         )}
       </div>
 

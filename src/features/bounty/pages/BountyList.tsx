@@ -4,11 +4,20 @@ import { BountyCard } from "../components/BountyCard";
 import Layout from "@/components/Layout";
 import { useSession } from "@/lib/auth-client";
 import { apiClient, Bounty } from "@/lib/api-client";
-import { Rocket, CheckCircle, X, Search } from "lucide-react";
+import {
+  Rocket,
+  CheckCircle,
+  X,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+
+const BOUNTIES_PER_PAGE = 20;
 
 export default function BountyList() {
   const router = useRouter();
@@ -21,6 +30,7 @@ export default function BountyList() {
   const [checkingSponsor, setCheckingSponsor] = useState(true);
   const [bounties, setBounties] = useState<Bounty[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
   const [overview, setOverview] = useState({
     total_value_usd: 0,
     total_value_alph: 0,
@@ -171,6 +181,19 @@ export default function BountyList() {
     // Match the bounty category with the active category
     return bounty.category?.toLowerCase() === activeCategory.toLowerCase();
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredBounties.length / BOUNTIES_PER_PAGE);
+  const startIndex = (currentPage - 1) * BOUNTIES_PER_PAGE;
+  const paginatedBounties = filteredBounties.slice(
+    startIndex,
+    startIndex + BOUNTIES_PER_PAGE,
+  );
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategory, activeStatus, searchQuery]);
 
   return (
     <Layout
@@ -336,57 +359,88 @@ export default function BountyList() {
                       </p>
                     </div>
                   ) : (
-                    filteredBounties.map((bounty) => {
-                      const daysRemaining = bounty.end_date
-                        ? Math.ceil(
-                            (new Date(bounty.end_date).getTime() - Date.now()) /
-                              (1000 * 60 * 60 * 24),
-                          )
-                        : null;
+                    <>
+                      {paginatedBounties.map((bounty) => {
+                        const daysRemaining = bounty.end_date
+                          ? Math.ceil(
+                              (new Date(bounty.end_date).getTime() -
+                                Date.now()) /
+                                (1000 * 60 * 60 * 24),
+                            )
+                          : null;
 
-                      // Determine status tag based on bounty status and date
-                      const getStatusTag = () => {
-                        if (bounty.status === "completed") {
-                          return "Closed";
-                        }
-                        if (bounty.status === "cancelled") {
-                          return "Closed";
-                        }
-                        if (bounty.status === "closed") {
-                          return "Closed";
-                        }
-                        // For open bounties, check deadline
-                        if (daysRemaining !== null && daysRemaining > 0) {
-                          return `Due in ${daysRemaining}d`;
-                        }
-                        if (daysRemaining === 0) {
-                          return "Due today";
-                        }
-                        // Deadline has passed but bounty is still open
-                        if (daysRemaining !== null && daysRemaining < 0) {
-                          return "Ended";
-                        }
-                        return "Active";
-                      };
+                        // Determine status tag based on bounty status and date
+                        const getStatusTag = () => {
+                          if (bounty.status === "completed") {
+                            return "Closed";
+                          }
+                          if (bounty.status === "cancelled") {
+                            return "Closed";
+                          }
+                          if (bounty.status === "closed") {
+                            return "Closed";
+                          }
+                          // For open bounties, check deadline
+                          if (daysRemaining !== null && daysRemaining > 0) {
+                            return `Due in ${daysRemaining}d`;
+                          }
+                          if (daysRemaining === 0) {
+                            return "Due today";
+                          }
+                          // Deadline has passed but bounty is still open
+                          if (daysRemaining !== null && daysRemaining < 0) {
+                            return "Ended";
+                          }
+                          return "Active";
+                        };
 
-                      return (
-                        <BountyCard
-                          key={bounty.id}
-                          id={bounty.id}
-                          logo={bounty.sponsor_logo_url || "💼"}
-                          title={bounty.title}
-                          company={bounty.sponsor_name || "Sponsor"}
-                          reward={`${bounty.reward_amount?.toLocaleString() || "0"} ${
-                            bounty.reward_currency || "ALPH"
-                          }`}
-                          tags={[
-                            bounty.difficulty || "beginner",
-                            getStatusTag(),
-                            bounty.category,
-                          ]}
-                        />
-                      );
-                    })
+                        return (
+                          <BountyCard
+                            key={bounty.id}
+                            id={bounty.id}
+                            logo={bounty.sponsor_logo_url || "💼"}
+                            title={bounty.title}
+                            company={bounty.sponsor_name || "Sponsor"}
+                            reward={`${bounty.reward_amount?.toLocaleString() || "0"} ${
+                              bounty.reward_currency || "ALPH"
+                            }`}
+                            tags={[
+                              bounty.difficulty || "beginner",
+                              getStatusTag(),
+                              bounty.category,
+                            ]}
+                          />
+                        );
+                      })}
+
+                      {/* Pagination */}
+                      {totalPages > 1 && (
+                        <div className="flex items-center justify-center gap-2 mt-8 pt-6 border-t border-border-grey dark:border-dark-charcoal">
+                          <button
+                            onClick={() =>
+                              setCurrentPage((p) => Math.max(1, p - 1))
+                            }
+                            disabled={currentPage === 1}
+                            className="p-2 rounded-lg border border-border-grey dark:border-dark-charcoal hover:border-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          >
+                            <ChevronLeft className="w-5 h-5" />
+                          </button>
+                          <span className="text-sm text-light-charcoal dark:text-lightgrey px-4">
+                            Page {currentPage} of {totalPages} (
+                            {filteredBounties.length} bounties)
+                          </span>
+                          <button
+                            onClick={() =>
+                              setCurrentPage((p) => Math.min(totalPages, p + 1))
+                            }
+                            disabled={currentPage === totalPages}
+                            className="p-2 rounded-lg border border-border-grey dark:border-dark-charcoal hover:border-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          >
+                            <ChevronRight className="w-5 h-5" />
+                          </button>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>

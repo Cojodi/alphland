@@ -1,10 +1,18 @@
 "use client";
 
 import { apiClient } from "@/lib/api-client";
-import { Bookmark, Calendar, DollarSign } from "lucide-react";
+import {
+  Bookmark,
+  Calendar,
+  DollarSign,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+
+const BOOKMARKS_PER_PAGE = 10;
 
 interface BookmarkItem {
   id: string;
@@ -26,12 +34,17 @@ interface BookmarksSectionProps {
 export function BookmarksSection({ userId }: BookmarksSectionProps) {
   const [bookmarks, setBookmarks] = useState<BookmarkItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchBookmarks = async () => {
       try {
         const { bookmarks: data } = await apiClient.getBookmarks(userId);
-        setBookmarks(data);
+        // Sort by created_at descending (newest first)
+        const sorted = data.sort(
+          (a: BookmarkItem, b: BookmarkItem) => b.created_at - a.created_at,
+        );
+        setBookmarks(sorted);
       } catch (error) {
         console.error("Error fetching bookmarks:", error);
       } finally {
@@ -40,6 +53,14 @@ export function BookmarksSection({ userId }: BookmarksSectionProps) {
     };
     fetchBookmarks();
   }, [userId]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(bookmarks.length / BOOKMARKS_PER_PAGE);
+  const startIndex = (currentPage - 1) * BOOKMARKS_PER_PAGE;
+  const paginatedBookmarks = bookmarks.slice(
+    startIndex,
+    startIndex + BOOKMARKS_PER_PAGE,
+  );
 
   if (loading) {
     return (
@@ -115,7 +136,7 @@ export function BookmarksSection({ userId }: BookmarksSectionProps) {
       </div>
 
       <div className="space-y-4">
-        {bookmarks.map((bookmark) => (
+        {paginatedBookmarks.map((bookmark) => (
           <Link
             key={bookmark.id}
             href={`/bounty/${bookmark.bounty_id}`}
@@ -177,6 +198,29 @@ export function BookmarksSection({ userId }: BookmarksSectionProps) {
           </Link>
         ))}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-6 pt-4 border-t border-border-grey dark:border-dark-charcoal">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="p-2 rounded-lg border border-border-grey dark:border-dark-charcoal hover:border-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <span className="text-sm text-light-charcoal dark:text-lightgrey px-4">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="p-2 rounded-lg border border-border-grey dark:border-dark-charcoal hover:border-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      )}
     </section>
   );
 }
