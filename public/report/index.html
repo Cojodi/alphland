@@ -16,20 +16,47 @@
     </style>
   </head>
   <body>
+    <script>
+      // Prevent auto-init so we can set app_id dynamically
+      window.CMS_MANUAL_INIT = true;
+    </script>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 
     <script>
+      // Dynamic OAuth App ID based on domain
+      const appIds = {
+        'www.alph.land': 'Ov23liwd5omDACDE8wyU',
+        'alph.land': 'Ov23liwd5omDACDE8wyU',
+      };
+      const defaultAppId = 'Ov23liNGjmU69p53f6KO'; // Testing/preview
+      const appId = appIds[window.location.hostname] || defaultAppId;
+
+      // Initialize CMS with dynamic app_id
+      CMS.init({
+        config: {
+          backend: {
+            name: 'github',
+            repo: 'xbabyx/alphland',
+            branch: 'develop',
+            auth_type: 'pkce',
+            app_id: appId,
+            open_authoring: true,
+          },
+          publish_mode: 'editorial_workflow',
+          media_folder: 'public/dapps',
+          public_folder: '/dapps',
+          load_config_file: true, // Also load config.yml for collections
+        },
+      });
+
       // Auto-confirm local backup recovery dialog
       (function() {
-        // Override window.confirm to auto-accept backup recovery
         const originalConfirm = window.confirm;
         window.confirm = function(message) {
-          // Auto-accept if this is the backup recovery prompt
           if (message && (message.includes('local backup') || message.includes('recovered'))) {
             console.log('Auto-accepting local backup recovery');
             return true;
           }
-          // For other confirms, use original behavior
           return originalConfirm.call(window, message);
         };
       })();
@@ -42,20 +69,17 @@
         const urlParams = new URLSearchParams(window.location.search);
         const dappName = urlParams.get('dapp');
 
-        // Redirect on load if not on new entry page
         function checkAndRedirect() {
           if (window.location.hash !== targetPath && !window.location.hash.startsWith('#/collections/reports/new')) {
             window.location.hash = targetPath;
           }
         }
 
-        // Initial redirect
         setTimeout(checkAndRedirect, 100);
 
         // Pre-fill dappName field if available
         if (dappName) {
           setTimeout(function() {
-            // Wait for CMS to load, then pre-fill the dapp field
             const checkInterval = setInterval(function() {
               const dappInput = document.querySelector('input[type="text"]');
               if (dappInput) {
@@ -67,7 +91,6 @@
           }, 1000);
         }
 
-        // Watch for hash changes and redirect back
         window.addEventListener('hashchange', function() {
           const hash = window.location.hash;
           if (!hash.startsWith('#/collections/reports/new') &&
@@ -81,18 +104,14 @@
         setTimeout(function() {
           const style = document.createElement('style');
           style.textContent = `
-            /* Hide sidebar collection list */
             [class*="SidebarNavList"],
             [class*="CollectionLabel"],
             nav[class*="Sidebar"] a:not([href*="new"]),
-            /* Hide back button that goes to list */
             a[href="#/collections/reports"],
             button[class*="BackButton"],
             [class*="BackArrow"],
-            /* Hide any entry cards/lists */
             [class*="EntryCard"],
             [class*="EntryListing"],
-            /* Hide collection controls */
             [class*="CollectionControls"] {
               display: none !important;
             }
