@@ -9,7 +9,7 @@
       /* Hide navigation elements that allow browsing other entries */
       [href="#/collections/dapps"],
       [data-testid="list-card"],
-      .css-1hwfws3, /* Collection list */
+      .css-1hwfws3,
       a[href*="#/collections/dapps/"]:not([href*="/new"]) {
         display: none !important;
       }
@@ -17,7 +17,6 @@
   </head>
   <body>
     <script>
-      // Prevent auto-init so we can set app_id dynamically
       window.CMS_MANUAL_INIT = true;
     </script>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
@@ -28,12 +27,13 @@
         'www.alph.land': 'Ov23liwd5omDACDE8wyU',
         'alph.land': 'Ov23liwd5omDACDE8wyU',
       };
-      const defaultAppId = 'Ov23liNGjmU69p53f6KO'; // Testing/preview
+      const defaultAppId = 'Ov23liNGjmU69p53f6KO';
       const appId = appIds[window.location.hostname] || defaultAppId;
 
-      // Initialize CMS with dynamic app_id
+      // Full CMS configuration (no config.yml loading)
       CMS.init({
         config: {
+          load_config_file: false,
           backend: {
             name: 'github',
             repo: 'xbabyx/alphland',
@@ -45,59 +45,93 @@
           publish_mode: 'editorial_workflow',
           media_folder: 'public/dapps',
           public_folder: '/dapps',
-          load_config_file: true, // Also load config.yml for collections
+          collections: [
+            {
+              name: 'dapps',
+              label: 'dApps',
+              label_singular: 'dApp',
+              folder: 'data',
+              create: true,
+              slug: '{{slug}}',
+              extension: 'json',
+              format: 'json',
+              editor: { preview: false },
+              fields: [
+                { label: 'Name', name: 'name', widget: 'string', required: true },
+                { label: 'Description', name: 'description', widget: 'text', required: true, hint: 'Full description of your dApp (2-3 sentences)' },
+                { label: 'Short Description', name: 'short_description', widget: 'string', required: true, hint: 'Brief tagline (max 60 characters)' },
+                { label: 'Tags', name: 'tags', widget: 'select', multiple: true, required: true, options: ['DeFi', 'NFT', 'Gaming', 'Infrastructure', 'Wallets', 'Bridges', 'Onramps', 'DEX', 'Lending', 'Staking', 'Analytics', 'Tools', 'DAO', 'Social', 'Marketplace'] },
+                {
+                  label: 'Links', name: 'links', widget: 'object', fields: [
+                    { label: 'Website', name: 'website', widget: 'string', required: true },
+                    { label: 'Careers Page', name: 'careers', widget: 'string', required: false, hint: 'URL or mailto:email' },
+                    { label: 'Twitter', name: 'twitter', widget: 'string', required: false },
+                    { label: 'Telegram', name: 'telegram', widget: 'string', required: false },
+                    { label: 'Discord', name: 'discord', widget: 'string', required: false },
+                    { label: 'Documentation', name: 'docs', widget: 'string', required: false },
+                    { label: 'GitHub', name: 'github', widget: 'string', required: false },
+                    { label: 'YouTube', name: 'youtube', widget: 'string', required: false },
+                    { label: 'Medium', name: 'medium', widget: 'string', required: false },
+                    { label: 'Mirror', name: 'mirror', widget: 'string', required: false },
+                    { label: 'LinkedIn', name: 'linkedin', widget: 'string', required: false },
+                  ]
+                },
+                { label: 'Twitter Username', name: 'twitterName', widget: 'string', required: false, hint: 'Without @ symbol' },
+                {
+                  label: 'Team Information', name: 'teamInfo', widget: 'object', fields: [
+                    { label: 'Contact Email', name: 'contactEmail', widget: 'string', required: false },
+                    { label: 'Founded Date', name: 'founded', widget: 'datetime', required: false, format: 'YYYY-MM-DDTHH:mm:ss.SSSZ' },
+                    { label: 'Anonymous Team', name: 'anonymous', widget: 'boolean', default: false },
+                  ]
+                },
+                {
+                  label: 'Media', name: 'media', widget: 'object', collapsed: false, fields: [
+                    { label: 'Logo', name: 'logoUrl', widget: 'image', required: true, hint: 'Square logo (recommended: 512x512px, WebP format)' },
+                    { label: 'Banner', name: 'bannerUrl', widget: 'image', required: true, hint: 'Wide banner (recommended: 1200x400px, WebP format)' },
+                    { label: 'Preview Image', name: 'previewUrl', widget: 'image', required: true, hint: 'Screenshot or preview (recommended: 1200x800px, WebP format)' },
+                    { label: 'Video URL', name: 'videoUrl', widget: 'string', required: false, hint: 'YouTube or Vimeo URL' },
+                    { label: 'Gallery', name: 'gallery', widget: 'list', required: false, field: { label: 'Image', name: 'image', widget: 'image' } },
+                  ]
+                },
+                { label: 'Smart Contracts', name: 'contracts', widget: 'list', required: false, default: [], collapsed: true, fields: [{ label: 'Contract Address', name: 'address', widget: 'string' }, { label: 'Contract Name', name: 'name', widget: 'string' }] },
+                { label: 'Audits', name: 'audits', widget: 'list', required: false, default: [], collapsed: true, fields: [{ label: 'Auditor', name: 'auditor', widget: 'string' }, { label: 'Report URL', name: 'url', widget: 'string' }, { label: 'Date', name: 'date', widget: 'datetime' }] },
+                { label: 'Tokens', name: 'tokens', widget: 'list', required: false, default: [], collapsed: true, fields: [{ label: 'Token Name', name: 'name', widget: 'string' }, { label: 'Token Symbol', name: 'symbol', widget: 'string' }, { label: 'Token ID', name: 'id', widget: 'string' }] },
+                { label: 'NFT Collection', name: 'nft', widget: 'object', required: false, collapsed: true, fields: [{ label: 'Collection Name', name: 'name', widget: 'string', required: false }, { label: 'Collection URL', name: 'url', widget: 'string', required: false }] },
+              ],
+            },
+          ],
         },
       });
 
-      // Auto-confirm local backup recovery dialog
+      // Auto-confirm local backup recovery
       (function() {
         const originalConfirm = window.confirm;
         window.confirm = function(message) {
           if (message && (message.includes('local backup') || message.includes('recovered'))) {
-            console.log('Auto-accepting local backup recovery');
             return true;
           }
           return originalConfirm.call(window, message);
         };
       })();
 
-      // Redirect to new entry page and prevent navigation elsewhere
+      // Redirect to new entry page
       (function() {
         const targetPath = '#/collections/dapps/new';
-
         function checkAndRedirect() {
-          if (window.location.hash !== targetPath && !window.location.hash.startsWith('#/collections/dapps/new')) {
+          if (!window.location.hash.startsWith('#/collections/dapps/new')) {
             window.location.hash = targetPath;
           }
         }
-
         setTimeout(checkAndRedirect, 100);
-
         window.addEventListener('hashchange', function() {
           const hash = window.location.hash;
-          if (!hash.startsWith('#/collections/dapps/new') &&
-              !hash.startsWith('#/workflow') &&
-              !hash.startsWith('#/editorial')) {
+          if (!hash.startsWith('#/collections/dapps/new') && !hash.startsWith('#/workflow') && !hash.startsWith('#/editorial')) {
             window.location.hash = targetPath;
           }
         });
-
-        // Hide sidebar/back navigation after CMS loads
         setTimeout(function() {
           const style = document.createElement('style');
-          style.textContent = `
-            [class*="SidebarNavList"],
-            [class*="CollectionLabel"],
-            nav[class*="Sidebar"] a:not([href*="new"]),
-            a[href="#/collections/dapps"],
-            button[class*="BackButton"],
-            [class*="BackArrow"],
-            [class*="EntryCard"],
-            [class*="EntryListing"],
-            [class*="CollectionControls"] {
-              display: none !important;
-            }
-          `;
+          style.textContent = '[class*="SidebarNavList"],[class*="CollectionLabel"],nav[class*="Sidebar"] a:not([href*="new"]),a[href="#/collections/dapps"],button[class*="BackButton"],[class*="BackArrow"],[class*="EntryCard"],[class*="EntryListing"],[class*="CollectionControls"]{display:none!important}';
           document.head.appendChild(style);
         }, 500);
       })();

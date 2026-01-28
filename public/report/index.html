@@ -6,7 +6,6 @@
     <meta name="robots" content="noindex" />
     <title>Report an Issue - Alphland</title>
     <style>
-      /* Hide navigation elements that allow browsing other entries */
       [href="#/collections/reports"],
       [data-testid="list-card"],
       .css-1hwfws3,
@@ -17,23 +16,21 @@
   </head>
   <body>
     <script>
-      // Prevent auto-init so we can set app_id dynamically
       window.CMS_MANUAL_INIT = true;
     </script>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 
     <script>
-      // Dynamic OAuth App ID based on domain
       const appIds = {
         'www.alph.land': 'Ov23liwd5omDACDE8wyU',
         'alph.land': 'Ov23liwd5omDACDE8wyU',
       };
-      const defaultAppId = 'Ov23liNGjmU69p53f6KO'; // Testing/preview
+      const defaultAppId = 'Ov23liNGjmU69p53f6KO';
       const appId = appIds[window.location.hostname] || defaultAppId;
 
-      // Initialize CMS with dynamic app_id
       CMS.init({
         config: {
+          load_config_file: false,
           backend: {
             name: 'github',
             repo: 'xbabyx/alphland',
@@ -45,39 +42,54 @@
           publish_mode: 'editorial_workflow',
           media_folder: 'public/dapps',
           public_folder: '/dapps',
-          load_config_file: true, // Also load config.yml for collections
+          collections: [
+            {
+              name: 'reports',
+              label: 'Reports',
+              label_singular: 'Report',
+              folder: 'reports',
+              create: true,
+              slug: '{{year}}-{{month}}-{{day}}-{{slug}}',
+              extension: 'md',
+              format: 'frontmatter',
+              editor: { preview: false },
+              fields: [
+                { label: 'dApp Name', name: 'dapp', widget: 'string', required: true, hint: 'Name of the dApp you are reporting about' },
+                { label: 'Issue Type', name: 'issueType', widget: 'select', required: true, options: ['Security Vulnerability', 'Bug Report', 'Incorrect Information', 'Scam/Fraud', 'Broken Link', 'Other'] },
+                { label: 'Title', name: 'title', widget: 'string', required: true, hint: 'Brief summary of the issue' },
+                { label: 'Description', name: 'body', widget: 'text', required: true, hint: 'Detailed description of the issue' },
+                { label: 'Reporter Email', name: 'email', widget: 'string', required: false, hint: 'Optional - for follow-up questions' },
+                { label: 'Submission Date', name: 'date', widget: 'datetime', format: 'YYYY-MM-DDTHH:mm:ss' },
+              ],
+            },
+          ],
         },
       });
 
-      // Auto-confirm local backup recovery dialog
+      // Auto-confirm local backup recovery
       (function() {
         const originalConfirm = window.confirm;
         window.confirm = function(message) {
           if (message && (message.includes('local backup') || message.includes('recovered'))) {
-            console.log('Auto-accepting local backup recovery');
             return true;
           }
           return originalConfirm.call(window, message);
         };
       })();
 
-      // Redirect to new entry page and prevent navigation elsewhere
+      // Redirect to new report page and pre-fill dapp name
       (function() {
         const targetPath = '#/collections/reports/new';
-
-        // Get dappName from URL query parameter
         const urlParams = new URLSearchParams(window.location.search);
         const dappName = urlParams.get('dapp');
 
         function checkAndRedirect() {
-          if (window.location.hash !== targetPath && !window.location.hash.startsWith('#/collections/reports/new')) {
+          if (!window.location.hash.startsWith('#/collections/reports/new')) {
             window.location.hash = targetPath;
           }
         }
-
         setTimeout(checkAndRedirect, 100);
 
-        // Pre-fill dappName field if available
         if (dappName) {
           setTimeout(function() {
             const checkInterval = setInterval(function() {
@@ -93,29 +105,14 @@
 
         window.addEventListener('hashchange', function() {
           const hash = window.location.hash;
-          if (!hash.startsWith('#/collections/reports/new') &&
-              !hash.startsWith('#/workflow') &&
-              !hash.startsWith('#/editorial')) {
+          if (!hash.startsWith('#/collections/reports/new') && !hash.startsWith('#/workflow') && !hash.startsWith('#/editorial')) {
             window.location.hash = targetPath;
           }
         });
 
-        // Hide sidebar/back navigation after CMS loads
         setTimeout(function() {
           const style = document.createElement('style');
-          style.textContent = `
-            [class*="SidebarNavList"],
-            [class*="CollectionLabel"],
-            nav[class*="Sidebar"] a:not([href*="new"]),
-            a[href="#/collections/reports"],
-            button[class*="BackButton"],
-            [class*="BackArrow"],
-            [class*="EntryCard"],
-            [class*="EntryListing"],
-            [class*="CollectionControls"] {
-              display: none !important;
-            }
-          `;
+          style.textContent = '[class*="SidebarNavList"],[class*="CollectionLabel"],nav[class*="Sidebar"] a:not([href*="new"]),a[href="#/collections/reports"],button[class*="BackButton"],[class*="BackArrow"],[class*="EntryCard"],[class*="EntryListing"],[class*="CollectionControls"]{display:none!important}';
           document.head.appendChild(style);
         }, 500);
       })();

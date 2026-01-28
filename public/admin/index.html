@@ -4,26 +4,24 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
-    <title>Submit Your dApp - Alphland CMS</title>
+    <title>Alphland CMS</title>
   </head>
   <body>
     <script>
-      // Prevent auto-init so we can set app_id dynamically
       window.CMS_MANUAL_INIT = true;
     </script>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
     <script>
-      // Dynamic OAuth App ID based on domain
       const appIds = {
         'www.alph.land': 'Ov23liwd5omDACDE8wyU',
         'alph.land': 'Ov23liwd5omDACDE8wyU',
       };
-      const defaultAppId = 'Ov23liNGjmU69p53f6KO'; // Testing/preview
+      const defaultAppId = 'Ov23liNGjmU69p53f6KO';
       const appId = appIds[window.location.hostname] || defaultAppId;
 
-      // Initialize CMS with dynamic app_id
       CMS.init({
         config: {
+          load_config_file: false,
           backend: {
             name: 'github',
             repo: 'xbabyx/alphland',
@@ -35,7 +33,80 @@
           publish_mode: 'editorial_workflow',
           media_folder: 'public/dapps',
           public_folder: '/dapps',
-          load_config_file: true, // Also load config.yml for collections
+          collections: [
+            {
+              name: 'dapps',
+              label: 'dApps',
+              label_singular: 'dApp',
+              folder: 'data',
+              create: true,
+              slug: '{{slug}}',
+              extension: 'json',
+              format: 'json',
+              editor: { preview: false },
+              fields: [
+                { label: 'Name', name: 'name', widget: 'string', required: true },
+                { label: 'Description', name: 'description', widget: 'text', required: true, hint: 'Full description of your dApp (2-3 sentences)' },
+                { label: 'Short Description', name: 'short_description', widget: 'string', required: true, hint: 'Brief tagline (max 60 characters)' },
+                { label: 'Tags', name: 'tags', widget: 'select', multiple: true, required: true, options: ['DeFi', 'NFT', 'Gaming', 'Infrastructure', 'Wallets', 'Bridges', 'Onramps', 'DEX', 'Lending', 'Staking', 'Analytics', 'Tools', 'DAO', 'Social', 'Marketplace'] },
+                {
+                  label: 'Links', name: 'links', widget: 'object', fields: [
+                    { label: 'Website', name: 'website', widget: 'string', required: true },
+                    { label: 'Careers Page', name: 'careers', widget: 'string', required: false },
+                    { label: 'Twitter', name: 'twitter', widget: 'string', required: false },
+                    { label: 'Telegram', name: 'telegram', widget: 'string', required: false },
+                    { label: 'Discord', name: 'discord', widget: 'string', required: false },
+                    { label: 'Documentation', name: 'docs', widget: 'string', required: false },
+                    { label: 'GitHub', name: 'github', widget: 'string', required: false },
+                    { label: 'YouTube', name: 'youtube', widget: 'string', required: false },
+                    { label: 'Medium', name: 'medium', widget: 'string', required: false },
+                    { label: 'Mirror', name: 'mirror', widget: 'string', required: false },
+                    { label: 'LinkedIn', name: 'linkedin', widget: 'string', required: false },
+                  ]
+                },
+                { label: 'Twitter Username', name: 'twitterName', widget: 'string', required: false },
+                {
+                  label: 'Team Information', name: 'teamInfo', widget: 'object', fields: [
+                    { label: 'Contact Email', name: 'contactEmail', widget: 'string', required: false },
+                    { label: 'Founded Date', name: 'founded', widget: 'datetime', required: false, format: 'YYYY-MM-DDTHH:mm:ss.SSSZ' },
+                    { label: 'Anonymous Team', name: 'anonymous', widget: 'boolean', default: false },
+                  ]
+                },
+                {
+                  label: 'Media', name: 'media', widget: 'object', collapsed: false, fields: [
+                    { label: 'Logo', name: 'logoUrl', widget: 'image', required: true },
+                    { label: 'Banner', name: 'bannerUrl', widget: 'image', required: true },
+                    { label: 'Preview Image', name: 'previewUrl', widget: 'image', required: true },
+                    { label: 'Video URL', name: 'videoUrl', widget: 'string', required: false },
+                    { label: 'Gallery', name: 'gallery', widget: 'list', required: false, field: { label: 'Image', name: 'image', widget: 'image' } },
+                  ]
+                },
+                { label: 'Smart Contracts', name: 'contracts', widget: 'list', required: false, default: [], collapsed: true, fields: [{ label: 'Contract Address', name: 'address', widget: 'string' }, { label: 'Contract Name', name: 'name', widget: 'string' }] },
+                { label: 'Audits', name: 'audits', widget: 'list', required: false, default: [], collapsed: true, fields: [{ label: 'Auditor', name: 'auditor', widget: 'string' }, { label: 'Report URL', name: 'url', widget: 'string' }, { label: 'Date', name: 'date', widget: 'datetime' }] },
+                { label: 'Tokens', name: 'tokens', widget: 'list', required: false, default: [], collapsed: true, fields: [{ label: 'Token Name', name: 'name', widget: 'string' }, { label: 'Token Symbol', name: 'symbol', widget: 'string' }, { label: 'Token ID', name: 'id', widget: 'string' }] },
+                { label: 'NFT Collection', name: 'nft', widget: 'object', required: false, collapsed: true, fields: [{ label: 'Collection Name', name: 'name', widget: 'string', required: false }, { label: 'Collection URL', name: 'url', widget: 'string', required: false }] },
+              ],
+            },
+            {
+              name: 'reports',
+              label: 'Reports',
+              label_singular: 'Report',
+              folder: 'reports',
+              create: true,
+              slug: '{{year}}-{{month}}-{{day}}-{{slug}}',
+              extension: 'md',
+              format: 'frontmatter',
+              editor: { preview: false },
+              fields: [
+                { label: 'dApp Name', name: 'dapp', widget: 'string', required: true },
+                { label: 'Issue Type', name: 'issueType', widget: 'select', required: true, options: ['Security Vulnerability', 'Bug Report', 'Incorrect Information', 'Scam/Fraud', 'Broken Link', 'Other'] },
+                { label: 'Title', name: 'title', widget: 'string', required: true },
+                { label: 'Description', name: 'body', widget: 'text', required: true },
+                { label: 'Reporter Email', name: 'email', widget: 'string', required: false },
+                { label: 'Submission Date', name: 'date', widget: 'datetime', format: 'YYYY-MM-DDTHH:mm:ss' },
+              ],
+            },
+          ],
         },
       });
     </script>
