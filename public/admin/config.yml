@@ -1,9 +1,12 @@
 backend:
   name: github
   repo: xbabyx/alphland
-  branch: bounty # The branch to save to
-  # Using GitHub OAuth App for authentication
-  # No base_url needed - uses GitHub's direct OAuth
+  branch: develop # Target branch for PRs
+  # Using GitHub PKCE authentication (no external server needed)
+  auth_type: pkce
+  app_id: Ov23liNGjmU69p53f6KO # GitHub OAuth App Client ID
+  # Allow anyone with GitHub account to submit (via fork)
+  open_authoring: true
 
 # Editorial workflow: creates PRs instead of direct commits
 publish_mode: editorial_workflow

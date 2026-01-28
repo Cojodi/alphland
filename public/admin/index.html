@@ -7,7 +7,37 @@
     <title>Submit Your dApp - Alphland CMS</title>
   </head>
   <body>
-    <!-- Include the script that builds the page and powers Decap CMS -->
+    <script>
+      // Prevent auto-init so we can set app_id dynamically
+      window.CMS_MANUAL_INIT = true;
+    </script>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script>
+      // Dynamic OAuth App ID based on domain
+      const appIds = {
+        'www.alph.land': 'Ov23liwd5omDACDE8wyU',
+        'alph.land': 'Ov23liwd5omDACDE8wyU',
+      };
+      const defaultAppId = 'Ov23liNGjmU69p53f6KO'; // Testing/preview
+      const appId = appIds[window.location.hostname] || defaultAppId;
+
+      // Initialize CMS with dynamic app_id
+      CMS.init({
+        config: {
+          backend: {
+            name: 'github',
+            repo: 'xbabyx/alphland',
+            branch: 'develop',
+            auth_type: 'pkce',
+            app_id: appId,
+            open_authoring: true,
+          },
+          publish_mode: 'editorial_workflow',
+          media_folder: 'public/dapps',
+          public_folder: '/dapps',
+          load_config_file: true, // Also load config.yml for collections
+        },
+      });
+    </script>
   </body>
 </html>
