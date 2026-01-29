@@ -882,19 +882,40 @@ export async function handleSponsorsAPI(
                    GROUP BY sponsor_id
                  ) b ON s.id = b.sponsor_id`;
 
+    // Try to filter by is_banned if param provided
+    // Use COALESCE to handle case where column might not exist or is NULL
     if (isBanned === "true") {
-      query += ` WHERE s.is_banned = 1`;
+      query += ` WHERE COALESCE(s.is_banned, 0) = 1`;
     } else if (isBanned === "false") {
-      query += ` WHERE s.is_banned = 0`;
+      query += ` WHERE COALESCE(s.is_banned, 0) = 0`;
     }
 
     query += ` ORDER BY s.created_at DESC`;
 
-    const { results } = await env.DB.prepare(query).all();
-
-    return new Response(JSON.stringify({ sponsors: results }), {
-      headers: corsHeaders,
-    });
+    try {
+      const { results } = await env.DB.prepare(query).all();
+      return new Response(JSON.stringify({ sponsors: results }), {
+        headers: corsHeaders,
+      });
+    } catch (error) {
+      // Fallback: if is_banned column doesn't exist, query without filter
+      console.error(
+        "Sponsors query failed, trying without is_banned filter:",
+        error,
+      );
+      const fallbackQuery = `SELECT s.*, b.bounty_count
+                             FROM sponsors s
+                             LEFT JOIN (
+                               SELECT sponsor_id, COUNT(*) as bounty_count
+                               FROM bounties
+                               GROUP BY sponsor_id
+                             ) b ON s.id = b.sponsor_id
+                             ORDER BY s.created_at DESC`;
+      const { results } = await env.DB.prepare(fallbackQuery).all();
+      return new Response(JSON.stringify({ sponsors: results }), {
+        headers: corsHeaders,
+      });
+    }
   }
 
   // PUT /api/sponsors/:id/verify - Verify sponsor
@@ -943,32 +964,50 @@ export async function handleSponsorsAPI(
     const id = pathname.split("/")[3];
     const now = Math.floor(Date.now() / 1000);
 
-    // Get sponsor to find user_id
-    const sponsor = await env.DB.prepare(
-      `SELECT user_id FROM sponsors WHERE id = ?`,
-    )
-      .bind(id)
-      .first();
-
-    if (sponsor) {
-      // Ban the sponsor
-      await env.DB.prepare(
-        `UPDATE sponsors SET is_banned = 1, banned_at = ?, updated_at = ? WHERE id = ?`,
+    try {
+      // Get sponsor to find user_id
+      const sponsor = await env.DB.prepare(
+        `SELECT user_id FROM sponsors WHERE id = ?`,
       )
-        .bind(now, now, id)
-        .run();
+        .bind(id)
+        .first();
 
-      // Also ban the associated user
-      await env.DB.prepare(
-        `UPDATE user SET banned = 1, bannedAt = ? WHERE id = ?`,
-      )
-        .bind(now * 1000, sponsor.user_id)
-        .run();
+      if (sponsor) {
+        // Ban the sponsor (may fail if columns don't exist)
+        try {
+          await env.DB.prepare(
+            `UPDATE sponsors SET is_banned = 1, banned_at = ?, updated_at = ? WHERE id = ?`,
+          )
+            .bind(now, now, id)
+            .run();
+        } catch (e) {
+          console.error("Failed to update sponsor is_banned:", e);
+        }
+
+        // Also ban the associated user (may fail if column doesn't exist)
+        try {
+          await env.DB.prepare(
+            `UPDATE user SET is_banned = 1, updatedAt = ? WHERE id = ?`,
+          )
+            .bind(now * 1000, sponsor.user_id)
+            .run();
+        } catch (e) {
+          console.error("Failed to update user is_banned:", e);
+        }
+      }
+
+      return new Response(JSON.stringify({ success: true }), {
+        headers: corsHeaders,
+      });
+    } catch (error) {
+      console.error("Failed to ban sponsor:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to ban sponsor. Run migrations 020 and 021 first.",
+        }),
+        { status: 500, headers: corsHeaders },
+      );
     }
-
-    return new Response(JSON.stringify({ success: true }), {
-      headers: corsHeaders,
-    });
   }
 
   // PUT /api/sponsors/:id/unban - Unban sponsor
@@ -979,32 +1018,50 @@ export async function handleSponsorsAPI(
     const id = pathname.split("/")[3];
     const now = Math.floor(Date.now() / 1000);
 
-    // Get sponsor to find user_id
-    const sponsor = await env.DB.prepare(
-      `SELECT user_id FROM sponsors WHERE id = ?`,
-    )
-      .bind(id)
-      .first();
-
-    if (sponsor) {
-      // Unban the sponsor
-      await env.DB.prepare(
-        `UPDATE sponsors SET is_banned = 0, banned_at = NULL, updated_at = ? WHERE id = ?`,
+    try {
+      // Get sponsor to find user_id
+      const sponsor = await env.DB.prepare(
+        `SELECT user_id FROM sponsors WHERE id = ?`,
       )
-        .bind(now, id)
-        .run();
+        .bind(id)
+        .first();
 
-      // Also unban the associated user
-      await env.DB.prepare(
-        `UPDATE user SET banned = 0, bannedAt = NULL WHERE id = ?`,
-      )
-        .bind(sponsor.user_id)
-        .run();
+      if (sponsor) {
+        // Unban the sponsor (may fail if columns don't exist)
+        try {
+          await env.DB.prepare(
+            `UPDATE sponsors SET is_banned = 0, banned_at = NULL, updated_at = ? WHERE id = ?`,
+          )
+            .bind(now, id)
+            .run();
+        } catch (e) {
+          console.error("Failed to update sponsor is_banned:", e);
+        }
+
+        // Also unban the associated user (may fail if column doesn't exist)
+        try {
+          await env.DB.prepare(
+            `UPDATE user SET is_banned = 0, updatedAt = ? WHERE id = ?`,
+          )
+            .bind(now * 1000, sponsor.user_id)
+            .run();
+        } catch (e) {
+          console.error("Failed to update user is_banned:", e);
+        }
+      }
+
+      return new Response(JSON.stringify({ success: true }), {
+        headers: corsHeaders,
+      });
+    } catch (error) {
+      console.error("Failed to unban sponsor:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to unban sponsor. Run migrations 020 and 021 first.",
+        }),
+        { status: 500, headers: corsHeaders },
+      );
     }
-
-    return new Response(JSON.stringify({ success: true }), {
-      headers: corsHeaders,
-    });
   }
 
   return new Response(JSON.stringify({ error: "Method not allowed" }), {

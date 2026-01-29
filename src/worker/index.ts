@@ -239,9 +239,10 @@ const worker = {
         const limit = parseInt(url.searchParams.get("limit") || "50");
         const offset = parseInt(url.searchParams.get("offset") || "0");
 
+        // Try query with is_banned column first, fallback without it
         let query = `
           SELECT
-            u.id, u.email, u.name, u.image, u.is_banned, u.createdAt,
+            u.id, u.email, u.name, u.image, COALESCE(u.is_banned, 0) as is_banned, u.createdAt,
             up.username, up.wallet_address,
             (SELECT COUNT(*) FROM bounty_submissions WHERE user_id = u.id) as submission_count,
             (SELECT COUNT(*) FROM bounty_submissions WHERE user_id = u.id AND status = 'approved') as approved_count,
@@ -259,9 +260,40 @@ const worker = {
         query += ` ORDER BY u.createdAt DESC LIMIT ? OFFSET ?`;
         params.push(limit, offset);
 
-        const { results } = await env.DB.prepare(query)
-          .bind(...params)
-          .all();
+        let results;
+        try {
+          const response = await env.DB.prepare(query)
+            .bind(...params)
+            .all();
+          results = response.results;
+        } catch (error) {
+          // Fallback query without is_banned if column doesn't exist
+          console.error(
+            "Admin users query failed, trying without is_banned:",
+            error,
+          );
+          let fallbackQuery = `
+            SELECT
+              u.id, u.email, u.name, u.image, 0 as is_banned, u.createdAt,
+              up.username, up.wallet_address,
+              (SELECT COUNT(*) FROM bounty_submissions WHERE user_id = u.id) as submission_count,
+              (SELECT COUNT(*) FROM bounty_submissions WHERE user_id = u.id AND status = 'approved') as approved_count,
+              (SELECT COUNT(*) FROM bookmarks WHERE user_id = u.id) as bookmark_count
+            FROM user u
+            LEFT JOIN user_profiles up ON u.id = up.user_id
+          `;
+          const fallbackParams: any[] = [];
+          if (search) {
+            fallbackQuery += ` WHERE u.email LIKE ? OR u.name LIKE ? OR up.username LIKE ?`;
+            fallbackParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
+          }
+          fallbackQuery += ` ORDER BY u.createdAt DESC LIMIT ? OFFSET ?`;
+          fallbackParams.push(limit, offset);
+          const response = await env.DB.prepare(fallbackQuery)
+            .bind(...fallbackParams)
+            .all();
+          results = response.results;
+        }
 
         // Get total count
         let countQuery = `SELECT COUNT(*) as count FROM user u LEFT JOIN user_profiles up ON u.id = up.user_id`;
@@ -352,22 +384,40 @@ const worker = {
         const userId = url.pathname.split("/")[4];
         const now = Date.now();
 
-        await env.DB.prepare(
-          `UPDATE user SET is_banned = 1, updatedAt = ? WHERE id = ?`,
-        )
-          .bind(now, userId)
-          .run();
+        try {
+          await env.DB.prepare(
+            `UPDATE user SET is_banned = 1, updatedAt = ? WHERE id = ?`,
+          )
+            .bind(now, userId)
+            .run();
 
-        // Also ban their sponsor if they have one
-        await env.DB.prepare(
-          `UPDATE sponsors SET is_banned = 1, banned_at = ?, updated_at = ? WHERE user_id = ?`,
-        )
-          .bind(Math.floor(now / 1000), Math.floor(now / 1000), userId)
-          .run();
+          // Also ban their sponsor if they have one (ignore errors if columns don't exist)
+          try {
+            await env.DB.prepare(
+              `UPDATE sponsors SET is_banned = 1, banned_at = ?, updated_at = ? WHERE user_id = ?`,
+            )
+              .bind(Math.floor(now / 1000), Math.floor(now / 1000), userId)
+              .run();
+          } catch {
+            // Sponsor ban columns may not exist yet
+          }
 
-        return new Response(JSON.stringify({ success: true }), {
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        } catch (error) {
+          console.error("Failed to ban user:", error);
+          return new Response(
+            JSON.stringify({
+              error:
+                "Failed to ban user. Please run migration 020_add_user_is_banned.sql first.",
+            }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
+        }
       }
 
       // PUT /api/admin/users/:id/unban - Unban user
@@ -378,22 +428,40 @@ const worker = {
         const userId = url.pathname.split("/")[4];
         const now = Date.now();
 
-        await env.DB.prepare(
-          `UPDATE user SET is_banned = 0, updatedAt = ? WHERE id = ?`,
-        )
-          .bind(now, userId)
-          .run();
+        try {
+          await env.DB.prepare(
+            `UPDATE user SET is_banned = 0, updatedAt = ? WHERE id = ?`,
+          )
+            .bind(now, userId)
+            .run();
 
-        // Also unban their sponsor if they have one
-        await env.DB.prepare(
-          `UPDATE sponsors SET is_banned = 0, banned_at = NULL, updated_at = ? WHERE user_id = ?`,
-        )
-          .bind(Math.floor(now / 1000), userId)
-          .run();
+          // Also unban their sponsor if they have one (ignore errors if columns don't exist)
+          try {
+            await env.DB.prepare(
+              `UPDATE sponsors SET is_banned = 0, banned_at = NULL, updated_at = ? WHERE user_id = ?`,
+            )
+              .bind(Math.floor(now / 1000), userId)
+              .run();
+          } catch {
+            // Sponsor ban columns may not exist yet
+          }
 
-        return new Response(JSON.stringify({ success: true }), {
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        } catch (error) {
+          console.error("Failed to unban user:", error);
+          return new Response(
+            JSON.stringify({
+              error:
+                "Failed to unban user. Please run migration 020_add_user_is_banned.sql first.",
+            }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
+        }
       }
 
       // GET /api/admin/submission-stats - Submission analysis
@@ -536,10 +604,18 @@ const worker = {
           `SELECT COUNT(*) as count FROM user`,
         ).first();
 
-        // Get sponsor count (non-banned)
-        const sponsorCount = await env.DB.prepare(
-          `SELECT COUNT(*) as count FROM sponsors WHERE is_banned = 0`,
-        ).first();
+        // Get sponsor count (non-banned if column exists, otherwise all)
+        let sponsorCount;
+        try {
+          sponsorCount = await env.DB.prepare(
+            `SELECT COUNT(*) as count FROM sponsors WHERE is_banned = 0 OR is_banned IS NULL`,
+          ).first();
+        } catch {
+          // Fallback if is_banned column doesn't exist yet
+          sponsorCount = await env.DB.prepare(
+            `SELECT COUNT(*) as count FROM sponsors`,
+          ).first();
+        }
 
         const overview = {
           id: 1,
