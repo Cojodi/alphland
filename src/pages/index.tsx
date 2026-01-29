@@ -6,6 +6,7 @@ import Card from "../components/Card/Card";
 import Categories from "../components/Categories/Categories";
 import DappOfTheMonth from "../components/FeaturedCard/DappOfTheMonth";
 import FilterMenu from "../components/FilterMenu/FilterMenu";
+import Hero from "../components/Hero/Hero";
 import Layout from "../components/Layout";
 import Select from "../components/Select/Select";
 import { categories } from "../data/categories";
@@ -166,7 +167,14 @@ const Home = ({
   return (
     <Layout isHome>
       <div className="container px-4 mx-auto mb-16 lg:mb-32">
-        <StyledSection className="lg:grid lg:mt-20">
+        <div className="mt-8 lg:mt-12">
+          <Hero
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            dappCount={dappCards.length}
+          />
+        </div>
+        <StyledSection className="lg:grid">
           <Categories
             isHome
             className="categories lg:max-w-[340px]"
