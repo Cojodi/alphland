@@ -1,8 +1,6 @@
-import FilterButton from "../components/Button/FilterButton";
 import Card from "../components/Card/Card";
-import Categories from "../components/Categories/Categories";
-import FilterMenu from "../components/FilterMenu/FilterMenu";
 import Layout from "../components/Layout";
+import SearchBar from "../components/SearchBar/SearchBar";
 import Select from "../components/Select/Select";
 import { categories } from "../data/categories";
 import { getAllDapps } from "../data/getAllDapps";
@@ -11,41 +9,32 @@ import sortByAttribute from "../helpers/sort";
 import { useCategoryStore } from "../hooks/useCategoryStore";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import styled from "styled-components";
-
-const StyledSection = styled.section`
-  grid-template-areas:
-    "list cards"
-    "list cards";
-  grid-template-columns: minmax(300px, 340px) 1fr;
-  grid-column-gap: 64px;
-
-  .categories {
-    grid-area: list;
-  }
-`;
 
 const Explore = ({ dappCards }: { dappCards: DappCard[] }) => {
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [ratings, setRatings] = useState<{ [key: string]: string[] }>({});
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
-  const selectedFilters = useCategoryStore((state) => state.selectedFilters);
-  const selectedRatings = useCategoryStore((state) => state.selectedRatings);
   const selectedCategories = useCategoryStore(
     (state) => state.selectedCategories,
   );
+  const setCategories = useCategoryStore((state) => state.setCategories);
   const selectedSort = useCategoryStore((state) => state.selectedSort);
-  const selectedCategory = useCategoryStore((state) => state.selectedCategory);
   const setSelectedSort = useCategoryStore((state) => state.setSelectedSort);
+  const selectedRatings = useCategoryStore((state) => state.selectedRatings);
 
-  // Initialize search from URL query
+  // Initialize from URL query
   useEffect(() => {
-    if (router.isReady && router.query.search) {
-      setSearchQuery(router.query.search as string);
+    if (router.isReady) {
+      if (router.query.search) {
+        setSearchQuery(router.query.search as string);
+      }
+      if (router.query.categories) {
+        const cats = (router.query.categories as string).split(",");
+        setCategories(cats.filter((c) => c.length > 0));
+      }
     }
-  }, [router.isReady, router.query.search]);
+  }, [router.isReady, router.query.search, router.query.categories]);
 
   useEffect(() => {
     const getAllRatings = async () => {
@@ -55,42 +44,26 @@ const Explore = ({ dappCards }: { dappCards: DappCard[] }) => {
     getAllRatings();
   }, []);
 
+  // Update URL when filters change
   useEffect(() => {
-    const allFilters = selectedFilters.join(",");
-    const allRatings = selectedRatings.join(",");
-    const allCategories = selectedCategories.join(",");
-    const sortBy = selectedSort;
-    let url = "/explore";
-    const params = [];
+    if (!router.isReady) return;
+
+    const params = new URLSearchParams();
     if (searchQuery) {
-      params.push(`search=${encodeURIComponent(searchQuery)}`);
+      params.set("search", searchQuery);
     }
-    if (allFilters.length) {
-      params.push(`filters=${allFilters}`);
+    if (selectedCategories.length > 0) {
+      params.set("categories", selectedCategories.join(","));
     }
-    if (sortBy && sortBy.length) {
-      params.push(`sort=${sortBy}`);
+    if (selectedSort) {
+      params.set("sort", selectedSort);
     }
-    if (selectedRatings.length) {
-      params.push(`ratings=${allRatings}`);
-    }
-    if (selectedCategories.length) {
-      params.push(`categories=${allCategories}`);
-    }
-    if (params.length > 0) {
-      url += `?${params.join("&")}`;
-    }
-    if (router.isReady && selectedCategory === "all") {
-      router.push(url, undefined, { scroll: false });
-    }
-  }, [
-    selectedFilters,
-    selectedSort,
-    selectedCategory,
-    selectedRatings,
-    selectedCategories,
-    searchQuery,
-  ]);
+
+    const url = params.toString()
+      ? `/explore?${params.toString()}`
+      : "/explore";
+    router.replace(url, undefined, { scroll: false });
+  }, [searchQuery, selectedCategories, selectedSort, router.isReady]);
 
   const filteredDapps = dappCards.filter((dapp) => {
     // Filter by search query
@@ -112,28 +85,7 @@ const Explore = ({ dappCards }: { dappCards: DappCard[] }) => {
         return categoryName && dapp.tags?.includes(categoryName);
       });
 
-    // Filter by selected filters (AND logic)
-    const matchesFilters =
-      selectedFilters.reduce((acc, val) => {
-        if (val === "dotw" && dapp.featured) {
-          acc = acc + 1;
-        }
-        if (val === "doxxed" && !dapp.annonymous) {
-          acc = acc + 1;
-        }
-        if (val === "audited" && dapp.audits && dapp.audits.length > 0) {
-          acc = acc + 1;
-        }
-        if (val === "verified" && dapp.verified) {
-          acc = acc + 1;
-        }
-        if (val === "councils_choice" && dapp.councils_choice) {
-          acc = acc + 1;
-        }
-        return acc;
-      }, 0) === selectedFilters.length;
-
-    return matchesSearch && matchesCategories && matchesFilters;
+    return matchesSearch && matchesCategories;
   });
 
   const dappsByRating = filterDappcardsByRating({
@@ -143,73 +95,113 @@ const Explore = ({ dappCards }: { dappCards: DappCard[] }) => {
     selectedRatings,
   });
   const sortedDapps = sortByAttribute(dappsByRating, selectedSort);
-  const filterCount = selectedFilters.length + selectedRatings.length;
+
+  // Get active category name for display
+  const activeCategoryName =
+    selectedCategories.length === 1
+      ? categories.find((c) => c.key === selectedCategories[0])?.name
+      : null;
 
   return (
     <Layout>
       <div className="container px-4 mx-auto mb-16 lg:mb-32">
+        {/* Header */}
         <div className="mt-8 lg:mt-12 mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-black dark:text-white mb-2">
-            Explore All dApps
+            {activeCategoryName
+              ? `${activeCategoryName} dApps`
+              : "Explore All dApps"}
           </h1>
-          <p className="text-light-charcoal dark:text-gray-400">
-            Browse the complete Alephium ecosystem catalog
+          <p className="text-light-charcoal dark:text-gray-400 mb-6">
+            {activeCategoryName
+              ? `Browse ${activeCategoryName.toLowerCase()} apps and tools on Alephium`
+              : "Browse the complete Alephium ecosystem catalog"}
           </p>
+
+          {/* Search and Sort Row */}
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+            <div className="w-full sm:max-w-md">
+              <SearchBar
+                value={searchQuery}
+                onChange={setSearchQuery}
+                placeholder="Search dApps..."
+              />
+            </div>
+            <div className="w-[164px]">
+              <Select
+                defaultValue={selectedSort}
+                placeholder="Sort By"
+                options={[
+                  { label: "A-Z", value: "A-Z" },
+                  { label: "Z-A", value: "Z-A" },
+                  { label: "Newest", value: "Newest" },
+                  { label: "Oldest", value: "Oldest" },
+                ]}
+                onChange={(sortBy) => setSelectedSort(sortBy)}
+              />
+            </div>
+          </div>
         </div>
 
-        <StyledSection className="lg:grid">
-          <Categories
-            className="categories lg:max-w-[340px]"
-            dappCards={dappCards}
-            dappRatings={ratings}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-          />
-          <div className="cards">
-            <h3 className="lg:hidden font-semibold text-xl leading-none mb-5">
-              All projects
-            </h3>
-            <div className="lg:block flex w-full mb-6">
-              <FilterButton
-                onClick={() => setShowMobileFilters(true)}
-                filterCount={filterCount}
-              />
-              <div className="w-[164px] float-left lg:float-right">
-                <Select
-                  defaultValue={selectedSort}
-                  placeholder="Sort By"
-                  options={[
-                    { label: "A-Z", value: "A-Z" },
-                    { label: "Z-A", value: "Z-A" },
-                    { label: "Newest", value: "Newest" },
-                    { label: "Oldest", value: "Oldest" },
-                  ]}
-                  onChange={(sortBy) => setSelectedSort(sortBy)}
-                />
-              </div>
-            </div>
-            {showMobileFilters && (
-              <FilterMenu
-                dappRatings={ratings}
-                dappCards={dappCards}
-                isMobileMenuOpen={showMobileFilters}
-                setIsMobileMenuOpen={setShowMobileFilters}
-              />
-            )}
-            <div className="grid grid-cols-1 w-full gap-y-8 justify-center md:grid-cols-2 lg:grid-cols-1 lg:mx-0 gap-x-20 lg:gap-y-20 xl:grid-cols-2 2xl:grid-cols-3">
-              {sortedDapps.map((card) => (
-                <Card key={card.url} {...card} />
-              ))}
-            </div>
-            {sortedDapps.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-light-charcoal dark:text-gray-400 text-lg">
-                  No dApps found matching your criteria.
-                </p>
-              </div>
-            )}
+        {/* Active Filters */}
+        {selectedCategories.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-6">
+            {selectedCategories.map((cat) => {
+              const category = categories.find((c) => c.key === cat);
+              return (
+                <button
+                  key={cat}
+                  onClick={() =>
+                    setCategories(selectedCategories.filter((c) => c !== cat))
+                  }
+                  className="flex items-center gap-2 px-3 py-1.5 bg-orange/10 text-orange rounded-full text-sm font-medium hover:bg-orange/20 transition-colors"
+                >
+                  {category?.name}
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              );
+            })}
+            <button
+              onClick={() => setCategories([])}
+              className="px-3 py-1.5 text-light-charcoal dark:text-gray-400 text-sm font-medium hover:text-orange transition-colors"
+            >
+              Clear all
+            </button>
           </div>
-        </StyledSection>
+        )}
+
+        {/* Results count */}
+        <div className="mb-6 text-sm text-light-charcoal dark:text-gray-400">
+          {sortedDapps.length} {sortedDapps.length === 1 ? "dApp" : "dApps"}{" "}
+          found
+        </div>
+
+        {/* dApps Grid */}
+        <div className="grid grid-cols-1 w-full gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {sortedDapps.map((card) => (
+            <Card key={card.url} {...card} />
+          ))}
+        </div>
+
+        {sortedDapps.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-light-charcoal dark:text-gray-400 text-lg">
+              No dApps found matching your criteria.
+            </p>
+          </div>
+        )}
       </div>
     </Layout>
   );

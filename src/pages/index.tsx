@@ -1,7 +1,9 @@
+import CategoriesSection from "../components/CategoriesSection/CategoriesSection";
 import FAQ from "../components/FAQ/FAQ";
 import Hero from "../components/Hero/Hero";
 import Layout from "../components/Layout";
 import Spotlight from "../components/Spotlight/Spotlight";
+import { categories } from "../data/categories";
 import { getAllDapps } from "../data/getAllDapps";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -41,12 +43,18 @@ interface SpotlightDapp {
   };
 }
 
+interface CategoryCount {
+  [key: string]: number;
+}
+
 const Home = ({
   spotlightDapps,
   totalDappCount,
+  categoryCounts,
 }: {
   spotlightDapps: SpotlightDapp[];
   totalDappCount: number;
+  categoryCounts: CategoryCount;
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
@@ -71,6 +79,8 @@ const Home = ({
         </div>
 
         <Spotlight dapps={spotlightDapps} />
+
+        <CategoriesSection categoryCounts={categoryCounts} />
 
         {/* FAQ Section */}
         <div className="max-w-3xl">
@@ -98,10 +108,19 @@ export const getStaticProps = async () => {
     };
   }).filter(Boolean) as SpotlightDapp[];
 
+  // Calculate category counts
+  const categoryCounts: CategoryCount = {};
+  categories.forEach((cat) => {
+    categoryCounts[cat.key] = dapps.filter((dapp) =>
+      dapp.tags.includes(cat.name),
+    ).length;
+  });
+
   return {
     props: {
       spotlightDapps,
       totalDappCount: dapps.length,
+      categoryCounts,
     },
   };
 };
