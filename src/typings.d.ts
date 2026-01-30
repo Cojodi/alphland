@@ -142,4 +142,5 @@ interface DappCard {
   verified: boolean;
   councils_choice: boolean;
   founded?: string;
+  links?: Links;
 }

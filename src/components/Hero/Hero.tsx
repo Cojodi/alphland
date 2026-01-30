@@ -13,15 +13,16 @@ const Hero = ({ searchQuery, onSearchChange, dappCount }: HeroProps) => {
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
           Explore the <span className="text-orange">Alephium</span> Ecosystem.
         </h1>
-        <p className="text-gray-300 text-lg md:text-xl mb-8">
+        <p className="text-white text-lg md:text-xl mb-8 opacity-80">
           Discover {dappCount}+ dApps, tools and services across Alephium.
         </p>
-        <SearchBar
-          value={searchQuery}
-          onChange={onSearchChange}
-          placeholder="Search App"
-          className="max-w-md"
-        />
+        <div className="max-w-md opacity-90">
+          <SearchBar
+            value={searchQuery}
+            onChange={onSearchChange}
+            placeholder="Search App"
+          />
+        </div>
       </div>
     </div>
   );

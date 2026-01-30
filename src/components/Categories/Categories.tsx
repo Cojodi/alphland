@@ -6,7 +6,6 @@ import { checkIfCategoryExists, generateUrl } from "../../helpers/category";
 import { filterDappcardsByRating } from "../../helpers/rating";
 import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { useDarkMode } from "../../hooks/useDarkMode";
-import FAQ from "../FAQ/FAQ";
 import SearchBar from "../SearchBar/SearchBar";
 import Image from "next/image";
 import Link from "next/link";
@@ -425,7 +424,6 @@ const Categories = ({
               ),
           )}
       </ul>
-      <FAQ />
     </CategoryContainer>
   );
 };

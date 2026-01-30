@@ -63,10 +63,10 @@ const FAQ = () => {
   };
 
   return (
-    <div className="hidden lg:block pt-8">
-      <h3 className="font-semibold text-xl leading-none pb-4 lg:text-[22px] lg:font-bold">
+    <div className="pt-8">
+      <h2 className="text-2xl md:text-3xl font-bold text-black dark:text-white mb-6">
         FAQ
-      </h3>
+      </h2>
       <div className="space-y-2">
         {faqData.map((item, index) => (
           <div
