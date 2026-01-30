@@ -83,9 +83,7 @@ const Home = ({
         <CategoriesSection categoryCounts={categoryCounts} />
 
         {/* FAQ Section */}
-        <div className="max-w-3xl">
-          <FAQ />
-        </div>
+        <FAQ />
       </div>
     </Layout>
   );
