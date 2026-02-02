@@ -108,52 +108,52 @@ const EcosystemMapPage = ({
             </div>
           </header>
 
-          {/* Ecosystem Grid - More compact, more columns */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
+          {/* Ecosystem Grid - Compact boxes */}
+          <div className="flex flex-wrap gap-2">
             {sortedCategories.map((category) => {
               const dapps = dappsByCategory[category];
-              const gridCols = getGridCols(category);
+              // Calculate optimal columns based on dapp count (max 6 per row)
+              const cols = Math.min(
+                6,
+                Math.max(3, Math.ceil(Math.sqrt(dapps.length))),
+              );
 
               return (
                 <div
                   key={category}
-                  className={`bg-white dark:bg-[#252525] rounded-lg p-3 shadow-sm border border-[#e5e3df] dark:border-[#333] ${
-                    dapps.length > 15 ? "sm:col-span-2" : ""
-                  }`}
+                  className="bg-white dark:bg-[#252525] rounded-md p-2 shadow-sm border border-[#e5e3df] dark:border-[#333] inline-block"
                 >
-                  {/* Category Label - Smaller */}
-                  <div className="mb-2">
-                    <span className="inline-block px-2 py-1 bg-[#6b6b6b] dark:bg-[#444] text-white text-[10px] font-semibold uppercase tracking-wider rounded">
+                  {/* Category Label */}
+                  <div className="mb-1.5">
+                    <span className="inline-block px-1.5 py-0.5 bg-[#6b6b6b] dark:bg-[#444] text-white text-[9px] font-semibold uppercase tracking-wider rounded">
                       {category}
                     </span>
                   </div>
 
-                  {/* Dapp Grid - Tighter */}
+                  {/* Dapp Grid */}
                   <div
-                    className="grid gap-1"
+                    className="grid gap-0.5"
                     style={{
-                      gridTemplateColumns: `repeat(${Math.min(gridCols, Math.max(3, Math.ceil(Math.sqrt(dapps.length))))}, minmax(0, 1fr))`,
+                      gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
                     }}
                   >
                     {dapps.map((dapp) => (
                       <Link key={dapp.url} href={`/${dapp.url}`}>
                         <a
-                          className="group flex flex-col items-center text-center p-1 rounded hover:bg-[#f5f3ef] dark:hover:bg-[#333] transition-all duration-150"
+                          className="group flex flex-col items-center text-center p-0.5 rounded hover:bg-[#f5f3ef] dark:hover:bg-[#333] transition-all duration-150"
                           title={dapp.name}
                         >
-                          {/* Logo Circle - Smaller */}
-                          <div className="relative w-8 h-8 lg:w-9 lg:h-9 rounded-full overflow-hidden bg-[#f5f3ef] dark:bg-[#333] border border-[#e5e3df] dark:border-[#444] group-hover:border-orange transition-colors duration-150 flex items-center justify-center">
+                          <div className="relative w-6 h-6 lg:w-7 lg:h-7 rounded-full overflow-hidden bg-[#f5f3ef] dark:bg-[#333] border border-[#e5e3df] dark:border-[#444] group-hover:border-orange transition-colors duration-150 flex items-center justify-center">
                             <Image
                               src={dapp.logo}
                               alt={dapp.name}
-                              width={28}
-                              height={28}
+                              width={20}
+                              height={20}
                               objectFit="contain"
                               className="rounded-full"
                             />
                           </div>
-                          {/* Name - Smaller */}
-                          <span className="mt-0.5 text-[8px] lg:text-[9px] text-[#666] dark:text-gray-500 font-medium leading-tight max-w-[50px] truncate group-hover:text-orange transition-colors duration-150">
+                          <span className="mt-0.5 text-[7px] lg:text-[8px] text-[#666] dark:text-gray-500 font-medium leading-tight max-w-[40px] truncate group-hover:text-orange transition-colors duration-150">
                             {dapp.name}
                           </span>
                         </a>
