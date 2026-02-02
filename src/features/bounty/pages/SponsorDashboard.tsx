@@ -9,6 +9,8 @@ import {
   BarChart3,
   Edit,
   TrendingUp,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -29,6 +31,14 @@ export default function SponsorDashboard() {
   const [selectedSubmission, setSelectedSubmission] =
     useState<BountySubmission | null>(null);
   const [selectedBounty, setSelectedBounty] = useState<Bounty | null>(null);
+
+  // Pagination states
+  const [bountiesPage, setBountiesPage] = useState(1);
+  const [submissionsPage, setSubmissionsPage] = useState(1);
+  const [bountiesTabPage, setBountiesTabPage] = useState(1);
+  const [submissionsTabPage, setSubmissionsTabPage] = useState(1);
+  const ITEMS_PER_PAGE = 5;
+  const TAB_ITEMS_PER_PAGE = 10;
 
   const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab);
@@ -92,8 +102,14 @@ export default function SponsorDashboard() {
     [router],
   );
 
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString();
+  const formatDate = (date: string | number) => {
+    // Handle Unix timestamp in seconds (convert to milliseconds)
+    const timestamp = typeof date === "number" ? date : Number(date);
+    const dateObj =
+      !isNaN(timestamp) && timestamp < 10000000000
+        ? new Date(timestamp * 1000)
+        : new Date(date);
+    return dateObj.toLocaleDateString();
   };
 
   const getInitials = (username: string) => {
@@ -542,52 +558,97 @@ export default function SponsorDashboard() {
                   <div className="bg-white dark:bg-hero-dark rounded-xl border border-light-gray dark:border-dark-charcoal p-6 space-y-4">
                     <h3 className="text-lg font-bold text-orange font-barlow">
                       Recent Bounties
+                      <span className="ml-2 text-sm font-normal text-light-charcoal dark:text-lightgrey">
+                        ({bounties.length})
+                      </span>
                     </h3>
                     {bounties.length === 0 ? (
                       <p className="text-light-charcoal dark:text-lightgrey font-barlow">
                         No bounties found
                       </p>
                     ) : (
-                      <div className="space-y-3">
-                        {bounties.slice(0, 5).map((bounty) => (
-                          <div
-                            key={bounty.id}
-                            className="p-4 border border-light-gray dark:border-dark-charcoal rounded-lg hover:border-orange hover:bg-orange/5 transition-all duration-200 cursor-pointer group"
-                            onClick={() => handleViewBounty(bounty.id)}
-                          >
-                            <div className="flex justify-between items-start gap-2">
-                              <div>
-                                <h4 className="font-semibold text-orange font-barlow group-hover:text-orange/80 transition-colors">
-                                  {bounty.title}
-                                </h4>
-                                <div className="flex items-center gap-2 mt-2">
-                                  <span
-                                    className={`text-xs font-barlow font-medium px-2 py-1 rounded ${
-                                      bounty.status === "open"
-                                        ? "bg-accessible-green/20 text-light-charcoal"
-                                        : "bg-light-gray text-light-charcoal"
-                                    }`}
+                      <>
+                        <div className="space-y-3">
+                          {bounties
+                            .slice(
+                              (bountiesPage - 1) * ITEMS_PER_PAGE,
+                              bountiesPage * ITEMS_PER_PAGE,
+                            )
+                            .map((bounty) => (
+                              <div
+                                key={bounty.id}
+                                className="p-4 border border-light-gray dark:border-dark-charcoal rounded-lg hover:border-orange hover:bg-orange/5 transition-all duration-200 cursor-pointer group"
+                                onClick={() => handleViewBounty(bounty.id)}
+                              >
+                                <div className="flex justify-between items-start gap-2">
+                                  <div>
+                                    <h4 className="font-semibold text-orange font-barlow group-hover:text-orange/80 transition-colors">
+                                      {bounty.title}
+                                    </h4>
+                                    <div className="flex items-center gap-2 mt-2">
+                                      <span
+                                        className={`text-xs font-barlow font-medium px-2 py-1 rounded ${
+                                          bounty.status === "open"
+                                            ? "bg-accessible-green/20 text-light-charcoal"
+                                            : "bg-light-gray text-light-charcoal"
+                                        }`}
+                                      >
+                                        {bounty.status}
+                                      </span>
+                                      <span className="text-xs text-light-charcoal dark:text-lightgrey font-barlow">
+                                        {bounty.current_submissions} submissions
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <button
+                                    className="text-orange hover:bg-orange/10 p-2 rounded"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleEditBounty(bounty.id, e);
+                                    }}
                                   >
-                                    {bounty.status}
-                                  </span>
-                                  <span className="text-xs text-light-charcoal dark:text-lightgrey font-barlow">
-                                    {bounty.current_submissions} submissions
-                                  </span>
+                                    <Edit className="w-4 h-4" />
+                                  </button>
                                 </div>
                               </div>
-                              <button
-                                className="text-orange hover:bg-orange/10 p-2 rounded"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleEditBounty(bounty.id, e);
-                                }}
-                              >
-                                <Edit className="w-4 h-4" />
-                              </button>
-                            </div>
+                            ))}
+                        </div>
+                        {/* Pagination */}
+                        {Math.ceil(bounties.length / ITEMS_PER_PAGE) > 1 && (
+                          <div className="flex items-center justify-center gap-2 pt-4 border-t border-light-gray dark:border-dark-charcoal">
+                            <button
+                              onClick={() =>
+                                setBountiesPage((p) => Math.max(1, p - 1))
+                              }
+                              disabled={bountiesPage === 1}
+                              className="p-2 rounded-lg border border-light-gray dark:border-dark-charcoal hover:border-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                              <ChevronLeft className="w-4 h-4" />
+                            </button>
+                            <span className="text-sm text-light-charcoal dark:text-lightgrey px-4 font-barlow">
+                              {bountiesPage} /{" "}
+                              {Math.ceil(bounties.length / ITEMS_PER_PAGE)}
+                            </span>
+                            <button
+                              onClick={() =>
+                                setBountiesPage((p) =>
+                                  Math.min(
+                                    Math.ceil(bounties.length / ITEMS_PER_PAGE),
+                                    p + 1,
+                                  ),
+                                )
+                              }
+                              disabled={
+                                bountiesPage ===
+                                Math.ceil(bounties.length / ITEMS_PER_PAGE)
+                              }
+                              className="p-2 rounded-lg border border-light-gray dark:border-dark-charcoal hover:border-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                              <ChevronRight className="w-4 h-4" />
+                            </button>
                           </div>
-                        ))}
-                      </div>
+                        )}
+                      </>
                     )}
                   </div>
 
@@ -595,52 +656,109 @@ export default function SponsorDashboard() {
                   <div className="bg-white dark:bg-hero-dark rounded-xl border border-light-gray dark:border-dark-charcoal p-6 space-y-4">
                     <h3 className="text-lg font-bold text-orange font-barlow">
                       Recent Submissions
+                      <span className="ml-2 text-sm font-normal text-light-charcoal dark:text-lightgrey">
+                        ({allSubmissions.length})
+                      </span>
                     </h3>
                     {allSubmissions.length === 0 ? (
                       <p className="text-light-charcoal dark:text-lightgrey font-barlow">
                         No submissions found
                       </p>
                     ) : (
-                      <div className="space-y-3">
-                        {allSubmissions.slice(0, 5).map((submission) => (
-                          <div
-                            key={submission.id}
-                            className="p-4 border border-light-gray dark:border-dark-charcoal rounded-lg hover:border-accessible-green hover:bg-accessible-green/5 transition-all duration-200 cursor-pointer"
-                            onClick={() =>
-                              viewSubmission(submission, submission.bounty_id)
-                            }
-                          >
-                            <div className="flex items-center justify-between gap-2">
-                              <div className="flex items-center gap-3 min-w-0">
-                                <div className="w-10 h-10 flex-shrink-0 bg-accessible-green rounded-full flex items-center justify-center text-white text-sm font-barlow">
-                                  {submission.user_username
-                                    ? getInitials(submission.user_username)
-                                    : "AN"}
-                                </div>
-                                <div className="min-w-0">
-                                  <p className="font-semibold text-orange font-barlow truncate">
-                                    {submission.user_username}
-                                  </p>
-                                  <p className="text-xs text-light-charcoal dark:text-lightgrey font-barlow truncate">
-                                    {getBountyTitle(submission.bounty_id)}
-                                  </p>
+                      <>
+                        <div className="space-y-3">
+                          {allSubmissions
+                            .slice(
+                              (submissionsPage - 1) * ITEMS_PER_PAGE,
+                              submissionsPage * ITEMS_PER_PAGE,
+                            )
+                            .map((submission) => (
+                              <div
+                                key={submission.id}
+                                className="p-4 border border-light-gray dark:border-dark-charcoal rounded-lg hover:border-accessible-green hover:bg-accessible-green/5 transition-all duration-200 cursor-pointer"
+                                onClick={() =>
+                                  viewSubmission(
+                                    submission,
+                                    submission.bounty_id,
+                                  )
+                                }
+                              >
+                                <div className="flex items-center justify-between gap-2">
+                                  <div className="flex items-center gap-3 min-w-0">
+                                    <div className="w-10 h-10 flex-shrink-0 bg-accessible-green rounded-full flex items-center justify-center text-white text-sm font-barlow">
+                                      {submission.user_username
+                                        ? getInitials(submission.user_username)
+                                        : "?"}
+                                    </div>
+                                    <div className="min-w-0">
+                                      <p className="font-semibold text-orange font-barlow truncate">
+                                        {submission.user_username ||
+                                          "Anonymous"}
+                                      </p>
+                                      <p className="text-xs text-light-charcoal dark:text-lightgrey font-barlow truncate">
+                                        {getBountyTitle(submission.bounty_id)} •{" "}
+                                        {formatDate(submission.submitted_at)}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <span
+                                    className={`text-xs font-barlow font-medium px-2 py-1 rounded whitespace-nowrap flex-shrink-0 ${
+                                      submission.status === "accepted"
+                                        ? "bg-accessible-green/20 text-light-charcoal"
+                                        : submission.status === "rejected"
+                                          ? "bg-red-500/20 text-red-500"
+                                          : "bg-yellow-500/20 text-yellow-600"
+                                    }`}
+                                  >
+                                    {submission.status}
+                                  </span>
                                 </div>
                               </div>
-                              <span
-                                className={`text-xs font-barlow font-medium px-2 py-1 rounded whitespace-nowrap flex-shrink-0 ${
-                                  submission.status === "accepted"
-                                    ? "bg-accessible-green/20 text-light-charcoal"
-                                    : submission.status === "rejected"
-                                      ? "bg-red-500/20 text-red-500"
-                                      : "bg-yellow-500/20 text-yellow-600"
-                                }`}
-                              >
-                                {submission.status}
-                              </span>
-                            </div>
+                            ))}
+                        </div>
+                        {/* Pagination */}
+                        {Math.ceil(allSubmissions.length / ITEMS_PER_PAGE) >
+                          1 && (
+                          <div className="flex items-center justify-center gap-2 pt-4 border-t border-light-gray dark:border-dark-charcoal">
+                            <button
+                              onClick={() =>
+                                setSubmissionsPage((p) => Math.max(1, p - 1))
+                              }
+                              disabled={submissionsPage === 1}
+                              className="p-2 rounded-lg border border-light-gray dark:border-dark-charcoal hover:border-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                              <ChevronLeft className="w-4 h-4" />
+                            </button>
+                            <span className="text-sm text-light-charcoal dark:text-lightgrey px-4 font-barlow">
+                              {submissionsPage} /{" "}
+                              {Math.ceil(
+                                allSubmissions.length / ITEMS_PER_PAGE,
+                              )}
+                            </span>
+                            <button
+                              onClick={() =>
+                                setSubmissionsPage((p) =>
+                                  Math.min(
+                                    Math.ceil(
+                                      allSubmissions.length / ITEMS_PER_PAGE,
+                                    ),
+                                    p + 1,
+                                  ),
+                                )
+                              }
+                              disabled={
+                                submissionsPage ===
+                                Math.ceil(
+                                  allSubmissions.length / ITEMS_PER_PAGE,
+                                )
+                              }
+                              className="p-2 rounded-lg border border-light-gray dark:border-dark-charcoal hover:border-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                              <ChevronRight className="w-4 h-4" />
+                            </button>
                           </div>
-                        ))}
-                      </div>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
@@ -664,53 +782,97 @@ export default function SponsorDashboard() {
                     </button>
                   </div>
                 ) : (
-                  bounties.map((bounty) => (
-                    <div
-                      key={bounty.id}
-                      className="bg-white dark:bg-hero-dark rounded-xl border border-light-gray dark:border-dark-charcoal p-6 hover:border-orange hover:shadow-lg transition-all duration-300 cursor-pointer"
-                      onClick={() => handleSelectBounty(bounty)}
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-orange font-barlow mb-2">
-                            {bounty.title}
-                          </h3>
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            <span
-                              className={`text-xs font-barlow font-medium px-2 py-1 rounded ${
-                                bounty.status === "open"
-                                  ? "bg-accessible-green/20 text-light-charcoal"
-                                  : "bg-light-gray text-light-charcoal"
-                              }`}
-                            >
-                              {bounty.status}
-                            </span>
-                            <span className="text-xs font-barlow font-medium px-2 py-1 rounded bg-orange/10 text-orange">
-                              {bounty.category}
-                            </span>
+                  <>
+                    {bounties
+                      .slice(
+                        (bountiesTabPage - 1) * TAB_ITEMS_PER_PAGE,
+                        bountiesTabPage * TAB_ITEMS_PER_PAGE,
+                      )
+                      .map((bounty) => (
+                        <div
+                          key={bounty.id}
+                          className="bg-white dark:bg-hero-dark rounded-xl border border-light-gray dark:border-dark-charcoal p-6 hover:border-orange hover:shadow-lg transition-all duration-300 cursor-pointer"
+                          onClick={() => handleSelectBounty(bounty)}
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div className="flex-1">
+                              <h3 className="text-lg font-semibold text-orange font-barlow mb-2">
+                                {bounty.title}
+                              </h3>
+                              <div className="flex flex-wrap gap-2 mb-3">
+                                <span
+                                  className={`text-xs font-barlow font-medium px-2 py-1 rounded ${
+                                    bounty.status === "open"
+                                      ? "bg-accessible-green/20 text-light-charcoal"
+                                      : "bg-light-gray text-light-charcoal"
+                                  }`}
+                                >
+                                  {bounty.status}
+                                </span>
+                                <span className="text-xs font-barlow font-medium px-2 py-1 rounded bg-orange/10 text-orange">
+                                  {bounty.category}
+                                </span>
+                              </div>
+                              <p className="text-sm text-light-charcoal dark:text-lightgrey font-barlow">
+                                {bounty.current_submissions} submissions • Due{" "}
+                                {formatDate(bounty.end_date)}
+                              </p>
+                            </div>
+                            <div className="flex items-center justify-between sm:flex-col sm:items-end gap-4">
+                              <div className="font-semibold text-orange font-barlow">
+                                {bounty.reward.amount} {bounty.reward.token}
+                              </div>
+                              <div className="flex gap-2">
+                                <button
+                                  className="border border-orange text-orange hover:bg-orange/10 font-barlow px-3 py-1 rounded text-sm flex items-center gap-1"
+                                  onClick={(e) =>
+                                    handleEditBounty(bounty.id, e)
+                                  }
+                                >
+                                  <Edit className="w-4 h-4" />
+                                  Edit
+                                </button>
+                              </div>
+                            </div>
                           </div>
-                          <p className="text-sm text-light-charcoal dark:text-lightgrey font-barlow">
-                            {bounty.current_submissions} submissions • Due{" "}
-                            {formatDate(bounty.end_date)}
-                          </p>
                         </div>
-                        <div className="flex items-center justify-between sm:flex-col sm:items-end gap-4">
-                          <div className="font-semibold text-orange font-barlow">
-                            {bounty.reward.amount} {bounty.reward.token}
-                          </div>
-                          <div className="flex gap-2">
-                            <button
-                              className="border border-orange text-orange hover:bg-orange/10 font-barlow px-3 py-1 rounded text-sm flex items-center gap-1"
-                              onClick={(e) => handleEditBounty(bounty.id, e)}
-                            >
-                              <Edit className="w-4 h-4" />
-                              Edit
-                            </button>
-                          </div>
-                        </div>
+                      ))}
+                    {/* Pagination */}
+                    {Math.ceil(bounties.length / TAB_ITEMS_PER_PAGE) > 1 && (
+                      <div className="flex items-center justify-center gap-2 pt-4">
+                        <button
+                          onClick={() =>
+                            setBountiesTabPage((p) => Math.max(1, p - 1))
+                          }
+                          disabled={bountiesTabPage === 1}
+                          className="p-2 rounded-lg border border-light-gray dark:border-dark-charcoal hover:border-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <span className="text-sm text-light-charcoal dark:text-lightgrey px-4 font-barlow">
+                          Page {bountiesTabPage} of{" "}
+                          {Math.ceil(bounties.length / TAB_ITEMS_PER_PAGE)}
+                        </span>
+                        <button
+                          onClick={() =>
+                            setBountiesTabPage((p) =>
+                              Math.min(
+                                Math.ceil(bounties.length / TAB_ITEMS_PER_PAGE),
+                                p + 1,
+                              ),
+                            )
+                          }
+                          disabled={
+                            bountiesTabPage ===
+                            Math.ceil(bounties.length / TAB_ITEMS_PER_PAGE)
+                          }
+                          className="p-2 rounded-lg border border-light-gray dark:border-dark-charcoal hover:border-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
                       </div>
-                    </div>
-                  ))
+                    )}
+                  </>
                 )}
               </div>
             )}
@@ -726,45 +888,94 @@ export default function SponsorDashboard() {
                     </p>
                   </div>
                 ) : (
-                  allSubmissions.map((submission) => (
-                    <div
-                      key={submission.id}
-                      className="bg-white dark:bg-hero-dark rounded-xl border border-light-gray dark:border-dark-charcoal p-6 hover:border-orange hover:shadow-lg transition-all duration-300 cursor-pointer"
-                      onClick={() =>
-                        viewSubmission(submission, submission.bounty_id)
-                      }
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div className="flex items-center gap-4 min-w-0">
-                          <div className="w-12 h-12 flex-shrink-0 bg-orange rounded-full flex items-center justify-center text-white font-barlow font-semibold">
-                            {submission.user_username
-                              ? getInitials(submission.user_username)
-                              : "AN"}
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="font-semibold text-orange font-barlow">
-                              {submission.title || "Untitled"}
-                            </h4>
-                            <p className="text-sm text-light-charcoal dark:text-lightgrey font-barlow truncate">
-                              {submission.user_username} •{" "}
-                              {formatDate(submission.submitted_at)}
-                            </p>
+                  <>
+                    {allSubmissions
+                      .slice(
+                        (submissionsTabPage - 1) * TAB_ITEMS_PER_PAGE,
+                        submissionsTabPage * TAB_ITEMS_PER_PAGE,
+                      )
+                      .map((submission) => (
+                        <div
+                          key={submission.id}
+                          className="bg-white dark:bg-hero-dark rounded-xl border border-light-gray dark:border-dark-charcoal p-6 hover:border-orange hover:shadow-lg transition-all duration-300 cursor-pointer"
+                          onClick={() =>
+                            viewSubmission(submission, submission.bounty_id)
+                          }
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div className="flex items-center gap-4 min-w-0">
+                              <div className="w-12 h-12 flex-shrink-0 bg-orange rounded-full flex items-center justify-center text-white font-barlow font-semibold">
+                                {submission.user_username
+                                  ? getInitials(submission.user_username)
+                                  : "?"}
+                              </div>
+                              <div className="min-w-0">
+                                <h4 className="font-semibold text-orange font-barlow">
+                                  {submission.title || "Submission"}
+                                </h4>
+                                <p className="text-sm text-light-charcoal dark:text-lightgrey font-barlow truncate">
+                                  {submission.user_username || "Anonymous"} •{" "}
+                                  {formatDate(submission.submitted_at)}
+                                </p>
+                              </div>
+                            </div>
+                            <span
+                              className={`text-xs font-barlow font-medium px-3 py-1 rounded whitespace-nowrap ${
+                                submission.status === "accepted"
+                                  ? "bg-accessible-green/20 text-light-charcoal"
+                                  : submission.status === "rejected"
+                                    ? "bg-red-500/20 text-red-500"
+                                    : "bg-yellow-500/20 text-yellow-600"
+                              }`}
+                            >
+                              {submission.status}
+                            </span>
                           </div>
                         </div>
-                        <span
-                          className={`text-xs font-barlow font-medium px-3 py-1 rounded whitespace-nowrap ${
-                            submission.status === "accepted"
-                              ? "bg-accessible-green/20 text-light-charcoal"
-                              : submission.status === "rejected"
-                                ? "bg-red-500/20 text-red-500"
-                                : "bg-yellow-500/20 text-yellow-600"
-                          }`}
+                      ))}
+                    {/* Pagination */}
+                    {Math.ceil(allSubmissions.length / TAB_ITEMS_PER_PAGE) >
+                      1 && (
+                      <div className="flex items-center justify-center gap-2 pt-4">
+                        <button
+                          onClick={() =>
+                            setSubmissionsTabPage((p) => Math.max(1, p - 1))
+                          }
+                          disabled={submissionsTabPage === 1}
+                          className="p-2 rounded-lg border border-light-gray dark:border-dark-charcoal hover:border-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
-                          {submission.status}
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <span className="text-sm text-light-charcoal dark:text-lightgrey px-4 font-barlow">
+                          Page {submissionsTabPage} of{" "}
+                          {Math.ceil(
+                            allSubmissions.length / TAB_ITEMS_PER_PAGE,
+                          )}
                         </span>
+                        <button
+                          onClick={() =>
+                            setSubmissionsTabPage((p) =>
+                              Math.min(
+                                Math.ceil(
+                                  allSubmissions.length / TAB_ITEMS_PER_PAGE,
+                                ),
+                                p + 1,
+                              ),
+                            )
+                          }
+                          disabled={
+                            submissionsTabPage ===
+                            Math.ceil(
+                              allSubmissions.length / TAB_ITEMS_PER_PAGE,
+                            )
+                          }
+                          className="p-2 rounded-lg border border-light-gray dark:border-dark-charcoal hover:border-orange disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
                       </div>
-                    </div>
-                  ))
+                    )}
+                  </>
                 )}
               </div>
             )}

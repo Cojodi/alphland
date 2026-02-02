@@ -49,11 +49,6 @@ const EcosystemMapPage = ({
     return a.localeCompare(b);
   });
 
-  // Group categories into rows for better layout
-  const getGridCols = (category: string) => {
-    return categoryConfig[category]?.cols ?? 5;
-  };
-
   const currentDate = new Date().toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
