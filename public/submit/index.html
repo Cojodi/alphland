@@ -22,13 +22,10 @@
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 
     <script>
-      // Dynamic OAuth App ID based on domain
-      const appIds = {
-        'www.alph.land': 'Ov23liwd5omDACDE8wyU',
-        'alph.land': 'Ov23liwd5omDACDE8wyU',
-      };
-      const defaultAppId = 'Ov23liNGjmU69p53f6KO';
-      const appId = appIds[window.location.hostname] || defaultAppId;
+      // Environment detection for branch selection
+      const host = window.location.hostname;
+      const isProduction = host === 'alph.land' || host === 'www.alph.land';
+      const targetBranch = isProduction ? 'develop' : 'bounty';
 
       // Full CMS configuration (no config.yml loading)
       CMS.init({
@@ -37,9 +34,9 @@
           backend: {
             name: 'github',
             repo: 'xbabyx/alphland',
-            branch: 'develop',
-            auth_type: 'pkce',
-            app_id: appId,
+            branch: targetBranch,
+            base_url: window.location.origin,
+            auth_endpoint: 'api/auth',
             open_authoring: true,
           },
           publish_mode: 'editorial_workflow',
