@@ -25,16 +25,8 @@ const SpotlightCard = ({
   tags,
   links,
 }: SpotlightCardProps) => {
-  const hasLinks =
-    links &&
-    (links.website ||
-      links.twitter ||
-      links.discord ||
-      links.telegram ||
-      links.github);
-
   return (
-    <div className="relative bg-white dark:bg-hero-dark rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-5 border border-transparent hover:border-orange/30 group">
+    <div className="relative bg-white dark:bg-hero-dark rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-5 border border-transparent hover:border-orange/30 group h-full flex flex-col">
       {/* External link icon */}
       <Link href={url}>
         <a className="absolute top-4 right-4 text-gray-400 hover:text-orange transition-colors">
@@ -72,61 +64,59 @@ const SpotlightCard = ({
       </div>
 
       {/* Description */}
-      <p className="text-sm text-light-charcoal dark:text-gray-300 leading-relaxed mb-4 line-clamp-3">
+      <p className="text-sm text-light-charcoal dark:text-gray-300 leading-relaxed mb-4 line-clamp-2 min-h-[40px]">
         {short_description}
       </p>
 
       {/* Social Links */}
-      {hasLinks && (
-        <div className="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-white/10">
-          {links.github && (
-            <a
-              href={links.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 hover:text-orange hover:bg-orange/10 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Github className="w-4 h-4" />
-            </a>
-          )}
-          {links.discord && (
-            <a
-              href={links.discord}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 hover:text-orange hover:bg-orange/10 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <MessageCircle className="w-4 h-4" />
-            </a>
-          )}
-          {links.twitter && (
-            <a
-              href={links.twitter}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 hover:text-orange hover:bg-orange/10 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
-            </a>
-          )}
-          {links.website && (
-            <a
-              href={links.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 hover:text-orange hover:bg-orange/10 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Globe className="w-4 h-4" />
-            </a>
-          )}
-        </div>
-      )}
+      <div className="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-white/10 mt-auto min-h-[48px]">
+        {links?.github && (
+          <a
+            href={links.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 hover:text-orange hover:bg-orange/10 transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Github className="w-4 h-4" />
+          </a>
+        )}
+        {links?.discord && (
+          <a
+            href={links.discord}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 hover:text-orange hover:bg-orange/10 transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <MessageCircle className="w-4 h-4" />
+          </a>
+        )}
+        {links?.twitter && (
+          <a
+            href={links.twitter}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 hover:text-orange hover:bg-orange/10 transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+          </a>
+        )}
+        {links?.website && (
+          <a
+            href={links.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 hover:text-orange hover:bg-orange/10 transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Globe className="w-4 h-4" />
+          </a>
+        )}
+      </div>
     </div>
   );
 };
