@@ -13,11 +13,104 @@
       a[href*="#/collections/dapps/"]:not([href*="/new"]) {
         display: none !important;
       }
+
+      /* Success page styles */
+      .success-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+      }
+      .success-card {
+        background: #1e1e2e;
+        border-radius: 16px;
+        padding: 48px;
+        max-width: 500px;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        border: 1px solid #333;
+      }
+      .success-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #00c853 0%, #00e676 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+      }
+      .success-icon svg {
+        width: 40px;
+        height: 40px;
+        color: white;
+      }
+      .success-title {
+        color: #fff;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      .success-message {
+        color: #a0a0a0;
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 24px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      .pr-link {
+        display: inline-block;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+        text-decoration: none;
+        padding: 14px 28px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 15px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      .pr-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+      }
+      .back-link {
+        display: block;
+        margin-top: 20px;
+        color: #6366f1;
+        text-decoration: none;
+        font-size: 14px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      .back-link:hover {
+        text-decoration: underline;
+      }
+      .loading-spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #333;
+        border-top-color: #6366f1;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 16px;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
     </style>
   </head>
   <body>
     <script>
       window.CMS_MANUAL_INIT = true;
+      // Store referrer for back link
+      window.referrerUrl = document.referrer || '/';
     </script>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 
@@ -26,6 +119,9 @@
       const host = window.location.hostname;
       const isProduction = host === 'alph.land' || host === 'www.alph.land';
       const targetBranch = isProduction ? 'develop' : 'bounty';
+
+      // Store dApp data for PR lookup
+      let lastDappData = null;
 
       // Full CMS configuration (no config.yml loading)
       CMS.init({
@@ -38,6 +134,11 @@
             base_url: window.location.origin,
             auth_endpoint: 'api/auth',
             open_authoring: true,
+            commit_messages: {
+              create: 'Add dApp: {{fields.name}}',
+              update: 'Update dApp: {{fields.name}}',
+              openAuthoring: '{{message}}',
+            },
           },
           publish_mode: 'editorial_workflow',
           media_folder: 'public/dapps',
@@ -100,6 +201,196 @@
         },
       });
 
+      // Register event handlers for CMS
+      CMS.registerEventListener({
+        name: 'preSave',
+        handler: ({ entry }) => {
+          // Store dApp data before save
+          lastDappData = entry.get('data').toJS();
+          console.log('dApp data:', lastDappData);
+          return entry.get('data');
+        },
+      });
+
+      CMS.registerEventListener({
+        name: 'postSave',
+        handler: ({ entry }) => {
+          console.log('dApp saved successfully');
+          // Show success page after a short delay to ensure PR is created
+          setTimeout(() => showSuccessPage(), 2000);
+        },
+      });
+
+      // Function to show success page
+      function showSuccessPage() {
+        // Try to get GitHub username from localStorage (set by CMS)
+        const authData = localStorage.getItem('netlify-cms-user');
+        let username = '';
+        if (authData) {
+          try {
+            const parsed = JSON.parse(authData);
+            username = parsed.login || parsed.name || '';
+          } catch (e) {}
+        }
+
+        // Get back URL
+        const backUrl = window.referrerUrl || '/';
+
+        // Create success overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'success-overlay';
+        overlay.innerHTML = `
+          <div class="success-card">
+            <div class="success-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <h2 class="success-title">dApp Submitted Successfully!</h2>
+            <p class="success-message">
+              Your dApp has been submitted as a Pull Request. Our team will review it shortly.
+            </p>
+            <div class="loading-spinner" id="pr-loading"></div>
+            <div id="pr-link-container"></div>
+            <a href="${backUrl}" class="back-link">← Back</a>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+
+        // Try to find the PR
+        findLatestPR(username);
+      }
+
+      // Function to find the latest PR created by the user
+      async function findLatestPR(username) {
+        const container = document.getElementById('pr-link-container');
+        const loading = document.getElementById('pr-loading');
+
+        try {
+          // Get auth token from CMS
+          const authData = localStorage.getItem('netlify-cms-user');
+          let token = '';
+          if (authData) {
+            try {
+              const parsed = JSON.parse(authData);
+              token = parsed.token || '';
+            } catch (e) {}
+          }
+
+          if (token) {
+            // Search for recent PRs
+            const response = await fetch(
+              'https://api.github.com/repos/xbabyx/alphland/pulls?state=open&sort=created&direction=desc&per_page=5',
+              {
+                headers: {
+                  'Authorization': `token ${token}`,
+                  'Accept': 'application/vnd.github.v3+json',
+                },
+              }
+            );
+
+            if (response.ok) {
+              const prs = await response.json();
+              // Find PR that matches our dApp (created in last 5 minutes)
+              const recentPR = prs.find(pr => {
+                const createdAt = new Date(pr.created_at);
+                const now = new Date();
+                const diffMinutes = (now - createdAt) / (1000 * 60);
+                return diffMinutes < 5 && (
+                  pr.title.includes('Add dApp:') ||
+                  pr.title.includes('data/') ||
+                  (lastDappData && pr.title.includes(lastDappData.name))
+                );
+              });
+
+              if (recentPR) {
+                loading.style.display = 'none';
+                container.innerHTML = `
+                  <a href="${recentPR.html_url}" target="_blank" class="pr-link">
+                    View Pull Request #${recentPR.number}
+                  </a>
+                `;
+
+                // Update PR body with dApp details if we have the data
+                if (lastDappData && token) {
+                  updatePRBody(recentPR.number, token, lastDappData);
+                }
+                return;
+              }
+            }
+          }
+
+          // Fallback: show link to all PRs
+          loading.style.display = 'none';
+          container.innerHTML = `
+            <a href="https://github.com/xbabyx/alphland/pulls" target="_blank" class="pr-link">
+              View All Pull Requests
+            </a>
+          `;
+        } catch (error) {
+          console.error('Error finding PR:', error);
+          loading.style.display = 'none';
+          container.innerHTML = `
+            <a href="https://github.com/xbabyx/alphland/pulls" target="_blank" class="pr-link">
+              View All Pull Requests
+            </a>
+          `;
+        }
+      }
+
+      // Function to update PR body with dApp details
+      async function updatePRBody(prNumber, token, dappData) {
+        try {
+          const tags = Array.isArray(dappData.tags) ? dappData.tags.join(', ') : (dappData.tags || 'N/A');
+          const links = dappData.links || {};
+
+          const body = `## New dApp Submission
+
+**Name:** ${dappData.name || 'N/A'}
+
+**Short Description:** ${dappData.short_description || 'N/A'}
+
+**Description:**
+${dappData.description || 'N/A'}
+
+**Tags:** ${tags}
+
+**Website:** ${links.website || 'N/A'}
+
+### Links
+| Platform | URL |
+|----------|-----|
+| Twitter | ${links.twitter || '-'} |
+| Discord | ${links.discord || '-'} |
+| Telegram | ${links.telegram || '-'} |
+| GitHub | ${links.github || '-'} |
+| Docs | ${links.docs || '-'} |
+
+### Team Info
+- **Contact Email:** ${dappData.teamInfo?.contactEmail || 'Not provided'}
+- **Anonymous Team:** ${dappData.teamInfo?.anonymous ? 'Yes' : 'No'}
+
+---
+*This dApp was submitted via [Alphland Submit Form](https://alph.land/submit)*`;
+
+          await fetch(
+            `https://api.github.com/repos/xbabyx/alphland/pulls/${prNumber}`,
+            {
+              method: 'PATCH',
+              headers: {
+                'Authorization': `token ${token}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ body }),
+            }
+          );
+          console.log('PR body updated successfully');
+        } catch (error) {
+          console.error('Error updating PR body:', error);
+        }
+      }
+
       // Auto-confirm local backup recovery
       (function() {
         const originalConfirm = window.confirm;
@@ -122,6 +413,9 @@
         setTimeout(checkAndRedirect, 100);
         window.addEventListener('hashchange', function() {
           const hash = window.location.hash;
+          // Allow success page to show without redirect
+          if (document.querySelector('.success-overlay')) return;
+
           if (!hash.startsWith('#/collections/dapps/new') && !hash.startsWith('#/workflow') && !hash.startsWith('#/editorial')) {
             window.location.hash = targetPath;
           }
