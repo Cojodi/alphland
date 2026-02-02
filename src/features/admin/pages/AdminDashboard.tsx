@@ -24,8 +24,6 @@ import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 import Layout from "@/components/Layout";
 
-const ADMIN_PASSWORD = "alphteam3sdf4!";
-
 interface Sponsor {
   id: string;
   user_id: string;
@@ -176,13 +174,24 @@ export default function AdminDashboard() {
   }, []);
 
   // Handle password submission
-  const handlePasswordSubmit = (e: React.FormEvent) => {
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      sessionStorage.setItem("admin_authenticated", "true");
-      setPasswordError(false);
-    } else {
+    try {
+      const response = await fetch("/api/admin/verify-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+
+      if (response.ok) {
+        setIsAuthenticated(true);
+        sessionStorage.setItem("admin_authenticated", "true");
+        setPasswordError(false);
+      } else {
+        setPasswordError(true);
+      }
+    } catch (error) {
+      console.error("Auth error:", error);
       setPasswordError(true);
     }
   };

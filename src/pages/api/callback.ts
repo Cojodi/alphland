@@ -4,7 +4,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { code, state } = req.query;
+  const { code } = req.query;
   const host = req.headers.host || "";
 
   if (!code) {
@@ -52,7 +52,7 @@ export default async function handler(
       return res.status(400).json({ error: tokenData.error_description });
     }
 
-    const { access_token, token_type } = tokenData;
+    const { access_token } = tokenData;
 
     // Return the token to Decap CMS via postMessage
     // This HTML page will send the token back to the CMS window
