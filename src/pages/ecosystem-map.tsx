@@ -170,7 +170,7 @@ const EcosystemMapPage = ({
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <a
-                  href="https://twitter.com/alaboratoio"
+                  href="https://twitter.com/alephium"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[#5a5a5a] hover:text-orange transition-colors"
