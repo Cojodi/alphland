@@ -19,21 +19,21 @@ interface EcosystemMapProps {
 
 // Define category order and grid sizes
 const categoryConfig: { [key: string]: { order: number; cols: number } } = {
-  DeFi: { order: 1, cols: 5 },
-  Infrastructure: { order: 2, cols: 5 },
-  Wallets: { order: 3, cols: 5 },
+  DeFi: { order: 1, cols: 6 },
+  Infrastructure: { order: 2, cols: 6 },
+  Wallets: { order: 3, cols: 6 },
   NFT: { order: 4, cols: 5 },
   Gaming: { order: 5, cols: 5 },
-  DEX: { order: 6, cols: 4 },
-  Bridges: { order: 7, cols: 4 },
-  Tools: { order: 8, cols: 4 },
-  Analytics: { order: 9, cols: 4 },
-  Staking: { order: 10, cols: 4 },
-  Lending: { order: 11, cols: 4 },
-  DAO: { order: 12, cols: 4 },
-  Social: { order: 13, cols: 4 },
-  Marketplace: { order: 14, cols: 4 },
-  Onramps: { order: 15, cols: 4 },
+  DEX: { order: 6, cols: 5 },
+  Bridges: { order: 7, cols: 5 },
+  Tools: { order: 8, cols: 5 },
+  Analytics: { order: 9, cols: 5 },
+  Staking: { order: 10, cols: 5 },
+  Lending: { order: 11, cols: 5 },
+  DAO: { order: 12, cols: 5 },
+  Social: { order: 13, cols: 5 },
+  Marketplace: { order: 14, cols: 5 },
+  Onramps: { order: 15, cols: 5 },
 };
 
 const EcosystemMapPage = ({
@@ -51,7 +51,7 @@ const EcosystemMapPage = ({
 
   // Group categories into rows for better layout
   const getGridCols = (category: string) => {
-    return categoryConfig[category]?.cols ?? 4;
+    return categoryConfig[category]?.cols ?? 5;
   };
 
   const currentDate = new Date().toLocaleDateString("en-US", {
@@ -67,49 +67,49 @@ const EcosystemMapPage = ({
     >
       {/* Full width background */}
       <div className="min-h-screen bg-[#f5f3ef] dark:bg-[#1a1a1a]">
-        <div className="container px-4 mx-auto pb-16">
-          {/* Header */}
-          <header className="py-8 lg:py-12">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-orange rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">A</span>
+        <div className="container px-3 lg:px-4 mx-auto pb-8 lg:pb-12">
+          {/* Header - Compact */}
+          <header className="py-4 lg:py-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 lg:w-8 lg:h-8 bg-orange rounded-md flex items-center justify-center">
+                  <span className="text-white font-bold text-sm lg:text-base">
+                    A
+                  </span>
                 </div>
-                <h1 className="text-2xl lg:text-3xl font-bold text-[#2a2a2a] dark:text-white tracking-tight">
+                <h1 className="text-lg lg:text-xl font-bold text-[#2a2a2a] dark:text-white tracking-tight">
                   ALEPHIUM{" "}
                   <span className="font-normal text-[#5a5a5a] dark:text-gray-400">
                     ECOSYSTEM MAP
                   </span>
                 </h1>
               </div>
-              <div className="text-sm text-[#7a7a7a] dark:text-gray-500 italic">
-                *Updated {currentDate}
-              </div>
-            </div>
-
-            {/* Stats */}
-            <div className="flex gap-6 mt-6">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-orange">
-                  {totalDapps}
-                </span>
-                <span className="text-sm text-[#5a5a5a] dark:text-gray-400">
-                  dApps
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-accessible-green">
-                  {categoryCount}
-                </span>
-                <span className="text-sm text-[#5a5a5a] dark:text-gray-400">
-                  Categories
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-lg font-bold text-orange">
+                    {totalDapps}
+                  </span>
+                  <span className="text-xs text-[#5a5a5a] dark:text-gray-400">
+                    dApps
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-lg font-bold text-accessible-green">
+                    {categoryCount}
+                  </span>
+                  <span className="text-xs text-[#5a5a5a] dark:text-gray-400">
+                    Categories
+                  </span>
+                </div>
+                <span className="text-[10px] text-[#999] dark:text-gray-600 italic hidden sm:block">
+                  {currentDate}
                 </span>
               </div>
             </div>
           </header>
 
-          {/* Ecosystem Grid - Masonry-like layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          {/* Ecosystem Grid - More compact, more columns */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
             {sortedCategories.map((category) => {
               const dapps = dappsByCategory[category];
               const gridCols = getGridCols(category);
@@ -117,43 +117,43 @@ const EcosystemMapPage = ({
               return (
                 <div
                   key={category}
-                  className={`bg-white dark:bg-[#252525] rounded-xl p-5 shadow-sm border border-[#e5e3df] dark:border-[#333] ${
-                    dapps.length > 12 ? "md:col-span-2" : ""
+                  className={`bg-white dark:bg-[#252525] rounded-lg p-3 shadow-sm border border-[#e5e3df] dark:border-[#333] ${
+                    dapps.length > 15 ? "sm:col-span-2" : ""
                   }`}
                 >
-                  {/* Category Label */}
-                  <div className="mb-4">
-                    <span className="inline-block px-3 py-1.5 bg-[#6b6b6b] dark:bg-[#444] text-white text-xs font-semibold uppercase tracking-wider rounded">
+                  {/* Category Label - Smaller */}
+                  <div className="mb-2">
+                    <span className="inline-block px-2 py-1 bg-[#6b6b6b] dark:bg-[#444] text-white text-[10px] font-semibold uppercase tracking-wider rounded">
                       {category}
                     </span>
                   </div>
 
-                  {/* Dapp Grid */}
+                  {/* Dapp Grid - Tighter */}
                   <div
-                    className="grid gap-3"
+                    className="grid gap-1"
                     style={{
-                      gridTemplateColumns: `repeat(${Math.min(gridCols, Math.ceil(dapps.length / Math.ceil(dapps.length / gridCols)))}, minmax(0, 1fr))`,
+                      gridTemplateColumns: `repeat(${Math.min(gridCols, Math.max(3, Math.ceil(Math.sqrt(dapps.length))))}, minmax(0, 1fr))`,
                     }}
                   >
                     {dapps.map((dapp) => (
                       <Link key={dapp.url} href={`/${dapp.url}`}>
                         <a
-                          className="group flex flex-col items-center text-center p-2 rounded-lg hover:bg-[#f5f3ef] dark:hover:bg-[#333] transition-all duration-200"
+                          className="group flex flex-col items-center text-center p-1 rounded hover:bg-[#f5f3ef] dark:hover:bg-[#333] transition-all duration-150"
                           title={dapp.name}
                         >
-                          {/* Logo Circle */}
-                          <div className="relative w-12 h-12 lg:w-14 lg:h-14 rounded-full overflow-hidden bg-[#f5f3ef] dark:bg-[#333] border-2 border-[#e5e3df] dark:border-[#444] group-hover:border-orange transition-colors duration-200 flex items-center justify-center">
+                          {/* Logo Circle - Smaller */}
+                          <div className="relative w-8 h-8 lg:w-9 lg:h-9 rounded-full overflow-hidden bg-[#f5f3ef] dark:bg-[#333] border border-[#e5e3df] dark:border-[#444] group-hover:border-orange transition-colors duration-150 flex items-center justify-center">
                             <Image
                               src={dapp.logo}
                               alt={dapp.name}
-                              width={40}
-                              height={40}
+                              width={28}
+                              height={28}
                               objectFit="contain"
                               className="rounded-full"
                             />
                           </div>
-                          {/* Name */}
-                          <span className="mt-1.5 text-[10px] lg:text-xs text-[#5a5a5a] dark:text-gray-400 font-medium leading-tight max-w-[70px] truncate group-hover:text-orange transition-colors duration-200">
+                          {/* Name - Smaller */}
+                          <span className="mt-0.5 text-[8px] lg:text-[9px] text-[#666] dark:text-gray-500 font-medium leading-tight max-w-[50px] truncate group-hover:text-orange transition-colors duration-150">
                             {dapp.name}
                           </span>
                         </a>
@@ -165,18 +165,18 @@ const EcosystemMapPage = ({
             })}
           </div>
 
-          {/* Footer */}
-          <footer className="mt-12 pt-8 border-t border-[#e5e3df] dark:border-[#333]">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
+          {/* Footer - Compact */}
+          <footer className="mt-6 pt-4 border-t border-[#e5e3df] dark:border-[#333]">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
                 <a
                   href="https://twitter.com/alephium"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#5a5a5a] hover:text-orange transition-colors"
+                  className="text-[#888] hover:text-orange transition-colors"
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="w-4 h-4"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -187,10 +187,10 @@ const EcosystemMapPage = ({
                   href="https://discord.gg/alephium"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#5a5a5a] hover:text-orange transition-colors"
+                  className="text-[#888] hover:text-orange transition-colors"
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="w-4 h-4"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -201,10 +201,10 @@ const EcosystemMapPage = ({
                   href="https://t.me/alephiumgroup"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#5a5a5a] hover:text-orange transition-colors"
+                  className="text-[#888] hover:text-orange transition-colors"
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="w-4 h-4"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -212,19 +212,14 @@ const EcosystemMapPage = ({
                   </svg>
                 </a>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-[#7a7a7a] dark:text-gray-500">
-                  Powered by
-                </span>
-                <Link href="/">
-                  <a className="flex items-center gap-1 text-orange font-semibold hover:opacity-80 transition-opacity">
-                    <div className="w-5 h-5 bg-orange rounded flex items-center justify-center">
-                      <span className="text-white font-bold text-xs">A</span>
-                    </div>
-                    ALPH.LAND
-                  </a>
-                </Link>
-              </div>
+              <Link href="/">
+                <a className="flex items-center gap-1 text-orange text-xs font-semibold hover:opacity-80 transition-opacity">
+                  <div className="w-4 h-4 bg-orange rounded flex items-center justify-center">
+                    <span className="text-white font-bold text-[8px]">A</span>
+                  </div>
+                  ALPH.LAND
+                </a>
+              </Link>
             </div>
           </footer>
         </div>
