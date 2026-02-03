@@ -933,7 +933,8 @@ export default function SponsorDashboard() {
                               )}
                               <div className="min-w-0">
                                 <h4 className="font-semibold text-orange font-barlow">
-                                  {submission.title || "Submission"}
+                                  {submission.bounty_name ||
+                                    getBountyTitle(submission.bounty_id)}
                                 </h4>
                                 <p className="text-sm text-light-charcoal dark:text-lightgrey font-barlow truncate">
                                   {submission.user_username || "Anonymous"} •{" "}
