@@ -54,6 +54,7 @@ export default function EditSponsorProfile() {
   const [bannerFile, setBannerFile] = useState<ImageFile | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [bannerDragActive, setBannerDragActive] = useState(false);
+  const [bannerRemoved, setBannerRemoved] = useState(false);
   const [userPersonalUsername, setUserPersonalUsername] = useState<string>("");
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -214,12 +215,13 @@ export default function EditSponsorProfile() {
     }
   };
 
-  const removeBanner = useCallback(() => {
+  const removeBanner = () => {
     if (bannerFile?.file) {
       URL.revokeObjectURL(bannerFile.preview);
     }
     setBannerFile(null);
-  }, [bannerFile]);
+    setBannerRemoved(true);
+  };
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -267,7 +269,10 @@ export default function EditSponsorProfile() {
         }
 
         // Upload banner to R2 if a new one was selected
-        let bannerUrl = null;
+        // undefined = keep existing, null = remove, string = new URL
+        let bannerUrl: string | null | undefined = bannerRemoved
+          ? null
+          : undefined;
         if (bannerFile?.file) {
           console.log("Uploading sponsor banner to R2...");
           const file = bannerFile.file;
@@ -299,19 +304,25 @@ export default function EditSponsorProfile() {
           }
         }
 
+        const updateData: Record<string, any> = {
+          name: formData.name,
+          description: formData.description,
+          logo_url: logoUrl,
+          website: formData.website,
+          twitter: formData.twitter,
+          contact_email: formData.contact_email || null,
+          contact_telegram: formData.contact_telegram || null,
+        };
+
+        // Only include banner_url if it changed (new upload or explicit removal)
+        if (bannerUrl !== undefined) {
+          updateData.banner_url = bannerUrl;
+        }
+
         const response = await fetch(`/api/sponsors/${sponsorId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: formData.name,
-            description: formData.description,
-            logo_url: logoUrl,
-            banner_url: bannerUrl,
-            website: formData.website,
-            twitter: formData.twitter,
-            contact_email: formData.contact_email || null,
-            contact_telegram: formData.contact_telegram || null,
-          }),
+          body: JSON.stringify(updateData),
         });
 
         if (!response.ok) {
@@ -327,7 +338,15 @@ export default function EditSponsorProfile() {
         setLoading(false);
       }
     },
-    [formData, logoFile, bannerFile, router, session?.user?.id, sponsorId],
+    [
+      formData,
+      logoFile,
+      bannerFile,
+      bannerRemoved,
+      router,
+      session?.user?.id,
+      sponsorId,
+    ],
   );
 
   const bioCharactersLeft = MAX_BIO_LENGTH - formData.description.length;

@@ -835,38 +835,70 @@ export async function handleSponsorsAPI(
     const body = (await request.json()) as any;
     const now = Math.floor(Date.now() / 1000);
 
-    await env.DB.prepare(
-      `UPDATE sponsors
-       SET name = COALESCE(?, name),
-           description = COALESCE(?, description),
-           logo_url = COALESCE(?, logo_url),
-           banner_url = COALESCE(?, banner_url),
-           website = COALESCE(?, website),
-           twitter = COALESCE(?, twitter),
-           discord = COALESCE(?, discord),
-           telegram = COALESCE(?, telegram),
-           wallet_address = COALESCE(?, wallet_address),
-           contact_email = COALESCE(?, contact_email),
-           contact_telegram = COALESCE(?, contact_telegram),
-           updated_at = ?
-       WHERE id = ?`,
-    )
-      .bind(
-        body.name || null,
-        body.description || null,
-        body.logo_url || null,
-        body.banner_url || null,
-        body.website || null,
-        body.twitter || null,
-        body.discord || null,
-        body.telegram || null,
-        body.wallet_address || null,
-        body.contact_email || null,
-        body.contact_telegram || null,
-        now,
-        id,
+    // Build dynamic update query to handle explicit null values
+    // If a field is in the body (even as null), update it
+    // If a field is undefined/not present, keep existing value
+    const updates: string[] = [];
+    const values: any[] = [];
+
+    if (body.name !== undefined) {
+      updates.push("name = ?");
+      values.push(body.name || null);
+    }
+    if (body.description !== undefined) {
+      updates.push("description = ?");
+      values.push(body.description || null);
+    }
+    if (body.logo_url !== undefined) {
+      updates.push("logo_url = ?");
+      values.push(body.logo_url || null);
+    }
+    // Handle banner_url - if explicitly set to null, remove it
+    if ("banner_url" in body) {
+      updates.push("banner_url = ?");
+      values.push(body.banner_url);
+    }
+    if (body.website !== undefined) {
+      updates.push("website = ?");
+      values.push(body.website || null);
+    }
+    if (body.twitter !== undefined) {
+      updates.push("twitter = ?");
+      values.push(body.twitter || null);
+    }
+    if (body.discord !== undefined) {
+      updates.push("discord = ?");
+      values.push(body.discord || null);
+    }
+    if (body.telegram !== undefined) {
+      updates.push("telegram = ?");
+      values.push(body.telegram || null);
+    }
+    if (body.wallet_address !== undefined) {
+      updates.push("wallet_address = ?");
+      values.push(body.wallet_address || null);
+    }
+    if (body.contact_email !== undefined) {
+      updates.push("contact_email = ?");
+      values.push(body.contact_email || null);
+    }
+    if (body.contact_telegram !== undefined) {
+      updates.push("contact_telegram = ?");
+      values.push(body.contact_telegram || null);
+    }
+
+    // Always update updated_at
+    updates.push("updated_at = ?");
+    values.push(now);
+    values.push(id);
+
+    if (updates.length > 1) {
+      await env.DB.prepare(
+        `UPDATE sponsors SET ${updates.join(", ")} WHERE id = ?`,
       )
-      .run();
+        .bind(...values)
+        .run();
+    }
 
     const sponsor = await env.DB.prepare(`SELECT * FROM sponsors WHERE id = ?`)
       .bind(id)
