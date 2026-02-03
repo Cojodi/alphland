@@ -1,14 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  X,
-  ExternalLink,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Copy,
-} from "lucide-react";
+import { X, ExternalLink, CheckCircle, XCircle, Copy } from "lucide-react";
 import Link from "next/link";
 import { apiClient, BountySubmission } from "@/lib/api-client";
 import { notificationService } from "../services/notificationService";
@@ -363,7 +356,7 @@ export function SubmissionReviewModal({
               <label className="block text-sm font-semibold text-black dark:text-white mb-3">
                 Review Decision <span className="text-red-500">*</span>
               </label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setReviewAction("approved")}
@@ -388,33 +381,6 @@ export function SubmissionReviewModal({
                     }`}
                   >
                     Approve
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setReviewAction("revision_requested")}
-                  className={`p-4 border-2 rounded-lg transition-all ${
-                    reviewAction === "revision_requested"
-                      ? "border-orange bg-orange/10"
-                      : "border-border-grey dark:border-dark-charcoal hover:border-orange"
-                  }`}
-                >
-                  <AlertCircle
-                    className={`w-6 h-6 mx-auto mb-2 ${
-                      reviewAction === "revision_requested"
-                        ? "text-orange"
-                        : "text-light-charcoal dark:text-lightgrey"
-                    }`}
-                  />
-                  <span
-                    className={`text-sm font-medium ${
-                      reviewAction === "revision_requested"
-                        ? "text-orange"
-                        : "text-black dark:text-white"
-                    }`}
-                  >
-                    Request Changes
                   </span>
                 </button>
 
