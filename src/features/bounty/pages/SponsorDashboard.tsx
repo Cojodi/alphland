@@ -685,11 +685,23 @@ export default function SponsorDashboard() {
                               >
                                 <div className="flex items-center justify-between gap-2">
                                   <div className="flex items-center gap-3 min-w-0">
-                                    <div className="w-10 h-10 flex-shrink-0 bg-accessible-green rounded-full flex items-center justify-center text-white text-sm font-barlow">
-                                      {submission.user_username
-                                        ? getInitials(submission.user_username)
-                                        : "?"}
-                                    </div>
+                                    {submission.user_avatar_url ? (
+                                      <Image
+                                        src={submission.user_avatar_url}
+                                        alt={submission.user_username || "User"}
+                                        width={40}
+                                        height={40}
+                                        className="w-10 h-10 flex-shrink-0 rounded-full object-cover"
+                                      />
+                                    ) : (
+                                      <div className="w-10 h-10 flex-shrink-0 bg-accessible-green rounded-full flex items-center justify-center text-white text-sm font-barlow">
+                                        {submission.user_username
+                                          ? getInitials(
+                                              submission.user_username,
+                                            )
+                                          : "?"}
+                                      </div>
+                                    )}
                                     <div className="min-w-0">
                                       <p className="font-semibold text-orange font-barlow truncate">
                                         {submission.user_username ||
@@ -904,11 +916,21 @@ export default function SponsorDashboard() {
                         >
                           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                             <div className="flex items-center gap-4 min-w-0">
-                              <div className="w-12 h-12 flex-shrink-0 bg-orange rounded-full flex items-center justify-center text-white font-barlow font-semibold">
-                                {submission.user_username
-                                  ? getInitials(submission.user_username)
-                                  : "?"}
-                              </div>
+                              {submission.user_avatar_url ? (
+                                <Image
+                                  src={submission.user_avatar_url}
+                                  alt={submission.user_username || "User"}
+                                  width={48}
+                                  height={48}
+                                  className="w-12 h-12 flex-shrink-0 rounded-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-12 h-12 flex-shrink-0 bg-orange rounded-full flex items-center justify-center text-white font-barlow font-semibold">
+                                  {submission.user_username
+                                    ? getInitials(submission.user_username)
+                                    : "?"}
+                                </div>
+                              )}
                               <div className="min-w-0">
                                 <h4 className="font-semibold text-orange font-barlow">
                                   {submission.title || "Submission"}
