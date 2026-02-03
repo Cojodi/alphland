@@ -60,7 +60,7 @@ export default function SponsorDashboard() {
   );
 
   const viewSubmission = useCallback(
-    (submission: any, bountyId: string) => {
+    (submission: any, bountyId: string, skipUrlUpdate = false) => {
       // Convert Submission to BountySubmission format
       const bountySubmission: any = {
         id: submission.id,
@@ -91,9 +91,26 @@ export default function SponsorDashboard() {
       setSelectedSubmission(bountySubmission);
       setSelectedBounty(bounty);
       setShowSubmissionDetails(true);
+
+      // Update URL with submission ID (unless already from URL)
+      if (!skipUrlUpdate) {
+        router.push(
+          `/bounty/sponsor/dashboard?submission=${submission.id}`,
+          undefined,
+          { shallow: true },
+        );
+      }
     },
-    [bounties],
+    [bounties, router],
   );
+
+  const closeSubmissionModal = useCallback(() => {
+    setShowSubmissionDetails(false);
+    setSelectedSubmission(null);
+    setSelectedBounty(null);
+    // Remove submission from URL
+    router.push("/bounty/sponsor/dashboard", undefined, { shallow: true });
+  }, [router]);
 
   const handleSelectBounty = useCallback(
     (bounty: Bounty) => {
@@ -165,22 +182,24 @@ export default function SponsorDashboard() {
   // Handle submission query parameter to open specific submission
   useEffect(() => {
     const submissionId = router.query.submission as string;
-    if (submissionId && allSubmissions.length > 0 && !loading) {
+    if (
+      submissionId &&
+      allSubmissions.length > 0 &&
+      !loading &&
+      !showSubmissionDetails
+    ) {
       const submission = allSubmissions.find((s) => s.id === submissionId);
       if (submission) {
-        viewSubmission(submission, submission.bounty_id);
-        // Clear the query parameter
-        router.replace("/bounty/sponsor/dashboard", undefined, {
-          shallow: true,
-        });
+        // Pass skipUrlUpdate=true since URL already has the submission ID
+        viewSubmission(submission, submission.bounty_id, true);
       }
     }
   }, [
     router.query.submission,
     allSubmissions,
     loading,
+    showSubmissionDetails,
     viewSubmission,
-    router,
   ]);
 
   useEffect(() => {
@@ -1008,18 +1027,12 @@ export default function SponsorDashboard() {
         {/* Submission Review Modal */}
         <SubmissionReviewModal
           isOpen={showSubmissionDetails}
-          onClose={() => {
-            setShowSubmissionDetails(false);
-            setSelectedSubmission(null);
-            setSelectedBounty(null);
-          }}
+          onClose={closeSubmissionModal}
           submission={selectedSubmission}
           bounty={selectedBounty}
           onSuccess={() => {
             refreshSubmissions();
-            setShowSubmissionDetails(false);
-            setSelectedSubmission(null);
-            setSelectedBounty(null);
+            closeSubmissionModal();
           }}
         />
       </div>
