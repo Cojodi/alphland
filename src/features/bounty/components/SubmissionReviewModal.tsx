@@ -33,6 +33,10 @@ export function SubmissionReviewModal({
   const [closeBounty, setCloseBounty] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successState, setSuccessState] = useState<{
+    show: boolean;
+    action: "approved" | "rejected" | null;
+  }>({ show: false, action: null });
   const [userWalletAddress, setUserWalletAddress] = useState<string | null>(
     null,
   );
@@ -178,19 +182,15 @@ export function SubmissionReviewModal({
         );
       }
 
-      // Reset form
-      setReviewAction(null);
+      // Show success state
+      setSuccessState({ show: true, action: reviewAction });
+
+      // Reset form fields
       setReviewerNotes("");
       setTransactionHash("");
       setRewardAmount("");
       setSelectedTier(null);
       setCloseBounty(false);
-
-      // Call success callback
-      onSuccess?.();
-
-      // Close modal
-      onClose();
     } catch (err) {
       console.error("Failed to update submission:", err);
       setError(
@@ -203,7 +203,66 @@ export function SubmissionReviewModal({
     }
   };
 
+  const handleDone = () => {
+    // Reset all states
+    setReviewAction(null);
+    setSuccessState({ show: false, action: null });
+    setError(null);
+    // Call success callback to refresh data
+    onSuccess?.();
+    // Close modal
+    onClose();
+  };
+
+  // Reset success state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSuccessState({ show: false, action: null });
+      setReviewAction(null);
+      setError(null);
+    }
+  }, [isOpen]);
+
   if (!isOpen || !submission || !bounty) return null;
+
+  // Show success view
+  if (successState.show) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+        <div className="bg-white dark:bg-hero-dark rounded-lg max-w-md w-full p-8 text-center">
+          <div
+            className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
+              successState.action === "approved"
+                ? "bg-accessible-green/20"
+                : "bg-red-500/20"
+            }`}
+          >
+            {successState.action === "approved" ? (
+              <CheckCircle className="w-8 h-8 text-accessible-green" />
+            ) : (
+              <XCircle className="w-8 h-8 text-red-500" />
+            )}
+          </div>
+          <h2 className="text-2xl font-bold text-black dark:text-white mb-2">
+            {successState.action === "approved"
+              ? "Submission Approved!"
+              : "Submission Rejected"}
+          </h2>
+          <p className="text-light-charcoal dark:text-lightgrey mb-6">
+            {successState.action === "approved"
+              ? "The submitter has been notified and will receive their reward."
+              : "The submitter has been notified of your decision."}
+          </p>
+          <button
+            onClick={handleDone}
+            className="w-full px-6 py-3 bg-orange hover:bg-orange/90 text-white rounded-lg transition-colors font-medium"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const extractTitle = (description: string | null): string => {
     if (!description) return "Submission";
