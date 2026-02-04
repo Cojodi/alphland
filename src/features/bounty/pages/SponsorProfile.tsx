@@ -76,43 +76,29 @@ export default function SponsorProfile({
       description={sponsor.description || `Sponsor profile for ${sponsor.name}`}
     >
       <div className="min-h-screen bg-smoked-white dark:bg-light-black">
-        {/* Header Banner */}
-        <div className="h-48 relative overflow-hidden">
-          {sponsor.banner_url ? (
-            <Image
-              src={sponsor.banner_url}
-              alt={`${sponsor.name} banner`}
-              layout="fill"
-              objectFit="cover"
-              priority
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-r from-orange to-orange/80" />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10"></div>
-
-          {/* Back Button */}
+        {/* Back Button */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
           <button
             onClick={() => router.push("/bounty/sponsor/dashboard")}
-            className="absolute top-4 left-4 flex items-center gap-2 px-3 py-2 bg-white/90 dark:bg-hero-dark/90 hover:bg-white dark:hover:bg-hero-dark text-black dark:text-white rounded-lg shadow-md transition-colors"
+            className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-hero-dark hover:bg-smoked-white dark:hover:bg-light-black text-black dark:text-white rounded-lg shadow-md transition-colors border border-border-grey dark:border-dark-charcoal"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-medium">Dashboard</span>
           </button>
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 pb-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
           <div className="space-y-8">
             {/* Profile Header */}
             <div className="flex flex-col sm:flex-row gap-6 items-start">
               {/* Avatar */}
-              <div className="w-40 h-40 border-4 border-white dark:border-hero-dark rounded-lg bg-white dark:bg-hero-dark shadow-box-image-shadow flex-shrink-0 flex items-center justify-center overflow-hidden">
+              <div className="w-32 h-32 border-4 border-white dark:border-hero-dark rounded-lg bg-white dark:bg-hero-dark shadow-box-image-shadow flex-shrink-0 flex items-center justify-center overflow-hidden">
                 {sponsor.logo_url ? (
                   <Image
                     src={sponsor.logo_url}
                     alt={sponsor.name}
-                    width={160}
-                    height={160}
+                    width={128}
+                    height={128}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -163,6 +149,21 @@ export default function SponsorProfile({
                   )}
                 </div>
               </div>
+            </div>
+
+            {/* Banner */}
+            <div className="h-48 relative overflow-hidden rounded-xl">
+              {sponsor.banner_url ? (
+                <Image
+                  src={sponsor.banner_url}
+                  alt={`${sponsor.name} banner`}
+                  layout="fill"
+                  objectFit="cover"
+                  priority
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-r from-orange to-orange/80" />
+              )}
             </div>
 
             {/* Stats Cards */}
