@@ -35,7 +35,7 @@ export function SubmissionReviewModal({
   const [error, setError] = useState<string | null>(null);
   const [successState, setSuccessState] = useState<{
     show: boolean;
-    action: "approved" | "rejected" | null;
+    action: "approved" | "rejected" | "revision_requested" | null;
   }>({ show: false, action: null });
   const [userWalletAddress, setUserWalletAddress] = useState<string | null>(
     null,

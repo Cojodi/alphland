@@ -1,6 +1,6 @@
 import type { Sponsor } from "../types/sponsor.types";
 import Layout from "@/components/Layout";
-import { Globe, CircleDollarSign, BarChart3, ArrowLeft } from "lucide-react";
+import { Globe, CircleDollarSign, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -151,9 +151,9 @@ export default function SponsorProfile({
               </div>
             </div>
 
-            {/* Banner */}
-            <div className="h-48 relative overflow-hidden rounded-xl">
-              {sponsor.banner_url ? (
+            {/* Banner - only show if sponsor has a custom banner image */}
+            {sponsor.banner_url && (
+              <div className="h-48 relative overflow-hidden rounded-xl">
                 <Image
                   src={sponsor.banner_url}
                   alt={`${sponsor.name} banner`}
@@ -161,10 +161,8 @@ export default function SponsorProfile({
                   objectFit="cover"
                   priority
                 />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-r from-orange to-orange/80" />
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
