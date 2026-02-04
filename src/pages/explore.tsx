@@ -66,16 +66,13 @@ const Explore = ({ dappCards }: { dappCards: DappCard[] }) => {
   }, [searchQuery, selectedCategories, selectedSort, router.isReady]);
 
   const filteredDapps = dappCards.filter((dapp) => {
-    // Filter by search query
+    // Filter by search query - match against title first, then description/tags
+    const query = searchQuery.toLowerCase();
     const matchesSearch =
       searchQuery === "" ||
-      dapp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      dapp.short_description
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
-      dapp.tags?.some((tag) =>
-        tag.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
+      dapp.title.toLowerCase().includes(query) ||
+      dapp.short_description?.toLowerCase().includes(query) ||
+      dapp.tags?.some((tag) => tag.toLowerCase().includes(query));
 
     // Filter by selected categories (OR logic)
     const matchesCategories =
@@ -88,8 +85,23 @@ const Explore = ({ dappCards }: { dappCards: DappCard[] }) => {
     return matchesSearch && matchesCategories;
   });
 
+  // Sort filtered results: prioritize title matches (startsWith > includes > description/tag only)
+  const rankedDapps = searchQuery
+    ? [...filteredDapps].sort((a, b) => {
+        const query = searchQuery.toLowerCase();
+        const aTitle = a.title.toLowerCase();
+        const bTitle = b.title.toLowerCase();
+        const aStartsWith = aTitle.startsWith(query) ? 0 : 1;
+        const bStartsWith = bTitle.startsWith(query) ? 0 : 1;
+        if (aStartsWith !== bStartsWith) return aStartsWith - bStartsWith;
+        const aTitleMatch = aTitle.includes(query) ? 0 : 1;
+        const bTitleMatch = bTitle.includes(query) ? 0 : 1;
+        return aTitleMatch - bTitleMatch;
+      })
+    : filteredDapps;
+
   const dappsByRating = filterDappcardsByRating({
-    dappCards: filteredDapps,
+    dappCards: rankedDapps,
     dappRatings: ratings,
     isMainCategory: false,
     selectedRatings,
