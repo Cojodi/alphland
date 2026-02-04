@@ -76,76 +76,72 @@ export default function SponsorProfile({
       description={sponsor.description || `Sponsor profile for ${sponsor.name}`}
     >
       <div className="min-h-screen bg-smoked-white dark:bg-light-black">
-        {/* Hero Banner with Profile Info */}
-        <div className="relative overflow-hidden">
-          {/* Banner Background */}
-          {sponsor.banner_url ? (
-            <Image
-              src={sponsor.banner_url}
-              alt={`${sponsor.name} banner`}
-              layout="fill"
-              objectFit="cover"
-              priority
-              className="absolute inset-0"
-            />
-          ) : (
+        {/* Banner */}
+        <div
+          className="relative min-h-[160px] sm:min-h-[240px] lg:min-h-[300px] w-full overflow-hidden bg-no-repeat bg-cover bg-center"
+          style={
+            sponsor.banner_url
+              ? { backgroundImage: `url(${sponsor.banner_url})` }
+              : undefined
+          }
+        >
+          {!sponsor.banner_url && (
             <div className="absolute inset-0 bg-gradient-to-r from-orange to-orange/80" />
           )}
-          {/* Dark overlay for text readability */}
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-black/30" />
 
-          {/* Content on top of banner */}
-          <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-20">
-            {/* Back Button */}
+          {/* Back Button on banner */}
+          <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
             <button
               onClick={() => router.push("/bounty/sponsor/dashboard")}
-              className="flex items-center gap-2 px-3 py-2 mb-8 bg-white/90 dark:bg-hero-dark/90 hover:bg-white dark:hover:bg-hero-dark text-black dark:text-white rounded-lg shadow-md transition-colors"
+              className="flex items-center gap-2 px-3 py-2 bg-white/90 dark:bg-hero-dark/90 hover:bg-white dark:hover:bg-hero-dark text-black dark:text-white rounded-lg shadow-md transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               <span className="text-sm font-medium">Dashboard</span>
             </button>
+          </div>
+        </div>
 
-            {/* Sponsor Name & Description */}
-            <div className="space-y-2">
-              <h1 className="text-3xl sm:text-4xl font-bold text-white flex items-center gap-3">
-                {sponsor.name}
+        {/* Logo overlapping banner bottom (like linx-app page) */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-[40px] xl:-mt-[60px]">
+          <div className="relative w-[80px] h-[80px] xl:w-[120px] xl:h-[120px] rounded-full overflow-hidden border-4 border-white dark:border-light-black shadow-lg bg-white dark:bg-hero-dark flex items-center justify-center">
+            {sponsor.logo_url ? (
+              <Image
+                src={sponsor.logo_url}
+                alt={sponsor.name}
+                layout="fill"
+                className="rounded-full object-cover"
+              />
+            ) : (
+              <div className="text-2xl xl:text-3xl font-semibold text-orange bg-orange/10 w-full h-full flex items-center justify-center">
+                {getInitials(sponsor.name)}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Profile Info + Content */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-12">
+          <div className="space-y-8">
+            {/* Name, Description, Social Links */}
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-3xl sm:text-4xl font-bold text-black dark:text-white">
+                  {sponsor.name}
+                </h1>
                 {sponsor.is_verified && (
                   <span className="px-3 py-1 bg-accessible-green/20 text-accessible-green rounded-full text-sm font-medium">
                     Verified
                   </span>
                 )}
-              </h1>
-              <p className="text-white/80 text-base">
-                {sponsor.description || "A sponsor on the Alephium platform"}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Profile section that overlaps the banner bottom */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 pb-12">
-          <div className="space-y-8">
-            {/* Logo + Social Links row */}
-            <div className="flex flex-col sm:flex-row gap-6 items-start">
-              {/* Logo */}
-              <div className="w-24 h-24 border-4 border-white dark:border-hero-dark rounded-lg bg-white dark:bg-hero-dark shadow-box-image-shadow flex-shrink-0 flex items-center justify-center overflow-hidden">
-                {sponsor.logo_url ? (
-                  <Image
-                    src={sponsor.logo_url}
-                    alt={sponsor.name}
-                    width={96}
-                    height={96}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="text-2xl font-semibold text-orange bg-orange/10 w-full h-full flex items-center justify-center">
-                    {getInitials(sponsor.name)}
-                  </div>
-                )}
               </div>
 
+              <p className="text-light-charcoal dark:text-lightgrey text-base">
+                {sponsor.description || "A sponsor on the Alephium platform"}
+              </p>
+
               {/* Social Links */}
-              <div className="flex flex-wrap gap-2 pt-4">
+              <div className="flex flex-wrap gap-2">
                 {sponsor.website && (
                   <a
                     href={sponsor.website}
