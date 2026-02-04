@@ -127,14 +127,11 @@ export function TieredRewardDisplay({
               </p>
             </div>
           </div>
-          <Link
-            href="/bounty/profile"
-            className="w-full flex items-center justify-center gap-2 bg-orange hover:bg-orange/90 text-white py-3 text-base font-semibold rounded-lg transition-colors"
-          >
-            <span className="flex items-center gap-2">
+          <Link href="/bounty/profile">
+            <a className="w-full flex items-center justify-center gap-2 bg-orange hover:bg-orange/90 text-white py-3 text-base font-semibold rounded-lg transition-colors">
               <User className="w-5 h-5" />
               Profile
-            </span>
+            </a>
           </Link>
         </div>
       ) : isBountyEnded ? (

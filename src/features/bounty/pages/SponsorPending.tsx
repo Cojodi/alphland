@@ -120,11 +120,10 @@ export default function SponsorPending() {
           </p>
 
           {/* Back Button */}
-          <Link
-            href="/bounty"
-            className="inline-block bg-smoked-white dark:bg-light-black hover:bg-border-grey dark:hover:bg-dark-charcoal text-black dark:text-white font-medium py-2.5 px-6 rounded-lg transition-colors border border-border-grey dark:border-dark-charcoal"
-          >
-            Back to Bounties
+          <Link href="/bounty">
+            <a className="inline-block bg-smoked-white dark:bg-light-black hover:bg-border-grey dark:hover:bg-dark-charcoal text-black dark:text-white font-medium py-2.5 px-6 rounded-lg transition-colors border border-border-grey dark:border-dark-charcoal">
+              Back to Bounties
+            </a>
           </Link>
         </div>
       </div>

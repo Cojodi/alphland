@@ -374,11 +374,10 @@ export default function EditSponsorProfile() {
             <p className="text-light-charcoal dark:text-lightgrey">
               Please login to edit your sponsor profile.
             </p>
-            <Link
-              href="/auth/login?redirect=/bounty/sponsor/edit"
-              className="inline-block bg-orange hover:bg-orange/90 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
-            >
-              Login to Continue
+            <Link href="/auth/login?redirect=/bounty/sponsor/edit">
+              <a className="inline-block bg-orange hover:bg-orange/90 text-white font-semibold px-8 py-3 rounded-lg transition-colors">
+                Login to Continue
+              </a>
             </Link>
           </div>
         </div>
@@ -399,11 +398,10 @@ export default function EditSponsorProfile() {
               You don&apos;t have a sponsor profile yet. Create one to get
               started.
             </p>
-            <Link
-              href="/bounty/sponsor"
-              className="inline-block bg-orange hover:bg-orange/90 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
-            >
-              Become a Sponsor
+            <Link href="/bounty/sponsor">
+              <a className="inline-block bg-orange hover:bg-orange/90 text-white font-semibold px-8 py-3 rounded-lg transition-colors">
+                Become a Sponsor
+              </a>
             </Link>
           </div>
         </div>

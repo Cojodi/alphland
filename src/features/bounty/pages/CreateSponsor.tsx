@@ -347,11 +347,10 @@ export default function CreateSponsorProfile() {
               Please login to apply as a sponsor and start posting bounties on
               Alphland.
             </p>
-            <Link
-              href="/auth/login?redirect=/bounty/sponsor"
-              className="inline-block bg-orange hover:bg-orange/90 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
-            >
-              Login to Continue
+            <Link href="/auth/login?redirect=/bounty/sponsor">
+              <a className="inline-block bg-orange hover:bg-orange/90 text-white font-semibold px-8 py-3 rounded-lg transition-colors">
+                Login to Continue
+              </a>
             </Link>
           </div>
         </div>

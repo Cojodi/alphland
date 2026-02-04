@@ -214,11 +214,10 @@ export default function BountyList() {
                     </p>
                     <p className="text-xs text-accessible-green/80 mt-0.5">
                       Please{" "}
-                      <Link
-                        href="/auth/login"
-                        className="underline hover:no-underline font-semibold"
-                      >
-                        sign in
+                      <Link href="/auth/login">
+                        <a className="underline hover:no-underline font-semibold">
+                          sign in
+                        </a>
                       </Link>{" "}
                       to access all features.
                     </p>
@@ -468,9 +467,10 @@ export default function BountyList() {
                         ? "/bounty/sponsor/dashboard"
                         : "/bounty/sponsor"
                     }
-                    className="block w-full bg-orange hover:bg-orange/90 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-center text-sm"
                   >
-                    {isSponsor ? "Go to Dashboard" : "Get Started"}
+                    <a className="block w-full bg-orange hover:bg-orange/90 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-center text-sm">
+                      {isSponsor ? "Go to Dashboard" : "Get Started"}
+                    </a>
                   </Link>
                 </div>
 
