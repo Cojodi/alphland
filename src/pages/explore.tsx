@@ -136,7 +136,7 @@ const Explore = ({ dappCards }: { dappCards: DappCard[] }) => {
               <SearchBar
                 value={searchQuery}
                 onChange={setSearchQuery}
-                placeholder="Search dApps..."
+                placeholder="Search dApps or categories..."
               />
             </div>
             <div className="w-[164px]">
@@ -155,44 +155,43 @@ const Explore = ({ dappCards }: { dappCards: DappCard[] }) => {
           </div>
         </div>
 
-        {/* Active Filters */}
-        {selectedCategories.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-6">
-            {selectedCategories.map((cat) => {
-              const category = categories.find((c) => c.key === cat);
+        {/* Category Tags */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {categories
+            .filter((c) => c.key !== "soon")
+            .map((cat) => {
+              const isActive = selectedCategories.includes(cat.key);
               return (
                 <button
-                  key={cat}
-                  onClick={() =>
-                    setCategories(selectedCategories.filter((c) => c !== cat))
-                  }
-                  className="flex items-center gap-2 px-3 py-1.5 bg-orange/10 text-orange rounded-full text-sm font-medium hover:bg-orange/20 transition-colors"
+                  key={cat.key}
+                  onClick={() => {
+                    if (isActive) {
+                      setCategories(
+                        selectedCategories.filter((c) => c !== cat.key),
+                      );
+                    } else {
+                      setCategories([...selectedCategories, cat.key]);
+                    }
+                  }}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    isActive
+                      ? "bg-orange text-white"
+                      : "bg-white dark:bg-white/10 text-light-charcoal dark:text-gray-400 hover:bg-orange/10 hover:text-orange"
+                  }`}
                 >
-                  {category?.name}
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  {cat.name}
                 </button>
               );
             })}
+          {selectedCategories.length > 0 && (
             <button
               onClick={() => setCategories([])}
-              className="px-3 py-1.5 text-light-charcoal dark:text-gray-400 text-sm font-medium hover:text-orange transition-colors"
+              className="px-3 py-1.5 text-light-charcoal dark:text-gray-400 text-sm font-medium hover:text-orange transition-colors underline"
             >
               Clear all
             </button>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Results count */}
         <div className="mb-6 text-sm text-light-charcoal dark:text-gray-400">
