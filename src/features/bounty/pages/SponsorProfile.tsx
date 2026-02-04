@@ -76,94 +76,98 @@ export default function SponsorProfile({
       description={sponsor.description || `Sponsor profile for ${sponsor.name}`}
     >
       <div className="min-h-screen bg-smoked-white dark:bg-light-black">
-        {/* Back Button */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-          <button
-            onClick={() => router.push("/bounty/sponsor/dashboard")}
-            className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-hero-dark hover:bg-smoked-white dark:hover:bg-light-black text-black dark:text-white rounded-lg shadow-md transition-colors border border-border-grey dark:border-dark-charcoal"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-medium">Dashboard</span>
-          </button>
+        {/* Hero Banner with Profile Info */}
+        <div className="relative overflow-hidden">
+          {/* Banner Background */}
+          {sponsor.banner_url ? (
+            <Image
+              src={sponsor.banner_url}
+              alt={`${sponsor.name} banner`}
+              layout="fill"
+              objectFit="cover"
+              priority
+              className="absolute inset-0"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-r from-orange to-orange/80" />
+          )}
+          {/* Dark overlay for text readability */}
+          <div className="absolute inset-0 bg-black/40" />
+
+          {/* Content on top of banner */}
+          <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-20">
+            {/* Back Button */}
+            <button
+              onClick={() => router.push("/bounty/sponsor/dashboard")}
+              className="flex items-center gap-2 px-3 py-2 mb-8 bg-white/90 dark:bg-hero-dark/90 hover:bg-white dark:hover:bg-hero-dark text-black dark:text-white rounded-lg shadow-md transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="text-sm font-medium">Dashboard</span>
+            </button>
+
+            {/* Sponsor Name & Description */}
+            <div className="space-y-2">
+              <h1 className="text-3xl sm:text-4xl font-bold text-white flex items-center gap-3">
+                {sponsor.name}
+                {sponsor.is_verified && (
+                  <span className="px-3 py-1 bg-accessible-green/20 text-accessible-green rounded-full text-sm font-medium">
+                    Verified
+                  </span>
+                )}
+              </h1>
+              <p className="text-white/80 text-base">
+                {sponsor.description || "A sponsor on the Alephium platform"}
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
+        {/* Profile section that overlaps the banner bottom */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 pb-12">
           <div className="space-y-8">
-            {/* Profile Header */}
+            {/* Logo + Social Links row */}
             <div className="flex flex-col sm:flex-row gap-6 items-start">
-              {/* Avatar */}
-              <div className="w-32 h-32 border-4 border-white dark:border-hero-dark rounded-lg bg-white dark:bg-hero-dark shadow-box-image-shadow flex-shrink-0 flex items-center justify-center overflow-hidden">
+              {/* Logo */}
+              <div className="w-24 h-24 border-4 border-white dark:border-hero-dark rounded-lg bg-white dark:bg-hero-dark shadow-box-image-shadow flex-shrink-0 flex items-center justify-center overflow-hidden">
                 {sponsor.logo_url ? (
                   <Image
                     src={sponsor.logo_url}
                     alt={sponsor.name}
-                    width={128}
-                    height={128}
+                    width={96}
+                    height={96}
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="text-3xl font-semibold text-orange bg-orange/10 w-full h-full flex items-center justify-center">
+                  <div className="text-2xl font-semibold text-orange bg-orange/10 w-full h-full flex items-center justify-center">
                     {getInitials(sponsor.name)}
                   </div>
                 )}
               </div>
 
-              <div className="flex-1 pt-2">
-                <div className="flex flex-wrap items-center gap-3 mb-3">
-                  <h1 className="text-3xl sm:text-4xl font-bold text-black dark:text-white">
-                    {sponsor.name}
-                  </h1>
-                  {sponsor.is_verified && (
-                    <span className="px-3 py-1 bg-accessible-green/20 text-accessible-green rounded-full text-sm font-medium">
-                      Verified
-                    </span>
-                  )}
-                </div>
-
-                <p className="text-light-charcoal dark:text-lightgrey text-base mb-6">
-                  {sponsor.description || "A sponsor on the Alephium platform"}
-                </p>
-
-                {/* Social Links */}
-                <div className="flex flex-wrap gap-2">
-                  {sponsor.website && (
-                    <a
-                      href={sponsor.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-4 py-2 border-2 border-orange text-orange hover:bg-orange/5 rounded-lg font-medium text-sm transition-colors inline-flex items-center gap-2"
-                    >
-                      <Globe className="w-4 h-4" />
-                      Website
-                    </a>
-                  )}
-                  {sponsor.twitter && (
-                    <a
-                      href={`https://x.com/${sponsor.twitter}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-4 py-2 border-2 border-accessible-green text-accessible-green hover:bg-accessible-green/5 rounded-lg font-medium text-sm transition-colors inline-flex items-center gap-2"
-                    >
-                      𝕏 Twitter
-                    </a>
-                  )}
-                </div>
+              {/* Social Links */}
+              <div className="flex flex-wrap gap-2 pt-4">
+                {sponsor.website && (
+                  <a
+                    href={sponsor.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 border-2 border-orange text-orange hover:bg-orange/5 rounded-lg font-medium text-sm transition-colors inline-flex items-center gap-2"
+                  >
+                    <Globe className="w-4 h-4" />
+                    Website
+                  </a>
+                )}
+                {sponsor.twitter && (
+                  <a
+                    href={`https://x.com/${sponsor.twitter}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 border-2 border-accessible-green text-accessible-green hover:bg-accessible-green/5 rounded-lg font-medium text-sm transition-colors inline-flex items-center gap-2"
+                  >
+                    𝕏 Twitter
+                  </a>
+                )}
               </div>
-            </div>
-
-            {/* Banner */}
-            <div className="h-48 relative overflow-hidden rounded-xl">
-              {sponsor.banner_url ? (
-                <Image
-                  src={sponsor.banner_url}
-                  alt={`${sponsor.name} banner`}
-                  layout="fill"
-                  objectFit="cover"
-                  priority
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-r from-orange to-orange/80" />
-              )}
             </div>
 
             {/* Stats Cards */}
