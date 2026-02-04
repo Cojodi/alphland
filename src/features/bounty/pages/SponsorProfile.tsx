@@ -151,9 +151,9 @@ export default function SponsorProfile({
               </div>
             </div>
 
-            {/* Banner - only show if sponsor has a custom banner image */}
-            {sponsor.banner_url && (
-              <div className="h-48 relative overflow-hidden rounded-xl">
+            {/* Banner */}
+            <div className="h-48 relative overflow-hidden rounded-xl">
+              {sponsor.banner_url ? (
                 <Image
                   src={sponsor.banner_url}
                   alt={`${sponsor.name} banner`}
@@ -161,8 +161,10 @@ export default function SponsorProfile({
                   objectFit="cover"
                   priority
                 />
-              </div>
-            )}
+              ) : (
+                <div className="w-full h-full bg-gradient-to-r from-orange to-orange/80" />
+              )}
+            </div>
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
