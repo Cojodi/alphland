@@ -1,6 +1,3 @@
-"use client";
-
-// import { ActivityFeed } from "../components/ActivityFeed";
 import { BookmarksSection } from "../components/BookmarksSection";
 import { ProfileDetails } from "../components/ProfileDetails";
 import { ProfileHeader } from "../components/ProfileHeader";
@@ -10,10 +7,9 @@ import { StatsSection } from "../components/StatsSection";
 import { SubmissionsSection } from "../components/SubmissionsSection";
 import Layout from "@/components/Layout";
 import { useSession } from "@/lib/auth-client";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-interface UserProfile {
+interface UserProfileData {
   id: string;
   user_id: string;
   username: string | null;
@@ -42,18 +38,20 @@ interface UserProfile {
   image: string | null;
 }
 
-export default function UserProfile() {
-  const router = useRouter();
-  const { username } = router.query;
-  const { data: session } = useSession();
-  const [userData, setUserData] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [userStats, setUserStats] = useState<{
+interface UserProfileProps {
+  user: UserProfileData;
+  stats: {
     submissions: number;
     won: number;
     earned: number;
-  } | null>(null);
+  } | null;
+}
+
+export default function UserProfile({
+  user: userData,
+  stats: userStats,
+}: UserProfileProps) {
+  const { data: session } = useSession();
   const [proofOfWork, setProofOfWork] = useState<
     Array<{
       id: string;
@@ -77,55 +75,10 @@ export default function UserProfile() {
   };
 
   useEffect(() => {
-    if (!username) return;
-
-    const fetchUserProfile = async () => {
-      try {
-        setLoading(true);
-
-        // Fetch by username only
-        const response = await fetch(`/api/users/username/${username}`);
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError("User not found");
-          } else {
-            setError("Failed to load profile");
-          }
-          return;
-        }
-
-        const data = await response.json();
-        setUserData(data.user);
-
-        // Fetch user stats
-        try {
-          const statsResponse = await fetch(
-            `/api/users/${data.user.user_id}/stats`,
-          );
-          if (statsResponse.ok) {
-            const statsData = await statsResponse.json();
-            setUserStats(statsData.stats);
-          }
-        } catch (err) {
-          console.error("Error fetching user stats:", err);
-          // Don't fail the whole page if stats fail to load
-        }
-
-        // Fetch proof of work
-        if (data.user.username) {
-          await fetchProofOfWork(data.user.username);
-        }
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-        setError("Failed to load profile");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserProfile();
-  }, [username]);
+    if (userData?.username) {
+      fetchProofOfWork(userData.username);
+    }
+  }, [userData?.username]);
 
   // Check if this is the current user's own profile
   const isOwnProfile = session?.user && userData?.user_id === session.user.id;
@@ -139,44 +92,6 @@ export default function UserProfile() {
       return defaultValue;
     }
   };
-
-  if (loading) {
-    return (
-      <Layout title="Loading... | Alphland" description="Loading user profile">
-        <div className="min-h-screen bg-smoked-white dark:bg-light-black flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange mx-auto mb-4"></div>
-            <p className="text-light-charcoal dark:text-lightgrey">
-              Loading profile...
-            </p>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
-
-  if (error || !userData) {
-    return (
-      <Layout title="User Not Found | Alphland" description="User not found">
-        <div className="min-h-screen bg-smoked-white dark:bg-light-black flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-black dark:text-white mb-2">
-              {error || "User not found"}
-            </h1>
-            <p className="text-light-charcoal dark:text-lightgrey mb-4">
-              The profile you&apos;re looking for doesn&apos;t exist.
-            </p>
-            <button
-              onClick={() => router.push("/bounty")}
-              className="px-4 py-2 bg-orange text-white rounded-lg hover:bg-orange/90 transition-colors"
-            >
-              Go to Bounties
-            </button>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
 
   // Parse skills from JSON - combine all skill categories
   const frontendSkills = parseJsonField<string[]>(userData.frontend_skills, []);
@@ -317,4 +232,49 @@ export default function UserProfile() {
       </div>
     </Layout>
   );
+}
+
+// Server-side data fetching for Next.js
+export async function getServerSideProps(context: any) {
+  const { username } = context.params;
+
+  try {
+    const protocol = context.req.headers["x-forwarded-proto"] || "http";
+    const host = context.req.headers.host || "localhost:3000";
+    const baseUrl = `${protocol}://${host}`;
+
+    // Fetch user profile by username
+    const response = await fetch(`${baseUrl}/api/users/username/${username}`);
+
+    if (!response.ok) {
+      return { notFound: true };
+    }
+
+    const data = await response.json();
+    const user = data.user;
+
+    // Fetch user stats
+    let stats = null;
+    try {
+      const statsResponse = await fetch(
+        `${baseUrl}/api/users/${user.user_id}/stats`,
+      );
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        stats = statsData.stats;
+      }
+    } catch (err) {
+      console.error("Error fetching user stats:", err);
+    }
+
+    return {
+      props: {
+        user,
+        stats,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    return { notFound: true };
+  }
 }
