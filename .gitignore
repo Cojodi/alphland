@@ -48,6 +48,7 @@ next-env.d.ts
 # wrangler
 /.wrangler/
 *.toml
+.dev.vars
 
 .claude
 /migrations/*.sql

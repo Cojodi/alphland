@@ -31,6 +31,7 @@ export interface Env {
   APP_URL?: string; // Same as BETTER_AUTH_URL
   RESEND_API_KEY?: string;
   FROM_EMAIL?: string;
+  GITHUB_ISSUES_TOKEN?: string; // GitHub token for creating issues
 }
 
 // Note: Do NOT cache auth instance globally
@@ -746,6 +747,98 @@ const worker = {
       // Proof of Work endpoints
       if (url.pathname.startsWith("/api/proof-of-work")) {
         return handleProofOfWorkAPI(request, env, url);
+      }
+
+      // GitHub Issues API - for report submissions
+      if (url.pathname === "/api/github/issues" && request.method === "POST") {
+        if (!env.GITHUB_ISSUES_TOKEN) {
+          return new Response(
+            JSON.stringify({ error: "GitHub token not configured" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
+        }
+
+        try {
+          const body = (await request.json()) as {
+            title: string;
+            body: string;
+            labels?: string[];
+          };
+
+          if (!body.title || !body.body) {
+            return new Response(
+              JSON.stringify({ error: "Title and body are required" }),
+              {
+                status: 400,
+                headers: { "Content-Type": "application/json", ...corsHeaders },
+              },
+            );
+          }
+
+          const githubResponse = await fetch(
+            "https://api.github.com/repos/xbabyx/alphland/issues",
+            {
+              method: "POST",
+              headers: {
+                Authorization: `token ${env.GITHUB_ISSUES_TOKEN}`,
+                Accept: "application/vnd.github.v3+json",
+                "Content-Type": "application/json",
+                "User-Agent": "Alphland-Report-Bot",
+              },
+              body: JSON.stringify({
+                title: body.title,
+                body: body.body,
+                labels: body.labels || ["report"],
+              }),
+            },
+          );
+
+          if (!githubResponse.ok) {
+            const errorData = await githubResponse.text();
+            console.error("GitHub API error:", errorData);
+            return new Response(
+              JSON.stringify({
+                error: "Failed to create issue",
+                details: errorData,
+              }),
+              {
+                status: githubResponse.status,
+                headers: { "Content-Type": "application/json", ...corsHeaders },
+              },
+            );
+          }
+
+          const issue = (await githubResponse.json()) as {
+            html_url: string;
+            number: number;
+          };
+          return new Response(
+            JSON.stringify({
+              success: true,
+              issue_url: issue.html_url,
+              issue_number: issue.number,
+            }),
+            {
+              status: 201,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
+        } catch (error) {
+          console.error("Error creating GitHub issue:", error);
+          return new Response(
+            JSON.stringify({
+              error: "Failed to create issue",
+              message: error instanceof Error ? error.message : "Unknown error",
+            }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
+        }
       }
 
       // Default 404
