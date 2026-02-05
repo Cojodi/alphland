@@ -154,7 +154,6 @@ export default function UserProfile({
   const isUsingGoogleNameFallback = !userData.username && !!userData.name;
   const displayUsername =
     userData.username || userData.name || userData.user_id.slice(0, 8);
-  const displayName = userData.name || userData.username || "Anonymous";
 
   return (
     <Layout
@@ -164,7 +163,6 @@ export default function UserProfile({
       <div className="min-h-screen bg-smoked-white dark:bg-light-black">
         <ProfileHeader
           username={displayUsername}
-          fullName={displayName}
           avatarUrl={userData.image || undefined}
           isOwnProfile={isOwnProfile || false}
           isUsingGoogleNameFallback={isUsingGoogleNameFallback}

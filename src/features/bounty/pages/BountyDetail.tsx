@@ -490,9 +490,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                     bountyId={bounty.id}
                     bountyTitle={bounty.title}
                     currentUserId={session?.user?.id}
-                    currentUsername={
-                      userProfile?.username || session?.user?.name || undefined
-                    }
+                    currentUsername={userProfile?.username || undefined}
                     currentUserAvatar={
                       userProfile?.image || session?.user?.image || undefined
                     }
@@ -513,7 +511,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
             bountyId={bounty.id}
             bountyTitle={bounty.title}
             userId={session.user.id}
-            username={userProfile?.username || session.user.name || undefined}
+            username={userProfile?.username || undefined}
             sponsorUserId={sponsorUserId || undefined}
             onSuccess={async () => {
               // Refresh submission status

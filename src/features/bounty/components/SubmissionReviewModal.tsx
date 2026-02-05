@@ -329,13 +329,12 @@ export function SubmissionReviewModal({
                 {submission.user_username ? (
                   <Link href={`/bounty/profile/${submission.user_username}`}>
                     <span className="font-medium text-orange hover:text-orange/80 transition-colors cursor-pointer">
-                      {submission.user_full_name || submission.user_username}
+                      @{submission.user_username}
                     </span>
                   </Link>
                 ) : (
                   <span className="font-medium text-light-charcoal">
-                    {submission.user_full_name ||
-                      `Anonymous (ID: ${submission.user_id?.substring(0, 8) || "unknown"}...)`}
+                    {`Anonymous (ID: ${submission.user_id?.substring(0, 8) || "unknown"}...)`}
                   </span>
                 )}
               </div>

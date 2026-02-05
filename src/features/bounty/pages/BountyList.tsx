@@ -503,8 +503,7 @@ export default function BountyList() {
                   ) : (
                     <div className="space-y-3">
                       {recentEarners.map((earner) => {
-                        const displayName =
-                          earner.username || earner.name || "Anonymous";
+                        const displayName = earner.username || "Anonymous";
                         const avatarUrl =
                           earner.avatar_url || earner.image || null;
                         const profileUrl = earner.username

@@ -115,10 +115,10 @@ const AuthButton = () => {
   if (session?.user) {
     // Use profile image if available, fallback to session image
     const displayImage = userProfile?.image || session.user.image;
-    // Always prefer username. While loading, show "..." to avoid flicker between Google name and username
+    // Only show username, not full name
     const displayName = isProfileLoading
       ? "..."
-      : userProfile?.username || session.user.name || "User";
+      : userProfile?.username || "User";
 
     return (
       <div className="relative" ref={dropdownRef}>

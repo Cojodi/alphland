@@ -269,8 +269,6 @@ interface FormData {
   profilePicture: File | null;
   profilePicturePreview: string | null;
   username: string;
-  firstName: string;
-  lastName: string;
   bio: string;
   alphWalletAddress: string;
   socials: {
@@ -303,8 +301,6 @@ export default function EditProfile() {
     profilePicture: null,
     profilePicturePreview: null,
     username: "",
-    firstName: "",
-    lastName: "",
     bio: "",
     alphWalletAddress: "",
     socials: {
@@ -387,17 +383,6 @@ export default function EditProfile() {
             ? JSON.parse(profile.web3_interests)
             : [];
 
-          // Get first_name and last_name from profile, fallback to splitting name
-          let firstName = profile.first_name || "";
-          let lastName = profile.last_name || "";
-
-          // Fallback: if no first/last name in profile, try splitting the name field
-          if (!firstName && !lastName && profile.name) {
-            const nameParts = profile.name.split(" ");
-            firstName = nameParts[0] || "";
-            lastName = nameParts.slice(1).join(" ") || "";
-          }
-
           // Extract username from URL fields (remove the URL part)
           const extractUsername = (url: string) => {
             if (!url) return "";
@@ -415,8 +400,6 @@ export default function EditProfile() {
           setFormData((prev) => ({
             ...prev,
             username: profile.username || "",
-            firstName,
-            lastName,
             bio: profile.bio || "",
             alphWalletAddress: profile.wallet_address || "",
             // Keep the current preview if user has selected a new image, otherwise use profile image
@@ -674,9 +657,6 @@ export default function EditProfile() {
       // Prepare request body with optional image
       const requestBody: Record<string, unknown> = {
         username: formData.username,
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        full_name: `${formData.firstName} ${formData.lastName}`.trim(),
         bio: formData.bio,
         wallet_address: formData.alphWalletAddress,
         github_username: formData.socials.github,
@@ -947,69 +927,6 @@ export default function EditProfile() {
                     className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
                   />
                 </div>
-
-                {/* First and Last Name - Read-only for Google-linked accounts */}
-                {isGoogleLinked ? (
-                  <div className="grid sm:grid-cols-2 gap-4 opacity-60">
-                    <div>
-                      <label className="block text-sm font-semibold text-black dark:text-white mb-2">
-                        First Name
-                        <span className="ml-2 text-xs font-normal text-light-charcoal dark:text-lightgrey">
-                          (from Google)
-                        </span>
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.firstName}
-                        disabled
-                        className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 border border-border-grey dark:border-dark-charcoal rounded-lg text-light-charcoal dark:text-lightgrey cursor-not-allowed"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-black dark:text-white mb-2">
-                        Last Name
-                        <span className="ml-2 text-xs font-normal text-light-charcoal dark:text-lightgrey">
-                          (from Google)
-                        </span>
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.lastName}
-                        disabled
-                        className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 border border-border-grey dark:border-dark-charcoal rounded-lg text-light-charcoal dark:text-lightgrey cursor-not-allowed"
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-semibold text-black dark:text-white mb-2">
-                        First Name
-                      </label>
-                      <input
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        placeholder="Enter your first name"
-                        className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-black dark:text-white mb-2">
-                        Last Name
-                      </label>
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        placeholder="Enter your last name"
-                        className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
-                      />
-                    </div>
-                  </div>
-                )}
 
                 {/* Bio */}
                 <div>

@@ -11,7 +11,6 @@ import Link from "next/link";
 
 interface ProfileHeaderProps {
   username: string;
-  fullName: string;
   avatarUrl?: string;
   isOwnProfile?: boolean;
   isUsingGoogleNameFallback?: boolean;
@@ -27,7 +26,6 @@ interface ProfileHeaderProps {
 
 export function ProfileHeader({
   username,
-  fullName,
   avatarUrl,
   isOwnProfile = false,
   isUsingGoogleNameFallback = false,
@@ -59,7 +57,7 @@ export function ProfileHeader({
               {avatarUrl ? (
                 <Image
                   src={avatarUrl}
-                  alt={fullName}
+                  alt={username}
                   width={96}
                   height={96}
                   className="w-full h-full object-cover"
@@ -67,7 +65,7 @@ export function ProfileHeader({
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange to-accessible-green text-white text-3xl font-bold">
-                  {fullName[0]}
+                  {username[0]?.toUpperCase()}
                 </div>
               )}
             </div>
@@ -78,11 +76,6 @@ export function ProfileHeader({
             <h1 className="text-3xl font-bold text-black dark:text-white mb-1">
               @{username}
             </h1>
-            {fullName !== username && (
-              <p className="text-light-charcoal dark:text-lightgrey text-lg">
-                {fullName}
-              </p>
-            )}
           </div>
 
           {/* Action Buttons */}
