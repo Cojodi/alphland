@@ -2,6 +2,7 @@
 
 import { notificationService } from "../services/notificationService";
 import { apiClient, BountyComment } from "@/lib/api-client";
+import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 
 interface CommentSectionProps {
@@ -116,7 +117,7 @@ function SingleComment({
             comment.user_id,
             bountyId,
             bountyTitle,
-            currentUsername
+            currentUsername,
           );
         }
       }
@@ -159,16 +160,33 @@ function SingleComment({
       <div className="flex gap-3 py-3">
         {/* Avatar */}
         <div className="flex-shrink-0">
-          {comment.user_avatar ? (
+          {comment.user_username ? (
+            <Link href={`/bounty/profile/${comment.user_username}`}>
+              <a className="block">
+                {comment.user_avatar ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={comment.user_avatar}
+                    alt={comment.user_username}
+                    className="w-8 h-8 rounded-full object-cover hover:ring-2 hover:ring-orange transition-all"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange/20 to-accessible-green/20 flex items-center justify-center text-sm font-medium text-light-charcoal dark:text-lightgrey hover:ring-2 hover:ring-orange transition-all">
+                    {comment.user_username[0].toUpperCase()}
+                  </div>
+                )}
+              </a>
+            </Link>
+          ) : comment.user_avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={comment.user_avatar}
-              alt={comment.user_username || "User"}
+              alt="User"
               className="w-8 h-8 rounded-full object-cover"
             />
           ) : (
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange/20 to-accessible-green/20 flex items-center justify-center text-sm font-medium text-light-charcoal dark:text-lightgrey">
-              {(comment.user_username || "U")[0].toUpperCase()}
+              U
             </div>
           )}
         </div>
@@ -176,9 +194,17 @@ function SingleComment({
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-semibold text-sm text-black dark:text-white">
-              {comment.user_username || "Anonymous"}
-            </span>
+            {comment.user_username ? (
+              <Link href={`/bounty/profile/${comment.user_username}`}>
+                <a className="font-semibold text-sm text-black dark:text-white hover:text-orange transition-colors">
+                  {comment.user_username}
+                </a>
+              </Link>
+            ) : (
+              <span className="font-semibold text-sm text-black dark:text-white">
+                Anonymous
+              </span>
+            )}
             <span className="text-xs text-light-charcoal dark:text-lightgrey">
               {formatTimeAgo(comment.created_at)}
             </span>
@@ -322,7 +348,7 @@ export function CommentSection({
     try {
       const { comments: rawComments } = await apiClient.getCommentsByBounty(
         bountyId,
-        currentUserId
+        currentUserId,
       );
       const organized = organizeComments(rawComments);
       setComments(organized);
@@ -356,7 +382,7 @@ export function CommentSection({
         // Find the parent comment to get its author
         const findComment = (
           comments: CommentWithReplies[],
-          id: string
+          id: string,
         ): CommentWithReplies | null => {
           for (const c of comments) {
             if (c.id === id) return c;
@@ -373,7 +399,7 @@ export function CommentSection({
             parentComment.user_id,
             bountyId,
             bountyTitle,
-            currentUsername
+            currentUsername,
           );
         }
       } else if (sponsorUserId && sponsorUserId !== currentUserId) {
@@ -381,14 +407,14 @@ export function CommentSection({
         const shouldNotify = await notificationService.shouldNotify(
           sponsorUserId,
           bountyId,
-          "comments"
+          "comments",
         );
         if (shouldNotify) {
           await notificationService.notifyNewComment(
             sponsorUserId,
             bountyId,
             bountyTitle,
-            currentUsername
+            currentUsername,
           );
         }
       }
@@ -512,8 +538,8 @@ export function CommentSection({
                   {isSubmitting
                     ? "Posting..."
                     : replyingTo
-                    ? "Reply"
-                    : "Post Comment"}
+                      ? "Reply"
+                      : "Post Comment"}
                 </button>
               </div>
             </div>
