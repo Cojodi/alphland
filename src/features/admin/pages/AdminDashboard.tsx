@@ -1027,7 +1027,7 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Top Success Rate Users */}
-                    {submissionStats.top_users.length > 0 && (
+                    {submissionStats.top_users?.length > 0 && (
                       <div>
                         <p className="text-sm font-medium text-light-black dark:text-white mb-3 flex items-center gap-2">
                           <Trophy className="w-4 h-4 text-orange" />
@@ -1035,7 +1035,7 @@ export default function AdminDashboard() {
                         </p>
                         <div className="space-y-2">
                           {submissionStats.top_users
-                            .slice(0, 5)
+                            ?.slice(0, 5)
                             .map((user, i) => (
                               <div
                                 key={user.user_id}
@@ -1096,7 +1096,7 @@ export default function AdminDashboard() {
                         </p>
                         <div className="space-y-2">
                           {bountyPopularity.most_bookmarked
-                            .slice(0, 5)
+                            ?.slice(0, 5)
                             .map((b) => (
                               <a
                                 key={b.id}
@@ -1129,7 +1129,7 @@ export default function AdminDashboard() {
                         </p>
                         <div className="space-y-2">
                           {bountyPopularity.most_submissions
-                            .slice(0, 5)
+                            ?.slice(0, 5)
                             .map((b) => (
                               <a
                                 key={b.id}
@@ -1162,7 +1162,7 @@ export default function AdminDashboard() {
                         </p>
                         <div className="space-y-2">
                           {bountyPopularity.most_comments
-                            .slice(0, 5)
+                            ?.slice(0, 5)
                             .map((b) => (
                               <a
                                 key={b.id}
