@@ -237,6 +237,18 @@
 
         <form id="report-form">
           <div class="form-group">
+            <label for="email">Your Email <span class="required">*</span></label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="your@email.com"
+              required
+            />
+            <p class="hint">We may contact you for more details about this report</p>
+          </div>
+
+          <div class="form-group">
             <label for="dapp">dApp Name <span class="required">*</span></label>
             <input
               type="text"
@@ -336,14 +348,22 @@
         e.preventDefault();
 
         // Get form data
+        const email = document.getElementById('email').value.trim();
         const dapp = document.getElementById('dapp').value.trim();
         const issueType = document.getElementById('issueType').value;
         const title = document.getElementById('title').value.trim();
         const description = document.getElementById('description').value.trim();
 
         // Validate
-        if (!dapp || !issueType || !title || !description) {
+        if (!email || !dapp || !issueType || !title || !description) {
           showError('Please fill in all required fields.');
+          return;
+        }
+
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          showError('Please enter a valid email address.');
           return;
         }
 
@@ -366,6 +386,9 @@
 ${description}
 
 ---
+
+> **Reporter:** \`${email}\`
+
 *Submitted via [Alphland Report Form](https://alph.land/report)*`;
 
         try {
