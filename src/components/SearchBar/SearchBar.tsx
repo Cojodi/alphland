@@ -2,13 +2,14 @@ import searchIcon from "../../assets/icons/search.svg";
 import searchIconLight from "../../assets/icons/searchLight.svg";
 import { useDarkMode } from "../../hooks/useDarkMode";
 import Image from "next/image";
-import React from "react";
+import React, { useRef, useEffect } from "react";
 
 type SearchBarProps = {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   className?: string;
+  autoFocus?: boolean;
 };
 
 const SearchBar = ({
@@ -16,8 +17,19 @@ const SearchBar = ({
   onChange,
   placeholder = "Search dApps...",
   className = "",
+  autoFocus = false,
 }: SearchBarProps) => {
   const { currentTheme } = useDarkMode();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (autoFocus && inputRef.current) {
+      inputRef.current.focus();
+      // Move cursor to end of input
+      const len = inputRef.current.value.length;
+      inputRef.current.setSelectionRange(len, len);
+    }
+  }, [autoFocus]);
 
   return (
     <div className={`relative ${className}`}>
@@ -31,6 +43,7 @@ const SearchBar = ({
           />
         </div>
         <input
+          ref={inputRef}
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}

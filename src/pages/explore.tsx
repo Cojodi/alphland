@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 const Explore = ({ dappCards }: { dappCards: DappCard[] }) => {
   const [ratings, setRatings] = useState<{ [key: string]: string[] }>({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [shouldAutoFocus, setShouldAutoFocus] = useState(false);
   const router = useRouter();
 
   const selectedCategories = useCategoryStore(
@@ -28,6 +29,7 @@ const Explore = ({ dappCards }: { dappCards: DappCard[] }) => {
     if (router.isReady) {
       if (router.query.search) {
         setSearchQuery(router.query.search as string);
+        setShouldAutoFocus(true);
       }
       if (router.query.categories) {
         const cats = (router.query.categories as string).split(",");
@@ -137,6 +139,7 @@ const Explore = ({ dappCards }: { dappCards: DappCard[] }) => {
                 value={searchQuery}
                 onChange={setSearchQuery}
                 placeholder="Search dApps or categories..."
+                autoFocus={shouldAutoFocus}
               />
             </div>
             <div className="w-[164px]">
