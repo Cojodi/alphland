@@ -172,52 +172,52 @@ const worker = {
           `SELECT COUNT(*) as count FROM user`,
         ).first();
 
-        // New users today (createdAt is in milliseconds)
+        // New users today (createdAt is in seconds - better-auth SQLite format)
         const newToday = await env.DB.prepare(
           `SELECT COUNT(*) as count FROM user WHERE createdAt >= ?`,
         )
-          .bind(todayStart * 1000)
+          .bind(todayStart)
           .first();
 
         // New users this week
         const newThisWeek = await env.DB.prepare(
           `SELECT COUNT(*) as count FROM user WHERE createdAt >= ?`,
         )
-          .bind(weekAgo * 1000)
+          .bind(weekAgo)
           .first();
 
         // New users this month
         const newThisMonth = await env.DB.prepare(
           `SELECT COUNT(*) as count FROM user WHERE createdAt >= ?`,
         )
-          .bind(monthAgo * 1000)
+          .bind(monthAgo)
           .first();
 
         // WAU - users with sessions in last 7 days
         const wau = await env.DB.prepare(
           `SELECT COUNT(DISTINCT userId) as count FROM session WHERE createdAt >= ?`,
         )
-          .bind(weekAgo * 1000)
+          .bind(weekAgo)
           .first();
 
         // MAU - users with sessions in last 30 days
         const mau = await env.DB.prepare(
           `SELECT COUNT(DISTINCT userId) as count FROM session WHERE createdAt >= ?`,
         )
-          .bind(monthAgo * 1000)
+          .bind(monthAgo)
           .first();
 
         // Daily new users for last 14 days (for trend chart)
         const { results: dailyTrend } = await env.DB.prepare(
           `SELECT
-            DATE(createdAt / 1000, 'unixepoch') as date,
+            DATE(createdAt, 'unixepoch') as date,
             COUNT(*) as count
           FROM user
           WHERE createdAt >= ?
-          GROUP BY DATE(createdAt / 1000, 'unixepoch')
+          GROUP BY DATE(createdAt, 'unixepoch')
           ORDER BY date ASC`,
         )
-          .bind((now - 14 * 86400) * 1000)
+          .bind(now - 14 * 86400)
           .all();
 
         return new Response(
