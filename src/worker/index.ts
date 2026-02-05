@@ -900,6 +900,7 @@ async function handleBountiesAPI(
 
     let query = `
       SELECT b.*, s.name as sponsor_name, s.logo_url as sponsor_logo_url,
+             s.is_verified as sponsor_is_verified,
              (SELECT COUNT(*) FROM bounty_submissions WHERE bounty_id = b.id) as submission_count
       FROM bounties b
       LEFT JOIN sponsors s ON b.sponsor_id = s.id
@@ -939,6 +940,7 @@ async function handleBountiesAPI(
       SELECT b.*,
              s.name as sponsor_name,
              s.logo_url as sponsor_logo_url,
+             s.is_verified as sponsor_is_verified,
              (SELECT COUNT(*) FROM bounty_submissions WHERE bounty_id = b.id) as submission_count
       FROM bounties b
       LEFT JOIN sponsors s ON b.sponsor_id = s.id

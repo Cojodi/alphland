@@ -408,6 +408,7 @@ export default function BountyList() {
                               getStatusTag(),
                               bounty.category,
                             ]}
+                            sponsorVerified={bounty.sponsor_is_verified === 1}
                           />
                         );
                       })}

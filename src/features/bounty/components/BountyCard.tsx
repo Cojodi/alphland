@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { CheckCircle } from "lucide-react";
 
 interface BountyCardProps {
   id: string;
@@ -8,6 +9,7 @@ interface BountyCardProps {
   company: string;
   reward: string;
   tags: string[];
+  sponsorVerified?: boolean;
 }
 
 // Helper function to determine tag style based on semantic meaning
@@ -46,6 +48,7 @@ export function BountyCard({
   company,
   reward,
   tags,
+  sponsorVerified = false,
 }: BountyCardProps) {
   return (
     <Link href={`/bounty/${id}`}>
@@ -79,8 +82,11 @@ export function BountyCard({
             <h3 className="font-semibold text-black dark:text-white mb-1 line-clamp-2 hover:text-orange transition">
               {title}
             </h3>
-            <p className="text-sm text-light-charcoal dark:text-lightgrey mb-3">
+            <p className="text-sm text-light-charcoal dark:text-lightgrey mb-3 flex items-center gap-1">
               {company}
+              {sponsorVerified && (
+                <CheckCircle className="w-4 h-4 text-accessible-green flex-shrink-0" />
+              )}
             </p>
 
             {/* Tags */}
