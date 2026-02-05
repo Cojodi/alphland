@@ -11,8 +11,6 @@ import { normalizeUrl } from "../utils/validators";
 
 interface FormData {
   // About You
-  first_name: string;
-  last_name: string;
   username: string;
   telegram: string;
   email: string;
@@ -56,8 +54,6 @@ export default function CreateSponsorProfile() {
   const [hasLoadedProfile, setHasLoadedProfile] = useState(false);
   const [isGoogleLinked, setIsGoogleLinked] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    first_name: "",
-    last_name: "",
     username: "",
     telegram: "",
     email: "",
@@ -87,22 +83,13 @@ export default function CreateSponsorProfile() {
 
           setFormData((prev) => ({
             ...prev,
-            first_name:
-              profile?.first_name || session.user.name?.split(" ")[0] || "",
-            last_name:
-              profile?.last_name ||
-              session.user.name?.split(" ").slice(1).join(" ") ||
-              "",
             username: profile?.username || "",
             email: session.user.email || "",
           }));
         } else {
           // Fallback to session data only
-          const nameParts = (session.user.name || "").split(" ");
           setFormData((prev) => ({
             ...prev,
-            first_name: nameParts[0] || "",
-            last_name: nameParts.slice(1).join(" ") || "",
             email: session.user.email || "",
           }));
         }
@@ -110,11 +97,8 @@ export default function CreateSponsorProfile() {
       } catch (error) {
         console.error("Failed to fetch user profile:", error);
         // Fallback to session data only
-        const nameParts = (session.user.name || "").split(" ");
         setFormData((prev) => ({
           ...prev,
-          first_name: nameParts[0] || "",
-          last_name: nameParts.slice(1).join(" ") || "",
           email: session.user.email || "",
         }));
         setHasLoadedProfile(true);
@@ -296,8 +280,6 @@ export default function CreateSponsorProfile() {
             industry: formData.industry,
             website: formData.company_url,
             twitter: formData.company_twitter,
-            contact_first_name: formData.first_name,
-            contact_last_name: formData.last_name,
             contact_username: formData.username,
             contact_telegram: formData.telegram || null,
             contact_email: formData.email || null,
@@ -424,87 +406,30 @@ export default function CreateSponsorProfile() {
                     </div>
                   )}
 
-                  {/* First/Last Name - Read-only for Google users */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="block text-sm font-medium text-black dark:text-white">
-                        First Name <span className="text-orange">*</span>
-                        {isGoogleLinked && (
-                          <span className="ml-1 text-xs font-normal text-light-charcoal dark:text-lightgrey">
-                            (from Google)
-                          </span>
-                        )}
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.first_name}
-                        onChange={(e) =>
-                          !isGoogleLinked &&
-                          setFormData((prev) => ({
-                            ...prev,
-                            first_name: e.target.value,
-                          }))
-                        }
-                        readOnly={isGoogleLinked}
-                        className={`w-full px-4 py-2.5 border border-border-grey dark:border-dark-charcoal rounded-lg placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none ${
-                          isGoogleLinked
-                            ? "bg-gray-100 dark:bg-gray-800 text-light-charcoal dark:text-lightgrey cursor-not-allowed"
-                            : "bg-smoked-white dark:bg-light-black text-black dark:text-white focus:ring-2 focus:ring-orange/50 focus:border-orange"
-                        }`}
-                        placeholder="First Name"
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="block text-sm font-medium text-black dark:text-white">
-                        Last Name <span className="text-orange">*</span>
-                        {isGoogleLinked && (
-                          <span className="ml-1 text-xs font-normal text-light-charcoal dark:text-lightgrey">
-                            (from Google)
-                          </span>
-                        )}
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.last_name}
-                        onChange={(e) =>
-                          !isGoogleLinked &&
-                          setFormData((prev) => ({
-                            ...prev,
-                            last_name: e.target.value,
-                          }))
-                        }
-                        readOnly={isGoogleLinked}
-                        className={`w-full px-4 py-2.5 border border-border-grey dark:border-dark-charcoal rounded-lg placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none ${
-                          isGoogleLinked
-                            ? "bg-gray-100 dark:bg-gray-800 text-light-charcoal dark:text-lightgrey cursor-not-allowed"
-                            : "bg-smoked-white dark:bg-light-black text-black dark:text-white focus:ring-2 focus:ring-orange/50 focus:border-orange"
-                        }`}
-                        placeholder="Last Name"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Username - Hidden/Auxiliary info */}
-                  {formData.username && (
-                    <div className="bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg p-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-xs text-light-charcoal dark:text-lightgrey">
-                            Your personal username
-                          </p>
-                          <p className="text-sm font-medium text-black dark:text-white">
-                            @{formData.username}
-                          </p>
-                        </div>
-                        <p className="text-xs text-light-charcoal dark:text-lightgrey max-w-[200px] text-right">
-                          This will not be displayed on your sponsor page.
+                  {/* Username */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-black dark:text-white">
+                      Username <span className="text-orange">*</span>
+                    </label>
+                    {formData.username ? (
+                      <div className="w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-800 border border-border-grey dark:border-dark-charcoal rounded-lg text-light-charcoal dark:text-lightgrey">
+                        @{formData.username}
+                      </div>
+                    ) : (
+                      <div className="w-full px-4 py-2.5 bg-orange/10 border border-orange/30 rounded-lg">
+                        <p className="text-sm text-orange">
+                          Please set up your username in your{" "}
+                          <Link
+                            href="/bounty/profile/edit"
+                            className="underline font-medium"
+                          >
+                            profile settings
+                          </Link>{" "}
+                          first.
                         </p>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -872,8 +797,7 @@ export default function CreateSponsorProfile() {
                     disabled={
                       loading ||
                       !agreed ||
-                      !formData.first_name ||
-                      !formData.last_name ||
+                      !formData.username ||
                       !formData.company_name ||
                       !formData.company_url ||
                       !formData.industry ||

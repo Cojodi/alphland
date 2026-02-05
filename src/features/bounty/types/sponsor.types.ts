@@ -20,8 +20,6 @@ export interface Sponsor {
   telegram?: string;
 
   // Contact Person Information
-  contact_first_name: string;
-  contact_last_name: string;
   contact_username: string;
   contact_telegram: string;
 
@@ -47,8 +45,6 @@ export interface Sponsor {
 
 export interface SponsorApplication {
   // About You
-  first_name: string;
-  last_name: string;
   username: string;
   telegram: string;
 

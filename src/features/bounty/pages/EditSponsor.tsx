@@ -17,8 +17,6 @@ interface FormData {
   industry: string;
   website: string;
   twitter: string;
-  contact_first_name: string;
-  contact_last_name: string;
   contact_username: string;
   contact_telegram: string;
   contact_email: string;
@@ -64,8 +62,6 @@ export default function EditSponsorProfile() {
     industry: "",
     website: "",
     twitter: "",
-    contact_first_name: "",
-    contact_last_name: "",
     contact_username: "",
     contact_telegram: "",
     contact_email: "",
@@ -105,8 +101,6 @@ export default function EditSponsorProfile() {
               industry: data.sponsor.industry || "",
               website: data.sponsor.website || "",
               twitter: data.sponsor.twitter || "",
-              contact_first_name: data.sponsor.contact_first_name || "",
-              contact_last_name: data.sponsor.contact_last_name || "",
               contact_username: data.sponsor.contact_username || "",
               contact_telegram: data.sponsor.contact_telegram || "",
               contact_email: data.sponsor.contact_email || "",
