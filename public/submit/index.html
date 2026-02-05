@@ -115,10 +115,8 @@
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 
     <script>
-      // Environment detection for branch selection
-      const host = window.location.hostname;
-      const isProduction = host === 'alph.land' || host === 'www.alph.land';
-      const targetBranch = isProduction ? 'develop' : 'bounty';
+      // Branch for dApp submissions - always use testing branch
+      const targetBranch = 'testing';
 
       // Store dApp data for PR lookup
       let lastDappData = null;
