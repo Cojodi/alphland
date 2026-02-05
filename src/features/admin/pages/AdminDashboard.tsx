@@ -930,7 +930,7 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Simple trend visualization */}
-                    {userStats.daily_trend.length > 0 && (
+                    {/* {userStats.daily_trend.length > 0 && (
                       <div>
                         <p className="text-sm font-medium text-light-black dark:text-white mb-3">
                           New Users (Last 14 Days)
@@ -956,7 +956,7 @@ export default function AdminDashboard() {
                           })}
                         </div>
                       </div>
-                    )}
+                    )} */}
                   </div>
                 )}
               </div>

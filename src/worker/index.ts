@@ -510,12 +510,18 @@ const worker = {
           LIMIT 10`,
         ).all();
 
-        // Average reward for approved submissions (assuming reward is stored)
-        // This is complex as rewards are JSON - simplified version
+        // Average reward for approved submissions
+        // Get reward from bounties table, not submissions
         const avgReward = await env.DB.prepare(
-          `SELECT AVG(CAST(json_extract(reward, '$.amount') AS REAL)) as avg_amount
-           FROM bounty_submissions
-           WHERE status = 'approved' AND reward IS NOT NULL`,
+          `SELECT AVG(
+             CASE
+               WHEN b.reward_currency = 'USD' THEN b.reward_amount
+               ELSE COALESCE(b.reward_usd_value, 0)
+             END
+           ) as avg_amount
+           FROM bounty_submissions s
+           JOIN bounties b ON s.bounty_id = b.id
+           WHERE s.status = 'approved'`,
         ).first();
 
         return new Response(
@@ -538,11 +544,12 @@ const worker = {
         const { results: mostBookmarked } = await env.DB.prepare(
           `SELECT
             b.id, b.title, b.status,
-            sp.name as sponsor_name,
+            COALESCE(sp.name, 'Unknown') as sponsor_name,
             COUNT(bm.id) as bookmark_count
           FROM bounties b
-          JOIN sponsors sp ON b.sponsor_id = sp.id
+          LEFT JOIN sponsors sp ON b.sponsor_id = sp.id
           LEFT JOIN bookmarks bm ON b.id = bm.bounty_id
+          WHERE b.status != 'deleted'
           GROUP BY b.id
           ORDER BY bookmark_count DESC
           LIMIT 10`,
@@ -552,11 +559,12 @@ const worker = {
         const { results: mostSubmissions } = await env.DB.prepare(
           `SELECT
             b.id, b.title, b.status,
-            sp.name as sponsor_name,
+            COALESCE(sp.name, 'Unknown') as sponsor_name,
             COUNT(s.id) as submission_count
           FROM bounties b
-          JOIN sponsors sp ON b.sponsor_id = sp.id
+          LEFT JOIN sponsors sp ON b.sponsor_id = sp.id
           LEFT JOIN bounty_submissions s ON b.id = s.bounty_id
+          WHERE b.status != 'deleted'
           GROUP BY b.id
           ORDER BY submission_count DESC
           LIMIT 10`,
@@ -566,11 +574,12 @@ const worker = {
         const { results: mostComments } = await env.DB.prepare(
           `SELECT
             b.id, b.title, b.status,
-            sp.name as sponsor_name,
+            COALESCE(sp.name, 'Unknown') as sponsor_name,
             COUNT(c.id) as comment_count
           FROM bounties b
-          JOIN sponsors sp ON b.sponsor_id = sp.id
+          LEFT JOIN sponsors sp ON b.sponsor_id = sp.id
           LEFT JOIN bounty_comments c ON b.id = c.bounty_id AND c.deleted_at IS NULL
+          WHERE b.status != 'deleted'
           GROUP BY b.id
           ORDER BY comment_count DESC
           LIMIT 10`,
