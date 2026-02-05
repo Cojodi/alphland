@@ -846,7 +846,7 @@ export default function EditProfile() {
                           fill="#EA4335"
                         />
                       </svg>
-                      <div className="flex-1">
+                      {/* <div className="flex-1">
                         <p className="text-sm text-blue-800 dark:text-blue-200 font-medium">
                           Linked via Google: {googleName}
                         </p>
@@ -854,7 +854,7 @@ export default function EditProfile() {
                           This name is synced from your Google account and
                           cannot be edited here.
                         </p>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 )}

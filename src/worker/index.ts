@@ -162,62 +162,63 @@ const worker = {
 
       // GET /api/admin/user-stats - User statistics overview
       if (url.pathname === "/api/admin/user-stats") {
-        const now = Math.floor(Date.now() / 1000);
-        const todayStart = now - (now % 86400); // Start of today (UTC)
-        const weekAgo = now - 7 * 86400;
-        const monthAgo = now - 30 * 86400;
+        const nowMs = Date.now();
+        const todayStartMs = nowMs - (nowMs % (86400 * 1000)); // Start of today (UTC) in ms
+        const weekAgoMs = nowMs - 7 * 86400 * 1000;
+        const monthAgoMs = nowMs - 30 * 86400 * 1000;
 
         // Total users
         const totalUsers = await env.DB.prepare(
           `SELECT COUNT(*) as count FROM user`,
         ).first();
 
-        // New users today (createdAt is in seconds - better-auth SQLite format)
+        // New users today (createdAt is in milliseconds)
         const newToday = await env.DB.prepare(
           `SELECT COUNT(*) as count FROM user WHERE createdAt >= ?`,
         )
-          .bind(todayStart)
+          .bind(todayStartMs)
           .first();
 
         // New users this week
         const newThisWeek = await env.DB.prepare(
           `SELECT COUNT(*) as count FROM user WHERE createdAt >= ?`,
         )
-          .bind(weekAgo)
+          .bind(weekAgoMs)
           .first();
 
         // New users this month
         const newThisMonth = await env.DB.prepare(
           `SELECT COUNT(*) as count FROM user WHERE createdAt >= ?`,
         )
-          .bind(monthAgo)
+          .bind(monthAgoMs)
           .first();
 
         // WAU - users with sessions in last 7 days
         const wau = await env.DB.prepare(
           `SELECT COUNT(DISTINCT userId) as count FROM session WHERE createdAt >= ?`,
         )
-          .bind(weekAgo)
+          .bind(weekAgoMs)
           .first();
 
         // MAU - users with sessions in last 30 days
         const mau = await env.DB.prepare(
           `SELECT COUNT(DISTINCT userId) as count FROM session WHERE createdAt >= ?`,
         )
-          .bind(monthAgo)
+          .bind(monthAgoMs)
           .first();
 
         // Daily new users for last 14 days (for trend chart)
+        // createdAt is in milliseconds, so divide by 1000 for unixepoch
         const { results: dailyTrend } = await env.DB.prepare(
           `SELECT
-            DATE(createdAt, 'unixepoch') as date,
+            DATE(createdAt / 1000, 'unixepoch') as date,
             COUNT(*) as count
           FROM user
           WHERE createdAt >= ?
-          GROUP BY DATE(createdAt, 'unixepoch')
+          GROUP BY DATE(createdAt / 1000, 'unixepoch')
           ORDER BY date ASC`,
         )
-          .bind(now - 14 * 86400)
+          .bind(nowMs - 14 * 86400 * 1000)
           .all();
 
         return new Response(

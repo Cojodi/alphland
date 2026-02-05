@@ -31,7 +31,7 @@ export interface User {
   is_banned: number; // 0 or 1 - banned users cannot use platform
   is_sponsor: number; // 0 or 1 - is this user a sponsor
   sponsor_id: string | null; // Reference to sponsors.id if is_sponsor = 1
-  createdAt: number; // Unix timestamp (seconds) - better-auth SQLite format
+  createdAt: number; // Unix timestamp (milliseconds) - Date.now() format
   updatedAt: number;
 }
 
