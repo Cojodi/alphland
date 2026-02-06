@@ -1865,6 +1865,7 @@ async function handleUsersAPI(
       );
 
       // Update profile with fields that match the actual database schema
+      // When username is set, mark is_default_username = 0 (user has set a custom username)
       const updateResult = await env.DB.prepare(
         `UPDATE user_profiles
          SET username = ?,
@@ -1884,6 +1885,7 @@ async function handleUsersAPI(
              web3_familiarity = ?,
              looking_for = ?,
              skills = ?,
+             is_default_username = CASE WHEN ? IS NOT NULL THEN 0 ELSE is_default_username END,
              updated_at = ?
          WHERE user_id = ?`,
       )
@@ -1905,6 +1907,7 @@ async function handleUsersAPI(
           body.web3_familiarity || null,
           body.looking_for || null,
           skillsJson,
+          body.username || null, // Used for is_default_username CASE check
           now,
           id,
         )

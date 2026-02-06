@@ -201,5 +201,78 @@ export function createAuth(
         generateId: () => crypto.randomUUID(),
       },
     },
+
+    // Database hooks for auto-generating default username on user creation
+    databaseHooks: {
+      user: {
+        create: {
+          after: async (user) => {
+            const maxRetries = 3;
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+              try {
+                // Generate default username from email
+                const emailPrefix = user.email
+                  .split("@")[0]
+                  .replace(/[^a-zA-Z0-9]/g, "")
+                  .toLowerCase()
+                  .slice(0, 20);
+
+                // Generate random alphanumeric suffix (4 chars + extra on retry)
+                const suffixLength = 4 + attempt;
+                const randomSuffix = Array.from(
+                  crypto.getRandomValues(new Uint8Array(suffixLength)),
+                )
+                  .map((b) => "abcdefghijklmnopqrstuvwxyz0123456789"[b % 36])
+                  .join("");
+
+                const defaultUsername = `${emailPrefix}_${randomSuffix}`;
+                const now = Math.floor(Date.now() / 1000);
+
+                // Ensure user_profiles row exists (fallback if trigger didn't run)
+                await kysely
+                  .insertInto("user_profiles")
+                  .values({
+                    id: crypto.randomUUID(),
+                    user_id: user.id,
+                    username: defaultUsername,
+                    is_default_username: 1,
+                    created_at: now,
+                    updated_at: now,
+                  })
+                  .onConflict((oc) =>
+                    oc.column("user_id").doUpdateSet({
+                      username: defaultUsername,
+                      is_default_username: 1,
+                      updated_at: now,
+                    }),
+                  )
+                  .execute();
+
+                console.log(
+                  `[AUTH] Auto-generated username "${defaultUsername}" for user ${user.id}`,
+                );
+                return; // Success, exit loop
+              } catch (error: any) {
+                // If it's a UNIQUE constraint violation on username, retry with longer suffix
+                if (
+                  attempt < maxRetries - 1 &&
+                  error?.message?.includes("UNIQUE")
+                ) {
+                  console.warn(
+                    `[AUTH] Username collision on attempt ${attempt + 1}, retrying...`,
+                  );
+                  continue;
+                }
+                // Don't fail user creation if username generation fails
+                console.error(
+                  "[AUTH] Failed to generate default username:",
+                  error,
+                );
+              }
+            }
+          },
+        },
+      },
+    },
   });
 }

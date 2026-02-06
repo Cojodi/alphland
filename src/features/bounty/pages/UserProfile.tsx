@@ -7,6 +7,7 @@ import { StatsSection } from "../components/StatsSection";
 import { SubmissionsSection } from "../components/SubmissionsSection";
 import Layout from "@/components/Layout";
 import { useSession } from "@/lib/auth-client";
+import { getDisplayUsername, shouldPromptForUsername } from "@/lib/user-utils";
 import { useEffect, useState } from "react";
 
 interface UserProfileData {
@@ -32,6 +33,7 @@ interface UserProfileData {
   blockchain_skills: string | null;
   web3_interests: string | null;
   projects: string | null;
+  is_default_username?: number;
   // From user table join
   email: string;
   name: string;
@@ -150,10 +152,18 @@ export default function UserProfile({
     internship: "Internship Opportunities",
   };
 
-  // Determine if using Google name fallback (no custom username set)
-  const isUsingGoogleNameFallback = !userData.username && !!userData.name;
-  const displayUsername =
-    userData.username || userData.name || userData.user_id.slice(0, 8);
+  // Determine if user should be prompted to set a custom username
+  const shouldShowUsernamePrompt = shouldPromptForUsername({
+    username: userData.username,
+    name: userData.name,
+    user_id: userData.user_id,
+    is_default_username: userData.is_default_username,
+  });
+  const displayUsername = getDisplayUsername({
+    username: userData.username,
+    name: userData.name,
+    user_id: userData.user_id,
+  });
 
   return (
     <Layout
@@ -165,7 +175,7 @@ export default function UserProfile({
           username={displayUsername}
           avatarUrl={userData.image || undefined}
           isOwnProfile={isOwnProfile || false}
-          isUsingGoogleNameFallback={isUsingGoogleNameFallback}
+          isUsingGoogleNameFallback={shouldShowUsernamePrompt}
           socials={socials}
         />
 

@@ -320,6 +320,7 @@ export default function EditProfile() {
     skills: [],
   });
 
+  const [usernameError, setUsernameError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasLoadedProfile, setHasLoadedProfile] = useState(false);
   const [isGoogleLinked, setIsGoogleLinked] = useState(false);
@@ -440,12 +441,33 @@ export default function EditProfile() {
     loadProfile();
   }, [session, hasLoadedProfile]);
 
+  const validateUsername = (username: string): string | null => {
+    if (!username) return null;
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      return "Username can only contain letters, numbers, and underscores";
+    }
+    if (username.length < 3) {
+      return "Username must be at least 3 characters";
+    }
+    if (username.length > 30) {
+      return "Username must be 30 characters or fewer";
+    }
+    // Warn if it looks like a system-generated default (e.g. "johndoe_x8k2")
+    if (/^[a-z0-9]+_[a-z0-9]{4,6}$/.test(username)) {
+      return "This looks like a system-generated username. Please choose a personalized one.";
+    }
+    return null;
+  };
+
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
   ) => {
     const { name, value } = e.target;
+    if (name === "username") {
+      setUsernameError(validateUsername(value));
+    }
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -597,6 +619,14 @@ export default function EditProfile() {
     // Validate required fields
     if (!formData.username || !formData.alphWalletAddress) {
       alert("Please fill in all required fields");
+      return;
+    }
+
+    // Validate username format
+    const usernameValidation = validateUsername(formData.username);
+    if (usernameValidation) {
+      setUsernameError(usernameValidation);
+      alert(usernameValidation);
       return;
     }
 
@@ -924,8 +954,22 @@ export default function EditProfile() {
                     onChange={handleInputChange}
                     placeholder="Enter your username"
                     required
-                    className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                    pattern="[a-zA-Z0-9_]+"
+                    maxLength={30}
+                    className={`w-full px-4 py-2 bg-smoked-white dark:bg-light-black border rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange ${
+                      usernameError
+                        ? "border-red-500 dark:border-red-500"
+                        : "border-border-grey dark:border-dark-charcoal"
+                    }`}
                   />
+                  {usernameError && (
+                    <p className="text-xs text-red-500 mt-1">{usernameError}</p>
+                  )}
+                  {!usernameError && formData.username && (
+                    <p className="text-xs text-light-charcoal dark:text-lightgrey mt-1">
+                      Only letters, numbers, and underscores
+                    </p>
+                  )}
                 </div>
 
                 {/* Bio */}

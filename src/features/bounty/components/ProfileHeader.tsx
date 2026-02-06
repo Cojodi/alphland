@@ -38,9 +38,7 @@ export function ProfileHeader({
         {isOwnProfile && isUsingGoogleNameFallback && (
           <div className="mb-6 bg-orange/10 dark:bg-orange/20 border border-orange/30 rounded-lg p-4">
             <p className="text-sm text-orange-800 dark:text-orange-200">
-              <span className="font-semibold">Tip:</span> You are currently
-              displaying your Google name. Set a unique username to personalize
-              your profile!
+              Hi! Set a personalized username for your profile.
             </p>
             <Link href="/bounty/profile/edit">
               <span className="inline-block mt-2 text-sm font-medium text-orange hover:underline cursor-pointer">
