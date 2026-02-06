@@ -45,10 +45,10 @@ const faqData: FAQItem[] = [
         you can use the <strong>&ldquo;Add your dApp&rdquo;</strong> flow to
         submit updated details, or reach out to the Alephium team at{" "}
         <a
-          href="mailto:ecosystem@alephium.org"
+          href="mailto:alph.land@alephium.org"
           className="text-orange hover:underline"
         >
-          ecosystem@alephium.org
+          alph.land@alephium.org
         </a>
       </>
     ),

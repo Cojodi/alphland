@@ -280,8 +280,8 @@ const Home = () => {
         <p className="my-4">
           If you have any questions about this Privacy Policy or wish to
           exercise your rights, please contact us at:{" "}
-          <a href="mailto:ecosystem@alephium.org" className="text-orange">
-            ecosystem@alephium.org
+          <a href="mailto:alph.land@alephium.org" className="text-orange">
+            alph.land@alephium.org
           </a>
         </p>
         <p className="my-4">
