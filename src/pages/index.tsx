@@ -21,11 +21,13 @@ const FEATURED_DAPPS = [
   "alephium-explorer",
   "henrycoder",
   "learnify",
-  "myonion",
   "nightshade",
   "onekey-wallet",
   "presenceprotocol",
   "safepal-wallet",
+  "tangem-wallet",
+  "ledger-wallet",
+  "alphbanx",
 ];
 
 interface SpotlightDapp {
