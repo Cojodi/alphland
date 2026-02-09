@@ -1,0 +1,47 @@
+{
+  "name": "Furnace",
+  "description": "Token Furnace is a platform designed to permanently remove tokens from circulation. Users can connect their wallet and burn tokens, reducing token supply which can impact tokenomics and market dynamics.",
+  "short_description": "Token Burner",
+  "tags": ["DeFi"],
+  "councils_choice": false,
+  "contracts": [
+    {
+      "name": "Furnace Contract",
+      "address": "21ekPmzVCwV3fH1XmajtCVWjnDsLxHt14PWdwodk16Zyh"
+    },
+    {
+      "name": "Furnace Contract",
+      "address": "21toXY23zRXeTKZnEKtfVMCzM3h8kZhrrJV3fMf31VoiY"
+    },
+    {
+      "name": "Furnace Contract",
+      "address": "x7DamzDESbTq7S2WqmuNMj1m3SCEwNLx4uttipyWgQjT"
+    },
+    {
+      "name": "Furnace Contract",
+      "address": "26MPtth6JVpNMV4EWFUDyrBPMQWpVfSUWPZNE9Kqvymw8"
+    }
+  ],
+  "audits": [{}],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://furnace.notrustverify.ch",
+    "twitter": "https://x.com/notrustverif",
+    "github": "https://github.com/notrustverify/token-furnace"
+  },
+  "twitterName": "notrustverif",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2021-01-01T00:00:00.000Z",
+    "anonymous": true
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/furnace/furnace-logo.gif",
+    "bannerUrl": "/dapps/furnace/furnace-banner.webp",
+    "previewUrl": "/dapps/furnace/furnace-preview.webp",
+    "videoUrl": "",
+    "gallery": [{}]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "Chain Reaction",
+  "description": "Chain Reaction is a last-player-wins game on Alephium. Someone starts a chain by choosing a token, setting an entry price, countdown duration, and price increase percentage. Players join by paying an escalating entry price which resets the timer. When the countdown expires, the last player wins the entire pot.",
+  "short_description": "On-chain Game",
+  "tags": ["Games"],
+  "councils_choice": false,
+  "contracts": [],
+  "audits": [{}],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://game.notrustverify.ch",
+    "twitter": "https://x.com/notrustverif",
+    "github": "https://github.com/notrustverify/chainreaction"
+  },
+  "twitterName": "notrustverify",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2021-01-01T00:00:00.000Z",
+    "anonymous": false,
+    "name": "No Trust Verify"
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/chain-reaction/chain-reaction-logo.webp",
+    "bannerUrl": "/dapps/chain-reaction/chain-reaction-banner.webp",
+    "previewUrl": "/dapps/chain-reaction/chain-reaction-preview.webp",
+    "videoUrl": "",
+    "gallery": [{}]
+  }
+}
