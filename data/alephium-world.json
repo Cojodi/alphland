@@ -2,7 +2,7 @@
   "name": "Alephium.World",
   "description": "Alephium.World is a dashboard that displays real time information about a subset of nodes connected to the Alephium network. It shows their locations on a map along with connection details and basic network metrics.",
   "short_description": "Vizualize fullnodes all around the world!",
-  "tags": ["Infrastructure", "Stats"],
+  "tags": ["Analytics"],
   "councils_choice": true,
   "contracts": [],
   "audits": [],
