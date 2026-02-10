@@ -2,7 +2,7 @@
   "name": "Alephium Decoder",
   "description": "Alephium Decoder is a technical tool that interprets raw transaction and contract data. It can replay contract instructions step by step for audit and debugging purposes.",
   "short_description": "Decode contracts, decode and replay transactions",
-  "tags": ["Infrastructure"],
+  "tags": ["Tools"],
   "councils_choice": true,
   "verified": false,
   "dotw": false,
