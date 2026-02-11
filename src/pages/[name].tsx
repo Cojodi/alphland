@@ -4,8 +4,10 @@ import flagIcon from "../assets/icons/flag.svg";
 import { AnnouncementBar } from "../components/AnnouncementBar";
 import Button from "../components/Button/Button";
 import Layout from "../components/Layout";
+import ResourceCard from "../components/ResourceCard/ResourceCard";
 import SocialLink from "../components/SocialLink/SocialLink";
 import Tag from "../components/Tag/Tag";
+import resourcesData from "../data/resources.json";
 import DappPageRating from "../sections/DappPage/DappPageRating";
 import { readdir, readFile } from "fs/promises";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
@@ -15,11 +17,20 @@ import Router, { useRouter } from "next/router";
 import path from "path";
 import { useEffect, useState } from "react";
 
-interface DappPageProps {
-  dappInfo: DappInfo;
+interface DappResource {
+  title: string;
+  link: string;
+  format: string;
+  topic: string;
+  language: string;
 }
 
-const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
+interface DappPageProps {
+  dappInfo: DappInfo;
+  dappResources: DappResource[];
+}
+
+const DappPage: NextPage<DappPageProps> = ({ dappInfo, dappResources }) => {
   const [showPrev, setShowPrev] = useState(false);
   const [bounties, setBounties] = useState<any[]>([]);
   const [loadingBounties, setLoadingBounties] = useState(true);
@@ -156,7 +167,7 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
             </section>
 
             {/* Resources & Tutorials */}
-            {dappInfo.media?.videoUrl && (
+            {dappResources.length > 0 && (
               <section>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold dark:text-white">
@@ -175,27 +186,9 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo }) => {
                   </Link>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="border border-border-grey dark:border-white/10 rounded-lg overflow-hidden bg-white dark:bg-white/5">
-                    <div className="relative bg-gradient-to-br from-teal-900 to-slate-900 aspect-video flex items-center justify-center">
-                      <div className="absolute top-3 left-3 bg-orange text-white px-2 py-1 rounded text-xs font-semibold">
-                        Video
-                      </div>
-                      <video
-                        src={dappInfo.media.videoUrl}
-                        className="w-full h-full object-cover"
-                        controls
-                      />
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold mb-2 dark:text-white">
-                        How to start with {dappInfo.name}
-                      </h3>
-                      <p className="text-sm text-light-charcoal dark:text-lightgrey">
-                        Complete beginner&apos;s guide to get started with{" "}
-                        {dappInfo.name}
-                      </p>
-                    </div>
-                  </div>
+                  {dappResources.slice(0, 4).map((resource, i) => (
+                    <ResourceCard key={i} resource={resource} />
+                  ))}
                 </div>
               </section>
             )}
@@ -375,9 +368,13 @@ export const getStaticProps: GetStaticProps<DappPageProps> = async (
 
   const dappInfo: DappInfo = JSON.parse(content);
 
+  const allResources = resourcesData as Record<string, DappResource[]>;
+  const dappResources = allResources[name as string] || [];
+
   return {
     props: {
       dappInfo,
+      dappResources,
     },
     revalidate: 10,
   };

@@ -789,7 +789,7 @@ const worker = {
           }
 
           const githubResponse = await fetch(
-            "https://api.github.com/repos/xbabyx/alphland/issues",
+            "https://api.github.com/repos/alph-land/alphland/issues",
             {
               method: "POST",
               headers: {

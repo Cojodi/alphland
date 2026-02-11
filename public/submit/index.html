@@ -127,7 +127,7 @@
           load_config_file: false,
           backend: {
             name: 'github',
-            repo: 'xbabyx/alphland',
+            repo: 'alph-land/alphland',
             branch: targetBranch,
             base_url: window.location.origin,
             auth_endpoint: 'api/auth',
@@ -278,7 +278,7 @@
           if (token) {
             // Search for recent PRs
             const response = await fetch(
-              'https://api.github.com/repos/xbabyx/alphland/pulls?state=open&sort=created&direction=desc&per_page=5',
+              'https://api.github.com/repos/alph-land/alphland/pulls?state=open&sort=created&direction=desc&per_page=5',
               {
                 headers: {
                   'Authorization': `token ${token}`,
@@ -321,7 +321,7 @@
           // Fallback: show link to all PRs
           loading.style.display = 'none';
           container.innerHTML = `
-            <a href="https://github.com/xbabyx/alphland/pulls" target="_blank" class="pr-link">
+            <a href="https://github.com/alph-land/alphland/pulls" target="_blank" class="pr-link">
               View All Pull Requests
             </a>
           `;
@@ -329,7 +329,7 @@
           console.error('Error finding PR:', error);
           loading.style.display = 'none';
           container.innerHTML = `
-            <a href="https://github.com/xbabyx/alphland/pulls" target="_blank" class="pr-link">
+            <a href="https://github.com/alph-land/alphland/pulls" target="_blank" class="pr-link">
               View All Pull Requests
             </a>
           `;
@@ -372,7 +372,7 @@ ${dappData.description || 'N/A'}
 *This dApp was submitted via [Alphland Submit Form](https://alph.land/submit)*`;
 
           await fetch(
-            `https://api.github.com/repos/xbabyx/alphland/pulls/${prNumber}`,
+            `https://api.github.com/repos/alph-land/alphland/pulls/${prNumber}`,
             {
               method: 'PATCH',
               headers: {

@@ -32,11 +32,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alchemypay/alchemypay-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alchemypay/alchemypay-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alchemypay/alchemypay-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alchemypay/alchemypay-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alchemypay/alchemypay-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alchemypay/alchemypay-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -106,11 +106,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-bridge/alephium-bridge-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-bridge/alephium-bridge-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-bridge/alephium-bridge-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-bridge/alephium-bridge-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-bridge/alephium-bridge-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-bridge/alephium-bridge-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -146,11 +146,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-decoder/alephium-decoder-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-decoder/alephium-decoder-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-decoder/alephium-decoder-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-decoder/alephium-decoder-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-decoder/alephium-decoder-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-decoder/alephium-decoder-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -193,11 +193,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-etherscan/alephium-etherscan-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-etherscan/alephium-etherscan-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-etherscan/alephium-etherscan-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-etherscan/alephium-etherscan-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-etherscan/alephium-etherscan-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-etherscan/alephium-etherscan-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -236,11 +236,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-explorer/alephium-explorer-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-explorer/alephium-explorer-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-explorer/alephium-explorer-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-explorer/alephium-explorer-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-explorer/alephium-explorer-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-explorer/alephium-explorer-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -288,11 +288,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-name-service/alephium-name-service-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-name-service/alephium-name-service-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-name-service/alephium-name-service-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-name-service/alephium-name-service-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-name-service/alephium-name-service-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-name-service/alephium-name-service-preview.webp",
       gallery: [],
     },
     url: "alephium-name-service",
@@ -303,12 +303,12 @@ export const dapps: DappInfo[] = [
       collectionPreview: [
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-name-service/ALEPHIUM.webp",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-name-service/ALEPHIUM.webp",
           name: "Alephium",
         },
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-name-service/SPLINTER.webp",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-name-service/SPLINTER.webp",
           name: "Splinter",
         },
       ],
@@ -344,11 +344,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-official-wallets/alephium-official-wallets-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-official-wallets/alephium-official-wallets-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-official-wallets/alephium-official-wallets-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-official-wallets/alephium-official-wallets-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-official-wallets/alephium-official-wallets-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-official-wallets/alephium-official-wallets-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -388,11 +388,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-toolkit/alephium-toolkit-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-toolkit/alephium-toolkit-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-toolkit/alephium-toolkit-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-toolkit/alephium-toolkit-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-toolkit/alephium-toolkit-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-toolkit/alephium-toolkit-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -432,11 +432,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-world/alephium-world-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-world/alephium-world-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-world/alephium-world-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-world/alephium-world-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-world/alephium-world-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-world/alephium-world-preview.webp",
       gallery: [],
     },
     url: "alephium-world",
@@ -472,11 +472,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphaday/alphaday-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphaday/alphaday-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphaday/alphaday-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphaday/alphaday-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphaday/alphaday-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphaday/alphaday-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -535,11 +535,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphaga/alphaga-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphaga/alphaga-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphaga/alphaga-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphaga/alphaga-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphaga/alphaga-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphaga/alphaga-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -578,11 +578,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphbanx/alphbanx-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphbanx/alphbanx-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphbanx/alphbanx-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphbanx/alphbanx-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphbanx/alphbanx-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphbanx/alphbanx-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -622,11 +622,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphiq/alphiq-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphiq/alphiq-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphiq/alphiq-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphiq/alphiq-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphiq/alphiq-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphiq/alphiq-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -665,11 +665,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphland/alphland-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphland/alphland-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphland/alphland-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphland/alphland-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphland/alphland-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphland/alphland-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -719,11 +719,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphpad/alphpad-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphpad/alphpad-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphpad/alphpad-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphpad/alphpad-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphpad/alphpad-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphpad/alphpad-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -761,11 +761,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphpost/alphpost-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphpost/alphpost-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphpost/alphpost-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphpost/alphpost-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphpost/alphpost-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphpost/alphpost-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -802,11 +802,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphtracker/alphtracker-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphtracker/alphtracker-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphtracker/alphtracker-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphtracker/alphtracker-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphtracker/alphtracker-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphtracker/alphtracker-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -847,11 +847,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphtradingbot/alphtradingbot-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphtradingbot/alphtradingbot-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphtradingbot/alphtradingbot-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphtradingbot/alphtradingbot-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphtradingbot/alphtradingbot-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphtradingbot/alphtradingbot-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -890,11 +890,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphy/alphy-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphy/alphy-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphy/alphy-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphy/alphy-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphy/alphy-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphy/alphy-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -957,11 +957,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/amolyus/amolyus-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/amolyus/amolyus-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/amolyus/amolyus-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/amolyus/amolyus-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/amolyus/amolyus-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/amolyus/amolyus-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1010,11 +1010,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ans/ans-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ans/ans-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ans/ans-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ans/ans-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ans/ans-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ans/ans-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1054,11 +1054,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/antpool/antpool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/antpool/antpool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/antpool/antpool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/antpool/antpool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/antpool/antpool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/antpool/antpool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1097,11 +1097,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/aura/logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/aura/logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/aura/banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/aura/banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/aura/preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/aura/preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1158,11 +1158,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ayin/ayin-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ayin/ayin-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ayin/ayin-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ayin/ayin-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ayin/ayin-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ayin/ayin-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1198,11 +1198,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/banxa/banxa-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/banxa/banxa-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/banxa/banxa-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/banxa/banxa-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/banxa/banxa-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/banxa/banxa-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -1245,11 +1245,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/black-paper/black-paper-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/black-paper/black-paper-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/black-paper/black-paper-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/black-paper/black-paper-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/black-paper/black-paper-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/black-paper/black-paper-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1289,11 +1289,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/blockflow-visualizer/blockflow-visualizer-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/blockflow-visualizer/blockflow-visualizer-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/blockflow-visualizer/blockflow-visualizer-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/blockflow-visualizer/blockflow-visualizer-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/blockflow-visualizer/blockflow-visualizer-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/blockflow-visualizer/blockflow-visualizer-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1333,11 +1333,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/cedric-crispin-pool/cedric-crispin-pool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/cedric-crispin-pool/cedric-crispin-pool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/cedric-crispin-pool/cedric-crispin-pool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/cedric-crispin-pool/cedric-crispin-pool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/cedric-crispin-pool/cedric-crispin-pool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/cedric-crispin-pool/cedric-crispin-pool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1372,11 +1372,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/changenow/changenow-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/changenow/changenow-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/changenow/changenow-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/changenow/changenow-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/changenow/changenow-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/changenow/changenow-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -1419,11 +1419,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/coinmore/coinmore-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/coinmore/coinmore-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/coinmore/coinmore-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/coinmore/coinmore-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/coinmore/coinmore-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/coinmore/coinmore-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1467,11 +1467,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/cyberscope/cyberscope-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/cyberscope/cyberscope-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/cyberscope/cyberscope-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/cyberscope/cyberscope-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/cyberscope/cyberscope-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/cyberscope/cyberscope-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1510,11 +1510,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dappnode/dappnode-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dappnode/dappnode-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dappnode/dappnode-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dappnode/dappnode-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dappnode/dappnode-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dappnode/dappnode-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1553,11 +1553,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/deadrare/deadrare-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/deadrare/deadrare-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/deadrare/deadrare-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/deadrare/deadrare-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/deadrare/deadrare-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/deadrare/deadrare-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1569,17 +1569,17 @@ export const dapps: DappInfo[] = [
       collectionPreview: [
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/deadrare/collection-nft-01.webp",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/deadrare/collection-nft-01.webp",
           name: "ALPHatauri #4",
         },
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/deadrare/collection-nft-02.webp",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/deadrare/collection-nft-02.webp",
           name: "ALPHatauri #42",
         },
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/deadrare/collection-nft-03.webp",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/deadrare/collection-nft-03.webp",
           name: "ALPHatauri #18",
         },
       ],
@@ -1618,11 +1618,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/defillama/defillama-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/defillama/defillama-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/defillama/defillama-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/defillama/defillama-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/defillama/defillama-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/defillama/defillama-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1658,11 +1658,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dia/dia-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dia/dia-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dia/dia-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dia/dia-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dia/dia-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dia/dia-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -1704,11 +1704,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/digital-asset-forge/digital-asset-forge-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/digital-asset-forge/digital-asset-forge-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/digital-asset-forge/digital-asset-forge-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/digital-asset-forge/digital-asset-forge-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/digital-asset-forge/digital-asset-forge-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/digital-asset-forge/digital-asset-forge-preview.webp",
       gallery: [],
     },
     contracts: [],
@@ -1751,11 +1751,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/doh/doh-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/doh/doh-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/doh/doh-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/doh/doh-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/doh/doh-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/doh/doh-preview.webp",
       gallery: [],
     },
     url: "doh",
@@ -1793,11 +1793,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dxpool/dxpool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dxpool/dxpool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dxpool/dxpool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dxpool/dxpool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dxpool/dxpool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dxpool/dxpool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1841,11 +1841,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/elexium/elexium-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/elexium/elexium-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/elexium/elexium-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/elexium/elexium-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/elexium/elexium-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/elexium/elexium-preview.webp",
       gallery: [],
     },
     url: "elexium",
@@ -1884,11 +1884,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/emcd/emcd-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/emcd/emcd-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/emcd/emcd-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/emcd/emcd-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/emcd/emcd-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/emcd/emcd-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1926,11 +1926,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/explorer-alephium-bridge/explorer-alephium-bridge-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/explorer-alephium-bridge/explorer-alephium-bridge-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/explorer-alephium-bridge/explorer-alephium-bridge-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/explorer-alephium-bridge/explorer-alephium-bridge-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/explorer-alephium-bridge/explorer-alephium-bridge-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/explorer-alephium-bridge/explorer-alephium-bridge-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -1971,11 +1971,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/f2pool/f2pool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/f2pool/f2pool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/f2pool/f2pool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/f2pool/f2pool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/f2pool/f2pool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/f2pool/f2pool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2010,11 +2010,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/fluxnode/fluxnode-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/fluxnode/fluxnode-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/fluxnode/fluxnode-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/fluxnode/fluxnode-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/fluxnode/fluxnode-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/fluxnode/fluxnode-preview.webp",
       gallery: [],
     },
     audits: [
@@ -2062,11 +2062,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/fxwallet/fxwallet-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/fxwallet/fxwallet-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/fxwallet/fxwallet-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/fxwallet/fxwallet-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/fxwallet/fxwallet-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/fxwallet/fxwallet-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2101,11 +2101,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/gateconnect/gateconnect-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/gateconnect/gateconnect-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/gateconnect/gateconnect-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/gateconnect/gateconnect-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/gateconnect/gateconnect-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/gateconnect/gateconnect-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -2143,11 +2143,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/godex/godex-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/godex/godex-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/godex/godex-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/godex/godex-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/godex/godex-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/godex/godex-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -2189,11 +2189,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/goldshell-wallet/goldshell-wallet-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/goldshell-wallet/goldshell-wallet-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/goldshell-wallet/goldshell-wallet-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/goldshell-wallet/goldshell-wallet-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/goldshell-wallet/goldshell-wallet-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/goldshell-wallet/goldshell-wallet-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2232,11 +2232,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/grumpy-fortunes/grumpy-fortunes-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/grumpy-fortunes/grumpy-fortunes-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/grumpy-fortunes/grumpy-fortunes-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/grumpy-fortunes/grumpy-fortunes-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/grumpy-fortunes/grumpy-fortunes-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/grumpy-fortunes/grumpy-fortunes-preview.webp",
       gallery: [],
     },
     contracts: [],
@@ -2275,11 +2275,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/grumpy-ralph/grumpy-ralph-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/grumpy-ralph/grumpy-ralph-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/grumpy-ralph/grumpy-ralph-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/grumpy-ralph/grumpy-ralph-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/grumpy-ralph/grumpy-ralph-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/grumpy-ralph/grumpy-ralph-preview.webp",
       gallery: [],
     },
     contracts: [],
@@ -2314,11 +2314,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/guardpay/guardpay-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/guardpay/guardpay-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/guardpay/guardpay-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/guardpay/guardpay-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/guardpay/guardpay-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/guardpay/guardpay-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -2371,11 +2371,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hacken/hacken-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hacken/hacken-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hacken/hacken-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hacken/hacken-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hacken/hacken-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hacken/hacken-preview.webp",
       gallery: [],
       videoUrl: "https://x.com/hackenclub/status/1871579631209664637",
     },
@@ -2416,11 +2416,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/halborn/halborn-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/halborn/halborn-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/halborn/halborn-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/halborn/halborn-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/halborn/halborn-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/halborn/halborn-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2461,11 +2461,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hashlock/hashlock-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hashlock/hashlock-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hashlock/hashlock-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hashlock/hashlock-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hashlock/hashlock-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hashlock/hashlock-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2504,11 +2504,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hearst/hearst-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hearst/hearst-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hearst/hearst-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hearst/hearst-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hearst/hearst-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hearst/hearst-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2548,11 +2548,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/henrycoder/henrycoder-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/henrycoder/henrycoder-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/henrycoder/henrycoder-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/henrycoder/henrycoder-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/henrycoder/henrycoder-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/henrycoder/henrycoder-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2592,11 +2592,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hermes/hermes-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hermes/hermes-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hermes/hermes-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hermes/hermes-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hermes/hermes-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hermes/hermes-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2635,11 +2635,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/herominers-pool/herominers-pool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/herominers-pool/herominers-pool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/herominers-pool/herominers-pool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/herominers-pool/herominers-pool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/herominers-pool/herominers-pool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/herominers-pool/herominers-pool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2674,11 +2674,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/houdini-swap/houdini-swap-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/houdini-swap/houdini-swap-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/houdini-swap/houdini-swap-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/houdini-swap/houdini-swap-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/houdini-swap/houdini-swap-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/houdini-swap/houdini-swap-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -2720,11 +2720,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/humpool/humpool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/humpool/humpool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/humpool/humpool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/humpool/humpool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/humpool/humpool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/humpool/humpool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2764,11 +2764,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/inference/inference-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/inference/inference-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/inference/inference-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/inference/inference-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/inference/inference-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/inference/inference-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2807,11 +2807,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/jjpool/jjpool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/jjpool/jjpool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/jjpool/jjpool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/jjpool/jjpool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/jjpool/jjpool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/jjpool/jjpool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2850,11 +2850,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/k1pool/k1pool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/k1pool/k1pool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/k1pool/k1pool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/k1pool/k1pool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/k1pool/k1pool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/k1pool/k1pool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2894,11 +2894,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/kryptex-pool/kryptex-pool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/kryptex-pool/kryptex-pool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/kryptex-pool/kryptex-pool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/kryptex-pool/kryptex-pool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/kryptex-pool/kryptex-pool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/kryptex-pool/kryptex-pool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2937,11 +2937,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/learnify/learnify-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/learnify/learnify-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/learnify/learnify-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/learnify/learnify-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/learnify/learnify-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/learnify/learnify-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2980,11 +2980,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ledger-wallet/ledger-wallet-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ledger-wallet/ledger-wallet-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ledger-wallet/ledger-wallet-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ledger-wallet/ledger-wallet-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ledger-wallet/ledger-wallet-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ledger-wallet/ledger-wallet-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3019,11 +3019,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/letsexchange/letsexchange-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/letsexchange/letsexchange-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/letsexchange/letsexchange-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/letsexchange/letsexchange-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/letsexchange/letsexchange-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/letsexchange/letsexchange-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -3063,11 +3063,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-app/logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-app/logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-app/banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-app/banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-app/preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-app/preview.webp",
       gallery: [],
     },
     audits: [],
@@ -3108,11 +3108,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-otc/linx-otc-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-otc/linx-otc-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-otc/linx-otc-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-otc/linx-otc-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-otc/linx-otc-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-otc/linx-otc-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3149,11 +3149,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-wallet/logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-wallet/logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-wallet/banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-wallet/banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-wallet/preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-wallet/preview.webp",
       gallery: [],
     },
     audits: [],
@@ -3199,11 +3199,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/minedfi/minedfi-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/minedfi/minedfi-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/minedfi/minedfi-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/minedfi/minedfi-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/minedfi/minedfi-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/minedfi/minedfi-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3242,11 +3242,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/mobula/mobula-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/mobula/mobula-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/mobula/mobula-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/mobula/mobula-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/mobula/mobula-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/mobula/mobula-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3286,11 +3286,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/myonion/myonion-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/myonion/myonion-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/myonion/myonion-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/myonion/myonion-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/myonion/myonion-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/myonion/myonion-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3330,11 +3330,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nicehash/nicehash-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nicehash/nicehash-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nicehash/nicehash-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nicehash/nicehash-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nicehash/nicehash-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nicehash/nicehash-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3372,11 +3372,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nightshade/nightshade-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nightshade/nightshade-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nightshade/nightshade-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nightshade/nightshade-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nightshade/nightshade-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nightshade/nightshade-preview.webp",
       gallery: [],
     },
     url: "nightshade",
@@ -3412,11 +3412,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nimbus/nimbus-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nimbus/nimbus-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nimbus/nimbus-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nimbus/nimbus-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nimbus/nimbus-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nimbus/nimbus-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3454,11 +3454,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/now-nodes/now-nodes-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/now-nodes/now-nodes-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/now-nodes/now-nodes-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/now-nodes/now-nodes-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/now-nodes/now-nodes-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/now-nodes/now-nodes-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -3501,11 +3501,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntminer/ntminer-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntminer/ntminer-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntminer/ntminer-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntminer/ntminer-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntminer/ntminer-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntminer/ntminer-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3545,11 +3545,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntv-dune/ntv-dune-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntv-dune/ntv-dune-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntv-dune/ntv-dune-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntv-dune/ntv-dune-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntv-dune/ntv-dune-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntv-dune/ntv-dune-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3588,11 +3588,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntv-overalldashboard/ntv-overalldashboard-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntv-overalldashboard/ntv-overalldashboard-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntv-overalldashboard/ntv-overalldashboard-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntv-overalldashboard/ntv-overalldashboard-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntv-overalldashboard/ntv-overalldashboard-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntv-overalldashboard/ntv-overalldashboard-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3631,11 +3631,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/okminer-pool/okminer-pool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/okminer-pool/okminer-pool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/okminer-pool/okminer-pool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/okminer-pool/okminer-pool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/okminer-pool/okminer-pool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/okminer-pool/okminer-pool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3674,42 +3674,42 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/onekey-wallet-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/onekey-wallet-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/onekey-wallet-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/onekey-wallet-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/onekey-wallet-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/onekey-wallet-preview.webp",
       gallery: [
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-1.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-1.webp",
           description: "OneKey Wallet",
         },
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-2.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-2.webp",
           description: "OneKey Wallet Supported Chains",
         },
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-3.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-3.webp",
           description: "OneKey Wallet Features",
         },
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-4.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-4.webp",
           description: "OneKey Wallet Features",
         },
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-5.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-5.webp",
           description: "OneKey Wallet Support Hardware Wallet",
         },
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-6.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-6.webp",
           description: "Wallet Wallet Features",
         },
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-7.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-7.webp",
           description: "Wallet Wallet Features",
         },
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-8.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-8.webp",
           description: "Wallet Wallet Features",
         },
       ],
@@ -3747,11 +3747,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onramper/onramper-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onramper/onramper-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onramper/onramper-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onramper/onramper-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onramper/onramper-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onramper/onramper-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -3806,11 +3806,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/phoenix-finance/phoenix-finance-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/phoenix-finance/phoenix-finance-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/phoenix-finance/phoenix-finance-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/phoenix-finance/phoenix-finance-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/phoenix-finance/phoenix-finance-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/phoenix-finance/phoenix-finance-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3850,11 +3850,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/pixelplex/pixelplex-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/pixelplex/pixelplex-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/pixelplex/pixelplex-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/pixelplex/pixelplex-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/pixelplex/pixelplex-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/pixelplex/pixelplex-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3893,11 +3893,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/presenceprotocol/presenceprotocol-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/presenceprotocol/presenceprotocol-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/presenceprotocol/presenceprotocol-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/presenceprotocol/presenceprotocol-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/presenceprotocol/presenceprotocol-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/presenceprotocol/presenceprotocol-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3937,11 +3937,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/primevault/primevault-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/primevault/primevault-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/primevault/primevault-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/primevault/primevault-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/primevault/primevault-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/primevault/primevault-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3978,11 +3978,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/proximauniverse/proximauniverse-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/proximauniverse/proximauniverse-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/proximauniverse/proximauniverse-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/proximauniverse/proximauniverse-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/proximauniverse/proximauniverse-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/proximauniverse/proximauniverse-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4025,11 +4025,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/pyreplay/pyreplay-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/pyreplay/pyreplay-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/pyreplay/pyreplay-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/pyreplay/pyreplay-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/pyreplay/pyreplay-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/pyreplay/pyreplay-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4069,11 +4069,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ralphbuilder/ralphbuilder-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ralphbuilder/ralphbuilder-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ralphbuilder/ralphbuilder-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ralphbuilder/ralphbuilder-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ralphbuilder/ralphbuilder-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ralphbuilder/ralphbuilder-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4113,11 +4113,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/richlist/richlist-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/richlist/richlist-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/richlist/richlist-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/richlist/richlist-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/richlist/richlist-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/richlist/richlist-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4156,11 +4156,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/rons-lp-tool/rons-lp-tool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/rons-lp-tool/rons-lp-tool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/rons-lp-tool/rons-lp-tool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/rons-lp-tool/rons-lp-tool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/rons-lp-tool/rons-lp-tool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/rons-lp-tool/rons-lp-tool-preview.webp",
       gallery: [],
     },
     url: "rons-lp-tool",
@@ -4199,11 +4199,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/safepal-wallet/safepal-wallet-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/safepal-wallet/safepal-wallet-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/safepal-wallet/safepal-wallet-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/safepal-wallet/safepal-wallet-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/safepal-wallet/safepal-wallet-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/safepal-wallet/safepal-wallet-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4252,11 +4252,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/sexy-pixels/sexy-pixels-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/sexy-pixels/sexy-pixels-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/sexy-pixels/sexy-pixels-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/sexy-pixels/sexy-pixels-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/sexy-pixels/sexy-pixels-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/sexy-pixels/sexy-pixels-preview.webp",
       gallery: [],
       videoUrl: "https://files.catbox.moe/r34zoy.mp4",
     },
@@ -4296,11 +4296,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/sezame-wallet/sezame-wallet-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/sezame-wallet/sezame-wallet-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/sezame-wallet/sezame-wallet-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/sezame-wallet/sezame-wallet-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/sezame-wallet/sezame-wallet-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/sezame-wallet/sezame-wallet-preview.webp",
       gallery: [
         {
           url: "https://sezame.app/wp-content/uploads/2022/05/1.webp",
@@ -4361,11 +4361,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/simpleswap/simpleswap-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/simpleswap/simpleswap-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/simpleswap/simpleswap-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/simpleswap/simpleswap-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/simpleswap/simpleswap-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/simpleswap/simpleswap-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -4407,11 +4407,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/solopool/solopool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/solopool/solopool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/solopool/solopool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/solopool/solopool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/solopool/solopool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/solopool/solopool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4461,11 +4461,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/squirrel/squirrel-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/squirrel/squirrel-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/squirrel/squirrel-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/squirrel/squirrel-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/squirrel/squirrel-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/squirrel/squirrel-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4500,11 +4500,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/stealthex/stealthex-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/stealthex/stealthex-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/stealthex/stealthex-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/stealthex/stealthex-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/stealthex/stealthex-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/stealthex/stealthex-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -4547,11 +4547,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/suricata-rally/suricata-rally-avatar.png",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/suricata-rally/suricata-rally-avatar.png",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/suricata-rally/suricata-rally-banner.png",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/suricata-rally/suricata-rally-banner.png",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/suricata-rally/suricata-rally-preview.png",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/suricata-rally/suricata-rally-preview.png",
       gallery: [],
       videoUrl: "https://suricata.bot/img/SuricataRally-boost-level2.mp4",
     },
@@ -4564,22 +4564,22 @@ export const dapps: DappInfo[] = [
       collectionPreview: [
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Caveman.png",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Caveman.png",
           name: "Hunter - Acacia Grove Booster NFT",
         },
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Jinn.png",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Jinn.png",
           name: "Jinn - Desert Dunes Booster NFT",
         },
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Hunter.png",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Hunter.png",
           name: "Hunter - Acacia Grove Booster NFT",
         },
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Trooper.png",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Trooper.png",
           name: "Trooper - Grassland Plains Booster NFT",
         },
       ],
@@ -4618,11 +4618,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/swap/swap-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/swap/swap-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/swap/swap-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/swap/swap-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/swap/swap-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/swap/swap-preview.webp",
       gallery: [],
     },
     url: "swap",
@@ -4656,11 +4656,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/swapspace/swapspace-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/swapspace/swapspace-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/swapspace/swapspace-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/swapspace/swapspace-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/swapspace/swapspace-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/swapspace/swapspace-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -4702,11 +4702,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tangem-wallet/tangem-wallet-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tangem-wallet/tangem-wallet-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tangem-wallet/tangem-wallet-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tangem-wallet/tangem-wallet-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tangem-wallet/tangem-wallet-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tangem-wallet/tangem-wallet-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4745,11 +4745,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tinnetwork/tinnetwork-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tinnetwork/tinnetwork-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tinnetwork/tinnetwork-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tinnetwork/tinnetwork-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tinnetwork/tinnetwork-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tinnetwork/tinnetwork-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4787,11 +4787,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tipalph/tipalph-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tipalph/tipalph-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tipalph/tipalph-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tipalph/tipalph-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tipalph/tipalph-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tipalph/tipalph-preview.webp",
       gallery: [],
     },
     contracts: [],
@@ -4826,11 +4826,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/transfi/transfi-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/transfi/transfi-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/transfi/transfi-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/transfi/transfi-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/transfi/transfi-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/transfi/transfi-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -4868,11 +4868,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/trocador/trocador-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/trocador/trocador-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/trocador/trocador-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/trocador/trocador-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/trocador/trocador-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/trocador/trocador-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -4915,11 +4915,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/twalph/twalph-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/twalph/twalph-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/twalph/twalph-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/twalph/twalph-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/twalph/twalph-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/twalph/twalph-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4958,11 +4958,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/twpool/twpool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/twpool/twpool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/twpool/twpool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/twpool/twpool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/twpool/twpool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/twpool/twpool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -5001,11 +5001,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/vipor/vipor-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/vipor/vipor-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/vipor/vipor-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/vipor/vipor-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/vipor/vipor-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/vipor/vipor-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -5043,11 +5043,11 @@ export const dapps: DappInfo[] = [
     twitterName: "voltpay_",
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/voltpay/voltpay-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/voltpay/voltpay-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/voltpay/voltpay-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/voltpay/voltpay-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/voltpay/voltpay-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/voltpay/voltpay-preview.webp",
       gallery: [],
     },
     tokens: [],
@@ -5086,11 +5086,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/vordex/vordex-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/vordex/vordex-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/vordex/vordex-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/vordex/vordex-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/vordex/vordex-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/vordex/vordex-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -5129,11 +5129,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/wemine/wemine-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/wemine/wemine-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/wemine/wemine-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/wemine/wemine-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/wemine/wemine-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/wemine/wemine-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -5172,11 +5172,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/whalepool/whalepool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/whalepool/whalepool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/whalepool/whalepool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/whalepool/whalepool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/whalepool/whalepool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/whalepool/whalepool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -5216,18 +5216,18 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/what-the-duck-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/what-the-duck/what-the-duck-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/what-the-duck-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/what-the-duck/what-the-duck-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/what-the-duck-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/what-the-duck/what-the-duck-preview.webp",
       gallery: [
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/nest.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/what-the-duck/nest.webp",
           description: "The Nest",
         },
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/game.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/what-the-duck/game.webp",
           description: "Quack Attack",
         },
       ],
@@ -5241,22 +5241,22 @@ export const dapps: DappInfo[] = [
       collectionPreview: [
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/collection-nft-37.webp",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/what-the-duck/collection-nft-37.webp",
           name: "Duck: 37",
         },
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/collection-nft-14.webp",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/what-the-duck/collection-nft-14.webp",
           name: "Duck: 14",
         },
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/collection-nft-73.webp",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/what-the-duck/collection-nft-73.webp",
           name: "Duck: 73",
         },
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/collection-nft-02.webp",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/what-the-duck/collection-nft-02.webp",
           name: "Duck: 2",
         },
       ],
@@ -5295,11 +5295,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/woolypooly/woolypooly-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/woolypooly/woolypooly-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/woolypooly/woolypooly-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/woolypooly/woolypooly-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/woolypooly/woolypooly-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/woolypooly/woolypooly-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -5344,11 +5344,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/yodh/yodh-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/yodh/yodh-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/yodh/yodh-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/yodh/yodh-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/yodh/yodh-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/yodh/yodh-preview.webp",
       gallery: [],
     },
     url: "yodh",
@@ -5382,11 +5382,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/zelcore/zelcore-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/zelcore/zelcore-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/zelcore/zelcore-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/zelcore/zelcore-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/zelcore/zelcore-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/zelcore/zelcore-preview.webp",
       gallery: [],
     },
     audits: [],

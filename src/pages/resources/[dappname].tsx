@@ -1,17 +1,30 @@
 import arrow from "../../assets/icons/arrowLeft.svg";
 import Layout from "../../components/Layout";
+import ResourceCard from "../../components/ResourceCard/ResourceCard";
+import resourcesData from "../../data/resources.json";
 import { readdir, readFile } from "fs/promises";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import Router from "next/router";
 import path from "path";
 
-interface ResourcesPageProps {
-  dappInfo: DappInfo;
+interface Resource {
+  title: string;
+  link: string;
+  format: string;
+  topic: string;
+  language: string;
 }
 
-const ResourcesPage: NextPage<ResourcesPageProps> = ({ dappInfo }) => {
+interface ResourcesPageProps {
+  dappInfo: DappInfo;
+  dappResources: Resource[];
+}
+
+const ResourcesPage: NextPage<ResourcesPageProps> = ({
+  dappInfo,
+  dappResources,
+}) => {
   return (
     <Layout
       title={`${dappInfo.name} - Resources & Tutorials`}
@@ -49,135 +62,158 @@ const ResourcesPage: NextPage<ResourcesPageProps> = ({ dappInfo }) => {
           </div>
 
           <div className="space-y-12">
-            {/* Video Tutorials */}
-            {dappInfo.media?.videoUrl && (
+            {/* Resources from JSON data */}
+            {dappResources.length > 0 && (
               <section>
                 <h2 className="text-2xl font-bold mb-6 dark:text-white">
-                  Video Tutorials
+                  Tutorials & Guides
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="border border-border-grey dark:border-white/10 rounded-lg overflow-hidden bg-white dark:bg-white/5">
-                    <div className="relative aspect-video">
-                      <video
-                        src={dappInfo.media.videoUrl}
-                        className="w-full h-full object-cover"
-                        controls
-                      />
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold mb-2 dark:text-white">
-                        Getting Started with {dappInfo.name}
-                      </h3>
-                      <p className="text-sm text-light-charcoal dark:text-lightgrey">
-                        Complete beginner&apos;s guide to get started
-                      </p>
-                    </div>
-                  </div>
+                  {dappResources.map((resource, i) => (
+                    <ResourceCard key={i} resource={resource} />
+                  ))}
                 </div>
               </section>
             )}
 
-            {/* Documentation */}
-            <section>
-              <h2 className="text-2xl font-bold mb-6 dark:text-white">
-                Documentation
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {dappInfo.links?.docs && (
-                  <a
-                    href={dappInfo.links.docs}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block p-6 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow"
-                  >
-                    <h3 className="font-semibold text-lg mb-2 dark:text-white">
-                      Official Documentation
-                    </h3>
-                    <p className="text-sm text-light-charcoal dark:text-lightgrey mb-4">
-                      Comprehensive guides and API references for developers
-                    </p>
-                    <span className="text-orange text-sm font-semibold">
-                      View Docs →
-                    </span>
-                  </a>
-                )}
+            {/* Video from dApp media */}
+            {dappInfo.media?.videoUrl &&
+              !dappResources.some(
+                (r) => r.link === dappInfo.media.videoUrl,
+              ) && (
+                <section>
+                  <h2 className="text-2xl font-bold mb-6 dark:text-white">
+                    Video
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="border border-border-grey dark:border-white/10 rounded-lg overflow-hidden bg-white dark:bg-white/5">
+                      <div className="relative aspect-video">
+                        <video
+                          src={dappInfo.media.videoUrl}
+                          className="w-full h-full object-cover"
+                          controls
+                        />
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-semibold mb-2 dark:text-white">
+                          Getting Started with {dappInfo.name}
+                        </h3>
+                        <p className="text-sm text-light-charcoal dark:text-lightgrey">
+                          Complete beginner&apos;s guide to get started
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              )}
 
-                {dappInfo.links?.github && (
-                  <a
-                    href={dappInfo.links.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block p-6 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow"
-                  >
-                    <h3 className="font-semibold text-lg mb-2 dark:text-white">
-                      GitHub Repository
-                    </h3>
-                    <p className="text-sm text-light-charcoal dark:text-lightgrey mb-4">
-                      Explore the source code and contribute to the project
-                    </p>
-                    <span className="text-orange text-sm font-semibold">
-                      View on GitHub →
-                    </span>
-                  </a>
-                )}
-              </div>
-            </section>
+            {/* Documentation */}
+            {(dappInfo.links?.docs || dappInfo.links?.github) && (
+              <section>
+                <h2 className="text-2xl font-bold mb-6 dark:text-white">
+                  Documentation
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {dappInfo.links?.docs && (
+                    <a
+                      href={dappInfo.links.docs}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block p-6 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow"
+                    >
+                      <h3 className="font-semibold text-lg mb-2 dark:text-white">
+                        Official Documentation
+                      </h3>
+                      <p className="text-sm text-light-charcoal dark:text-lightgrey mb-4">
+                        Comprehensive guides and API references for developers
+                      </p>
+                      <span className="text-orange text-sm font-semibold">
+                        View Docs →
+                      </span>
+                    </a>
+                  )}
+
+                  {dappInfo.links?.github && (
+                    <a
+                      href={dappInfo.links.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block p-6 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow"
+                    >
+                      <h3 className="font-semibold text-lg mb-2 dark:text-white">
+                        GitHub Repository
+                      </h3>
+                      <p className="text-sm text-light-charcoal dark:text-lightgrey mb-4">
+                        Explore the source code and contribute to the project
+                      </p>
+                      <span className="text-orange text-sm font-semibold">
+                        View on GitHub →
+                      </span>
+                    </a>
+                  )}
+                </div>
+              </section>
+            )}
 
             {/* Community Resources */}
-            <section>
-              <h2 className="text-2xl font-bold mb-6 dark:text-white">
-                Community & Support
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {dappInfo.links?.discord && (
-                  <a
-                    href={dappInfo.links.discord}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block p-6 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow text-center"
-                  >
-                    <h3 className="font-semibold mb-2 dark:text-white">
-                      Discord
-                    </h3>
-                    <p className="text-sm text-light-charcoal dark:text-lightgrey">
-                      Join our community for support and discussions
-                    </p>
-                  </a>
-                )}
+            {(dappInfo.links?.discord ||
+              dappInfo.links?.telegram ||
+              dappInfo.links?.medium) && (
+              <section>
+                <h2 className="text-2xl font-bold mb-6 dark:text-white">
+                  Community & Support
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {dappInfo.links?.discord && (
+                    <a
+                      href={dappInfo.links.discord}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block p-6 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow text-center"
+                    >
+                      <h3 className="font-semibold mb-2 dark:text-white">
+                        Discord
+                      </h3>
+                      <p className="text-sm text-light-charcoal dark:text-lightgrey">
+                        Join our community for support and discussions
+                      </p>
+                    </a>
+                  )}
 
-                {dappInfo.links?.telegram && (
-                  <a
-                    href={dappInfo.links.telegram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block p-6 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow text-center"
-                  >
-                    <h3 className="font-semibold mb-2 dark:text-white">
-                      Telegram
-                    </h3>
-                    <p className="text-sm text-light-charcoal dark:text-lightgrey">
-                      Get real-time updates and support
-                    </p>
-                  </a>
-                )}
+                  {dappInfo.links?.telegram && (
+                    <a
+                      href={dappInfo.links.telegram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block p-6 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow text-center"
+                    >
+                      <h3 className="font-semibold mb-2 dark:text-white">
+                        Telegram
+                      </h3>
+                      <p className="text-sm text-light-charcoal dark:text-lightgrey">
+                        Get real-time updates and support
+                      </p>
+                    </a>
+                  )}
 
-                {dappInfo.links?.medium && (
-                  <a
-                    href={dappInfo.links.medium}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block p-6 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow text-center"
-                  >
-                    <h3 className="font-semibold mb-2 dark:text-white">
-                      Medium Blog
-                    </h3>
-                    <p className="text-sm text-light-charcoal dark:text-lightgrey">
-                      Read our latest articles and updates
-                    </p>
-                  </a>
-                )}
-              </div>
-            </section>
+                  {dappInfo.links?.medium && (
+                    <a
+                      href={dappInfo.links.medium}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block p-6 border border-border-grey dark:border-white/10 rounded-lg bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow text-center"
+                    >
+                      <h3 className="font-semibold mb-2 dark:text-white">
+                        Medium Blog
+                      </h3>
+                      <p className="text-sm text-light-charcoal dark:text-lightgrey">
+                        Read our latest articles and updates
+                      </p>
+                    </a>
+                  )}
+                </div>
+              </section>
+            )}
 
             {/* Gallery */}
             {dappInfo.media?.gallery && dappInfo.media.gallery.length > 0 && (
@@ -205,7 +241,7 @@ const ResourcesPage: NextPage<ResourcesPageProps> = ({ dappInfo }) => {
 };
 
 export const getStaticProps: GetStaticProps<ResourcesPageProps> = async (
-  context
+  context,
 ) => {
   const dappname = context.params?.dappname;
 
@@ -218,9 +254,13 @@ export const getStaticProps: GetStaticProps<ResourcesPageProps> = async (
 
   const dappInfo: DappInfo = JSON.parse(content);
 
+  const allResources = resourcesData as Record<string, Resource[]>;
+  const dappResources = allResources[dappname as string] || [];
+
   return {
     props: {
       dappInfo,
+      dappResources,
     },
     revalidate: 10,
   };
