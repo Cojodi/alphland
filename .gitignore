@@ -56,3 +56,4 @@ next-env.d.ts
 /d1-manager-main
 *.sh
 migrations/
+*.xlsx
