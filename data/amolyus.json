@@ -2,7 +2,7 @@
   "name": "Amolyus",
   "description": "Amolyus is a project that produces NFT collections on Alephium and develops token utilities around them. It issues the LFG token, which is used for governance, in app utility, and revenue distribution within the project.",
   "short_description": "Community Driven Digital Assets",
-  "tags": ["DeFi", "NFTs", "Games", "DAOs", "Infrastructure"],
+  "tags": ["NFTs"],
   "group": "Group 0",
   "contracts": [
     {
