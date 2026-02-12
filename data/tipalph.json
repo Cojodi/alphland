@@ -2,7 +2,7 @@
   "name": "TipALPH",
   "description": "TipALPH is a Telegram bot that lets users tip others using ALPH and any token issued on the Alephium blockchain directly inside Telegram chats.",
   "short_description": "Tipping bot for Alephium",
-  "tags": ["Onramps", "Social"],
+  "tags": ["Tools"],
   "dotw": false,
   "verified": false,
   "councils_choice": false,
