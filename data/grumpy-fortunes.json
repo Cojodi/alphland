@@ -2,7 +2,7 @@
   "name": "Grumpy Fortunes",
   "description": "Grumpy Fortunes is an onchain application that generates AI based price prediction messages for ALPH. It offers an interactive interface combining entertainment with experimental forecasting features. It is part of the broader Grumpy ecosystem.",
   "short_description": "The First AI Powered Oracle on Alephium",
-  "tags": ["DeFi", "NFTs", "Games"],
+  "tags": ["Games"],
   "group": "",
   "contract": [],
   "audits": [],
