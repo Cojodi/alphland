@@ -2,7 +2,7 @@
   "name": "Furnace",
   "description": "Token Furnace is a platform designed to permanently remove tokens from circulation. Users can connect their wallet and burn tokens, reducing token supply which can impact tokenomics and market dynamics.",
   "short_description": "Token Burner",
-  "tags": ["DeFi"],
+  "tags": ["Tools"],
   "councils_choice": false,
   "contracts": [
     {
