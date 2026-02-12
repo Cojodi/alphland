@@ -2,7 +2,7 @@
   "name": "No Trust Verify dashboard",
   "description": "No Trust Verify Dashboard is an analytics interface showing Alephium network metrics such as block activity, transaction volume, and address statistics. It provides insight into network performance and onchain behavior.",
   "short_description": "Explore detailled stats about Alephium network.",
-  "tags": ["Stats"],
+  "tags": ["Analytics"],
   "contracts": [],
   "audits": [],
   "verified": false,
