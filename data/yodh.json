@@ -2,7 +2,7 @@
   "name": "Yodh",
   "description": "Yodh is a dApp that lets users create digital gift cards using ALPH or other tokens on the Alephium blockchain. It allows senders to choose an amount, attach a message, and generate a redeemable link for recipients.",
   "short_description": "DigitALPH Gift Card",
-  "tags": ["Onramps", "Social"],
+  "tags": ["Tools"],
   "dotw": false,
   "verified": false,
   "group": "Group 0",
