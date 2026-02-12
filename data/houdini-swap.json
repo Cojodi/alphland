@@ -2,7 +2,7 @@
   "name": "Houdini Swap",
   "description": "Houdini Swap is a non custodial cross chain liquidity aggregator with privacy preserving features. It enables users to perform asset swaps across multiple networks while minimizing data exposure.",
   "short_description": "Transact Freely",
-  "tags": ["Bridges", "Infrastructure"],
+  "tags": ["Bridges"],
   "councils_choice": false,
   "verified": true,
   "dotw": false,

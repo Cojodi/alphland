@@ -2,7 +2,7 @@
   "name": "Grumpy Ralph",
   "description": "Grumpy Ralph is an AI assisted contract creation tool that helps users generate and deploy basic smart contracts. It automates portions of Ralph code creation and simplifies deployment steps for non technical users.",
   "short_description": "The First AI Contract Creation Tool on Alephium",
-  "tags": ["DeFi", "NFTs", "Infrastructure"],
+  "tags": ["Tools", "Ai"],
   "group": "",
   "contract": [],
   "audits": [],

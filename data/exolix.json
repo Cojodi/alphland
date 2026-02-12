@@ -2,7 +2,7 @@
   "name": "Exolix",
   "description": "Exolix is a leading multi-chain swap aggregator with access to 4M+ pairs, 2K+ assets, and 200+ chains, using compliant and private Web3 routes through CEXs and DEXs to deliver the best rates, privacy, and full interoperability.",
   "short_description": "Ultimate multi-chain swap aggregator",
-  "tags": ["Onramps"],
+  "tags": ["Bridges"],
   "councils_choice": false,
   "verified": false,
   "dotw": false,

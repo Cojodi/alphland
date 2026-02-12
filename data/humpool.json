@@ -2,7 +2,7 @@
   "name": "HumPool",
   "description": "HumPool is a digital currency mining pool offering stable mining servers and performance tracking. It supports global miners and provides multi asset mining capabilities.",
   "short_description": "A Better Cryptocurrency Mining Pool",
-  "tags": ["Hashrate"],
+  "tags": ["Mining"],
   "contracts": [],
   "councils_choice": false,
   "audits": [],

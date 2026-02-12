@@ -2,7 +2,7 @@
   "name": "HenryCoder",
   "description": "HenryCoder is an AI powered development assistant that translates EVM based code into Ralph. It helps developers migrate applications to Alephium by reducing manual rewriting and improving development efficiency.",
   "short_description": "Your number one assistant in moving from EVM to Alephium.",
-  "tags": ["Utility", "Infrastructure"],
+  "tags": ["Tools", "Ai"],
   "contracts": [],
   "councils_choice": true,
   "audits": [],

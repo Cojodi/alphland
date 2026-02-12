@@ -2,7 +2,7 @@
   "name": "Kryptex Pool",
   "description": "Kryptex Pool is a mining service allowing users to mine cryptocurrencies and receive payouts in BTC or USDT. It supports various mining algorithms and automatic payout conversions.",
   "short_description": "More ways to mine. More ways to earn. With Kryptex Pool",
-  "tags": ["Hashrate"],
+  "tags": ["Mining"],
   "contracts": [],
   "councils_choice": false,
   "audits": [],

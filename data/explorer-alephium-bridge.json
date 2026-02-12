@@ -2,7 +2,7 @@
   "name": "Alephium Bridge Explorer",
   "description": "Alephium Bridge Explorer is a monitoring interface displaying real time token flows and transaction activity across the Alephium Bridge. It helps users visualize cross chain movement and bridge usage.",
   "short_description": "Explore real-time movement of information and value around the Alephium bridge.",
-  "tags": ["Stats"],
+  "tags": ["Infrastructure", "Bridges", "Tools"],
   "councils_choice": true,
   "contracts": [],
   "verified": true,
