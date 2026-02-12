@@ -19,21 +19,22 @@ interface EcosystemMapProps {
 
 // Define category order and grid sizes
 const categoryConfig: { [key: string]: { order: number; cols: number } } = {
-  DeFi: { order: 1, cols: 6 },
-  Infrastructure: { order: 2, cols: 6 },
-  Wallets: { order: 3, cols: 6 },
-  NFT: { order: 4, cols: 5 },
-  Gaming: { order: 5, cols: 5 },
-  DEX: { order: 6, cols: 5 },
-  Bridges: { order: 7, cols: 5 },
-  Tools: { order: 8, cols: 5 },
-  Analytics: { order: 9, cols: 5 },
-  Staking: { order: 10, cols: 5 },
-  Lending: { order: 11, cols: 5 },
-  DAO: { order: 12, cols: 5 },
-  Social: { order: 13, cols: 5 },
-  Marketplace: { order: 14, cols: 5 },
-  Onramps: { order: 15, cols: 5 },
+  Mining: { order: 1, cols: 6 },
+  Tools: { order: 2, cols: 6 },
+  Infrastructure: { order: 3, cols: 6 },
+  Bridges: { order: 4, cols: 6 },
+  Analytics: { order: 5, cols: 6 },
+  Wallets: { order: 6, cols: 6 },
+  DeFi: { order: 7, cols: 6 },
+  Security: { order: 8, cols: 5 },
+  Onramps: { order: 9, cols: 5 },
+  Games: { order: 10, cols: 5 },
+  Quests: { order: 11, cols: 5 },
+  NFTs: { order: 12, cols: 5 },
+  Ai: { order: 13, cols: 5 },
+  Education: { order: 14, cols: 5 },
+  Social: { order: 15, cols: 5 },
+  ComingSoon: { order: 16, cols: 5 },
 };
 
 const EcosystemMapPage = ({

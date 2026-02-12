@@ -33,6 +33,8 @@ import tools from "../assets/icons/tools.svg";
 import toolsLight from "../assets/icons/toolsLight.svg";
 import verified from "../assets/icons/verified.svg";
 import verifiedLight from "../assets/icons/verifiedLight.svg";
+import ai from "../assets/icons/crystal-ball.svg";
+import aiLight from "../assets/icons/crystal-ball-light.svg";
 import wallet from "../assets/icons/wallet.svg";
 import walletLight from "../assets/icons/walletLight.svg";
 
@@ -64,11 +66,12 @@ export const categories = [
   { key: "onramps", name: "Onramps", icon: card, iconDark: cardLight },
   { key: "nfts", name: "NFTs", icon: gallery, iconDark: galleryLight },
   {
-    key: "hashrate",
-    name: "Hashrate",
+    key: "mining",
+    name: "Mining",
     icon: hashrate,
     iconDark: hashrateLight,
   },
+  { key: "ai", name: "Ai", icon: ai, iconDark: aiLight },
   { key: "security", name: "Security", icon: lock, iconDark: lockLight },
   { key: "games", name: "Games", icon: gaming, iconDark: gamingLight },
   { key: "soon", name: "ComingSoon", icon: time, iconDark: timeLight },
