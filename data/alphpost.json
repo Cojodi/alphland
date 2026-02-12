@@ -2,7 +2,7 @@
   "name": "AlphPost",
   "description": "AlphPost is a social and task based marketplace where users create posts, complete activities, and interact socially. It integrates content creation with an internal task system.",
   "short_description": "Social Network and task based marketplace.",
-  "tags": ["Social", "ComingSoon", "Infrastructure", "DeFi"],
+  "tags": ["Social", "ComingSoon"],
   "contracts": [],
   "audits": [],
   "verified": false,

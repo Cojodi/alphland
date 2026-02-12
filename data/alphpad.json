@@ -2,7 +2,7 @@
   "name": "AlphPad",
   "description": "AlphPad is a decentralized launchpad that facilitates IDOs for projects in the Alephium ecosystem. It enables projects to run token sales under standardized terms and uses a tiered participation system based on locking the APAD token.",
   "short_description": "The Premier Launchpad on Alephium - Elevating Projects to New Heights!",
-  "tags": ["DeFi", "Infrastructure"],
+  "tags": ["Infrastructure"],
   "contracts": [],
   "audits": [
     {

@@ -2,7 +2,7 @@
   "name": "ALPH Trading Bot",
   "description": "ALPH Trading Bot is a Telegram based trading tool that allows users to set automated buy orders, including sniping orders for new token launches. It supports scheduled and trigger based executions so users can automate entry conditions without manual monitoring.",
   "short_description": "Your Gateway to Alephium Blockchain",
-  "tags": ["Social", "Infrastructure", "NFTs"],
+  "tags": ["Tools"],
   "contracts": [],
   "audits": [],
   "councils_choice": true,
