@@ -2,7 +2,7 @@
   "name": "Presence Protocol",
   "description": "Presence Protocol is an attendance verification system issuing event based proof of presence tokens. It records participation data onchain for both digital and in person events.",
   "short_description": "Proof You Were There. Powered by Alephium.",
-  "tags": ["NFTs", "Social"],
+  "tags": ["NFTs", "Tools"],
   "group": "Group 0",
   "audits": [],
   "verified": false,
