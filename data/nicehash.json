@@ -2,7 +2,7 @@
   "name": "NiceHash",
   "description": "NiceHash is a hashrate marketplace connecting miners with buyers of computing power. It offers mining tools, marketplace listings, performance analytics, and hashpower purchasing options.",
   "short_description": "The world’s largest hashrate marketplace, connecting buyers and miners",
-  "tags": ["Hashrate", "Infrastructure"],
+  "tags": ["Mining", "Infrastructure"],
   "contracts": [],
   "councils_choice": false,
   "audits": [],
