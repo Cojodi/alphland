@@ -2,7 +2,7 @@
   "name": "TW Pool",
   "description": "TW Pool is a cryptocurrency mining pool offering stable hashrate distribution, transparent payouts, and real-time performance monitoring. It supports multiple Proof-of-Work assets and provides miners with reliable infrastructure for consistent earnings.",
   "short_description": "TW Altcoin Pool",
-  "tags": ["Hashrate"],
+  "tags": ["Mining"],
   "contracts": [],
   "councils_choice": false,
   "audits": [],
