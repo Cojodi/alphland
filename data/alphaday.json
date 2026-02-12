@@ -2,7 +2,7 @@
   "name": "Alphaday",
   "description": "Alphaday is an information dashboard aggregating news, onchain data, social media, and crypto tools into a customizable interface. It centralizes research and monitoring workflows for users.",
   "short_description": "All-in-one crypto workflow dashboard",
-  "tags": ["Infrastructure", "Stats"],
+  "tags": ["Analytics"],
   "verified": false,
   "dotw": false,
   "councils_choice": true,

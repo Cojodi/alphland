@@ -2,7 +2,7 @@
   "name": "HeroMiners Pool",
   "description": "HeroMiners Pool is a mining pool supporting many GPU and ASIC compatible cryptocurrencies. It offers distributed servers, reward tracking, and multi coin mining support.",
   "short_description": "We stand for miners!",
-  "tags": ["Hashrate"],
+  "tags": ["Mining"],
   "contracts": [],
   "councils_choice": false,
   "audits": [],

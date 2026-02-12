@@ -2,7 +2,7 @@
   "name": "Digital Asset Forge",
   "description": "Digital Asset Forge is a toolkit for token creation and management. It includes automated token list submission and a full featured airdrop manager supporting CSV uploads and contract holder imports.",
   "short_description": "The Alephium Fair Launch Foundry",
-  "tags": ["DeFi", "Infrastructure"],
+  "tags": ["Tools"],
   "group": "",
   "contract": [],
   "audits": [],

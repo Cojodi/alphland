@@ -2,7 +2,7 @@
   "name": "Alephium Toolkit - Multi-Sig GUI",
   "description": "Alephium Toolkit Multi Sig GUI is an interface for creating and managing multi signature wallets",
   "short_description": "Alephium Multi-sig GUI",
-  "tags": ["Infrastructure"],
+  "tags": ["Tools"],
   "contracts": [],
   "verified": true,
   "dotw": false,

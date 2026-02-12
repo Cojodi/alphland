@@ -2,7 +2,7 @@
   "name": "DefiLlama",
   "description": "DefiLlama is a data analytics platform that tracks total value locked (TVL), fees, revenue, and usage across thousands of DeFi protocols and multiple blockchains. It provides open-source metrics and tools to compare chains, protocols, and financial activity in decentralized finance.",
   "short_description": "Open and transparent DeFi analytics.",
-  "tags": ["Stats"],
+  "tags": ["Analytics"],
   "contracts": [],
   "audits": [],
   "verified": false,

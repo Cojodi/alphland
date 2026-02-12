@@ -2,7 +2,7 @@
   "name": "ANTPOOL",
   "description": " ANTPOOL is a global mining pool supporting multiple proof of work cryptocurrencies. It provides mining distribution, payout systems, and monitoring tools.",
   "short_description": "Technology brings infinite possibilities to the blockchain world",
-  "tags": ["Hashrate"],
+  "tags": ["Mining"],
   "contracts": [],
   "councils_choice": false,
   "audits": [],

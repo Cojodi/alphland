@@ -2,7 +2,7 @@
   "name": "Alphland",
   "description": "Alphland is an ecosystem discovery hub that showcases all applications, tools, and services built on Alephium. It helps users easily explore, understand, and access products, acting as a gateway to the entire Alephium ecosystem.",
   "short_description": "Project/dApp aggregator for Alephium",
-  "tags": ["Infrastructure"],
+  "tags": ["Education", "Quests"],
   "contracts": [],
   "audits": [],
   "verified": false,

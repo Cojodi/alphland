@@ -2,7 +2,7 @@
   "name": "ANS",
   "description": "ANS is a naming system that replaces long wallet addresses with short readable names. It enhances usability by simplifying address sharing across the ecosystem.",
   "short_description": "The Alephium name service.",
-  "tags": ["Infrastructure", "Social"],
+  "tags": ["Infrastructure"],
   "contracts": [],
   "audits": [
     {

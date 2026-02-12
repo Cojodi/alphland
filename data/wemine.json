@@ -2,7 +2,7 @@
   "name": "WeMine",
   "description": "WeMine offers access to Bitcoin mining through “Mining Power” units (represented as NFTs) that link to institutional-grade mining infrastructure. Investors can buy these units and earn rewards based on mining performance without needing to manage the hardware themselves.",
   "short_description": "WeMine, you earn!",
-  "tags": ["ComingSoon", "Hashrate", "DeFi", "Infrastructure"],
+  "tags": ["DeFi", "Mining", "ComingSoon"],
   "contracts": [],
   "councils_choice": false,
   "audits": [],

@@ -2,7 +2,7 @@
   "name": "K1Pool",
   "description": "K1Pool is a mining pool supporting multiple mining algorithms and streamlined miner setup. It provides organized dashboards and simplified access to multi asset mining operations.",
   "short_description": "Easy to join, easy to get started",
-  "tags": ["Hashrate"],
+  "tags": ["Mining"],
   "contracts": [],
   "councils_choice": false,
   "audits": [],

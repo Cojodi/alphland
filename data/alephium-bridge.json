@@ -2,7 +2,7 @@
   "name": "Alephium Bridge",
   "description": "Alephium Bridge is a cross chain bridge that enables decentralized token transfers between supported networks (BNB chain and Ethereum). It provides a trust minimized mechanism for moving assets without centralized custodianship.",
   "short_description": "Unlimited, decentralized cross-chain transfer of tokens",
-  "tags": ["Bridges"],
+  "tags": ["Bridges", "Tools", "Infrastructure"],
   "councils_choice": true,
   "contracts": [
     {

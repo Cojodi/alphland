@@ -2,7 +2,7 @@
   "name": "CoinMore",
   "description": "CoinMore is a mining pool that supports Alephium mining and provides detailed performance statistics, hashrate tracking, and payout options. It allows miners to join the network via dedicated servers and export data for reporting.",
   "short_description": "Experience the power of Alephium's sharded blockchain technology with CoinMore.io",
-  "tags": ["Hashrate"],
+  "tags": ["Mining"],
   "contracts": [],
   "councils_choice": false,
   "audits": [],

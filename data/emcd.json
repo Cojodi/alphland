@@ -2,7 +2,7 @@
   "name": "EMCD",
   "description": "EMCD is a cryptocurrency service platform that includes a major mining pool, digital asset wallet, and financial products such as savings accounts and cards. It supports multiple assets and offers infrastructure tools.",
   "short_description": "EMCD.io — leading crypto mining pool and ecosystem for digital assets.",
-  "tags": ["Hashrate"],
+  "tags": ["Mining", "Bridges"],
   "contracts": [],
   "councils_choice": false,
   "audits": [],

@@ -2,7 +2,7 @@
   "name": "Alephium Name Service",
   "description": "Alephium Name Service is a naming system that lets users register human readable names linked to wallet addresses. It simplifies address sharing and identity management across the ecosystem.",
   "short_description": "Alephium Name Service is a name system on Alephium",
-  "tags": ["Infrastructure", "NFTs"],
+  "tags": ["Infrastructure"],
   "contracts": ["229YhAcdSWLX7UXQF3gXdHKo5NBkr1VgiuiwtJzjqTgwy"],
   "audits": [],
   "verified": false,
