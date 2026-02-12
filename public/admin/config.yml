@@ -39,21 +39,22 @@ collections:
           multiple: true,
           required: true,
           options: [
-            "DeFi",
-            "NFT",
-            "Gaming",
-            "Infrastructure",
-            "Wallets",
-            "Bridges",
-            "Onramps",
-            "DEX",
-            "Lending",
-            "Staking",
-            "Analytics",
+            "Mining",
             "Tools",
-            "DAO",
+            "Infrastructure",
+            "Bridges",
+            "Analytics",
+            "Wallets",
+            "DeFi",
+            "Security",
+            "Onramps",
+            "Games",
+            "Quests",
+            "NFTs",
+            "Ai",
+            "Education",
             "Social",
-            "Marketplace"
+            "ComingSoon"
           ]
         }
       # - {

@@ -28,15 +28,21 @@ interface ImageFile {
 }
 
 const INDUSTRIES = [
-  "DeFi",
-  "NFT",
-  "Gaming",
+  "Mining",
+  "Tools",
   "Infrastructure",
-  "DAO",
+  "Bridges",
+  "Analytics",
+  "Wallets",
+  "DeFi",
+  "Security",
+  "Onramps",
+  "Games",
+  "Quests",
+  "NFTs",
+  "Ai",
+  "Education",
   "Social",
-  "Developer Tools",
-  "Wallet",
-  "Exchange",
   "Other",
 ];
 
