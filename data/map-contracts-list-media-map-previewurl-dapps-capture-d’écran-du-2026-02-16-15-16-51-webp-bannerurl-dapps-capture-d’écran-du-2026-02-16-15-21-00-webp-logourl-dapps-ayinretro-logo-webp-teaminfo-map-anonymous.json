@@ -1,0 +1,24 @@
+{
+  "contracts": [],
+  "media": {
+    "previewUrl": "/dapps/capture-d’écran-du-2026-02-16-15-16-51.webp",
+    "bannerUrl": "/dapps/capture-d’écran-du-2026-02-16-15-21-00.webp",
+    "logoUrl": "/dapps/ayinretro.logo.webp"
+  },
+  "teamInfo": {
+    "anonymous": false
+  },
+  "name": "Ayin retro",
+  "audits": [],
+  "tags": [
+    "DeFi",
+    "Tools"
+  ],
+  "short_description": "open-source front end for ayin smart contracts",
+  "links": {
+    "website": "https://www.ayin-retro.com/",
+    "github": "https://github.com/MiniJudie/ayin-retro"
+  },
+  "tokens": [],
+  "description": "Ayin Retro is a web interface for interacting with Ayin liquidity pools, swaps, and staking on the Alephium blockchain. You can browse pools, add or remove liquidity, swap tokens, and stake LP tokens or AYIN (xAyin, Pounder vault)."
+}
