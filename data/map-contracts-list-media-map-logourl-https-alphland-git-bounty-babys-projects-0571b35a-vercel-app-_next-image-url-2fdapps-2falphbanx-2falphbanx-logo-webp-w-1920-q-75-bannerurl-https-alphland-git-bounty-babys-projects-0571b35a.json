@@ -1,0 +1,22 @@
+{
+  "contracts": [],
+  "media": {
+    "logoUrl": "https://alphland-git-bounty-babys-projects-0571b35a.vercel.app/_next/image?url=%2Fdapps%2Falphbanx%2Falphbanx-logo.webp&w=1920&q=75",
+    "bannerUrl": "https://alphland-git-bounty-babys-projects-0571b35a.vercel.app/dapps/alphbanx/alphbanx-banner.webp",
+    "previewUrl": "https://raw.githubusercontent.com/MiniJudie/alphland/refs/heads/develop/public/dapps/alphbanx/alphbanx-preview.webp"
+  },
+  "teamInfo": {
+    "anonymous": false
+  },
+  "name": "AlphBanX",
+  "audits": [],
+  "tags": [
+    "DeFi"
+  ],
+  "short_description": "A next-generation form of stable currency.",
+  "links": {
+    "website": "https://www.alphbanx.com/"
+  },
+  "tokens": [],
+  "description": "AlphBanX is a lending and borrowing platform that lets users deposit ALPH as collateral to borrow ABD, an overcollateralized stablecoin pegged to the US dollar. It includes customizable interest rates, liquidation auctions for under-collateralized positions, and yield opportunities."
+}
