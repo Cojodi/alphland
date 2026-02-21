@@ -18,7 +18,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const authUrl = new URL("https://github.com/login/oauth/authorize");
   authUrl.searchParams.set("client_id", clientId);
   authUrl.searchParams.set("redirect_uri", `https://${host}/api/callback`);
-  authUrl.searchParams.set("scope", "public_repo,read:user");
+  authUrl.searchParams.set("scope", "public_repo");
   authUrl.searchParams.set("state", (req.query.state as string) || "");
 
   // Redirect to GitHub OAuth
