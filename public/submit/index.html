@@ -6,6 +6,56 @@
     <meta name="robots" content="noindex" />
     <title>Submit Your dApp - Alphland</title>
     <style>
+      /* Intro banner */
+      .submit-intro-banner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border-bottom: 1px solid #2a2a4a;
+        padding: 20px 32px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      .submit-intro-banner h1 {
+        color: #fff;
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 6px;
+      }
+      .submit-intro-banner p {
+        color: #a0a0b0;
+        font-size: 14px;
+        margin: 0 0 12px;
+        line-height: 1.5;
+      }
+      .submit-intro-checklist {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .submit-intro-checklist li {
+        background: #23233a;
+        border: 1px solid #333355;
+        border-radius: 6px;
+        color: #c0c0d8;
+        font-size: 13px;
+        padding: 4px 10px;
+      }
+      .submit-intro-checklist li::before {
+        content: '✓ ';
+        color: #6366f1;
+        font-weight: 700;
+      }
+      /* Push CMS content below the banner */
+      #nc-root {
+        margin-top: 130px;
+      }
+
       /* Hide navigation elements that allow browsing other entries */
       [href="#/collections/dapps"],
       [data-testid="list-card"],
@@ -388,6 +438,30 @@ ${dappData.description || 'N/A'}
           console.error('Error updating PR body:', error);
         }
       }
+
+      // Inject intro banner
+      (function() {
+        const banner = document.createElement('div');
+        banner.className = 'submit-intro-banner';
+        banner.innerHTML = `
+          <h1>Submit Your dApp to Alphland</h1>
+          <p>Fill in the form below to list your project. After submission, a Pull Request will be created on GitHub for our team to review. Before you start, prepare:</p>
+          <ul class="submit-intro-checklist">
+            <li>Logo (512×512px, WebP)</li>
+            <li>Banner (1200×400px, WebP)</li>
+            <li>Preview screenshot (1200×800px)</li>
+            <li>Website URL &amp; social links</li>
+            <li>Short tagline (max 60 chars)</li>
+            <li>Full description (2–3 sentences)</li>
+          </ul>
+        `;
+        document.body.insertBefore(banner, document.body.firstChild);
+        // Adjust CMS root margin to match actual banner height
+        setTimeout(function() {
+          const root = document.getElementById('nc-root');
+          if (root) root.style.marginTop = banner.offsetHeight + 'px';
+        }, 600);
+      })();
 
       // Auto-confirm local backup recovery
       (function() {
