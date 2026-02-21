@@ -4,6 +4,7 @@ import SearchBar from "../components/SearchBar/SearchBar";
 import Select from "../components/Select/Select";
 import { categories } from "../data/categories";
 import { getAllDapps } from "../data/getAllDapps";
+import { TAG_SYNONYMS } from "../data/searchKeywords";
 import { filterDappcardsByRating, getRatings } from "../helpers/rating";
 import sortByAttribute from "../helpers/sort";
 import { useCategoryStore } from "../hooks/useCategoryStore";
@@ -68,13 +69,16 @@ const Explore = ({ dappCards }: { dappCards: DappCard[] }) => {
   }, [searchQuery, selectedCategories, selectedSort, router.isReady]);
 
   const filteredDapps = dappCards.filter((dapp) => {
-    // Filter by search query - match against title first, then description/tags
+    // Filter by search query - match against title, description, tags, per-dApp keywords, and tag synonyms
     const query = searchQuery.toLowerCase();
+    const synonymTag = TAG_SYNONYMS[query];
     const matchesSearch =
       searchQuery === "" ||
       dapp.title.toLowerCase().includes(query) ||
       dapp.short_description?.toLowerCase().includes(query) ||
-      dapp.tags?.some((tag) => tag.toLowerCase().includes(query));
+      dapp.tags?.some((tag) => tag.toLowerCase().includes(query)) ||
+      dapp.keywords?.some((kw) => kw.toLowerCase().includes(query)) ||
+      (synonymTag !== undefined && dapp.tags?.includes(synonymTag));
 
     // Filter by selected categories (OR logic)
     const matchesCategories =
@@ -228,6 +232,7 @@ export const getStaticProps = async () => {
     short_description: dapp.short_description,
     title: dapp.name,
     tags: dapp.tags,
+    keywords: dapp.keywords ?? [],
     url: dapp.url,
     logo: dapp.media.logoUrl,
     image: dapp.media.previewUrl,

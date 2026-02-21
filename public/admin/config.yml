@@ -82,6 +82,15 @@ collections:
       #    hint: "Leave as false - assigned by admins"
       #  }
 
+      - {
+          label: "Search Keywords",
+          name: "keywords",
+          widget: "list",
+          required: false,
+          hint: "Hidden keywords to improve search (e.g. dex, swap, lend, loan). Not displayed publicly.",
+          field: { label: "Keyword", name: "keyword", widget: "string" }
+        }
+
       # Links Section
       - label: "Links"
         name: "links"
