@@ -232,11 +232,11 @@
                 },
                 {
                   label: 'Media', name: 'media', widget: 'object', collapsed: false, fields: [
-                    { label: 'Logo', name: 'logoUrl', widget: 'image', required: true, hint: 'Square logo (recommended: 512x512px, WebP format)' },
-                    { label: 'Banner', name: 'bannerUrl', widget: 'image', required: true, hint: 'Wide banner (recommended: 1200x400px, WebP format)' },
-                    { label: 'Preview Image', name: 'previewUrl', widget: 'image', required: true, hint: 'Screenshot or preview (recommended: 1200x800px, WebP format)' },
+                    { label: 'Logo', name: 'logoUrl', widget: 'image', required: true, choose_url: false, hint: 'Square logo (recommended: 512x512px, WebP format)' },
+                    { label: 'Banner', name: 'bannerUrl', widget: 'image', required: true, choose_url: false, hint: 'Wide banner (recommended: 1200x400px, WebP format)' },
+                    { label: 'Preview Image', name: 'previewUrl', widget: 'image', required: true, choose_url: false, hint: 'Screenshot or preview (recommended: 1200x800px, WebP format)' },
                     { label: 'Video URL', name: 'videoUrl', widget: 'string', required: false, hint: 'YouTube or Vimeo URL' },
-                    { label: 'Gallery', name: 'gallery', widget: 'list', required: false, field: { label: 'Image', name: 'image', widget: 'image' } },
+                    { label: 'Gallery', name: 'gallery', widget: 'list', required: false, field: { label: 'Image', name: 'image', widget: 'image', choose_url: false } },
                   ]
                 },
                 { label: 'Smart Contracts', name: 'contracts', widget: 'list', required: false, default: [], collapsed: true, fields: [{ label: 'Contract Address', name: 'address', widget: 'string' }, { label: 'Contract Name', name: 'name', widget: 'string' }] },
@@ -499,6 +499,9 @@ ${dappData.description || 'N/A'}
               previewUrls[file.name] = URL.createObjectURL(file);
               return;
             }
+            // Stop Decap from reading the original file before conversion
+            e.stopImmediatePropagation();
+            e.preventDefault();
             try {
               const webpFile = await convertToWebP(file);
               const dt = new DataTransfer();

@@ -142,6 +142,7 @@ collections:
               name: "logoUrl",
               widget: "image",
               required: true,
+              choose_url: false,
               hint: "Square logo (recommended: 512x512px, WebP format)"
             }
           - {
@@ -149,6 +150,7 @@ collections:
               name: "bannerUrl",
               widget: "image",
               required: true,
+              choose_url: false,
               hint: "Wide banner (recommended: 1200x400px, WebP format)"
             }
           - {
@@ -156,6 +158,7 @@ collections:
               name: "previewUrl",
               widget: "image",
               required: true,
+              choose_url: false,
               hint: "Screenshot or preview (recommended: 1200x800px, WebP format)"
             }
           - {
@@ -170,7 +173,7 @@ collections:
               name: "gallery",
               widget: "list",
               required: false,
-              field: { label: "Image", name: "image", widget: "image" }
+              field: { label: "Image", name: "image", widget: "image", choose_url: false }
             }
 
       # Optional Advanced Fields
