@@ -5,6 +5,7 @@ import resourcesData from "../../data/resources.json";
 import { readdir, readFile } from "fs/promises";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Image from "next/image";
+import Script from "next/script";
 import Router from "next/router";
 import path from "path";
 
@@ -14,6 +15,7 @@ interface Resource {
   format: string;
   topic: string;
   language: string;
+  embedHtml?: string;
 }
 
 interface ResourcesPageProps {
@@ -25,11 +27,19 @@ const ResourcesPage: NextPage<ResourcesPageProps> = ({
   dappInfo,
   dappResources,
 }) => {
+  const hasTweets = dappResources.some((r) => r.embedHtml);
+
   return (
     <Layout
       title={`${dappInfo.name} - Resources & Tutorials`}
       description={`Learn how to use ${dappInfo.name} with our comprehensive guides and tutorials`}
     >
+      {hasTweets && (
+        <Script
+          src="https://platform.twitter.com/widgets.js"
+          strategy="afterInteractive"
+        />
+      )}
       <div className="min-h-screen bg-white dark:bg-hero-dark">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <button
@@ -240,6 +250,21 @@ const ResourcesPage: NextPage<ResourcesPageProps> = ({
   );
 };
 
+const isTweetUrl = (url: string) =>
+  /^https?:\/\/(twitter\.com|x\.com)\/\w+\/status\/\d+/.test(url);
+
+const fetchTweetEmbed = async (url: string): Promise<string | null> => {
+  try {
+    const oembedUrl = `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}&omit_script=true&dnt=true`;
+    const res = await fetch(oembedUrl);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return (data.html as string) || null;
+  } catch {
+    return null;
+  }
+};
+
 export const getStaticProps: GetStaticProps<ResourcesPageProps> = async (
   context,
 ) => {
@@ -255,7 +280,17 @@ export const getStaticProps: GetStaticProps<ResourcesPageProps> = async (
   const dappInfo: DappInfo = JSON.parse(content);
 
   const allResources = resourcesData as Record<string, Resource[]>;
-  const dappResources = allResources[dappname as string] || [];
+  const rawResources = allResources[dappname as string] || [];
+
+  const dappResources = await Promise.all(
+    rawResources.map(async (resource) => {
+      if (isTweetUrl(resource.link)) {
+        const embedHtml = await fetchTweetEmbed(resource.link);
+        return embedHtml ? { ...resource, embedHtml } : resource;
+      }
+      return resource;
+    }),
+  );
 
   return {
     props: {

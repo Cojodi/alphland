@@ -96,8 +96,16 @@ export interface BountySubmission {
   description: string;
   submission_url: string;
   tweet_url: string | null;
-  status: "submitted" | "in_review" | "accepted" | "rejected";
+  status:
+    | "submitted"
+    | "in_review"
+    | "accepted"
+    | "rejected"
+    | "approved"
+    | "pending"
+    | "revision_requested";
   feedback: string | null;
+  reviewer_notes?: string | null;
   review_started_at: number | null;
   completed_at: number | null;
   reward: {

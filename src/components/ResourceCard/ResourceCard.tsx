@@ -6,6 +6,7 @@ interface Resource {
   format: string;
   topic: string;
   language: string;
+  embedHtml?: string;
 }
 
 interface ResourceCardProps {
@@ -37,6 +38,7 @@ const getFormatColor = (format: string) => {
 const ResourceCard = ({ resource }: ResourceCardProps) => {
   const youtubeId = getYouTubeId(resource.link);
   const isVideo = resource.format === "Video" && youtubeId;
+  const hasTweetEmbed = !!resource.embedHtml;
 
   return (
     <div className="border border-border-grey dark:border-white/10 rounded-lg overflow-hidden bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow group">
@@ -50,6 +52,11 @@ const ResourceCard = ({ resource }: ResourceCardProps) => {
             allowFullScreen
           />
         </div>
+      ) : hasTweetEmbed ? (
+        <div
+          className="px-4 pt-4 [&_.twitter-tweet]:mx-auto [&_.twitter-tweet]:!max-w-full"
+          dangerouslySetInnerHTML={{ __html: resource.embedHtml! }}
+        />
       ) : (
         <a
           href={resource.link}
