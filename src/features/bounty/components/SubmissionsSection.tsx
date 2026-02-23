@@ -185,7 +185,11 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
                     </h3>
 
                     <div className="flex flex-wrap items-center gap-3 text-sm text-light-charcoal dark:text-lightgrey mb-3">
-                      <span>Bounty: {submission.bounty_id}</span>
+                      <Link href={`/bounty/${submission.bounty_id}`}>
+                        <a className="text-orange hover:underline">
+                          {submission.bounty_title || submission.bounty_id}
+                        </a>
+                      </Link>
                       <span>•</span>
                       <span>{formatDate(submission.created_at)}</span>
                     </div>

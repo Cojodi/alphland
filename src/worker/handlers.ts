@@ -240,7 +240,6 @@ export async function handleSubmissionsAPI(
     const { results } = await env.DB.prepare(
       `SELECT s.*,
               b.title as bounty_title,
-              b.title as bounty_name,
               b.sponsor_id,
               sp.name as sponsor_name,
               sp.logo_url as sponsor_logo_url,
@@ -785,7 +784,7 @@ export async function handleSponsorsAPI(
     // Get submissions for all bounties by this sponsor (with user info)
     const { results: submissions } = await env.DB.prepare(
       `SELECT bs.*,
-              b.title as bounty_name,
+              b.title as bounty_title,
               COALESCE(up.username, u.name, u.email) as user_username,
               u.name as user_full_name,
               u.image as user_avatar_url

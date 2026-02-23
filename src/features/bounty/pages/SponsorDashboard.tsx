@@ -166,7 +166,7 @@ export default function SponsorDashboard() {
           user_id: s.user_id || s.submitted_by,
           user_wallet_address: s.user_wallet_address || "",
           bounty_id: s.bounty_id,
-          bounty_name: s.bounty_name,
+          bounty_title: s.bounty_title,
           sponsor_id: sponsor.id,
           status: s.status,
           submitted_at: s.created_at,
@@ -249,7 +249,7 @@ export default function SponsorDashboard() {
           user_id: s.user_id || s.submitted_by,
           user_wallet_address: s.user_wallet_address || "",
           bounty_id: s.bounty_id,
-          bounty_name: s.bounty_name,
+          bounty_title: s.bounty_title,
           sponsor_id: sponsorId,
           status: s.status,
           submitted_at: s.created_at,
@@ -719,7 +719,7 @@ export default function SponsorDashboard() {
                                           "Anonymous"}
                                       </p>
                                       <p className="text-xs text-light-charcoal dark:text-lightgrey font-barlow truncate">
-                                        {submission.bounty_name ||
+                                        {submission.bounty_title ||
                                           getBountyTitle(
                                             submission.bounty_id,
                                           )}{" "}
@@ -947,7 +947,7 @@ export default function SponsorDashboard() {
                               )}
                               <div className="min-w-0">
                                 <h4 className="font-semibold text-orange font-barlow">
-                                  {submission.bounty_name ||
+                                  {submission.bounty_title ||
                                     getBountyTitle(submission.bounty_id)}
                                 </h4>
                                 <p className="text-sm text-light-charcoal dark:text-lightgrey font-barlow truncate">

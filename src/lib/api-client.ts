@@ -87,7 +87,7 @@ export interface UpdateUserProfileInput {
 export interface BountySubmission {
   id: string;
   bounty_id: string;
-  bounty_name: string;
+  bounty_title: string;
   sponsor_id: string;
   sponsor_name: string;
   sponsor_logo_url: string | null;
