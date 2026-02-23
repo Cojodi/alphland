@@ -23,6 +23,8 @@ interface DappResource {
   format: string;
   topic: string;
   language: string;
+  embedHtml?: string;
+  ogImage?: string;
 }
 
 interface DappPageProps {
@@ -354,6 +356,46 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo, dappResources }) => {
   );
 };
 
+const isTweetUrl = (url: string) =>
+  /^https?:\/\/(twitter\.com|x\.com)\/\w+\/status\/\d+/.test(url);
+
+const fetchTweetEmbed = async (url: string): Promise<string | null> => {
+  try {
+    const oembedUrl = `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}&omit_script=true&dnt=true`;
+    const res = await fetch(oembedUrl);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return (data.html as string) || null;
+  } catch {
+    return null;
+  }
+};
+
+const fetchOgImage = async (url: string): Promise<string | null> => {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+  try {
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; Alphland/1.0)" },
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+    const match =
+      html.match(
+        /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+      ) ||
+      html.match(
+        /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
+      );
+    return match?.[1] || null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+};
+
 export const getStaticProps: GetStaticProps<DappPageProps> = async (
   context,
 ) => {
@@ -369,7 +411,22 @@ export const getStaticProps: GetStaticProps<DappPageProps> = async (
   const dappInfo: DappInfo = JSON.parse(content);
 
   const allResources = resourcesData as Record<string, DappResource[]>;
-  const dappResources = allResources[name as string] || [];
+  const rawResources = allResources[name as string] || [];
+
+  const dappResources = await Promise.all(
+    rawResources.map(async (resource) => {
+      if (isTweetUrl(resource.link)) {
+        const embedHtml = await fetchTweetEmbed(resource.link);
+        return embedHtml ? { ...resource, embedHtml } : resource;
+      }
+      const isYouTube = /youtube\.com\/watch|youtu\.be\//.test(resource.link);
+      if (!isYouTube) {
+        const ogImage = await fetchOgImage(resource.link);
+        return ogImage ? { ...resource, ogImage } : resource;
+      }
+      return resource;
+    }),
+  );
 
   return {
     props: {
