@@ -14,6 +14,7 @@ import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
+import Script from "next/script";
 import path from "path";
 import { useEffect, useState } from "react";
 
@@ -33,6 +34,7 @@ interface DappPageProps {
 }
 
 const DappPage: NextPage<DappPageProps> = ({ dappInfo, dappResources }) => {
+  const hasTweets = dappResources.some((r) => r.embedHtml);
   const [showPrev, setShowPrev] = useState(false);
   const [bounties, setBounties] = useState<any[]>([]);
   const [loadingBounties, setLoadingBounties] = useState(true);
@@ -104,6 +106,12 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo, dappResources }) => {
       description={dappInfo.short_description}
       image={dappInfo.media.previewUrl}
     >
+      {hasTweets && (
+        <Script
+          src="https://platform.twitter.com/widgets.js"
+          strategy="afterInteractive"
+        />
+      )}
       {/* Banner */}
       <div
         className="relative mt-[56px] lg:mt-0 max-h-[380px] min-h-[104px] sm:min-h-[240px] lg:min-h-[420px] w-full overflow-hidden bg-no-repeat bg-cover bg-center"
