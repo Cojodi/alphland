@@ -16,6 +16,7 @@ interface Resource {
   topic: string;
   language: string;
   embedHtml?: string;
+  ogImage?: string;
 }
 
 interface ResourcesPageProps {
@@ -265,6 +266,32 @@ const fetchTweetEmbed = async (url: string): Promise<string | null> => {
   }
 };
 
+const fetchOgImage = async (url: string): Promise<string | null> => {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+  try {
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; Alphland/1.0)" },
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+    // Match both attribute orderings: property="og:image" content="..." and content="..." property="og:image"
+    const match =
+      html.match(
+        /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+      ) ||
+      html.match(
+        /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
+      );
+    return match?.[1] || null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+};
+
 export const getStaticProps: GetStaticProps<ResourcesPageProps> = async (
   context,
 ) => {
@@ -287,6 +314,12 @@ export const getStaticProps: GetStaticProps<ResourcesPageProps> = async (
       if (isTweetUrl(resource.link)) {
         const embedHtml = await fetchTweetEmbed(resource.link);
         return embedHtml ? { ...resource, embedHtml } : resource;
+      }
+      // YouTube is handled client-side via iframe; skip OG fetch for it
+      const isYouTube = /youtube\.com\/watch|youtu\.be\//.test(resource.link);
+      if (!isYouTube) {
+        const ogImage = await fetchOgImage(resource.link);
+        return ogImage ? { ...resource, ogImage } : resource;
       }
       return resource;
     }),

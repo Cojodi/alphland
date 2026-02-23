@@ -7,6 +7,7 @@ interface Resource {
   topic: string;
   language: string;
   embedHtml?: string;
+  ogImage?: string;
 }
 
 interface ResourceCardProps {
@@ -39,6 +40,7 @@ const ResourceCard = ({ resource }: ResourceCardProps) => {
   const youtubeId = getYouTubeId(resource.link);
   const isVideo = resource.format === "Video" && youtubeId;
   const hasTweetEmbed = !!resource.embedHtml;
+  const hasOgImage = !!resource.ogImage;
 
   return (
     <div className="border border-border-grey dark:border-white/10 rounded-lg overflow-hidden bg-white dark:bg-white/5 hover:shadow-box-image-shadow-hover transition-shadow group">
@@ -57,6 +59,21 @@ const ResourceCard = ({ resource }: ResourceCardProps) => {
           className="px-4 pt-4 [&_.twitter-tweet]:mx-auto [&_.twitter-tweet]:!max-w-full"
           dangerouslySetInnerHTML={{ __html: resource.embedHtml! }}
         />
+      ) : hasOgImage ? (
+        <a
+          href={resource.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block relative aspect-video overflow-hidden"
+        >
+          <Image
+            src={resource.ogImage!}
+            alt={resource.title}
+            layout="fill"
+            objectFit="cover"
+            className="transition-transform duration-300 group-hover:scale-105"
+          />
+        </a>
       ) : (
         <a
           href={resource.link}
