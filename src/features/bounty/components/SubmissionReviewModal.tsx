@@ -247,8 +247,14 @@ export function SubmissionReviewModal({
   // Show success view
   if (successState.show) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-        <div className="bg-white dark:bg-hero-dark rounded-lg max-w-md w-full p-8 text-center">
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+        onClick={onClose}
+      >
+        <div
+          className="bg-white dark:bg-hero-dark rounded-lg max-w-md w-full p-8 text-center"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div
             className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
               successState.action === "approved"
@@ -308,8 +314,14 @@ export function SubmissionReviewModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="bg-white dark:bg-hero-dark rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white dark:bg-hero-dark rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border-grey dark:border-dark-charcoal sticky top-0 bg-white dark:bg-hero-dark z-10">
           <div>
