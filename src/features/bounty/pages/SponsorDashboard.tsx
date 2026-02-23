@@ -719,8 +719,11 @@ export default function SponsorDashboard() {
                                           "Anonymous"}
                                       </p>
                                       <p className="text-xs text-light-charcoal dark:text-lightgrey font-barlow truncate">
-                                        {getBountyTitle(submission.bounty_id)} •{" "}
-                                        {formatDate(submission.submitted_at)}
+                                        {submission.bounty_name ||
+                                          getBountyTitle(
+                                            submission.bounty_id,
+                                          )}{" "}
+                                        • {formatDate(submission.submitted_at)}
                                       </p>
                                     </div>
                                   </div>
