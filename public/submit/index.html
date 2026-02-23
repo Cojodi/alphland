@@ -439,6 +439,92 @@ ${dappData.description || 'N/A'}
         }
       }
 
+      // WebP conversion + preview fix
+      (function() {
+        const previewUrls = {}; // filename -> blob URL for local preview
+
+        function convertToWebP(file) {
+          return new Promise(function(resolve) {
+            const canvas = document.createElement('canvas');
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = function() {
+              canvas.width = img.width;
+              canvas.height = img.height;
+              canvas.getContext('2d').drawImage(img, 0, 0);
+              URL.revokeObjectURL(url);
+              canvas.toBlob(function(blob) {
+                const newName = file.name.replace(/\.[^.]+$/, '.webp');
+                const webpFile = new File([blob], newName, { type: 'image/webp' });
+                previewUrls[newName] = URL.createObjectURL(blob);
+                resolve(webpFile);
+              }, 'image/webp', 0.85);
+            };
+            img.onerror = function() {
+              URL.revokeObjectURL(url);
+              resolve(file);
+            };
+            img.src = url;
+          });
+        }
+
+        function showToast(msg) {
+          const t = document.createElement('div');
+          t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#6366f1;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:99999;font-family:system-ui,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:opacity 0.3s';
+          t.textContent = msg;
+          document.body.appendChild(t);
+          setTimeout(function() { t.style.opacity = '0'; setTimeout(function() { t.remove(); }, 300); }, 3000);
+        }
+
+        function fixBrokenPreviews() {
+          document.querySelectorAll('img').forEach(function(img) {
+            if (img.naturalWidth === 0 && img.src && !img.dataset.webpFixed) {
+              const filename = img.src.split('/').pop().split('?')[0];
+              if (previewUrls[filename]) {
+                img.dataset.webpFixed = '1';
+                img.src = previewUrls[filename];
+              }
+            }
+          });
+        }
+
+        const processed = new WeakSet();
+        function handleFileInput(input) {
+          if (processed.has(input)) return;
+          processed.add(input);
+          input.addEventListener('change', async function(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file || !file.type.startsWith('image/')) return;
+            if (file.type === 'image/webp') {
+              previewUrls[file.name] = URL.createObjectURL(file);
+              return;
+            }
+            try {
+              const webpFile = await convertToWebP(file);
+              const dt = new DataTransfer();
+              dt.items.add(webpFile);
+              const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'files').set;
+              setter.call(input, dt.files);
+              input.dispatchEvent(new Event('input', { bubbles: true }));
+              input.dispatchEvent(new Event('change', { bubbles: true }));
+              showToast('Converted to WebP: ' + webpFile.name);
+            } catch (err) {
+              console.error('WebP conversion failed:', err);
+            }
+          }, true);
+        }
+
+        const observer = new MutationObserver(function() {
+          document.querySelectorAll('input[type="file"]').forEach(handleFileInput);
+          fixBrokenPreviews();
+        });
+        setTimeout(function() {
+          if (document.body) {
+            observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
+          }
+        }, 500);
+      })();
+
       // Inject intro banner
       (function() {
         const banner = document.createElement('div');
