@@ -179,28 +179,20 @@ export default function SponsorDashboard() {
     }
   }, [sponsor]);
 
-  // Handle submission query parameter to open specific submission
+  // Handle submission query parameter to open specific submission.
+  // Intentionally excludes allSubmissions and showSubmissionDetails from deps
+  // to prevent a race condition where refreshSubmissions() triggers a re-open
+  // after the modal has just been closed.
   useEffect(() => {
     const submissionId = router.query.submission as string;
-    if (
-      submissionId &&
-      allSubmissions.length > 0 &&
-      !loading &&
-      !showSubmissionDetails
-    ) {
-      const submission = allSubmissions.find((s) => s.id === submissionId);
-      if (submission) {
-        // Pass skipUrlUpdate=true since URL already has the submission ID
-        viewSubmission(submission, submission.bounty_id, true);
-      }
+    if (!submissionId || loading || showSubmissionDetails) return;
+    if (allSubmissions.length === 0) return;
+    const submission = allSubmissions.find((s) => s.id === submissionId);
+    if (submission) {
+      viewSubmission(submission, submission.bounty_id, true);
     }
-  }, [
-    router.query.submission,
-    allSubmissions,
-    loading,
-    showSubmissionDetails,
-    viewSubmission,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query.submission, loading]);
 
   useEffect(() => {
     async function fetchSponsorData() {
@@ -1030,10 +1022,7 @@ export default function SponsorDashboard() {
           onClose={closeSubmissionModal}
           submission={selectedSubmission}
           bounty={selectedBounty}
-          onSuccess={() => {
-            refreshSubmissions();
-            closeSubmissionModal();
-          }}
+          onSuccess={refreshSubmissions}
         />
       </div>
     </Layout>

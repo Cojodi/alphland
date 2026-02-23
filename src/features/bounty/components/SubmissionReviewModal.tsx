@@ -16,6 +16,15 @@ interface SubmissionReviewModalProps {
   onSuccess?: () => void;
 }
 
+const initialFormState = {
+  reviewAction: null as "approved" | "rejected" | null,
+  reviewerNotes: "",
+  transactionHash: "",
+  rewardAmount: "",
+  selectedTier: null as number | null,
+  closeBounty: false,
+};
+
 export function SubmissionReviewModal({
   isOpen,
   onClose,
@@ -23,19 +32,12 @@ export function SubmissionReviewModal({
   bounty,
   onSuccess,
 }: SubmissionReviewModalProps) {
-  const [reviewAction, setReviewAction] = useState<
-    "approved" | "rejected" | "revision_requested" | null
-  >(null);
-  const [reviewerNotes, setReviewerNotes] = useState("");
-  const [transactionHash, setTransactionHash] = useState("");
-  const [rewardAmount, setRewardAmount] = useState("");
-  const [selectedTier, setSelectedTier] = useState<number | null>(null);
-  const [closeBounty, setCloseBounty] = useState(false);
+  const [form, setForm] = useState(initialFormState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successState, setSuccessState] = useState<{
     show: boolean;
-    action: "approved" | "rejected" | "revision_requested" | null;
+    action: "approved" | "rejected" | null;
   }>({ show: false, action: null });
   const [userWalletAddress, setUserWalletAddress] = useState<string | null>(
     null,
@@ -50,8 +52,12 @@ export function SubmissionReviewModal({
 
   // Get token amount for the selected tier or fixed reward
   const getTokenAmount = (): { amount: number; token: string } => {
-    if (bounty?.reward_type === "tiered" && selectedTier && tieredRewards) {
-      const tier = tieredRewards.find((t) => t.position === selectedTier);
+    if (
+      bounty?.reward_type === "tiered" &&
+      form.selectedTier &&
+      tieredRewards
+    ) {
+      const tier = tieredRewards.find((t) => t.position === form.selectedTier);
       return tier
         ? { amount: tier.amount, token: tier.token }
         : { amount: 0, token: bounty?.reward?.token || "ALPH" };
@@ -94,23 +100,23 @@ export function SubmissionReviewModal({
     e.preventDefault();
     setError(null);
 
-    if (!submission || !reviewAction || !bounty) {
+    if (!submission || !form.reviewAction || !bounty) {
       setError("Please select a review action");
       return;
     }
 
-    if (reviewAction === "approved") {
-      if (!transactionHash.trim()) {
+    if (form.reviewAction === "approved") {
+      if (!form.transactionHash.trim()) {
         setError("Please provide a transaction hash for approved submissions");
         return;
       }
 
-      if (!rewardAmount.trim() || isNaN(parseFloat(rewardAmount))) {
+      if (!form.rewardAmount.trim() || isNaN(parseFloat(form.rewardAmount))) {
         setError("Please provide a valid ALPH reward amount");
         return;
       }
 
-      if (bounty.reward_type === "tiered" && !selectedTier) {
+      if (bounty.reward_type === "tiered" && !form.selectedTier) {
         setError("Please select a tier placement for this submission");
         return;
       }
@@ -120,14 +126,14 @@ export function SubmissionReviewModal({
 
     try {
       // Prepare reviewer notes with reward info
-      let finalReviewerNotes = reviewerNotes.trim();
-      if (reviewAction === "approved") {
+      let finalReviewerNotes = form.reviewerNotes.trim();
+      if (form.reviewAction === "approved") {
         const tierInfo =
-          bounty.reward_type === "tiered" && selectedTier
-            ? `Tier ${selectedTier} placement. `
+          bounty.reward_type === "tiered" && form.selectedTier
+            ? `Tier ${form.selectedTier} placement. `
             : "";
         const tokenReward = getTokenAmount();
-        const rewardInfo = `${tierInfo}Reward: ${rewardAmount} ALPH (for ${tokenReward.amount.toLocaleString()} ${tokenReward.token} bounty)`;
+        const rewardInfo = `${tierInfo}Reward: ${form.rewardAmount} ALPH (for ${tokenReward.amount.toLocaleString()} ${tokenReward.token} bounty)`;
         finalReviewerNotes = finalReviewerNotes
           ? `${finalReviewerNotes}\n\n${rewardInfo}`
           : rewardInfo;
@@ -135,13 +141,13 @@ export function SubmissionReviewModal({
 
       // Update submission status
       await apiClient.updateSubmission(submission.id, {
-        status: reviewAction,
+        status: form.reviewAction,
         reviewer_notes: finalReviewerNotes || undefined,
-        transaction_hash: transactionHash.trim() || undefined,
+        transaction_hash: form.transactionHash.trim() || undefined,
       });
 
       // Close bounty if requested and this is the last spot
-      if (reviewAction === "approved" && closeBounty) {
+      if (form.reviewAction === "approved" && form.closeBounty) {
         console.log("Closing bounty:", bounty.id);
         const closeBountyResponse = await fetch(`/api/bounties/${bounty.id}`, {
           method: "PUT",
@@ -165,32 +171,26 @@ export function SubmissionReviewModal({
       }
 
       // Send notification to submitter
-      if (reviewAction === "approved") {
+      if (form.reviewAction === "approved") {
         await notificationService.notifySubmissionApproved(
           submission.user_id,
           submission.bounty_id,
           bounty.title,
-          parseFloat(rewardAmount),
+          parseFloat(form.rewardAmount),
           bounty.reward?.token || "ALPH",
         );
-      } else if (reviewAction === "rejected") {
+      } else if (form.reviewAction === "rejected") {
         await notificationService.notifySubmissionRejected(
           submission.user_id,
           submission.bounty_id,
           bounty.title,
-          reviewerNotes,
+          form.reviewerNotes,
         );
       }
 
-      // Show success state
-      setSuccessState({ show: true, action: reviewAction });
-
-      // Reset form fields
-      setReviewerNotes("");
-      setTransactionHash("");
-      setRewardAmount("");
-      setSelectedTier(null);
-      setCloseBounty(false);
+      // Show success state then reset form
+      setSuccessState({ show: true, action: form.reviewAction });
+      setForm(initialFormState);
     } catch (err) {
       console.error("Failed to update submission:", err);
       setError(
@@ -204,24 +204,43 @@ export function SubmissionReviewModal({
   };
 
   const handleDone = () => {
-    // Reset all states
-    setReviewAction(null);
+    setForm(initialFormState);
     setSuccessState({ show: false, action: null });
     setError(null);
-    // Call success callback to refresh data
     onSuccess?.();
-    // Close modal
     onClose();
   };
 
-  // Reset success state when modal closes
+  // Reset all form state when modal closes
   useEffect(() => {
     if (!isOpen) {
+      setForm(initialFormState);
       setSuccessState({ show: false, action: null });
-      setReviewAction(null);
       setError(null);
     }
   }, [isOpen]);
+
+  // Pre-populate form when opening an already-reviewed submission.
+  // Runs only when a different submission is opened (keyed on submission.id),
+  // not on every render or data refresh.
+  useEffect(() => {
+    if (!isOpen || !submission) return;
+    const { status, transaction_hash, reviewer_notes } = submission;
+    if (status === "approved" || status === "rejected") {
+      setForm({
+        ...initialFormState,
+        reviewAction: status,
+        transactionHash: transaction_hash || "",
+        reviewerNotes: reviewer_notes || "",
+      });
+    } else if (status === "revision_requested") {
+      // Legacy status: no longer selectable, but show saved notes
+      setForm({ ...initialFormState, reviewerNotes: reviewer_notes || "" });
+    } else {
+      setForm(initialFormState);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, submission?.id]);
 
   if (!isOpen || !submission || !bounty) return null;
 
@@ -417,23 +436,25 @@ export function SubmissionReviewModal({
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  onClick={() => setReviewAction("approved")}
+                  onClick={() =>
+                    setForm((prev) => ({ ...prev, reviewAction: "approved" }))
+                  }
                   className={`p-4 border-2 rounded-lg transition-all ${
-                    reviewAction === "approved"
+                    form.reviewAction === "approved"
                       ? "border-accessible-green bg-accessible-green/10"
                       : "border-border-grey dark:border-dark-charcoal hover:border-accessible-green"
                   }`}
                 >
                   <CheckCircle
                     className={`w-6 h-6 mx-auto mb-2 ${
-                      reviewAction === "approved"
+                      form.reviewAction === "approved"
                         ? "text-accessible-green"
                         : "text-light-charcoal dark:text-lightgrey"
                     }`}
                   />
                   <span
                     className={`text-sm font-medium ${
-                      reviewAction === "approved"
+                      form.reviewAction === "approved"
                         ? "text-accessible-green"
                         : "text-black dark:text-white"
                     }`}
@@ -444,23 +465,25 @@ export function SubmissionReviewModal({
 
                 <button
                   type="button"
-                  onClick={() => setReviewAction("rejected")}
+                  onClick={() =>
+                    setForm((prev) => ({ ...prev, reviewAction: "rejected" }))
+                  }
                   className={`p-4 border-2 rounded-lg transition-all ${
-                    reviewAction === "rejected"
+                    form.reviewAction === "rejected"
                       ? "border-red-500 bg-red-500/10"
                       : "border-border-grey dark:border-dark-charcoal hover:border-red-500"
                   }`}
                 >
                   <XCircle
                     className={`w-6 h-6 mx-auto mb-2 ${
-                      reviewAction === "rejected"
+                      form.reviewAction === "rejected"
                         ? "text-red-500"
                         : "text-light-charcoal dark:text-lightgrey"
                     }`}
                   />
                   <span
                     className={`text-sm font-medium ${
-                      reviewAction === "rejected"
+                      form.reviewAction === "rejected"
                         ? "text-red-500"
                         : "text-black dark:text-white"
                     }`}
@@ -478,23 +501,28 @@ export function SubmissionReviewModal({
                 className="block text-sm font-semibold text-black dark:text-white mb-2"
               >
                 Feedback{" "}
-                {reviewAction === "rejected" && (
+                {form.reviewAction === "rejected" && (
                   <span className="text-red-500">*</span>
                 )}
               </label>
               <textarea
                 id="reviewer_notes"
-                value={reviewerNotes}
-                onChange={(e) => setReviewerNotes(e.target.value)}
+                value={form.reviewerNotes}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    reviewerNotes: e.target.value,
+                  }))
+                }
                 placeholder="Provide feedback to the submitter..."
                 rows={4}
                 className="w-full px-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder-light-charcoal dark:placeholder-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 resize-none"
-                required={reviewAction === "rejected"}
+                required={form.reviewAction === "rejected"}
               />
             </div>
 
             {/* Tier Selection (only for approved + tiered bounties) */}
-            {reviewAction === "approved" &&
+            {form.reviewAction === "approved" &&
               bounty?.reward_type === "tiered" &&
               tieredRewards && (
                 <div>
@@ -527,11 +555,14 @@ export function SubmissionReviewModal({
                           key={tier.position}
                           type="button"
                           onClick={() => {
-                            setSelectedTier(tier.position);
-                            setRewardAmount(""); // Let sponsor fill in the ALPH amount
+                            setForm((prev) => ({
+                              ...prev,
+                              selectedTier: tier.position,
+                              rewardAmount: "",
+                            }));
                           }}
                           className={`p-4 border-2 rounded-lg transition-all ${
-                            selectedTier === tier.position
+                            form.selectedTier === tier.position
                               ? "border-orange bg-orange/20 shadow-md"
                               : "border-border-grey dark:border-dark-charcoal hover:border-orange bg-white dark:bg-hero-dark"
                           }`}
@@ -539,7 +570,7 @@ export function SubmissionReviewModal({
                           <div className="text-center">
                             <div
                               className={`text-lg font-bold mb-2 ${
-                                selectedTier === tier.position
+                                form.selectedTier === tier.position
                                   ? "text-orange"
                                   : "text-black dark:text-white"
                               }`}
@@ -560,16 +591,16 @@ export function SubmissionReviewModal({
                       );
                     })}
                   </div>
-                  {selectedTier && (
+                  {form.selectedTier && (
                     <p className="text-xs text-accessible-green mt-3 font-medium">
                       ✓ Selected:{" "}
-                      {selectedTier === 1
+                      {form.selectedTier === 1
                         ? "1st"
-                        : selectedTier === 2
+                        : form.selectedTier === 2
                           ? "2nd"
-                          : selectedTier === 3
+                          : form.selectedTier === 3
                             ? "3rd"
-                            : `${selectedTier}th`}{" "}
+                            : `${form.selectedTier}th`}{" "}
                       place
                     </p>
                   )}
@@ -577,7 +608,7 @@ export function SubmissionReviewModal({
               )}
 
             {/* Reward Amount (only for approved) */}
-            {reviewAction === "approved" && (
+            {form.reviewAction === "approved" && (
               <div>
                 <label
                   htmlFor="reward_amount"
@@ -604,8 +635,13 @@ export function SubmissionReviewModal({
                   <input
                     type="number"
                     id="reward_amount"
-                    value={rewardAmount}
-                    onChange={(e) => setRewardAmount(e.target.value)}
+                    value={form.rewardAmount}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        rewardAmount: e.target.value,
+                      }))
+                    }
                     placeholder="0.00"
                     step="0.01"
                     min="0"
@@ -617,7 +653,7 @@ export function SubmissionReviewModal({
                   </span>
                 </div>
 
-                {bounty?.reward_type === "tiered" && !selectedTier && (
+                {bounty?.reward_type === "tiered" && !form.selectedTier && (
                   <p className="text-xs text-orange mt-2">
                     ⚠ Please select a tier placement above first
                   </p>
@@ -626,7 +662,7 @@ export function SubmissionReviewModal({
             )}
 
             {/* Transaction Hash (only for approved) */}
-            {reviewAction === "approved" && (
+            {form.reviewAction === "approved" && (
               <div>
                 <label
                   htmlFor="transaction_hash"
@@ -637,8 +673,13 @@ export function SubmissionReviewModal({
                 <input
                   type="text"
                   id="transaction_hash"
-                  value={transactionHash}
-                  onChange={(e) => setTransactionHash(e.target.value)}
+                  value={form.transactionHash}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      transactionHash: e.target.value,
+                    }))
+                  }
                   placeholder="0x..."
                   className="w-full px-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder-light-charcoal dark:placeholder-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 font-mono"
                   required
@@ -650,28 +691,34 @@ export function SubmissionReviewModal({
             )}
 
             {/* Close Bounty Option (only for approved + single reward bounty) */}
-            {reviewAction === "approved" && bounty?.reward_type === "fixed" && (
-              <div className="p-4 bg-orange/5 border border-orange/20 rounded-lg">
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={closeBounty}
-                    onChange={(e) => setCloseBounty(e.target.checked)}
-                    className="mt-1 w-4 h-4 text-orange bg-smoked-white dark:bg-light-black border-border-grey dark:border-dark-charcoal rounded focus:ring-2 focus:ring-orange/50"
-                  />
-                  <div>
-                    <span className="text-sm font-semibold text-black dark:text-white block mb-1">
-                      Close this bounty after approval
-                    </span>
-                    <span className="text-xs text-light-charcoal dark:text-lightgrey">
-                      Since this is a single-reward bounty, you can close it
-                      after accepting this submission to prevent further
-                      submissions.
-                    </span>
-                  </div>
-                </label>
-              </div>
-            )}
+            {form.reviewAction === "approved" &&
+              bounty?.reward_type === "fixed" && (
+                <div className="p-4 bg-orange/5 border border-orange/20 rounded-lg">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.closeBounty}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          closeBounty: e.target.checked,
+                        }))
+                      }
+                      className="mt-1 w-4 h-4 text-orange bg-smoked-white dark:bg-light-black border-border-grey dark:border-dark-charcoal rounded focus:ring-2 focus:ring-orange/50"
+                    />
+                    <div>
+                      <span className="text-sm font-semibold text-black dark:text-white block mb-1">
+                        Close this bounty after approval
+                      </span>
+                      <span className="text-xs text-light-charcoal dark:text-lightgrey">
+                        Since this is a single-reward bounty, you can close it
+                        after accepting this submission to prevent further
+                        submissions.
+                      </span>
+                    </div>
+                  </label>
+                </div>
+              )}
 
             {/* Action Buttons */}
             <div className="flex gap-3 pt-4">
@@ -684,7 +731,7 @@ export function SubmissionReviewModal({
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting || !reviewAction}
+                disabled={isSubmitting || !form.reviewAction}
                 className="flex-1 px-6 py-3 bg-orange hover:bg-orange/90 text-white rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? "Submitting..." : "Submit Review"}
