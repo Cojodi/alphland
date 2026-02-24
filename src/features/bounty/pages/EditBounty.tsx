@@ -412,7 +412,7 @@ export default function EditBounty() {
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
-                      USD Reference (Optional)
+                      USD Reference
                     </label>
                     <div className="relative">
                       <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-light-charcoal dark:text-lightgrey" />
