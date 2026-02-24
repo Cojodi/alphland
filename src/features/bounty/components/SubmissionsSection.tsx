@@ -120,6 +120,12 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
     return firstLine.substring(0, 50) + (firstLine.length > 50 ? "..." : "");
   };
 
+  const extractNotes = (description: string | null): string | null => {
+    if (!description) return null;
+    const notesMatch = description.match(/\*\*Notes:\*\*\n([\s\S]+)$/);
+    return notesMatch ? notesMatch[1].trim() : null;
+  };
+
   if (loading) {
     return (
       <section className="bg-white dark:bg-hero-dark rounded-lg p-6 border border-border-grey dark:border-dark-charcoal">
@@ -216,6 +222,17 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
                         </a>
                       )}
                     </div>
+
+                    {extractNotes(submission.description) && (
+                      <div className="mt-3 p-3 bg-smoked-white dark:bg-light-black rounded-lg">
+                        <p className="text-xs font-semibold text-black dark:text-white mb-1">
+                          Additional Notes:
+                        </p>
+                        <p className="text-sm text-light-charcoal dark:text-lightgrey">
+                          {extractNotes(submission.description)}
+                        </p>
+                      </div>
+                    )}
 
                     {submission.feedback && (
                       <div className="mt-3 p-3 bg-smoked-white dark:bg-light-black rounded-lg">
