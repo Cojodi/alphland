@@ -283,13 +283,24 @@ export default function BountyList() {
                   {/* Stats */}
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-1">
-                      <p className="text-2xl font-bold text-black dark:text-white">
-                        {overview.total_value_usd > 0
-                          ? `${overview.total_value_usd.toLocaleString()} USD`
-                          : overview.total_value_alph > 0
-                            ? `${overview.total_value_alph.toLocaleString()} ALPH`
-                            : "0 USD"}
-                      </p>
+                      {overview.total_value_usd > 0 && (
+                        <p className="text-2xl font-bold text-black dark:text-white">
+                          {overview.total_value_usd.toLocaleString()} USD
+                        </p>
+                      )}
+                      {overview.total_value_alph > 0 && (
+                        <p
+                          className={`font-bold text-accessible-green ${overview.total_value_usd > 0 ? "text-base" : "text-2xl"}`}
+                        >
+                          {overview.total_value_alph.toLocaleString()} ALPH
+                        </p>
+                      )}
+                      {overview.total_value_usd === 0 &&
+                        overview.total_value_alph === 0 && (
+                          <p className="text-2xl font-bold text-black dark:text-white">
+                            0 USD
+                          </p>
+                        )}
                       <p className="text-sm text-light-charcoal dark:text-lightgrey">
                         Total Value Earned
                       </p>
