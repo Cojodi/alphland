@@ -69,12 +69,7 @@ export default function SponsorDashboard() {
         submitted_by: submission.user_id,
         submission_url: submission.submission_url || "",
         description: submission.description || submission.title || null,
-        status:
-          submission.status === "accepted"
-            ? "approved"
-            : submission.status === "rejected"
-              ? "rejected"
-              : "pending",
+        status: submission.status || "pending",
         reviewer_notes: submission.reviewer_notes || null,
         reviewed_by: null,
         reviewed_at: submission.completed_at || null,
@@ -208,6 +203,7 @@ export default function SponsorDashboard() {
           sponsor_id: sponsor.id,
           status: s.status,
           reviewer_notes: s.reviewer_notes || null,
+          transaction_hash: s.transaction_hash || null,
           submitted_at: s.created_at,
         }));
 
@@ -292,6 +288,7 @@ export default function SponsorDashboard() {
           sponsor_id: sponsorId,
           status: s.status,
           reviewer_notes: s.reviewer_notes || null,
+          transaction_hash: s.transaction_hash || null,
           submitted_at: s.created_at,
         }));
 
@@ -773,7 +770,7 @@ export default function SponsorDashboard() {
                                   </div>
                                   <span
                                     className={`text-xs font-barlow font-medium px-2 py-1 rounded whitespace-nowrap flex-shrink-0 ${
-                                      submission.status === "accepted"
+                                      submission.status === "approved"
                                         ? "bg-accessible-green/20 text-light-charcoal"
                                         : submission.status === "rejected"
                                           ? "bg-red-500/20 text-red-500"
@@ -1005,7 +1002,7 @@ export default function SponsorDashboard() {
                             </div>
                             <span
                               className={`text-xs font-barlow font-medium px-3 py-1 rounded whitespace-nowrap ${
-                                submission.status === "accepted"
+                                submission.status === "approved"
                                   ? "bg-accessible-green/20 text-light-charcoal"
                                   : submission.status === "rejected"
                                     ? "bg-red-500/20 text-red-500"

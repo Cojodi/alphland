@@ -99,9 +99,8 @@ export interface BountySubmission {
   status:
     | "submitted"
     | "in_review"
-    | "accepted"
-    | "rejected"
     | "approved"
+    | "rejected"
     | "pending"
     | "revision_requested";
   reviewer_notes: string | null;
