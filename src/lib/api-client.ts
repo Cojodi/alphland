@@ -104,8 +104,7 @@ export interface BountySubmission {
     | "approved"
     | "pending"
     | "revision_requested";
-  feedback: string | null;
-  reviewer_notes?: string | null;
+  reviewer_notes: string | null;
   review_started_at: number | null;
   completed_at: number | null;
   reward: {

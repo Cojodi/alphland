@@ -75,7 +75,7 @@ export default function SponsorDashboard() {
             : submission.status === "rejected"
               ? "rejected"
               : "pending",
-        reviewer_notes: submission.feedback || null,
+        reviewer_notes: submission.reviewer_notes || null,
         reviewed_by: null,
         reviewed_at: submission.completed_at || null,
         transaction_hash: submission.transaction_hash || null,
@@ -169,6 +169,7 @@ export default function SponsorDashboard() {
           bounty_title: s.bounty_title,
           sponsor_id: sponsor.id,
           status: s.status,
+          reviewer_notes: s.reviewer_notes || null,
           submitted_at: s.created_at,
         }));
 
@@ -252,6 +253,7 @@ export default function SponsorDashboard() {
           bounty_title: s.bounty_title,
           sponsor_id: sponsorId,
           status: s.status,
+          reviewer_notes: s.reviewer_notes || null,
           submitted_at: s.created_at,
         }));
 

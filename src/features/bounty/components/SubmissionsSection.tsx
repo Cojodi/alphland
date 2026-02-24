@@ -234,13 +234,13 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
                       </div>
                     )}
 
-                    {submission.feedback && (
+                    {submission.reviewer_notes && (
                       <div className="mt-3 p-3 bg-smoked-white dark:bg-light-black rounded-lg">
                         <p className="text-xs font-semibold text-black dark:text-white mb-1">
-                          Reviewer Notes:
+                          Sponsor Feedback:
                         </p>
                         <p className="text-sm text-light-charcoal dark:text-lightgrey">
-                          {submission.feedback}
+                          {submission.reviewer_notes}
                         </p>
                       </div>
                     )}

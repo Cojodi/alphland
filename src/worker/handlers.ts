@@ -282,7 +282,7 @@ export async function handleSubmissionsAPI(
     )
       .bind(
         body.status,
-        body.reviewer_notes || body.feedback || null,
+        body.reviewer_notes || null,
         body.transaction_hash || null,
         body.status === "approved" || body.status === "rejected" ? now : null,
         now,

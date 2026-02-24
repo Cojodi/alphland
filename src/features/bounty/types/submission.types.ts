@@ -12,7 +12,7 @@ export interface Submission {
   submission_url: string;
   tweet_url?: string;
   status: SubmissionStatus;
-  feedback?: string;
+  reviewer_notes?: string;
   transaction_hash?: string;
   user_username: string;
   user_avatar_url?: string;
