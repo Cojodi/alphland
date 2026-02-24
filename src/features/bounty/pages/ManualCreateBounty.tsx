@@ -536,7 +536,7 @@ export default function ManualCreateBounty() {
                       className="w-4 h-4 text-orange focus:ring-orange"
                     />
                     <span className="text-black dark:text-white font-barlow">
-                      Tiered
+                      Tiered (USD)
                     </span>
                   </label>
                 </div>
