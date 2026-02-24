@@ -26,16 +26,11 @@ interface BountyFormData {
 const BOUNTY_STATUSES = [
   { value: "open", label: "Open", description: "Accepting submissions" },
   {
-    value: "in_progress",
-    label: "In Progress",
-    description: "Reviewing submissions",
-  },
-  { value: "completed", label: "Completed", description: "Bounty fulfilled" },
-  {
     value: "closed",
     label: "Closed",
     description: "No longer accepting submissions",
   },
+  { value: "completed", label: "Completed", description: "Bounty fulfilled" },
 ];
 
 export default function EditBounty() {
@@ -412,7 +407,7 @@ export default function EditBounty() {
                 <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-4">
                   Current Status
                 </label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   {BOUNTY_STATUSES.map((status) => (
                     <button
                       key={status.value}
@@ -437,33 +432,6 @@ export default function EditBounty() {
                       </div>
                     </button>
                   ))}
-                </div>
-              </div>
-
-              {/* Quick Actions */}
-              <div className="border-t border-border-grey dark:border-dark-charcoal pt-6">
-                <h3 className="text-lg font-semibold text-black dark:text-white font-barlow mb-4">
-                  Quick Actions
-                </h3>
-                <div className="flex flex-wrap gap-4">
-                  {formData.status !== "closed" && (
-                    <button
-                      type="button"
-                      onClick={handleCloseBounty}
-                      disabled={loading}
-                      className="px-6 py-3 border-2 border-yellow-500 text-yellow-600 hover:bg-yellow-500/10 rounded-lg font-barlow font-semibold transition-colors disabled:opacity-50"
-                    >
-                      Close Bounty
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => setShowDeleteModal(true)}
-                    className="px-6 py-3 border-2 border-red-500 text-red-500 hover:bg-red-500/10 rounded-lg font-barlow font-semibold transition-colors flex items-center gap-2"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Delete Bounty
-                  </button>
                 </div>
               </div>
             </div>
