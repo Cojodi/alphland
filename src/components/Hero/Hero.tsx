@@ -139,7 +139,7 @@ const Hero = ({
   return (
     <div className="bg-gradient-to-br from-[#1a1f2e] to-[#2d3548] rounded-2xl p-8 md:p-12 mb-8 md:mb-12">
       <div
-        className={`flex flex-col ${hasBanner ? "lg:flex-row items-center gap-10" : ""}`}
+        className={`flex flex-col ${hasBanner ? "lg:flex-row items-stretch gap-10" : ""}`}
       >
         {/* Left: text + search */}
         <div
@@ -162,7 +162,7 @@ const Hero = ({
 
         {/* Right: featured dApp cards */}
         {hasBanner && (
-          <div className="w-full lg:w-7/12 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="w-full lg:w-7/12 grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
             {bannerDapps.map((dapp) => (
               <BannerCard key={dapp.url} {...dapp} />
             ))}
