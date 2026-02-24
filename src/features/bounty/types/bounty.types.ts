@@ -33,6 +33,7 @@ export interface Bounty {
   current_submissions: number;
   max_submissions?: number;
   category: string;
+  difficulty?: string;
   dapp_name?: string;
   sponsor_name?: string;
   sponsor_logo_url?: string | null;

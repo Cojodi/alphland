@@ -235,6 +235,22 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                   <div className="flex items-center gap-1">
                     <span>🌐 Global</span>
                   </div>
+                  {bounty.difficulty && (
+                    <div className="flex items-center gap-1">
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                          bounty.difficulty === "beginner"
+                            ? "bg-accessible-green/10 text-accessible-green"
+                            : bounty.difficulty === "advanced"
+                              ? "bg-danger-red/10 text-danger-red"
+                              : "bg-orange/10 text-orange"
+                        }`}
+                      >
+                        {bounty.difficulty.charAt(0).toUpperCase() +
+                          bounty.difficulty.slice(1)}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-2">
                     <Users className="w-5 h-5" />
                     <span>{bounty.current_submissions} participants</span>
@@ -579,6 +595,7 @@ export async function getServerSideProps(context: any) {
       end_date: bountyData.end_date,
       current_submissions: bountyData.submission_count || 0,
       category: bountyData.category,
+      difficulty: bountyData.difficulty || null,
       dapp_name: bountyData.dapp_name || null,
       sponsor_name: bountyData.sponsor_name || null,
       sponsor_logo_url: bountyData.sponsor_logo_url || null,
