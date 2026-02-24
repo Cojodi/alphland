@@ -33,7 +33,7 @@ const BannerCard = ({
   tags,
   links,
 }: BannerDapp) => (
-  <div className="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-5 flex flex-col h-full hover:border-orange/50 transition-colors">
+  <div className="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-5 flex flex-col flex-1 hover:border-orange/50 transition-colors">
     {/* External link */}
     <Link href={url}>
       <a className="absolute top-4 right-4 text-white/40 hover:text-orange transition-colors">
@@ -137,7 +137,7 @@ const Hero = ({
   const hasBanner = bannerDapps && bannerDapps.length > 0;
 
   return (
-    <div className="bg-gradient-to-br from-[#1a1f2e] to-[#2d3548] rounded-2xl p-8 md:p-12 mb-8 md:mb-12">
+    <div className="bg-gradient-to-br from-[#1a1f2e] to-[#2d3548] rounded-2xl p-8 md:p-6 mb-8 md:mb-12">
       <div
         className={`flex flex-col ${hasBanner ? "lg:flex-row items-stretch gap-10" : ""}`}
       >
@@ -162,7 +162,7 @@ const Hero = ({
 
         {/* Right: featured dApp cards */}
         {hasBanner && (
-          <div className="w-full lg:w-7/12 grid grid-cols-1 sm:grid-cols-2 gap-4 h-full lg:[grid-auto-rows:1fr]">
+          <div className="w-full lg:w-7/12 flex flex-col sm:flex-row gap-4">
             {bannerDapps.map((dapp) => (
               <BannerCard key={dapp.url} {...dapp} />
             ))}
