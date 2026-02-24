@@ -35,6 +35,9 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
   const [showSubmissionModal, setShowSubmissionModal] = useState(false);
   const [userSubmission, setUserSubmission] = useState<any>(null);
   const [checkingSubmission, setCheckingSubmission] = useState(true);
+  const [submissionCount, setSubmissionCount] = useState(
+    bounty.current_submissions,
+  );
 
   // Smooth scroll to section
   const scrollToSection = (sectionId: string) => {
@@ -268,7 +271,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                   )}
                   <div className="flex items-center gap-2">
                     <Users className="w-5 h-5" />
-                    <span>{bounty.current_submissions} participants</span>
+                    <span>{submissionCount} participants</span>
                   </div>
                 </div>
               </div>
@@ -355,7 +358,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                     token={bounty.reward.token}
                     usdEquivalent={bounty.reward.usd_equivalent}
                     tiers={tieredRewards}
-                    submissions={bounty.current_submissions}
+                    submissions={submissionCount}
                     timeRemaining={timeRemaining}
                     skills={bounty.skills}
                     userSubmission={userSubmission}
@@ -545,13 +548,14 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
             username={userProfile?.username || undefined}
             sponsorUserId={sponsorUserId || undefined}
             onSuccess={async () => {
-              // Refresh submission status
+              // Refresh submission status and update participant count immediately
               try {
                 const result = await apiClient.checkUserSubmission(
                   session.user.id,
                   bounty.id,
                 );
                 setUserSubmission(result.submission);
+                setSubmissionCount((c) => c + 1);
               } catch (error) {
                 console.error("Error refreshing submission:", error);
               }
