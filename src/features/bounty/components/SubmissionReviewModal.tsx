@@ -132,8 +132,13 @@ export function SubmissionReviewModal({
           bounty.reward_type === "tiered" && form.selectedTier
             ? `Tier ${form.selectedTier} placement. `
             : "";
-        const tokenReward = getTokenAmount();
-        const rewardInfo = `${tierInfo}Reward: ${form.rewardAmount} ALPH (for ${tokenReward.amount.toLocaleString()} ${tokenReward.token} bounty)`;
+        // For ALPH bounties use the stored USD reference; for USD bounties use the bounty amount.
+        // Avoid toLocaleString to keep the number parseable by the earnings regex.
+        const usdBountyValue =
+          bounty.reward.token === "ALPH"
+            ? bounty.reward.usd_equivalent
+            : getTokenAmount().amount;
+        const rewardInfo = `${tierInfo}Reward: ${form.rewardAmount} ALPH (for ${usdBountyValue} USD bounty)`;
         finalReviewerNotes = finalReviewerNotes
           ? `${finalReviewerNotes}\n\n${rewardInfo}`
           : rewardInfo;

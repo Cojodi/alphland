@@ -1736,13 +1736,22 @@ async function handleUsersAPI(
         .all();
 
       let totalEarned = 0;
+      let totalAlphEarned = 0;
       for (const submission of approvedSubmissions) {
-        // Extract USD amount from reviewer_notes
+        // Format written by SubmissionReviewModal: "Reward: X ALPH (for Y USD bounty)"
+        // Extract both the actual ALPH paid and the USD reference value.
+        // Handle legacy entries with locale-formatted numbers (e.g. "1,500").
         const notes = submission.reviewer_notes as string;
         if (notes) {
-          const usdMatch = notes.match(/for\s+\$?(\d+\.?\d*)\s*USD\s+bounty/i);
+          const usdMatch = notes.match(
+            /for\s+\$?([\d,]+\.?\d*)\s*USD\s+bounty/i,
+          );
           if (usdMatch) {
-            totalEarned += parseFloat(usdMatch[1]);
+            totalEarned += parseFloat(usdMatch[1].replace(/,/g, ""));
+          }
+          const alphMatch = notes.match(/Reward:\s+([\d.]+)\s*ALPH/i);
+          if (alphMatch) {
+            totalAlphEarned += parseFloat(alphMatch[1]);
           }
         }
       }
@@ -1753,6 +1762,7 @@ async function handleUsersAPI(
             submissions: totalSubmissions,
             won: totalWon,
             earned: totalEarned,
+            alph_earned: totalAlphEarned,
           },
         }),
         {

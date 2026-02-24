@@ -46,6 +46,7 @@ interface UserProfileProps {
     submissions: number;
     won: number;
     earned: number;
+    alph_earned?: number;
   } | null;
 }
 
@@ -204,6 +205,7 @@ export default function UserProfile({
               <SkillsSection skills={skillsGrouped} />
               <StatsSection
                 earned={userStats?.earned || 0}
+                alphEarned={userStats?.alph_earned || 0}
                 submissions={userStats?.submissions || 0}
                 won={userStats?.won || 0}
               />
