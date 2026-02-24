@@ -1308,6 +1308,14 @@ async function handleBountiesAPI(
         updates.push("category = ?");
         values.push(body.category);
       }
+      if (body.start_date !== undefined) {
+        updates.push("start_date = ?");
+        values.push(body.start_date);
+      }
+      if (body.end_date !== undefined) {
+        updates.push("end_date = ?");
+        values.push(body.end_date);
+      }
 
       updates.push("updated_at = ?");
       values.push(now);

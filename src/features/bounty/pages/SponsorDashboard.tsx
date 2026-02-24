@@ -651,15 +651,17 @@ export default function SponsorDashboard() {
                                       </span>
                                     </div>
                                   </div>
-                                  <button
-                                    className="text-orange hover:bg-orange/10 p-2 rounded"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleEditBounty(bounty.id, e);
-                                    }}
-                                  >
-                                    <Edit className="w-4 h-4" />
-                                  </button>
+                                  {bounty.status !== "completed" && (
+                                    <button
+                                      className="text-orange hover:bg-orange/10 p-2 rounded"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleEditBounty(bounty.id, e);
+                                      }}
+                                    >
+                                      <Edit className="w-4 h-4" />
+                                    </button>
+                                  )}
                                 </div>
                               </div>
                             ))}
@@ -890,15 +892,17 @@ export default function SponsorDashboard() {
                                 {bounty.reward.amount} {bounty.reward.token}
                               </div>
                               <div className="flex gap-2">
-                                <button
-                                  className="border border-orange text-orange hover:bg-orange/10 font-barlow px-3 py-1 rounded text-sm flex items-center gap-1"
-                                  onClick={(e) =>
-                                    handleEditBounty(bounty.id, e)
-                                  }
-                                >
-                                  <Edit className="w-4 h-4" />
-                                  Edit
-                                </button>
+                                {bounty.status !== "completed" && (
+                                  <button
+                                    className="border border-orange text-orange hover:bg-orange/10 font-barlow px-3 py-1 rounded text-sm flex items-center gap-1"
+                                    onClick={(e) =>
+                                      handleEditBounty(bounty.id, e)
+                                    }
+                                  >
+                                    <Edit className="w-4 h-4" />
+                                    Edit
+                                  </button>
+                                )}
                               </div>
                             </div>
                           </div>

@@ -95,15 +95,26 @@ export default function EditBounty() {
           return;
         }
 
+        // Completed bounties cannot be edited
+        if (b.status === "completed") {
+          router.push("/bounty/sponsor/dashboard");
+          return;
+        }
+
         setBounty(b);
 
-        // Parse dates
-        const startDate = b.start_date
-          ? new Date(b.start_date * 1000).toISOString().split("T")[0]
-          : "";
-        const endDate = b.end_date
-          ? new Date(b.end_date * 1000).toISOString().split("T")[0]
-          : "";
+        // Parse dates — handle both Unix timestamp (seconds) and ISO strings
+        const parseDate = (val: string | number | null): string => {
+          if (!val) return "";
+          const ts = Number(val);
+          const d =
+            !isNaN(ts) && ts > 1000000 && ts < 10000000000
+              ? new Date(ts * 1000)
+              : new Date(val);
+          return isNaN(d.getTime()) ? "" : d.toISOString().split("T")[0];
+        };
+        const startDate = parseDate(b.start_date);
+        const endDate = parseDate(b.end_date);
 
         setFormData({
           title: b.title || "",
@@ -155,6 +166,8 @@ export default function EditBounty() {
           reward_amount: parseFloat(formData.reward_amount),
           reward_currency: formData.reward_currency,
           status: formData.status,
+          start_date: formData.start_date || null,
+          end_date: formData.end_date || null,
         }),
       });
 
@@ -317,6 +330,40 @@ export default function EditBounty() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              {/* Dates */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
+                    Start Date
+                  </label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-light-charcoal dark:text-lightgrey" />
+                    <input
+                      type="date"
+                      name="start_date"
+                      value={formData.start_date}
+                      onChange={handleInputChange}
+                      className="w-full pl-10 pr-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
+                    End Date
+                  </label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-light-charcoal dark:text-lightgrey" />
+                    <input
+                      type="date"
+                      name="end_date"
+                      value={formData.end_date}
+                      onChange={handleInputChange}
+                      className="w-full pl-10 pr-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
