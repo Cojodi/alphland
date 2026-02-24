@@ -19,6 +19,7 @@ interface DappResource {
   slug: string;
   name: string;
   logoUrl: string;
+  bannerUrl: string;
   resources: Resource[];
 }
 
@@ -182,7 +183,11 @@ const ResourcesPage = ({
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {dapp.resources.map((resource, i) => (
-                <ResourceCard key={i} resource={resource} />
+                <ResourceCard
+                  key={i}
+                  resource={resource}
+                  dappBannerUrl={dapp.bannerUrl}
+                />
               ))}
             </div>
           </section>
@@ -224,6 +229,7 @@ export const getStaticProps: GetStaticProps<ResourcesPageProps> = async () => {
         slug,
         name: dapp.name,
         logoUrl: dapp.media.logoUrl,
+        bannerUrl: dapp.media.bannerUrl,
         resources: res,
       });
     }

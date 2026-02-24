@@ -12,6 +12,7 @@ interface Resource {
 
 interface ResourceCardProps {
   resource: Resource;
+  dappBannerUrl?: string;
 }
 
 const getYouTubeId = (url: string): string | null => {
@@ -36,10 +37,9 @@ const getFormatColor = (format: string) => {
   }
 };
 
-const ResourceCard = ({ resource }: ResourceCardProps) => {
+const ResourceCard = ({ resource, dappBannerUrl }: ResourceCardProps) => {
   const youtubeId = getYouTubeId(resource.link);
   const isVideo = resource.format === "Video" && youtubeId;
-  const hasTweetEmbed = !!resource.embedHtml;
   const hasOgImage = !!resource.ogImage;
 
   return (
@@ -54,11 +54,6 @@ const ResourceCard = ({ resource }: ResourceCardProps) => {
             allowFullScreen
           />
         </div>
-      ) : hasTweetEmbed ? (
-        <div
-          className="px-4 pt-4 [&_.twitter-tweet]:mx-auto [&_.twitter-tweet]:!max-w-full"
-          dangerouslySetInnerHTML={{ __html: resource.embedHtml! }}
-        />
       ) : hasOgImage ? (
         <a
           href={resource.link}
@@ -74,6 +69,26 @@ const ResourceCard = ({ resource }: ResourceCardProps) => {
             className="transition-transform duration-300 group-hover:scale-105"
           />
         </a>
+      ) : dappBannerUrl ? (
+        <a
+          href={resource.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block relative aspect-video overflow-hidden"
+        >
+          <Image
+            src={dappBannerUrl}
+            alt={resource.title}
+            layout="fill"
+            objectFit="cover"
+            className="transition-transform duration-300 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-3">
+            <p className="text-white text-sm font-semibold line-clamp-2 leading-tight">
+              {resource.title}
+            </p>
+          </div>
+        </a>
       ) : (
         <a
           href={resource.link}
@@ -82,15 +97,8 @@ const ResourceCard = ({ resource }: ResourceCardProps) => {
           className="block relative aspect-video bg-gradient-to-br from-gray-100 to-gray-200 dark:from-white/5 dark:to-white/10 flex items-center justify-center"
         >
           <div className="text-center px-4">
-            <div className="text-4xl mb-2">
-              {resource.format === "Article"
-                ? "📄"
-                : resource.format === "Tweet"
-                  ? "🐦"
-                  : "📚"}
-            </div>
-            <p className="text-sm text-light-charcoal dark:text-lightgrey">
-              Click to open
+            <p className="text-sm font-semibold dark:text-white line-clamp-3">
+              {resource.title}
             </p>
           </div>
         </a>

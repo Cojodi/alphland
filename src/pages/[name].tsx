@@ -197,7 +197,11 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo, dappResources }) => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {dappResources.slice(0, 4).map((resource, i) => (
-                    <ResourceCard key={i} resource={resource} />
+                    <ResourceCard
+                      key={i}
+                      resource={resource}
+                      dappBannerUrl={dappInfo.media.bannerUrl}
+                    />
                   ))}
                 </div>
               </section>
