@@ -163,6 +163,13 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
     ? new Date(bounty.end_date).getTime() < Date.now()
     : false;
 
+  // Compute display status: open / closed / completed
+  const computedStatus = !isBountyEnded
+    ? "open"
+    : bounty.status === "completed"
+      ? "completed"
+      : "closed";
+
   return (
     <Layout title={`${bounty.title} - Bounty`} description={bounty.description}>
       <div className="min-h-screen bg-smoked-white dark:bg-light-black">
@@ -215,21 +222,27 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                   <div className="flex items-center gap-1">
                     <span
                       className={`inline-block w-2 h-2 rounded-full ${
-                        bounty.status === "open" && !isBountyEnded
+                        computedStatus === "open"
                           ? "bg-accessible-green"
-                          : "bg-danger-red"
+                          : computedStatus === "completed"
+                            ? "bg-light-charcoal dark:bg-lightgrey"
+                            : "bg-danger-red"
                       }`}
                     ></span>
                     <span
                       className={`font-medium ${
-                        bounty.status === "open" && !isBountyEnded
+                        computedStatus === "open"
                           ? "text-accessible-green"
-                          : "text-danger-red"
+                          : computedStatus === "completed"
+                            ? "text-light-charcoal dark:text-lightgrey"
+                            : "text-danger-red"
                       }`}
                     >
-                      {bounty.status === "open" && !isBountyEnded
-                        ? "Submissions Open"
-                        : "Submissions Closed"}
+                      {computedStatus === "open"
+                        ? "Open"
+                        : computedStatus === "completed"
+                          ? "Completed"
+                          : "Closed"}
                     </span>
                   </div>
                   <div className="flex items-center gap-1">

@@ -37,6 +37,11 @@ const getTagStyle = (tag: string): string => {
     return "bg-danger-red/10 text-danger-red dark:bg-danger-red/20";
   }
 
+  // Completed state - muted/neutral success
+  if (tagLower === "completed") {
+    return "bg-accessible-green/10 text-light-charcoal dark:text-lightgrey";
+  }
+
   // Neutral states - default styling (categories, difficulty, due dates, etc.)
   return "bg-smoked-white dark:bg-light-black text-light-charcoal dark:text-lightgrey";
 };

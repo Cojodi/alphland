@@ -129,6 +129,42 @@ export default function SponsorDashboard() {
     return dateObj.toLocaleDateString();
   };
 
+  // Compute display status for a bounty using end_date + submission review state
+  const getBountyDisplayStatus = (
+    bounty: Bounty,
+  ): "open" | "closed" | "completed" => {
+    if (!bounty.end_date) return "open";
+    const ts = Number(bounty.end_date);
+    const endMs =
+      !isNaN(ts) && ts < 10000000000
+        ? ts * 1000
+        : new Date(bounty.end_date).getTime();
+    const isExpired = endMs < Date.now();
+    if (!isExpired) return "open";
+    const bountySubmissions = allSubmissions.filter(
+      (s) => s.bounty_id === bounty.id,
+    );
+    const allReviewed =
+      bountySubmissions.length === 0 ||
+      bountySubmissions.every(
+        (s) =>
+          (s.status as string) === "approved" ||
+          (s.status as string) === "rejected",
+      );
+    return allReviewed ? "completed" : "closed";
+  };
+
+  const getStatusBadgeStyle = (status: "open" | "closed" | "completed") => {
+    switch (status) {
+      case "open":
+        return "bg-accessible-green/20 text-accessible-green";
+      case "closed":
+        return "bg-danger-red/10 text-danger-red";
+      case "completed":
+        return "bg-accessible-green/10 text-light-charcoal dark:text-lightgrey";
+    }
+  };
+
   const getInitials = (username: string) => {
     return username
       .split(" ")
@@ -599,15 +635,17 @@ export default function SponsorDashboard() {
                                       {bounty.title}
                                     </h4>
                                     <div className="flex items-center gap-2 mt-2">
-                                      <span
-                                        className={`text-xs font-barlow font-medium px-2 py-1 rounded ${
-                                          bounty.status === "open"
-                                            ? "bg-accessible-green/20 text-light-charcoal"
-                                            : "bg-light-gray text-light-charcoal"
-                                        }`}
-                                      >
-                                        {bounty.status}
-                                      </span>
+                                      {(() => {
+                                        const ds =
+                                          getBountyDisplayStatus(bounty);
+                                        return (
+                                          <span
+                                            className={`text-xs font-barlow font-medium px-2 py-1 rounded capitalize ${getStatusBadgeStyle(ds)}`}
+                                          >
+                                            {ds}
+                                          </span>
+                                        );
+                                      })()}
                                       <span className="text-xs text-light-charcoal dark:text-lightgrey font-barlow">
                                         {bounty.current_submissions} submissions
                                       </span>
@@ -828,15 +866,16 @@ export default function SponsorDashboard() {
                                 {bounty.title}
                               </h3>
                               <div className="flex flex-wrap gap-2 mb-3">
-                                <span
-                                  className={`text-xs font-barlow font-medium px-2 py-1 rounded ${
-                                    bounty.status === "open"
-                                      ? "bg-accessible-green/20 text-light-charcoal"
-                                      : "bg-light-gray text-light-charcoal"
-                                  }`}
-                                >
-                                  {bounty.status}
-                                </span>
+                                {(() => {
+                                  const ds = getBountyDisplayStatus(bounty);
+                                  return (
+                                    <span
+                                      className={`text-xs font-barlow font-medium px-2 py-1 rounded capitalize ${getStatusBadgeStyle(ds)}`}
+                                    >
+                                      {ds}
+                                    </span>
+                                  );
+                                })()}
                                 <span className="text-xs font-barlow font-medium px-2 py-1 rounded bg-orange/10 text-orange">
                                   {bounty.category}
                                 </span>

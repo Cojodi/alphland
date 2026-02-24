@@ -143,34 +143,18 @@ export default function BountyList() {
       return false;
     }
 
-    // Filter by status
+    // Filter by status (matches the computed display status)
     if (activeStatus !== "all") {
-      const hasEnded = isBountyEnded(bounty);
-      const hasSubmissions = (bounty.submission_count || 0) > 0;
-
-      if (activeStatus === "closed") {
-        // Show: bounties with status "closed" OR ended bounties with submissions
-        if (
-          bounty.status !== "closed" &&
-          !(bounty.status === "open" && hasEnded && hasSubmissions)
-        ) {
-          return false;
-        }
+      const isExpired = isBountyEnded(bounty);
+      if (activeStatus === "open") {
+        // Open: end_date not expired
+        if (isExpired) return false;
+      } else if (activeStatus === "closed") {
+        // Closed: expired AND not marked completed
+        if (!isExpired || bounty.status === "completed") return false;
       } else if (activeStatus === "completed") {
-        // Show: bounties with status "completed" OR ended bounties without submissions
-        if (
-          bounty.status !== "completed" &&
-          !(bounty.status === "open" && hasEnded && !hasSubmissions)
-        ) {
-          return false;
-        }
-      } else if (activeStatus === "open") {
-        // Show: bounties with status "open" that have NOT ended
-        if (bounty.status !== "open" || hasEnded) {
-          return false;
-        }
-      } else if (bounty.status !== activeStatus) {
-        return false;
+        // Completed: DB status is "completed"
+        if (bounty.status !== "completed") return false;
       }
     }
 
@@ -368,29 +352,13 @@ export default function BountyList() {
                             )
                           : null;
 
-                        // Determine status tag based on bounty status and date
+                        // Determine status tag based on end_date and DB status
                         const getStatusTag = () => {
-                          if (bounty.status === "completed") {
-                            return "Closed";
-                          }
-                          if (bounty.status === "cancelled") {
-                            return "Closed";
-                          }
-                          if (bounty.status === "closed") {
-                            return "Closed";
-                          }
-                          // For open bounties, check deadline
-                          if (daysRemaining !== null && daysRemaining > 0) {
-                            return `Due in ${daysRemaining}d`;
-                          }
-                          if (daysRemaining === 0) {
-                            return "Due today";
-                          }
-                          // Deadline has passed but bounty is still open
-                          if (daysRemaining !== null && daysRemaining < 0) {
-                            return "Ended";
-                          }
-                          return "Active";
+                          const isExpired =
+                            daysRemaining !== null && daysRemaining < 0;
+                          if (!isExpired) return "Open";
+                          if (bounty.status === "completed") return "Completed";
+                          return "Closed";
                         };
 
                         return (
