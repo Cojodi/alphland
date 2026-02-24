@@ -27,6 +27,7 @@ export default function ManualCreateBounty() {
   const [loading, setLoading] = useState(false);
   const [sponsor, setSponsor] = useState<any>(null);
   const [loadingSponsor, setLoadingSponsor] = useState(true);
+  const [dapps, setDapps] = useState<{ slug: string; name: string }[]>([]);
 
   const [formData, setFormData] = useState<BountyFormData>({
     title: "",
@@ -80,6 +81,13 @@ export default function ManualCreateBounty() {
       fetchSponsorData();
     }
   }, [session, isPending, router]);
+
+  useEffect(() => {
+    fetch("/api/dapps")
+      .then((r) => r.json())
+      .then((data) => setDapps(data.dapps || []))
+      .catch(() => {});
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -289,20 +297,24 @@ export default function ManualCreateBounty() {
               {/* DApp Name */}
               <div>
                 <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
-                  DApp Name (Optional)
+                  DApp (Optional)
                 </label>
-                <input
-                  type="text"
+                <select
                   name="dapp_name"
                   value={formData.dapp_name}
                   onChange={handleInputChange}
-                  placeholder="e.g., Alphbanx, Linx, Ayin"
                   className="w-full px-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
-                />
+                >
+                  <option value="">— Not associated with a dApp —</option>
+                  {dapps.map((dapp) => (
+                    <option key={dapp.slug} value={dapp.name}>
+                      {dapp.name}
+                    </option>
+                  ))}
+                </select>
                 <p className="text-xs text-light-charcoal dark:text-lightgrey mt-2 font-barlow">
-                  If this bounty is for a specific dApp (e.g., Alphbanx), enter
-                  its name here. The bounty will appear on that dApp&apos;s page
-                  if the name matches exactly.
+                  Select the dApp this bounty is for. The bounty will appear on
+                  that dApp&apos;s page.
                 </p>
               </div>
             </div>
