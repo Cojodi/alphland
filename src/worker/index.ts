@@ -1302,7 +1302,8 @@ async function handleBountiesAPI(
       }
       if (body.status !== undefined) {
         updates.push("status = ?");
-        values.push(body.status);
+        // "closed" is not in the DB CHECK constraint — store as "cancelled"
+        values.push(body.status === "closed" ? "cancelled" : body.status);
       }
       if (body.category !== undefined) {
         updates.push("category = ?");

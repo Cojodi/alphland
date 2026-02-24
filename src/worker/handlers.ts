@@ -16,6 +16,8 @@ function transformBounty(bounty: any) {
   if (!bounty) return bounty;
   return {
     ...bounty,
+    // "cancelled" is the DB-level value for frontend "closed" (CHECK constraint workaround)
+    status: bounty.status === "cancelled" ? "closed" : bounty.status,
     reward: {
       amount: bounty.reward_amount || 0,
       token: bounty.reward_currency || "ALPH",

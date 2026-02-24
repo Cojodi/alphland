@@ -164,11 +164,13 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
     : false;
 
   // Compute display status: open / closed / completed
-  const computedStatus = !isBountyEnded
-    ? "open"
-    : bounty.status === "completed"
+  // DB "completed" takes priority over end_date check
+  const computedStatus =
+    bounty.status === "completed"
       ? "completed"
-      : "closed";
+      : !isBountyEnded
+        ? "open"
+        : "closed";
 
   return (
     <Layout title={`${bounty.title} - Bounty`} description={bounty.description}>

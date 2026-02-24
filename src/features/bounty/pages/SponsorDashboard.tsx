@@ -133,6 +133,8 @@ export default function SponsorDashboard() {
   const getBountyDisplayStatus = (
     bounty: Bounty,
   ): "open" | "closed" | "completed" => {
+    // DB status takes priority
+    if (bounty.status === "completed") return "completed";
     if (!bounty.end_date) return "open";
     const ts = Number(bounty.end_date);
     const endMs =
