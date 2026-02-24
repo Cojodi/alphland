@@ -8,9 +8,12 @@ import { getAllDapps } from "../data/getAllDapps";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
+// dApps shown in the Hero banner carousel (top of page)
+const BANNER_DAPPS = ["powfi", "linx-app"];
+
 // Featured dApps slugs - handpicked for the spotlight section
 const FEATURED_DAPPS = [
-  "linx-app",
+  "alphbanx",
   "elexium",
   "aura",
   "alephium-bridge",
@@ -27,10 +30,11 @@ const FEATURED_DAPPS = [
   "safepal-wallet",
   "tangem-wallet",
   "ledger-wallet",
-  "alphbanx",
+  "wemine",
+  "chain-reaction",
 ];
 
-interface SpotlightDapp {
+interface DappCard {
   title: string;
   short_description: string;
   logo: string;
@@ -45,15 +49,20 @@ interface SpotlightDapp {
   };
 }
 
+// Keep SpotlightDapp as an alias for backwards compat with Spotlight component
+type SpotlightDapp = DappCard;
+
 interface CategoryCount {
   [key: string]: number;
 }
 
 const Home = ({
+  bannerDapps,
   spotlightDapps,
   totalDappCount,
   categoryCounts,
 }: {
+  bannerDapps: DappCard[];
   spotlightDapps: SpotlightDapp[];
   totalDappCount: number;
   categoryCounts: CategoryCount;
@@ -77,6 +86,7 @@ const Home = ({
             searchQuery={searchQuery}
             onSearchChange={handleSearch}
             dappCount={totalDappCount}
+            bannerDapps={bannerDapps}
           />
         </div>
 
@@ -94,8 +104,8 @@ const Home = ({
 export const getStaticProps = async () => {
   const dapps = await getAllDapps();
 
-  // Filter and map featured dApps for spotlight
-  const spotlightDapps = FEATURED_DAPPS.map((slug) => {
+  // Build hero banner dApps
+  const mapDapp = (slug: string) => {
     const dapp = dapps.find((d) => d.url === slug);
     if (!dapp) return null;
     return {
@@ -106,7 +116,14 @@ export const getStaticProps = async () => {
       tags: dapp.tags,
       links: dapp.links,
     };
-  }).filter(Boolean) as SpotlightDapp[];
+  };
+
+  const bannerDapps = BANNER_DAPPS.map(mapDapp).filter(Boolean) as DappCard[];
+
+  // Filter and map featured dApps for spotlight
+  const spotlightDapps = FEATURED_DAPPS.map(mapDapp).filter(
+    Boolean,
+  ) as SpotlightDapp[];
 
   // Calculate category counts
   const categoryCounts: CategoryCount = {};
@@ -118,6 +135,7 @@ export const getStaticProps = async () => {
 
   return {
     props: {
+      bannerDapps,
       spotlightDapps,
       totalDappCount: dapps.length,
       categoryCounts,
