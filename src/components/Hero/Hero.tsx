@@ -162,7 +162,7 @@ const Hero = ({
 
         {/* Right: featured dApp cards */}
         {hasBanner && (
-          <div className="w-full lg:w-7/12 grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
+          <div className="w-full lg:w-7/12 grid grid-cols-1 sm:grid-cols-2 gap-4 h-full lg:[grid-auto-rows:1fr]">
             {bannerDapps.map((dapp) => (
               <BannerCard key={dapp.url} {...dapp} />
             ))}
