@@ -71,7 +71,7 @@ export function SubmissionModal({
     try {
       // Create submission with title and notes combined in description
       const descriptionWithNotes = formData.notes
-        ? `${formData.description}\n\n**Notes:**\n${formData.notes}`
+        ? `${formData.description}\n\nNotes:\n${formData.notes}`
         : formData.description;
 
       const result = await apiClient.createSubmission({

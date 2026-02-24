@@ -313,6 +313,39 @@ export function SubmissionReviewModal({
     return text.trim();
   };
 
+  // Parse tier placement from reviewer_notes
+  // Format: "Tier X placement. Reward: Y ALPH (...)"
+  const parseTierFromNotes = (notes: string | null): number | null => {
+    if (!notes) return null;
+    const match = notes.match(/Tier (\d+) placement/);
+    return match ? parseInt(match[1]) : null;
+  };
+
+  // Parse ALPH reward amount from reviewer_notes
+  // Format: "Reward: Y ALPH (...)"
+  const parseAlphRewardFromNotes = (notes: string | null): string | null => {
+    if (!notes) return null;
+    const match = notes.match(/Reward:\s*([\d.]+)\s*ALPH/);
+    return match ? `${match[1]} ALPH` : null;
+  };
+
+  const tierPosition = parseTierFromNotes(submission.reviewer_notes ?? null);
+  const alphReward = parseAlphRewardFromNotes(
+    submission.reviewer_notes ?? null,
+  );
+
+  const tierLabel = (pos: number) =>
+    pos === 1
+      ? "🥇 1st Place"
+      : pos === 2
+        ? "🥈 2nd Place"
+        : pos === 3
+          ? "🥉 3rd Place"
+          : `${pos}th Place`;
+
+  const isAlreadyReviewed =
+    submission.status === "approved" || submission.status === "rejected";
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
@@ -429,6 +462,80 @@ export function SubmissionReviewModal({
               </a>
             )}
           </div>
+
+          {/* Already Reviewed Banner */}
+          {isAlreadyReviewed && (
+            <div
+              className={`rounded-lg p-4 border ${
+                submission.status === "approved"
+                  ? "bg-accessible-green/10 border-accessible-green/30"
+                  : "bg-red-500/10 border-red-500/30"
+              }`}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                {submission.status === "approved" ? (
+                  <CheckCircle className="w-5 h-5 text-accessible-green flex-shrink-0" />
+                ) : (
+                  <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                )}
+                <span
+                  className={`font-bold text-base ${
+                    submission.status === "approved"
+                      ? "text-accessible-green"
+                      : "text-red-500"
+                  }`}
+                >
+                  {submission.status === "approved" ? "Approved" : "Rejected"}
+                </span>
+              </div>
+
+              {submission.status === "approved" && (
+                <div className="space-y-1.5 text-sm">
+                  {tierPosition && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-light-charcoal dark:text-lightgrey">
+                        Placement:
+                      </span>
+                      <span className="font-semibold text-black dark:text-white">
+                        {tierLabel(tierPosition)}
+                      </span>
+                    </div>
+                  )}
+                  {alphReward && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-light-charcoal dark:text-lightgrey">
+                        Reward Paid:
+                      </span>
+                      <span className="font-semibold text-accessible-green">
+                        {alphReward}
+                      </span>
+                    </div>
+                  )}
+                  {submission.transaction_hash && (
+                    <div className="flex items-start gap-2">
+                      <span className="text-light-charcoal dark:text-lightgrey flex-shrink-0">
+                        Tx Hash:
+                      </span>
+                      <a
+                        href={`https://explorer.alephium.org/transactions/${submission.transaction_hash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-xs text-accessible-green hover:text-accessible-green/80 break-all flex items-center gap-1"
+                      >
+                        {submission.transaction_hash.slice(0, 16)}...
+                        {submission.transaction_hash.slice(-16)}
+                        <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                      </a>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <p className="text-xs text-light-charcoal dark:text-lightgrey mt-3">
+                You can update the review decision below if needed.
+              </p>
+            </div>
+          )}
 
           {/* Review Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
