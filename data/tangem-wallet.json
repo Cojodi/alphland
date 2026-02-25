@@ -1,7 +1,7 @@
 {
   "name": "Tangem Wallet",
   "description": "Tangem Wallet is a hardware wallet in a card form that keeps your private keys securely offline. It supports a wide range of digital assets and enables safe storage, sending, receiving, and swap functionality.",
-  "short_description": "Your Secure Crypto & Hardware Wallet",
+  "short_description": "Hardware and software wallet support of ALPH.",
   "tags": ["Wallets"],
   "contracts": [],
   "audits": [],

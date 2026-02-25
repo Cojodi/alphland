@@ -1,7 +1,7 @@
 {
   "name": "DIA Oracle",
   "description": "DIA Oracle is a cross-chain oracle system that provides token price feeds, verifiable randomness, and real-world asset data. It aggregates information from multiple sources and delivers customizable oracles for applications requiring external inputs.",
-  "short_description": "Cross-chain oracles for Web3",
+  "short_description": "Cross-chain oracle.",
   "tags": ["Infrastructure"],
   "councils_choice": true,
   "verified": true,

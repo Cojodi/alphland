@@ -1,7 +1,7 @@
 {
   "name": "Learnify",
   "description": "Learnify is an educational platform that rewards users for completing learning modules. It offers structured lessons and incentives to encourage continued progress.",
-  "short_description": "Learn and Earn",
+  "short_description": "Learn-and-earn platform with mini-games.",
   "tags": ["Quests", "Education"],
   "contracts": [],
   "audits": [],
