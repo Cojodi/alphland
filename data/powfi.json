@@ -1,7 +1,7 @@
 {
   "name": "Powfi",
   "description": "Powfi is the unifying DeFi layer of Alephium, a composable CLMM DEX and Staking layer where ecosystem growth strengthens ALPH and rewards long term participants.",
-  "short_description": "Alephium's Unifying DeFi Layer",
+  "short_description": "CLMM DEX & staked ALPH platform by Alephium.",
   "tags": ["DeFi", "Bridges", "Infrastructure"],
   "councils_choice": true,
   "verified": true,

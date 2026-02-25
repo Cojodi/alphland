@@ -1,7 +1,7 @@
 {
   "name": "Alephium Explorer",
   "description": "Alephium Explorer is a block explorer showing blocks, transactions, addresses, and network metrics. It helps users view onchain activity and follow ALPH usage across the network.",
-  "short_description": "Explore detailled stats about Alephium network",
+  "short_description": "Explore and search the Alephium blockchain. By Alephium.",
   "tags": ["Analytics"],
   "contracts": [],
   "audits": [],

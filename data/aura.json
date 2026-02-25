@@ -1,7 +1,7 @@
 {
   "name": "Aura",
   "description": "Aura is a decentralized prediction market protocol allowing users to create and trade event based markets. It rewards correct predictions and supports community governed market creation.",
-  "short_description": "Predict on Alephium",
+  "short_description": "Decentralized prediction marketplace.",
   "tags": ["DeFi"],
   "contracts": [],
   "audits": [],

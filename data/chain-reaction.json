@@ -1,7 +1,7 @@
 {
   "name": "Chain Reaction",
   "description": "Chain Reaction is a last-player-wins game on Alephium. Someone starts a chain by choosing a token, setting an entry price, countdown duration, and price increase percentage. Players join by paying an escalating entry price which resets the timer. When the countdown expires, the last player wins the entire pot.",
-  "short_description": "On-chain Game",
+  "short_description": "Last-player-wins game.",
   "tags": ["Games"],
   "councils_choice": false,
   "contracts": [],

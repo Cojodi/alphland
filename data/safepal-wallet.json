@@ -1,7 +1,7 @@
 {
   "name": "SafePal Wallet",
   "description": "SafePal is a suite of crypto wallets including hardware devices, mobile apps, and browser extensions. It supports more than one hundred blockchains and offers secure asset management tools.",
-  "short_description": "SafePal is a comprehensive crypto wallet suite",
+  "short_description": "Hardware and software wallet support of all Alephium tokens and dApps.",
   "tags": ["Wallets"],
   "group": "Group 0",
   "contracts": [],

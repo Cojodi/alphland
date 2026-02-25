@@ -1,7 +1,7 @@
 {
   "name": "OneKey Wallet",
   "description": "OneKey is an open source wallet offering hardware and software products for secure asset management. It enables users to self custody cryptocurrencies through offline signing and multi platform support.",
-  "short_description": "Open source crypto wallet. Trusted by millions.",
+  "short_description": "Hardware and software wallet support of all Alephium tokens and dApps.",
   "tags": ["Wallets"],
   "contracts": [],
   "audits": [],

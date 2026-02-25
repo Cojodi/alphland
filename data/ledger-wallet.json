@@ -1,7 +1,7 @@
 {
   "name": "Ledger Wallet",
   "description": "Ledger is a hardware wallet used for offline storage of digital assets. It supports a wide range of cryptocurrencies and connects to companion applications for transaction signing and portfolio management.",
-  "short_description": "We Are Ledger",
+  "short_description": "Hardware wallet support of all Alephium tokens and dApps.",
   "tags": ["Wallets"],
   "contracts": [],
   "audits": [],
