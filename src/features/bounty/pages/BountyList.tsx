@@ -307,11 +307,7 @@ export default function BountyList() {
                     </div>
                     <div className="space-y-1">
                       <p className="text-2xl font-bold text-accessible-green">
-                        {
-                          bounties.filter(
-                            (b) => b.status === "open" && !isBountyEnded(b),
-                          ).length
-                        }
+                        {bounties.filter((b) => !isBountyEnded(b)).length}
                       </p>
                       <p className="text-sm text-light-charcoal dark:text-lightgrey">
                         Opportunities Open
@@ -319,15 +315,7 @@ export default function BountyList() {
                     </div>
                     <div className="space-y-1">
                       <p className="text-2xl font-bold text-light-charcoal dark:text-lightgrey">
-                        {
-                          bounties.filter(
-                            (b) =>
-                              b.status === "closed" ||
-                              b.status === "completed" ||
-                              b.status === "cancelled" ||
-                              (b.status === "open" && isBountyEnded(b)),
-                          ).length
-                        }
+                        {bounties.filter((b) => isBountyEnded(b)).length}
                       </p>
                       <p className="text-sm text-light-charcoal dark:text-lightgrey">
                         Opportunities Closed
