@@ -62,7 +62,10 @@ const EcosystemMapPage = ({
       description="Explore the complete Alephium ecosystem landscape"
     >
       {/* Full width background */}
-      <div className="min-h-screen bg-[#f5f3ef] dark:bg-[#1a1a1a]">
+      <div
+        className="min-h-screen bg-[#f5f3ef] dark:bg-[#1a1a1a]"
+        style={{ zoom: 1.25 }}
+      >
         <div className="container px-3 lg:px-4 mx-auto pb-8 lg:pb-12">
           {/* Header - Compact */}
           <header className="py-4 lg:py-6">
