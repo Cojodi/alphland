@@ -5,8 +5,6 @@ const BLOCKED_WORDS = [
   "fucked",
   "fucks",
   "fck",
-  "f*ck",
-  "f**k",
   "shit",
   "shitting",
   "shitty",
