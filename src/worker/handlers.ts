@@ -675,6 +675,31 @@ export async function handleSponsorsAPI(
     });
   }
 
+  // GET /api/sponsors/name/:username - Get sponsor by username
+  if (
+    request.method === "GET" &&
+    pathname.match(/^\/api\/sponsors\/name\/[^/]+$/)
+  ) {
+    const username = pathname.split("/").pop();
+
+    const sponsor = await env.DB.prepare(
+      `SELECT * FROM sponsors WHERE username = ?`,
+    )
+      .bind(username)
+      .first();
+
+    if (!sponsor) {
+      return new Response(JSON.stringify({ error: "Sponsor not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    return new Response(JSON.stringify({ sponsor }), {
+      headers: corsHeaders,
+    });
+  }
+
   // GET /api/sponsors/user/:userId - Get sponsor by user ID
   if (
     request.method === "GET" &&

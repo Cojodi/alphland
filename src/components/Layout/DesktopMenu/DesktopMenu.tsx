@@ -29,7 +29,7 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
   const setSort = useCategoryStore((state) => state.setSelectedSort);
   const setRatings = useCategoryStore((state) => state.setRatings);
   const [isSponsor, setIsSponsor] = useState(false);
-  const [sponsorId, setSponsorId] = useState<string | null>(null);
+  const [sponsorUsername, setSponsorUsername] = useState<string | null>(null);
 
   // Check if current page is bounty, sponsor, or user profile related
   const isBountyPage =
@@ -41,7 +41,7 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
     async function checkSponsorStatus() {
       if (!session?.user?.id) {
         setIsSponsor(false);
-        setSponsorId(null);
+        setSponsorUsername(null);
         return;
       }
 
@@ -50,15 +50,15 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
         if (response.ok) {
           const data = await response.json();
           setIsSponsor(!!data.sponsor);
-          setSponsorId(data.sponsor?.id || null);
+          setSponsorUsername(data.sponsor?.username || null);
         } else {
           setIsSponsor(false);
-          setSponsorId(null);
+          setSponsorUsername(null);
         }
       } catch (error) {
         console.error("Error checking sponsor status:", error);
         setIsSponsor(false);
-        setSponsorId(null);
+        setSponsorUsername(null);
       }
     }
 
@@ -234,8 +234,8 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
                           Dashboard
                         </span>
                       </Link>
-                      {sponsorId && (
-                        <Link href={`/bounty/sponsor/${sponsorId}`}>
+                      {sponsorUsername && (
+                        <Link href={`/bounty/sponsor/${sponsorUsername}`}>
                           <span
                             className="flex items-center gap-3 px-4 py-2.5 text-sm text-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black transition-colors cursor-pointer"
                             onClick={() => setSponsorDropdownOpen(false)}

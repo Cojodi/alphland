@@ -351,7 +351,7 @@ export default function SponsorProfile({
 
 // Server-side data fetching for Next.js
 export async function getServerSideProps(context: any) {
-  const { id } = context.params;
+  const { name } = context.params;
 
   try {
     // Determine the API base URL
@@ -359,8 +359,17 @@ export async function getServerSideProps(context: any) {
     const host = context.req.headers.host || "localhost:3000";
     const baseUrl = `${protocol}://${host}`;
 
+    // Resolve username to sponsor id first
+    const nameRes = await fetch(`${baseUrl}/api/sponsors/name/${name}`);
+    if (!nameRes.ok) return { notFound: true };
+    const nameData = await nameRes.json();
+    const sponsorId = nameData.sponsor?.id;
+    if (!sponsorId) return { notFound: true };
+
     // Fetch sponsor data with bounties
-    const response = await fetch(`${baseUrl}/api/sponsors/${id}/dashboard`);
+    const response = await fetch(
+      `${baseUrl}/api/sponsors/${sponsorId}/dashboard`,
+    );
 
     if (!response.ok) {
       return {
