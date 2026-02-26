@@ -433,7 +433,9 @@ export default function BountyList() {
                     href={
                       isSponsor
                         ? "/bounty/sponsor/dashboard"
-                        : "/bounty/sponsor"
+                        : session?.user
+                          ? "/bounty/sponsor"
+                          : "/auth/login?redirect=/bounty/sponsor"
                     }
                   >
                     <a className="block w-full bg-orange hover:bg-orange/90 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-center text-sm">
