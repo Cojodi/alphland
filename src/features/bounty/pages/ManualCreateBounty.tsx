@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useSession } from "@/lib/auth-client";
 import Layout from "@/components/Layout";
 import { Plus, X, Calendar, DollarSign } from "lucide-react";
+import { containsProfanity } from "@/lib/profanity-filter";
 
 interface BountyFormData {
   title: string;
@@ -127,6 +128,17 @@ export default function ManualCreateBounty() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (
+      containsProfanity(formData.title) ||
+      containsProfanity(formData.description)
+    ) {
+      alert(
+        "Your bounty contains inappropriate language. Please revise the title or description.",
+      );
+      return;
+    }
+
     setLoading(true);
 
     try {

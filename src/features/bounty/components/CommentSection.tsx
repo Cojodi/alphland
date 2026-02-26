@@ -2,6 +2,7 @@
 
 import { notificationService } from "../services/notificationService";
 import { apiClient, BountyComment } from "@/lib/api-client";
+import { containsProfanity } from "@/lib/profanity-filter";
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 
@@ -130,6 +131,10 @@ function SingleComment({
 
   const handleEdit = async () => {
     if (!editContent.trim()) return;
+    if (containsProfanity(editContent)) {
+      alert("Your comment contains inappropriate language. Please revise it.");
+      return;
+    }
     try {
       await apiClient.updateComment(comment.id, { content: editContent });
       setIsEditing(false);
@@ -367,6 +372,11 @@ export function CommentSection({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim() || !currentUserId || isSubmitting) return;
+
+    if (containsProfanity(newComment)) {
+      alert("Your comment contains inappropriate language. Please revise it.");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
