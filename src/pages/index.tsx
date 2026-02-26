@@ -13,25 +13,28 @@ const BANNER_DAPPS = ["powfi", "linx-app"];
 
 // Featured dApps slugs - handpicked for the spotlight section
 const FEATURED_DAPPS = [
+  // Community dApps
   "alphbanx",
-  "elexium",
-  "aura",
-  "alephium-bridge",
-  "alephium-official-wallets",
   "alphpad",
+  "aura",
+  "chain-reaction",
   "deadrare",
-  "dia",
-  "alephium-explorer",
-  "henrycoder",
+  "elexium",
   "learnify",
+  // "moonshot-boxes", // coming soon
   "nightshade",
-  "onekey-wallet",
   "presenceprotocol",
+  "wemine",
+  // Official & Infrastructure
+  "alephium-bridge",
+  "alephium-explorer",
+  "alephium-official-wallets",
+  "dia",
+  "henrycoder",
+  "ledger-wallet",
+  "onekey-wallet",
   "safepal-wallet",
   "tangem-wallet",
-  "ledger-wallet",
-  "wemine",
-  "chain-reaction",
 ];
 
 interface DappCard {
