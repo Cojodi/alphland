@@ -185,7 +185,7 @@ export function createAuth(
 
     baseURL: publicUrl,
     secret: env.BETTER_AUTH_SECRET,
-    trustedOrigins: [publicUrl],
+    trustedOrigins: [publicUrl, "https://alph.land", "https://www.alph.land"],
 
     // TODO: Re-enable account settings when we have a real production domain
     // Currently commented out to avoid cookie/state issues in preview domains
