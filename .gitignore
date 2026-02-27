@@ -59,3 +59,4 @@ src/worker/node_modules/.mf/
 *.sh
 migrations/
 *.xlsx
+alephium-brand-guide
