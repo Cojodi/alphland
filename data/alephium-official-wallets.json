@@ -1,7 +1,7 @@
 {
   "name": "Alephium Official Wallets",
   "description": "Alephium Official Wallets are self custodial applications that allow users to store, send, and receive Alephium assets. They support dApp interactions while keeping private keys under user control.",
-  "short_description": "Mobile, desktop, and browser extension wallet by Alephium.",
+  "short_description": "Mobile, desktop, and browser extension wallet.",
   "tags": ["Wallets"],
   "councils_choice": true,
   "verified": true,

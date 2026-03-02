@@ -11,30 +11,35 @@ import { useState } from "react";
 // dApps shown in the Hero banner carousel (top of page)
 const BANNER_DAPPS = ["powfi", "linx-app"];
 
-// Featured dApps slugs - handpicked for the spotlight section
+// Official Alephium Core Team dApps - shown in "By Alephium" section (A→Z)
+const BY_ALEPHIUM_DAPPS = [
+  "alephium-bridge",
+  "alephium-explorer",
+  "alephium-official-wallets",
+  "powfi",
+];
+
+// Featured dApps slugs - handpicked for the spotlight section (A→Z)
 const FEATURED_DAPPS = [
-  // Community dApps
   "alphbanx",
   "alphpad",
   "aura",
   "chain-reaction",
   "deadrare",
+  "dia",
   "elexium",
+  "henrycoder",
   "learnify",
+  "ledger-wallet",
+  "linx-app",
   // "moonshot-boxes", // coming soon
   "nightshade",
-  "presenceprotocol",
-  "wemine",
-  // Official & Infrastructure
-  "alephium-bridge",
-  "alephium-explorer",
-  "alephium-official-wallets",
-  "dia",
-  "henrycoder",
-  "ledger-wallet",
   "onekey-wallet",
+  "powfi",
+  "presenceprotocol",
   "safepal-wallet",
   "tangem-wallet",
+  "wemine",
 ];
 
 interface DappCard {
@@ -61,11 +66,13 @@ interface CategoryCount {
 
 const Home = ({
   bannerDapps,
+  byAlephiumDapps,
   spotlightDapps,
   totalDappCount,
   categoryCounts,
 }: {
   bannerDapps: DappCard[];
+  byAlephiumDapps: SpotlightDapp[];
   spotlightDapps: SpotlightDapp[];
   totalDappCount: number;
   categoryCounts: CategoryCount;
@@ -95,6 +102,12 @@ const Home = ({
 
         <Spotlight dapps={spotlightDapps} />
 
+        <Spotlight
+          dapps={byAlephiumDapps}
+          title="By Alephium"
+          subtitle="Made & maintained by the Alephium Core Team"
+        />
+
         <CategoriesSection categoryCounts={categoryCounts} />
 
         {/* FAQ Section */}
@@ -123,6 +136,11 @@ export const getStaticProps = async () => {
 
   const bannerDapps = BANNER_DAPPS.map(mapDapp).filter(Boolean) as DappCard[];
 
+  // Build By Alephium section dApps
+  const byAlephiumDapps = BY_ALEPHIUM_DAPPS.map(mapDapp).filter(
+    Boolean,
+  ) as SpotlightDapp[];
+
   // Filter and map featured dApps for spotlight
   const spotlightDapps = FEATURED_DAPPS.map(mapDapp).filter(
     Boolean,
@@ -139,6 +157,7 @@ export const getStaticProps = async () => {
   return {
     props: {
       bannerDapps,
+      byAlephiumDapps,
       spotlightDapps,
       totalDappCount: dapps.length,
       categoryCounts,

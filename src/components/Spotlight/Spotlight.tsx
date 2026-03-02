@@ -19,20 +19,24 @@ interface SpotlightDapp {
 
 interface SpotlightProps {
   dapps: SpotlightDapp[];
+  title?: string;
+  subtitle?: string;
 }
 
-const Spotlight = ({ dapps }: SpotlightProps) => {
+const Spotlight = ({
+  dapps,
+  title = "Spotlight",
+  subtitle = "Handpicked by our team",
+}: SpotlightProps) => {
   return (
     <section className="mb-16">
       {/* Header */}
       <div className="flex items-end justify-between mb-6">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold text-black dark:text-white mb-1">
-            Spotlight
+            {title}
           </h2>
-          <p className="text-light-charcoal dark:text-gray-400">
-            Handpicked by our team
-          </p>
+          <p className="text-light-charcoal dark:text-gray-400">{subtitle}</p>
         </div>
         <Link href="/explore">
           <a className="hidden sm:flex items-center gap-1 text-orange hover:text-orange/80 font-medium transition-colors">
