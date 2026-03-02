@@ -35,7 +35,6 @@ const FEATURED_DAPPS = [
   // "moonshot-boxes", // coming soon
   "nightshade",
   "onekey-wallet",
-  "powfi",
   "presenceprotocol",
   "safepal-wallet",
   "tangem-wallet",
@@ -100,13 +99,13 @@ const Home = ({
           />
         </div>
 
-        <Spotlight dapps={spotlightDapps} />
-
         <Spotlight
           dapps={byAlephiumDapps}
           title="By Alephium"
-          subtitle="Made & maintained by the Alephium Core Team"
+          subtitle="Essentials to start your Alephium journey"
         />
+
+        <Spotlight dapps={spotlightDapps} />
 
         <CategoriesSection categoryCounts={categoryCounts} />
 
