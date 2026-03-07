@@ -1,0 +1,39 @@
+{
+  "name": "ALPH 2048 Arena",
+  "description": "ALPH 2048 Arena is an on-chain 2048 score game on Alephium. Players start a ranked run, play for the highest score, and submit verified results tied to wallet identity. The game is designed for fast play sessions with a live leaderboard and transparent score receipts.",
+  "short_description": "On-chain 2048 score game on Alephium.",
+  "tags": ["Games"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://alph2048.aigames.alehpium.org/",
+    "careers": "",
+    "twitter": "",
+    "telegram": "",
+    "discord": "",
+    "github": "https://github.com/clawdia-gh/alph2048",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "docs": ""
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2026-03-07T00:00:00.000Z",
+    "anonymous": true,
+    "name": "AIGames"
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/alph2048-arena/alph2048-arena-logo.webp",
+    "bannerUrl": "/dapps/alph2048-arena/alph2048-arena-banner.webp",
+    "previewUrl": "/dapps/alph2048-arena/alph2048-arena-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
