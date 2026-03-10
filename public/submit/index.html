@@ -55,6 +55,14 @@
       #nc-root {
         margin-top: 130px;
       }
+      /* Push Decap CMS sticky/fixed toolbar below the banner */
+      #nc-root header,
+      #nc-root [class*="AppHeader"],
+      #nc-root [class*="ToolbarContainer"],
+      #nc-root [class*="EditorToolbar"],
+      #nc-root [class*="Toolbar"][style*="position"] {
+        top: var(--banner-height, 130px) !important;
+      }
 
       /* Hide navigation elements that allow browsing other entries */
       [href="#/collections/dapps"],
@@ -545,11 +553,16 @@ ${dappData.description || 'N/A'}
           </ul>
         `;
         document.body.insertBefore(banner, document.body.firstChild);
-        // Adjust CMS root margin to match actual banner height
-        setTimeout(function() {
+        // Adjust CMS root margin and toolbar offset to match actual banner height
+        function applyBannerOffset() {
+          const h = banner.offsetHeight;
+          document.documentElement.style.setProperty('--banner-height', h + 'px');
           const root = document.getElementById('nc-root');
-          if (root) root.style.marginTop = banner.offsetHeight + 'px';
-        }, 600);
+          if (root) root.style.marginTop = h + 'px';
+        }
+        setTimeout(applyBannerOffset, 600);
+        // Re-apply after CMS fully renders (toolbar may mount later)
+        setTimeout(applyBannerOffset, 2000);
       })();
 
       // Auto-confirm local backup recovery
