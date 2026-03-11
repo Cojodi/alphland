@@ -2589,3 +2589,280 @@ export async function handleProofOfWorkAPI(
     headers: corsHeaders,
   });
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// dApp submission — creates a branch + files + PR via GitHub bot token
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface SubmitDappBody {
+  name: string;
+  description: string;
+  short_description: string;
+  tags: string[];
+  links: {
+    website: string;
+    careers?: string;
+    twitter?: string;
+    telegram?: string;
+    discord?: string;
+    docs?: string;
+    github?: string;
+    youtube?: string;
+    medium?: string;
+    mirror?: string;
+    linkedin?: string;
+  };
+  twitterName?: string;
+  teamInfo?: {
+    contactEmail?: string;
+    founded?: string;
+    anonymous?: boolean;
+  };
+  logoImage: string; // base64 data URL
+  bannerImage: string; // base64 data URL
+  previewImage: string; // base64 data URL
+}
+
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 80);
+}
+
+function stripDataUrl(dataUrl: string): string {
+  return dataUrl.replace(/^data:[^;]+;base64,/, "");
+}
+
+async function githubApiFetch(
+  path: string,
+  token: string,
+  options: RequestInit = {},
+): Promise<any> {
+  const res = await fetch(`https://api.github.com${path}`, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github.v3+json",
+      "Content-Type": "application/json",
+      "User-Agent": "alphland-submit-bot",
+      ...(options.headers || {}),
+    },
+  });
+  const data = (await res.json()) as any;
+  if (!res.ok) {
+    throw new Error(
+      `GitHub API ${res.status} on ${path}: ${JSON.stringify(data.message ?? data)}`,
+    );
+  }
+  return data;
+}
+
+async function putRepoFile(
+  repo: string,
+  branch: string,
+  token: string,
+  filePath: string,
+  base64Content: string,
+  message: string,
+): Promise<void> {
+  await githubApiFetch(`/repos/${repo}/contents/${filePath}`, token, {
+    method: "PUT",
+    body: JSON.stringify({ message, content: base64Content, branch }),
+  });
+}
+
+export async function handleSubmitDappAPI(
+  request: Request,
+  env: Env,
+  _url: URL,
+): Promise<Response> {
+  const json = (obj: unknown, status = 200) =>
+    new Response(JSON.stringify(obj), {
+      status,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+
+  if (!env.GITHUB_BOT_TOKEN) {
+    return json({ error: "GitHub bot token not configured" }, 500);
+  }
+
+  let body: SubmitDappBody;
+  try {
+    body = (await request.json()) as SubmitDappBody;
+  } catch {
+    return json({ error: "Invalid JSON body" }, 400);
+  }
+
+  const missing: string[] = [];
+  if (!body.name?.trim()) missing.push("name");
+  if (!body.description?.trim()) missing.push("description");
+  if (!body.short_description?.trim()) missing.push("short_description");
+  if (!body.tags?.length) missing.push("tags");
+  if (!body.links?.website?.trim()) missing.push("links.website");
+  if (!body.logoImage) missing.push("logo image");
+  if (!body.bannerImage) missing.push("banner image");
+  if (!body.previewImage) missing.push("preview image");
+  if (missing.length)
+    return json(
+      { error: `Missing required fields: ${missing.join(", ")}` },
+      400,
+    );
+
+  if (body.short_description.trim().length > 60) {
+    return json({ error: "short_description exceeds 60 characters" }, 400);
+  }
+
+  try {
+    const token = env.GITHUB_BOT_TOKEN;
+    const repo = "alph-land/alphland";
+    const baseBranch = "develop";
+    const slug = slugify(body.name.trim());
+    const branchName = `submit/dapp-${slug}-${Date.now()}`;
+    const folder = `public/dapps/${slug}`;
+    const links = body.links ?? {};
+    const teamInfo = body.teamInfo ?? {};
+
+    // 1. Get base branch SHA
+    const baseRef = await githubApiFetch(
+      `/repos/${repo}/git/ref/heads/${baseBranch}`,
+      token,
+    );
+    const baseSha = baseRef.object.sha;
+
+    // 2. Create new branch
+    await githubApiFetch(`/repos/${repo}/git/refs`, token, {
+      method: "POST",
+      body: JSON.stringify({ ref: `refs/heads/${branchName}`, sha: baseSha }),
+    });
+
+    // 3. Upload images
+    await putRepoFile(
+      repo,
+      branchName,
+      token,
+      `${folder}/${slug}-logo.webp`,
+      stripDataUrl(body.logoImage),
+      `chore: add ${body.name} logo`,
+    );
+    await putRepoFile(
+      repo,
+      branchName,
+      token,
+      `${folder}/${slug}-banner.webp`,
+      stripDataUrl(body.bannerImage),
+      `chore: add ${body.name} banner`,
+    );
+    await putRepoFile(
+      repo,
+      branchName,
+      token,
+      `${folder}/${slug}-preview.webp`,
+      stripDataUrl(body.previewImage),
+      `chore: add ${body.name} preview`,
+    );
+
+    // 4. Build and upload dApp JSON
+    const foundedRaw = teamInfo.founded?.trim() ?? "";
+    const dappJson = {
+      name: body.name.trim(),
+      description: body.description.trim(),
+      short_description: body.short_description.trim(),
+      tags: body.tags,
+      verified: false,
+      dotw: false,
+      councils_choice: false,
+      links: {
+        website: links.website?.trim() ?? "",
+        careers: links.careers?.trim() ?? "",
+        twitter: links.twitter?.trim() ?? "",
+        telegram: links.telegram?.trim() ?? "",
+        discord: links.discord?.trim() ?? "",
+        docs: links.docs?.trim() ?? "",
+        github: links.github?.trim() ?? "",
+        youtube: links.youtube?.trim() ?? "",
+        medium: links.medium?.trim() ?? "",
+        mirror: links.mirror?.trim() ?? "",
+        linkedin: links.linkedin?.trim() ?? "",
+      },
+      twitterName: body.twitterName?.trim() ?? "",
+      teamInfo: {
+        contactEmail: teamInfo.contactEmail?.trim() ?? "",
+        founded: foundedRaw ? `${foundedRaw}T00:00:00.000Z` : "",
+        anonymous: teamInfo.anonymous ?? false,
+      },
+      media: {
+        logoUrl: `/dapps/${slug}/${slug}-logo.webp`,
+        bannerUrl: `/dapps/${slug}/${slug}-banner.webp`,
+        previewUrl: `/dapps/${slug}/${slug}-preview.webp`,
+      },
+      contracts: [],
+      audits: [],
+      tokens: [],
+    };
+
+    const jsonBase64 = btoa(
+      unescape(encodeURIComponent(JSON.stringify(dappJson, null, 2))),
+    );
+    await putRepoFile(
+      repo,
+      branchName,
+      token,
+      `data/${slug}.json`,
+      jsonBase64,
+      `feat: add dApp ${body.name}`,
+    );
+
+    // 5. Open PR → develop
+    const prBody = `## New dApp Submission
+
+**Name:** ${body.name}
+
+**Short Description:** ${body.short_description}
+
+**Description:**
+${body.description}
+
+**Tags:** ${body.tags.join(", ")}
+
+**Website:** ${links.website}
+
+### Links
+| Platform | URL |
+|----------|-----|
+| Twitter | ${links.twitter || "-"} |
+| Discord | ${links.discord || "-"} |
+| Telegram | ${links.telegram || "-"} |
+| GitHub | ${links.github || "-"} |
+| Docs | ${links.docs || "-"} |
+
+### Team Info
+- **Contact Email:** ${teamInfo.contactEmail || "Not provided"}
+- **Anonymous Team:** ${teamInfo.anonymous ? "Yes" : "No"}
+
+---
+*Submitted via [Alphland Submit Form](https://alph.land/submit)*`;
+
+    const pr = await githubApiFetch(`/repos/${repo}/pulls`, token, {
+      method: "POST",
+      body: JSON.stringify({
+        title: `Add dApp: ${body.name}`,
+        body: prBody,
+        head: branchName,
+        base: baseBranch,
+      }),
+    });
+
+    return json({ prUrl: pr.html_url, prNumber: pr.number });
+  } catch (err) {
+    console.error("[submit-dapp] error:", err);
+    return json(
+      { error: err instanceof Error ? err.message : "Internal server error" },
+      500,
+    );
+  }
+}

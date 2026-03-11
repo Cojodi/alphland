@@ -15,6 +15,7 @@ import {
   handleImageUploadAPI,
   handleImageServingAPI,
   handleProofOfWorkAPI,
+  handleSubmitDappAPI,
 } from "./handlers";
 
 // Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
@@ -32,6 +33,7 @@ export interface Env {
   RESEND_API_KEY?: string;
   FROM_EMAIL?: string;
   GITHUB_ISSUES_TOKEN?: string; // GitHub token for creating issues
+  GITHUB_BOT_TOKEN?: string; // GitHub token for dApp submissions (create branch + PR)
 }
 
 // Note: Do NOT cache auth instance globally
@@ -849,6 +851,11 @@ const worker = {
             },
           );
         }
+      }
+
+      // dApp submission endpoint
+      if (url.pathname === "/api/submit-dapp" && request.method === "POST") {
+        return handleSubmitDappAPI(request, env, url);
       }
 
       // Default 404
