@@ -2687,7 +2687,7 @@ export async function handleSubmitDappAPI(
       },
     });
 
-  if (!env.GITHUB_BOT_TOKEN) {
+  if (!env.GITHUB_ISSUES_TOKEN) {
     return json({ error: "GitHub bot token not configured" }, 500);
   }
 
@@ -2718,7 +2718,7 @@ export async function handleSubmitDappAPI(
   }
 
   try {
-    const token = env.GITHUB_BOT_TOKEN;
+    const token = env.GITHUB_ISSUES_TOKEN;
     const repo = "alph-land/alphland";
     const baseBranch = "develop";
     const slug = slugify(body.name.trim());

@@ -33,7 +33,7 @@ export interface Env {
   RESEND_API_KEY?: string;
   FROM_EMAIL?: string;
   GITHUB_ISSUES_TOKEN?: string; // GitHub token for creating issues
-  GITHUB_BOT_TOKEN?: string; // GitHub token for dApp submissions (create branch + PR)
+  GITHUB_BOT_TOKEN?: string; // unused — dApp submissions use GITHUB_ISSUES_TOKEN
 }
 
 // Note: Do NOT cache auth instance globally
