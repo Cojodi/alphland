@@ -943,13 +943,15 @@ export async function handleSponsorsAPI(
   if (request.method === "GET" && pathname === "/api/sponsors") {
     const isBanned = url.searchParams.get("is_banned");
 
-    let query = `SELECT s.*, b.bounty_count
+    let query = `SELECT s.*, b.bounty_count,
+                        u.email as user_email, u.name as user_name, u.image as user_image
                  FROM sponsors s
                  LEFT JOIN (
                    SELECT sponsor_id, COUNT(*) as bounty_count
                    FROM bounties
                    GROUP BY sponsor_id
-                 ) b ON s.id = b.sponsor_id`;
+                 ) b ON s.id = b.sponsor_id
+                 LEFT JOIN user u ON s.user_id = u.id`;
 
     // Try to filter by is_banned if param provided
     // Use COALESCE to handle case where column might not exist or is NULL
@@ -972,13 +974,15 @@ export async function handleSponsorsAPI(
         "Sponsors query failed, trying without is_banned filter:",
         error,
       );
-      const fallbackQuery = `SELECT s.*, b.bounty_count
+      const fallbackQuery = `SELECT s.*, b.bounty_count,
+                                    u.email as user_email, u.name as user_name, u.image as user_image
                              FROM sponsors s
                              LEFT JOIN (
                                SELECT sponsor_id, COUNT(*) as bounty_count
                                FROM bounties
                                GROUP BY sponsor_id
                              ) b ON s.id = b.sponsor_id
+                             LEFT JOIN user u ON s.user_id = u.id
                              ORDER BY s.created_at DESC`;
       const { results } = await env.DB.prepare(fallbackQuery).all();
       return new Response(JSON.stringify({ sponsors: results }), {

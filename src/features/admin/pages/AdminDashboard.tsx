@@ -755,6 +755,22 @@ export default function AdminDashboard() {
                                 </span>
                               )}
                             </div>
+                            {(sponsor as any).user_email && (
+                              <p className="text-xs text-light-charcoal font-barlow mt-1 flex items-center gap-1">
+                                <span className="opacity-60">Account:</span>
+                                {(sponsor as any).user_image && (
+                                  <img
+                                    src={(sponsor as any).user_image}
+                                    alt=""
+                                    className="w-4 h-4 rounded-full inline-block"
+                                  />
+                                )}
+                                <span>{(sponsor as any).user_name || ""}</span>
+                                <span className="opacity-60">
+                                  {(sponsor as any).user_email}
+                                </span>
+                              </p>
+                            )}
                             {sponsor.contact_first_name && (
                               <p className="text-xs text-light-charcoal font-barlow mt-1">
                                 Contact: {sponsor.contact_first_name}{" "}
