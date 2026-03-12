@@ -17,6 +17,17 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           const content = readFileSync(path.join(dataDir, file), "utf8");
           const data = JSON.parse(content);
           if (!data.name) return null;
+          const baseUrl = `https://${req.headers.host}`;
+          if (data.media) {
+            const toAbsolute = (url: string) =>
+              url && url.startsWith("/") ? `${baseUrl}${url}` : url;
+            data.media = {
+              ...data.media,
+              logoUrl: toAbsolute(data.media.logoUrl),
+              bannerUrl: toAbsolute(data.media.bannerUrl),
+              previewUrl: toAbsolute(data.media.previewUrl),
+            };
+          }
           return { slug: file.replace(/\.json$/, ""), ...data };
         } catch {
           return null;
