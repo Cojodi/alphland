@@ -5,42 +5,12 @@ import Layout from "../components/Layout";
 import Spotlight from "../components/Spotlight/Spotlight";
 import { categories } from "../data/categories";
 import { getAllDapps } from "../data/getAllDapps";
+import { BY_ALEPHIUM_DAPPS, FEATURED_DAPPS } from "../data/featuredDapps";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
 // dApps shown in the Hero banner carousel (top of page)
 const BANNER_DAPPS = ["powfi", "linx-app"];
-
-// Official Alephium Core Team dApps - shown in "By Alephium" section (A→Z)
-const BY_ALEPHIUM_DAPPS = [
-  "alephium-bridge",
-  "alephium-explorer",
-  "alephium-official-wallets",
-  "powfi",
-];
-
-// Featured dApps slugs - handpicked for the spotlight section (A→Z)
-const FEATURED_DAPPS = [
-  "alphbanx",
-  "alphpad",
-  "alph-2048-arena",
-  "aura",
-  "chain-reaction",
-  "deadrare",
-  "dia",
-  "elexium",
-  "henrycoder",
-  "learnify",
-  "ledger-wallet",
-  "linx-app",
-  // "moonshot-boxes", // coming soon
-  "nightshade",
-  "onekey-wallet",
-  "presenceprotocol",
-  "safepal-wallet",
-  "tangem-wallet",
-  "wemine",
-];
 
 interface DappCard {
   title: string;
