@@ -3087,7 +3087,7 @@ export const dapps: DappInfo[] = [
     dotw: false,
     councils_choice: false,
     links: {
-      website: "https://linxotc.com",
+      website: "https://otc.linxlabs.org",
       mirror: "",
       twitter: "https://x.com/linx_labs",
       telegram: "https://t.me/linx_wallet_chat",
