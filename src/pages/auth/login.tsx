@@ -1,28 +1,29 @@
-import Button from "@/components/Button/Button";
 import Layout from "@/components/Layout";
 import { authClient, useSession } from "@/lib/auth-client";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 
 /**
- * Login Page - Google OAuth Only
- *
- * Simplified login page supporting only Google authentication.
- * Email/Password authentication has been moved to /auth/email-login for future use.
+ * Login Page - Google OAuth + Email OTP
  *
  * Flow:
- * 1. User clicks "Continue with Google"
- * 2. Redirects to Google OAuth
- * 3. Google returns user info
- * 4. Better Auth auto-creates user if first time
- * 5. User is redirected to the app
+ * 1. User picks Google → OAuth redirect
+ * 2. User picks Email OTP → enter email → "Send Code" → enter 6-digit OTP → verify → redirect
  */
 export default function LoginPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
 
-  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Email OTP state
+  const [otpStep, setOtpStep] = useState<"idle" | "enterEmail" | "enterOtp">(
+    "idle",
+  );
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpLoading, setOtpLoading] = useState(false);
 
   // Get redirect URL from query params, default to /bounty
   const redirectUrl = (router.query.redirect as string) || "/bounty";
@@ -35,9 +36,8 @@ export default function LoginPage() {
   }, [session, isPending, router, redirectUrl]);
 
   const handleGoogleLogin = async () => {
-    setLoading(true);
+    setGoogleLoading(true);
     setError("");
-
     try {
       await authClient.signIn.social({
         provider: "google",
@@ -45,8 +45,49 @@ export default function LoginPage() {
       });
     } catch (err: any) {
       setError(err.message || "Google sign in failed");
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleSendOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setOtpLoading(true);
+    try {
+      const result = await authClient.emailOtp.sendVerificationOtp({
+        email,
+        type: "sign-in",
+      });
+      if (result.error) {
+        setError(result.error.message || "Failed to send code");
+      } else {
+        setOtpStep("enterOtp");
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to send code");
     } finally {
-      setLoading(false);
+      setOtpLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setOtpLoading(true);
+    try {
+      const result = await authClient.signIn.emailOtp({
+        email,
+        otp,
+      });
+      if (result.error) {
+        setError(result.error.message || "Invalid code");
+      } else {
+        router.push(redirectUrl);
+      }
+    } catch (err: any) {
+      setError(err.message || "Verification failed");
+    } finally {
+      setOtpLoading(false);
     }
   };
 
@@ -88,13 +129,13 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Google Sign In Button */}
+            {/* Google Sign In */}
             <button
               onClick={handleGoogleLogin}
-              disabled={loading}
+              disabled={googleLoading || otpLoading}
               className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-border-grey dark:border-dark-charcoal rounded-lg bg-white dark:bg-light-black hover:bg-smoked-white dark:hover:bg-hero-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? (
+              {googleLoading ? (
                 <div className="flex items-center gap-2">
                   <div className="w-5 h-5 border-2 border-black dark:border-white border-t-transparent rounded-full animate-spin"></div>
                   <span className="text-black dark:text-white">
@@ -132,30 +173,132 @@ export default function LoginPage() {
               )}
             </button>
 
-            {/* Info Text */}
-            <p className="mt-6 text-center text-xs text-light-charcoal dark:text-lightgrey">
-              By continuing, you agree to our Terms of Service and Privacy
-              Policy
-            </p>
+            {/* Divider */}
+            <div className="my-6 flex items-center">
+              <div className="flex-1 border-t border-border-grey dark:border-dark-charcoal"></div>
+              <span className="px-4 text-xs text-light-charcoal dark:text-lightgrey">
+                or
+              </span>
+              <div className="flex-1 border-t border-border-grey dark:border-dark-charcoal"></div>
+            </div>
 
-            {/* Divider - Optional Email Login Link */}
-            {process.env.NODE_ENV === "development" && (
-              <>
-                <div className="my-6 flex items-center">
-                  <div className="flex-1 border-t border-border-grey dark:border-dark-charcoal"></div>
-                  <span className="px-4 text-xs text-light-charcoal dark:text-lightgrey">
-                    Development Only
-                  </span>
-                  <div className="flex-1 border-t border-border-grey dark:border-dark-charcoal"></div>
+            {/* Email OTP */}
+            {otpStep === "idle" && (
+              <button
+                onClick={() => {
+                  setError("");
+                  setOtpStep("enterEmail");
+                }}
+                disabled={googleLoading}
+                className="w-full px-4 py-3 border border-border-grey dark:border-dark-charcoal rounded-lg bg-white dark:bg-light-black hover:bg-smoked-white dark:hover:bg-hero-dark transition-colors text-black dark:text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Continue with Email
+              </button>
+            )}
+
+            {otpStep === "enterEmail" && (
+              <form onSubmit={handleSendOtp} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-black dark:text-white mb-1">
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full px-4 py-3 rounded-lg border border-border-grey dark:border-dark-charcoal bg-white dark:bg-light-black text-black dark:text-white placeholder-light-charcoal dark:placeholder-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50"
+                  />
                 </div>
-
                 <button
-                  onClick={() => router.push("/auth/email-login")}
-                  className="w-full text-sm text-orange hover:text-orange/80 font-medium"
+                  type="submit"
+                  disabled={otpLoading}
+                  className="w-full px-4 py-3 rounded-lg bg-orange hover:bg-orange/90 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Email/Password Login (Coming Soon)
+                  {otpLoading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      Sending...
+                    </span>
+                  ) : (
+                    "Send Code"
+                  )}
                 </button>
-              </>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOtpStep("idle");
+                    setError("");
+                  }}
+                  className="w-full text-sm text-light-charcoal dark:text-lightgrey hover:text-black dark:hover:text-white"
+                >
+                  Back
+                </button>
+              </form>
+            )}
+
+            {otpStep === "enterOtp" && (
+              <form onSubmit={handleVerifyOtp} className="space-y-4">
+                <p className="text-sm text-light-charcoal dark:text-lightgrey">
+                  A 6-digit code was sent to{" "}
+                  <span className="text-black dark:text-white font-medium">
+                    {email}
+                  </span>
+                  . Enter it below.
+                </p>
+                <div>
+                  <label className="block text-sm font-medium text-black dark:text-white mb-1">
+                    Verification code
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    inputMode="numeric"
+                    pattern="\d{6}"
+                    maxLength={6}
+                    value={otp}
+                    onChange={(e) =>
+                      setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                    }
+                    placeholder="000000"
+                    className="w-full px-4 py-3 rounded-lg border border-border-grey dark:border-dark-charcoal bg-white dark:bg-light-black text-black dark:text-white placeholder-light-charcoal dark:placeholder-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 text-center text-2xl tracking-widest"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={otpLoading || otp.length !== 6}
+                  className="w-full px-4 py-3 rounded-lg bg-orange hover:bg-orange/90 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {otpLoading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      Verifying...
+                    </span>
+                  ) : (
+                    "Sign In"
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOtpStep("enterEmail");
+                    setOtp("");
+                    setError("");
+                  }}
+                  className="w-full text-sm text-light-charcoal dark:text-lightgrey hover:text-black dark:hover:text-white"
+                >
+                  Resend code
+                </button>
+              </form>
+            )}
+
+            {/* Info Text */}
+            {otpStep === "idle" && (
+              <p className="mt-6 text-center text-xs text-light-charcoal dark:text-lightgrey">
+                By continuing, you agree to our Terms of Service and Privacy
+                Policy
+              </p>
             )}
           </div>
 
@@ -163,7 +306,7 @@ export default function LoginPage() {
           <div className="text-center">
             <p className="text-xs text-light-charcoal dark:text-lightgrey">
               New to Alphland? Your account will be created automatically when
-              you sign in with Google.
+              you sign in.
             </p>
           </div>
         </div>

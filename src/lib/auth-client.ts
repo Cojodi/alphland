@@ -8,6 +8,7 @@
  * - Google OAuth callback URL should be: http://localhost:3000/api/auth/callback/google
  */
 import { createAuthClient } from "better-auth/react";
+import { emailOTPClient } from "better-auth/client/plugins";
 
 export const authClient = createAuthClient({
   // Use relative URL - requests go through Next.js proxy to worker
@@ -15,6 +16,7 @@ export const authClient = createAuthClient({
   fetchOptions: {
     credentials: "include", // Important: ensures cookies are sent with requests
   },
+  plugins: [emailOTPClient()],
 });
 
 /**

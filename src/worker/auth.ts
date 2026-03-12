@@ -16,6 +16,7 @@
  *    - Worker sets cookie, which appears on localhost:3000 domain
  */
 import { betterAuth } from "better-auth";
+import { emailOTP } from "better-auth/plugins";
 import { Kysely } from "kysely";
 import { D1Dialect } from "kysely-d1";
 import { Resend } from "resend";
@@ -174,6 +175,57 @@ export function createAuth(
         enabled: !!(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET),
       },
     },
+
+    plugins: [
+      emailOTP({
+        otpLength: 6,
+        expiresIn: 300, // 5 minutes
+        sendVerificationOTP: async ({
+          email,
+          otp,
+        }: {
+          email: string;
+          otp: string;
+          type: string;
+        }) => {
+          if (!resend || !ctx) {
+            console.error("RESEND_API_KEY or ctx not configured");
+            return;
+          }
+
+          ctx.waitUntil(
+            resend.emails
+              .send({
+                from: fromEmail,
+                to: email,
+                subject: "Your login code - Alphland",
+                html: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2>Your Login Code</h2>
+                    <p>Use the code below to sign in to Alphland. It expires in 5 minutes.</p>
+                    <div style="font-size: 36px; font-weight: bold; letter-spacing: 8px; text-align: center; padding: 24px; background: #f5f5f5; border-radius: 8px; margin: 24px 0;">
+                      ${otp}
+                    </div>
+                    <p>If you didn't request this code, you can safely ignore this email.</p>
+                    <hr style="border: none; border-top: 1px solid #ddd; margin: 24px 0;">
+                    <p style="color: #666; font-size: 12px;">This email was sent by Alphland</p>
+                  </div>
+                `,
+              })
+              .then(({ error }) => {
+                if (error) {
+                  console.error("Failed to send OTP email:", error);
+                } else {
+                  console.log(`OTP email sent to ${email}`);
+                }
+              })
+              .catch((err) => {
+                console.error("OTP email error:", err);
+              }),
+          );
+        },
+      }),
+    ],
 
     session: {
       expiresIn: 60 * 60 * 24 * 7, // 7 days
