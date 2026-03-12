@@ -16,20 +16,22 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         try {
           const content = readFileSync(path.join(dataDir, file), "utf8");
           const data = JSON.parse(content);
-          return {
-            slug: file.replace(/\.json$/, ""),
-            name: data.name as string,
-          };
+          if (!data.name) return null;
+          return { slug: file.replace(/\.json$/, ""), ...data };
         } catch {
           return null;
         }
       })
-      .filter(
-        (d): d is { slug: string; name: string } => d !== null && !!d.name,
-      )
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .filter(Boolean)
+      .sort((a: { name: string }, b: { name: string }) =>
+        a.name.localeCompare(b.name),
+      );
 
-    return res.status(200).json({ dapps });
+    res.setHeader(
+      "Cache-Control",
+      "public, max-age=60, stale-while-revalidate=300",
+    );
+    return res.status(200).json(dapps);
   } catch (error) {
     return res.status(500).json({ error: "Failed to load dapps" });
   }

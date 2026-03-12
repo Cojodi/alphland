@@ -86,9 +86,9 @@ export default function ManualCreateBounty() {
   }, [session, isPending, router]);
 
   useEffect(() => {
-    fetch("/api/dapps")
+    fetch("/api/dapps-directory")
       .then((r) => r.json())
-      .then((data) => setDapps(data.dapps || []))
+      .then((data) => setDapps(Array.isArray(data) ? data : []))
       .catch(() => {});
   }, []);
 
