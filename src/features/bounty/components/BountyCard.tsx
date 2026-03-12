@@ -57,7 +57,7 @@ export function BountyCard({
 }: BountyCardProps) {
   return (
     <Link href={`/bounty/${id}`}>
-      <div className="p-6 bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal rounded-xl hover:shadow-box-image-shadow-hover transition hover:border-orange/20 cursor-pointer">
+      <a className="block p-6 bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal rounded-xl hover:shadow-box-image-shadow-hover transition hover:border-orange/20 cursor-pointer">
         <div className="flex gap-4">
           {/* Logo */}
           <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-orange/20 to-accessible-green/20 dark:from-orange/10 dark:to-accessible-green/10 flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden">
@@ -112,7 +112,7 @@ export function BountyCard({
             <p className="font-bold text-accessible-green text-lg">{reward}</p>
           </div>
         </div>
-      </div>
+      </a>
     </Link>
   );
 }
