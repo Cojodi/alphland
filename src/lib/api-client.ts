@@ -37,6 +37,7 @@ export interface Bounty {
   created_at: string;
   updated_at: string;
   completed_at: string | null;
+  sponsor_id?: string;
   sponsor_name?: string;
   sponsor_logo_url?: string | null;
   sponsor_is_verified?: number;

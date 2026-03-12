@@ -364,6 +364,7 @@ export default function BountyList() {
                           <BountyCard
                             key={bounty.id}
                             id={bounty.id}
+                            sponsorId={bounty.sponsor_id}
                             logo={bounty.sponsor_logo_url || "💼"}
                             title={bounty.title}
                             company={bounty.sponsor_name || "Sponsor"}

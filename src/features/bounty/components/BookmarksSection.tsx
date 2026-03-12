@@ -18,6 +18,7 @@ const BOOKMARKS_PER_PAGE = 10;
 interface BookmarkItem {
   id: string;
   bounty_id: string;
+  sponsor_id: string | null;
   created_at: number;
   title: string;
   reward_amount: number;
@@ -203,7 +204,19 @@ export function BookmarksSection({
 
                     {/* Sponsor Name */}
                     <p className="text-sm text-light-charcoal dark:text-lightgrey mb-2">
-                      by {bookmark.sponsor_name}
+                      by{" "}
+                      {bookmark.sponsor_id ? (
+                        <Link href={`/bounty/sponsor/${bookmark.sponsor_id}`}>
+                          <a
+                            className="hover:text-orange transition-colors"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {bookmark.sponsor_name}
+                          </a>
+                        </Link>
+                      ) : (
+                        bookmark.sponsor_name
+                      )}
                     </p>
 
                     {/* Meta Info */}

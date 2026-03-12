@@ -1605,6 +1605,7 @@ export async function handleBookmarksAPI(
           bo.reward_usd_value,
           bo.status,
           bo.end_date,
+          bo.sponsor_id,
           s.name as sponsor_name,
           s.logo_url as sponsor_logo_url
         FROM bookmarks b

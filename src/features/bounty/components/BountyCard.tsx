@@ -4,6 +4,7 @@ import { CheckCircle } from "lucide-react";
 
 interface BountyCardProps {
   id: string;
+  sponsorId?: string;
   logo?: string;
   title: string;
   company: string;
@@ -48,6 +49,7 @@ const getTagStyle = (tag: string): string => {
 
 export function BountyCard({
   id,
+  sponsorId,
   logo,
   title,
   company,
@@ -88,7 +90,18 @@ export function BountyCard({
               {title}
             </h3>
             <p className="text-sm text-light-charcoal dark:text-lightgrey mb-3 flex items-center gap-1">
-              {company}
+              {sponsorId ? (
+                <Link href={`/bounty/sponsor/${sponsorId}`}>
+                  <a
+                    className="hover:text-orange transition-colors"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {company}
+                  </a>
+                </Link>
+              ) : (
+                company
+              )}
               {sponsorVerified && (
                 <CheckCircle className="w-4 h-4 text-accessible-green flex-shrink-0" />
               )}
