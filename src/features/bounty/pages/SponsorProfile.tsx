@@ -359,11 +359,21 @@ export async function getServerSideProps(context: any) {
     const host = context.req.headers.host || "localhost:3000";
     const baseUrl = `${protocol}://${host}`;
 
-    // Resolve username to sponsor id first
+    // Resolve name/id to sponsor id: try username first, fall back to direct id lookup
+    let sponsorId: string | null = null;
     const nameRes = await fetch(`${baseUrl}/api/sponsors/name/${name}`);
-    if (!nameRes.ok) return { notFound: true };
-    const nameData = await nameRes.json();
-    const sponsorId = nameData.sponsor?.id;
+    if (nameRes.ok) {
+      const nameData = await nameRes.json();
+      sponsorId = nameData.sponsor?.id ?? null;
+    }
+    if (!sponsorId) {
+      // name param might already be a sponsor id
+      const idRes = await fetch(`${baseUrl}/api/sponsors/${name}`);
+      if (idRes.ok) {
+        const idData = await idRes.json();
+        sponsorId = idData.sponsor?.id ?? null;
+      }
+    }
     if (!sponsorId) return { notFound: true };
 
     // Fetch sponsor data with bounties
