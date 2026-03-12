@@ -3,6 +3,7 @@
  * This worker handles API requests and connects to D1 database
  */
 import { createAuth } from "./auth";
+import { DAPP_LIST, FEATURED_DAPPS_FULL } from "./dappList";
 import {
   handleSubmissionsAPI,
   handleCommentsAPI,
@@ -856,6 +857,30 @@ const worker = {
       // dApp submission endpoint
       if (url.pathname === "/api/submit-dapp" && request.method === "POST") {
         return handleSubmitDappAPI(request, env, url);
+      }
+
+      // Apple App Store compliance list: name, developer, url only
+      if (url.pathname === "/api/dapp-list" && request.method === "GET") {
+        return new Response(JSON.stringify(DAPP_LIST), {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store",
+            ...corsHeaders,
+          },
+        });
+      }
+
+      // Full dapp data for spotlight + By Alephium dApps
+      if (url.pathname === "/api/featured-dapps" && request.method === "GET") {
+        return new Response(JSON.stringify(FEATURED_DAPPS_FULL), {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store",
+            ...corsHeaders,
+          },
+        });
       }
 
       // Default 404
