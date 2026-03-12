@@ -1,6 +1,7 @@
 "use client";
 
 import { apiClient } from "@/lib/api-client";
+import { sponsorSlug } from "../utils";
 import {
   Bookmark,
   Calendar,
@@ -205,8 +206,10 @@ export function BookmarksSection({
                     {/* Sponsor Name */}
                     <p className="text-sm text-light-charcoal dark:text-lightgrey mb-2">
                       by{" "}
-                      {bookmark.sponsor_id ? (
-                        <Link href={`/bounty/sponsor/${bookmark.sponsor_id}`}>
+                      {bookmark.sponsor_id && bookmark.sponsor_name ? (
+                        <Link
+                          href={`/bounty/sponsor/${sponsorSlug(bookmark.sponsor_name)}`}
+                        >
                           <a
                             className="hover:text-orange transition-colors"
                             onClick={(e) => e.stopPropagation()}

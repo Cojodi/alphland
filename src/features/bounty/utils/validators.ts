@@ -1,5 +1,13 @@
 // Validation utilities for bounty forms
 
+/** Generate a URL-friendly slug from a sponsor's company name.
+ *  "Linx Labs" → "linxlabs", "BabyPoolTool" → "babypooltool"
+ *  The worker resolves these by normalizing the sponsors.name column the same way.
+ */
+export function sponsorSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
 export function isValidUrl(url: string): boolean {
   try {
     new URL(url);

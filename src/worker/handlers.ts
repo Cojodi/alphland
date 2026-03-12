@@ -675,17 +675,21 @@ export async function handleSponsorsAPI(
     });
   }
 
-  // GET /api/sponsors/name/:username - Get sponsor by username
+  // GET /api/sponsors/name/:slug - Get sponsor by username or slugified company name
   if (
     request.method === "GET" &&
     pathname.match(/^\/api\/sponsors\/name\/[^/]+$/)
   ) {
-    const username = pathname.split("/").pop();
+    const slug = pathname.split("/").pop()!;
 
+    // Normalize: lowercase, remove all non-alphanumeric characters for slug comparison
     const sponsor = await env.DB.prepare(
-      `SELECT * FROM sponsors WHERE username = ?`,
+      `SELECT * FROM sponsors
+       WHERE username = ?
+          OR LOWER(REPLACE(REPLACE(REPLACE(name, ' ', ''), '-', ''), '_', '')) = LOWER(REPLACE(REPLACE(?, '-', ''), '_', ''))
+       LIMIT 1`,
     )
-      .bind(username)
+      .bind(slug, slug)
       .first();
 
     if (!sponsor) {

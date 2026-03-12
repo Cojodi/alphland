@@ -12,6 +12,7 @@ import { apiClient } from "@/lib/api-client";
 import { useSession } from "@/lib/auth-client";
 import { Bookmark, Users, ArrowLeft, Bell } from "lucide-react";
 import Link from "next/link";
+import { sponsorSlug } from "../utils";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Image from "next/image";
@@ -217,8 +218,10 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
 
                 <div className="flex flex-wrap gap-4 text-sm text-light-charcoal dark:text-lightgrey mb-4">
                   <div className="flex items-center gap-2">
-                    {bounty.sponsor_id ? (
-                      <Link href={`/bounty/sponsor/${bounty.sponsor_id}`}>
+                    {bounty.sponsor_id && bounty.sponsor_name ? (
+                      <Link
+                        href={`/bounty/sponsor/${sponsorSlug(bounty.sponsor_name)}`}
+                      >
                         <a className="font-medium hover:text-orange transition-colors">
                           by{" "}
                           {bounty.sponsor_name || bounty.dapp_name || "Sponsor"}

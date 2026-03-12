@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { CheckCircle } from "lucide-react";
+import { sponsorSlug } from "../utils";
 
 interface BountyCardProps {
   id: string;
@@ -90,8 +91,8 @@ export function BountyCard({
               {title}
             </h3>
             <p className="text-sm text-light-charcoal dark:text-lightgrey mb-3 flex items-center gap-1">
-              {sponsorId ? (
-                <Link href={`/bounty/sponsor/${sponsorId}`}>
+              {sponsorId && company ? (
+                <Link href={`/bounty/sponsor/${sponsorSlug(company)}`}>
                   <a
                     className="hover:text-orange transition-colors"
                     onClick={(e) => e.stopPropagation()}
