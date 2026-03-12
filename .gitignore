@@ -60,3 +60,4 @@ src/worker/node_modules/.mf/
 migrations/
 *.xlsx
 alephium-brand-guide
+deploy.md
