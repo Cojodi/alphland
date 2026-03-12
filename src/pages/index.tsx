@@ -23,6 +23,7 @@ const BY_ALEPHIUM_DAPPS = [
 const FEATURED_DAPPS = [
   "alphbanx",
   "alphpad",
+  "alph-2048-arena",
   "aura",
   "chain-reaction",
   "deadrare",
