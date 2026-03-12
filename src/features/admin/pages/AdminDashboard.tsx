@@ -1281,6 +1281,11 @@ export default function AdminDashboard() {
                                 {user.email}
                                 {user.username && ` • @${user.username}`}
                               </p>
+                              {user.createdAt && (
+                                <p className="text-xs text-light-charcoal opacity-60">
+                                  First login: {formatDate(user.createdAt)}
+                                </p>
+                              )}
                             </div>
                           </div>
 
