@@ -818,7 +818,8 @@ export async function handleSponsorsAPI(
               b.title as bounty_title,
               COALESCE(up.username, u.name, u.email) as user_username,
               u.name as user_full_name,
-              u.image as user_avatar_url
+              u.image as user_avatar_url,
+              up.wallet_address as user_wallet_address
        FROM bounty_submissions bs
        JOIN bounties b ON bs.bounty_id = b.id
        LEFT JOIN user u ON bs.user_id = u.id

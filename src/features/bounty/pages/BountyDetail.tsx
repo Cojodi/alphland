@@ -31,6 +31,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
   const [userProfile, setUserProfile] = useState<{
     username: string | null;
     image: string | null;
+    wallet_address: string | null;
   } | null>(null);
   const [sponsorUserId, setSponsorUserId] = useState<string | null>(null);
   const [isSponsor, setIsSponsor] = useState(false);
@@ -63,6 +64,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
           setUserProfile({
             username: data.user?.username || null,
             image: data.user?.image || null,
+            wallet_address: data.user?.wallet_address || null,
           });
         }
       } catch (error) {
@@ -386,10 +388,34 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                               alert("Please sign in to submit your work");
                               return;
                             }
+                            if (!userProfile?.wallet_address) {
+                              return;
+                            }
                             setShowSubmissionModal(true);
                           }
                     }
                   />
+
+                  {/* Wallet address required warning */}
+                  {session?.user?.id &&
+                    !userProfile?.wallet_address &&
+                    !isBountyEnded &&
+                    !userSubmission && (
+                      <div className="rounded-lg border border-orange/40 bg-orange/5 px-4 py-3 text-sm text-orange dark:text-orange">
+                        <p className="font-medium mb-1">
+                          Wallet address required
+                        </p>
+                        <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                          You need to bind your Alph wallet before submitting.{" "}
+                          <Link
+                            href="/bounty/profile/edit"
+                            className="underline text-orange hover:opacity-80"
+                          >
+                            Go to Edit Profile →
+                          </Link>
+                        </p>
+                      </div>
+                    )}
 
                   {/* Notification Settings for Sponsor */}
                   {isSponsor &&
