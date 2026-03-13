@@ -1102,7 +1102,7 @@ export default function EditProfile() {
                 {/* Alph Wallet Address */}
                 <div>
                   <label className="block text-sm font-semibold text-black dark:text-white mb-2">
-                    Alph Wallet Address
+                    Alph Wallet Address*
                   </label>
                   {formData.alphWalletAddress ? (
                     <div className="flex items-center gap-3 px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg">
