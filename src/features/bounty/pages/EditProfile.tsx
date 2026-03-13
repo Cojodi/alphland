@@ -2,6 +2,7 @@
 
 import Layout from "@/components/Layout";
 import { useSession } from "@/lib/auth-client";
+import { useWallet, useConnect } from "@alephium/web3-react";
 import { X, Upload } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -329,6 +330,10 @@ export default function EditProfile() {
   const [walletBindError, setWalletBindError] = useState("");
   const [walletMode, setWalletMode] = useState<"connect" | "manual">("connect");
   const [manualWalletInput, setManualWalletInput] = useState("");
+  const [pendingBind, setPendingBind] = useState(false);
+
+  const { connectionStatus, signer, account: walletAccount } = useWallet();
+  const { connect } = useConnect();
 
   // Load existing profile data
   useEffect(() => {
@@ -611,25 +616,13 @@ export default function EditProfile() {
 
   const bioCharactersLeft = 150 - formData.bio.length;
 
-  const handleBindWallet = async () => {
+  const doSignAndBind = async (
+    walletSigner: NonNullable<typeof signer>,
+    connectedAccount: NonNullable<typeof walletAccount>,
+  ) => {
     setWalletBindLoading(true);
     setWalletBindError("");
     try {
-      const win = window as any;
-      if (!win.alephium) {
-        setWalletBindError(
-          "Alephium Extension not found. Please install it from the Chrome Web Store.",
-        );
-        return;
-      }
-
-      // Connect and get account
-      const accounts = await win.alephium.enable({ networkId: "mainnet" });
-      const account = accounts?.[0];
-      if (!account?.address || !account?.publicKey) {
-        throw new Error("No account found in wallet");
-      }
-
       // Get nonce from server
       const nonceRes = await fetch("/api/wallet/nonce", {
         method: "POST",
@@ -640,10 +633,10 @@ export default function EditProfile() {
 
       // Sign the message
       const message = `Bind wallet to Alphland: ${nonce}`;
-      const { signature } = await win.alephium.signMessage({
+      const { signature } = await walletSigner.signMessage({
         message,
         messageHasher: "alephium",
-        signerAddress: account.address,
+        signerAddress: connectedAccount.address,
       });
 
       // Send to server for verification and binding
@@ -652,8 +645,8 @@ export default function EditProfile() {
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          address: account.address,
-          publicKey: account.publicKey,
+          address: connectedAccount.address,
+          publicKey: connectedAccount.publicKey,
           signature,
           nonce,
         }),
@@ -662,7 +655,10 @@ export default function EditProfile() {
       if (!bindRes.ok)
         throw new Error(bindData.error || "Failed to bind wallet");
 
-      setFormData((prev) => ({ ...prev, alphWalletAddress: account.address }));
+      setFormData((prev) => ({
+        ...prev,
+        alphWalletAddress: connectedAccount.address,
+      }));
     } catch (err: any) {
       if (
         err?.message?.toLowerCase().includes("cancelled") ||
@@ -674,6 +670,28 @@ export default function EditProfile() {
       }
     } finally {
       setWalletBindLoading(false);
+    }
+  };
+
+  // When wallet connects after user clicked "Connect Alephium Wallet", proceed with binding
+  useEffect(() => {
+    if (
+      pendingBind &&
+      connectionStatus === "connected" &&
+      signer &&
+      walletAccount
+    ) {
+      setPendingBind(false);
+      doSignAndBind(signer, walletAccount);
+    }
+  }, [connectionStatus, pendingBind]);
+
+  const handleBindWallet = async () => {
+    if (connectionStatus === "connected" && signer && walletAccount) {
+      await doSignAndBind(signer, walletAccount);
+    } else {
+      setPendingBind(true);
+      connect();
     }
   };
 
