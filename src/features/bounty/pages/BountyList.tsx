@@ -181,8 +181,9 @@ export default function BountyList() {
 
   return (
     <Layout
-      title="Bounties - Alphland"
-      description="Browse and participate in bounty opportunities"
+      title="Bounties"
+      description="Earn ALPH rewards by completing bounties on Alphland — find open tasks, submit your work, and get paid in Alephium's native token."
+      canonical="https://alph.land/bounty"
     >
       <div className="min-h-screen bg-smoked-white dark:bg-light-black">
         {/* Email Verification Success Banner */}

@@ -59,7 +59,7 @@ const Home = ({
   };
 
   return (
-    <Layout isHome>
+    <Layout isHome canonical="https://alph.land">
       <div className="container px-4 mx-auto mb-16 lg:mb-32">
         <div className="mt-8 lg:mt-12">
           <Hero

@@ -105,6 +105,7 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo, dappResources }) => {
       title={dappInfo.name}
       description={dappInfo.short_description}
       image={dappInfo.media.previewUrl}
+      canonical={`https://alph.land/${name}`}
     >
       {hasTweets && (
         <Script

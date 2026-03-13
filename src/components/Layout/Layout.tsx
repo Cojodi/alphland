@@ -17,6 +17,7 @@ interface LayoutProps {
   title?: string;
   description?: string;
   image?: string;
+  canonical?: string;
   isHome?: boolean;
 }
 
@@ -25,60 +26,95 @@ export const Layout = ({
   title,
   description,
   image,
+  canonical,
   isHome,
 }: LayoutProps) => {
   const selectedFilters = useCategoryStore((state) => state.selectedFilters);
   const selectedRatings = useCategoryStore((state) => state.selectedRatings);
   const { currentTheme } = useDarkMode();
 
+  const pageTitle = title
+    ? `${title} on Alphland – The best of Alephium's ecosystem`
+    : `Alphland | Discover the best of Alephium's ecosystem`;
+
+  const ogTitle = title
+    ? `Discover ${title} on Alphland – the best of Alephium's ecosystem`
+    : `Alphland | Discover the best of Alephium's ecosystem`;
+
+  const metaDescription = description
+    ? description
+    : `Alphland is the go-to directory for Alephium's ecosystem — explore dApps, DeFi protocols, NFT platforms, tools, and bounties built on Alephium blockchain.`;
+
+  const ogImage = image ?? "https://www.alph.land/share-preview.png";
+  const canonicalUrl = canonical ?? "https://alph.land";
+
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Alphland",
+    url: "https://alph.land",
+    logo: "https://alph.land/android-chrome-512x512.png",
+    description: metaDescription,
+    sameAs: ["https://github.com/cojodi/Alphland"],
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Alphland",
+    url: "https://alph.land",
+    description: metaDescription,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: "https://alph.land/?search={search_term_string}",
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <>
       <Head>
-        <title>
-          {title
-            ? `${title} on Alphland – The best of Alephium's ecosystem`
-            : `Alphland | The best of Alephium's ecosystem`}
-        </title>
-        <meta
-          name="description"
-          content={
-            description
-              ? `${description}`
-              : `Alphland | The best of Alephium's ecosystem`
-          }
-        />
+        <title>{pageTitle}</title>
+        <meta name="description" content={metaDescription} />
+        <link rel="canonical" href={canonicalUrl} />
 
-        <meta property="og:site_name" content="alph.land" />
-        <meta
-          property="og:title"
-          content={
-            title
-              ? `Discover ${title} on Alphland – the best of Alephium's ecosystem`
-              : `Alphland | The best of Alephium's ecosystem`
-          }
-        />
-        {description && <meta name="og:description" content={description} />}
-        <meta
-          name="og:image"
-          content={image ?? "https://www.alph.land/share-preview.png"}
-        />
+        {/* Open Graph */}
+        <meta property="og:site_name" content="Alphland" />
         <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:title" content={ogTitle} />
+        <meta property="og:description" content={metaDescription} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
 
+        {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          property="twitter:title"
-          content={
-            title
-              ? `Discover ${title} on Alphland – the best of Alephium's ecosystem`
-              : `Alphland | The best of Alephium's ecosystem`
-          }
-        />
+        <meta name="twitter:title" content={ogTitle} />
+        <meta name="twitter:description" content={metaDescription} />
+        <meta name="twitter:image" content={ogImage} />
+        <meta name="twitter:site" content="@alephium" />
 
-        {description && (
-          <meta name="twitter:description" content={description} />
+        {/* JSON-LD Structured Data */}
+        {isHome && (
+          <>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify(organizationSchema),
+              }}
+            />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify(websiteSchema),
+              }}
+            />
+          </>
         )}
-        {image && <meta name="twitter:image" content={image} />}
-        <meta name="twitter:site" content="@argentHQ" />
 
         <link
           rel="apple-touch-icon"
@@ -97,7 +133,6 @@ export const Layout = ({
           sizes="16x16"
           href="/favicon-16x16.png"
         />
-
         <link rel="manifest" href="/site.webmanifest" />
       </Head>
       <Header />
