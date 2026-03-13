@@ -58,7 +58,7 @@ export function createAuth(
 
   // Initialize Resend for email sending
   const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
-  const fromEmail = env.FROM_EMAIL || "onboarding@resend.dev";
+  const fromEmail = `Alphland <${env.FROM_EMAIL || "onboarding@resend.dev"}>`;
 
   return betterAuth({
     // D1 uses SQLite syntax - must specify type
