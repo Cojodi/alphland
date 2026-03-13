@@ -3,6 +3,7 @@
  * This worker handles API requests and connects to D1 database
  */
 import { createAuth } from "./auth";
+import { verifySignedMessage } from "@alephium/web3";
 import { DAPP_LIST, FEATURED_DAPPS_FULL } from "./dappList";
 import {
   handleSubmissionsAPI,
@@ -2004,6 +2005,208 @@ async function handleUsersAPI(
           headers: corsHeaders,
         },
       );
+    }
+  }
+
+  // POST /api/wallet/nonce - Generate nonce for wallet binding
+  if (request.method === "POST" && url.pathname === "/api/wallet/nonce") {
+    try {
+      const auth = createAuth(
+        env.DB,
+        {
+          GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
+          GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
+          BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
+          BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+          APP_URL: env.APP_URL,
+          RESEND_API_KEY: env.RESEND_API_KEY,
+          FROM_EMAIL: env.FROM_EMAIL,
+        },
+        ctx,
+      );
+      const session = await auth.api.getSession({ headers: request.headers });
+      if (!session?.user) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: corsHeaders,
+        });
+      }
+      const userId = session.user.id;
+      const nonce = crypto.randomUUID();
+      const expiresAt = Math.floor(Date.now() / 1000) + 300; // 5 minutes
+
+      await env.DB.prepare("DELETE FROM wallet_nonces WHERE user_id = ?")
+        .bind(userId)
+        .run();
+      await env.DB.prepare(
+        "INSERT INTO wallet_nonces (id, user_id, nonce, expires_at) VALUES (?, ?, ?, ?)",
+      )
+        .bind(crypto.randomUUID(), userId, nonce, expiresAt)
+        .run();
+
+      return new Response(JSON.stringify({ nonce }), { headers: corsHeaders });
+    } catch (error: any) {
+      console.error("[POST /api/wallet/nonce] Error:", error);
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
+        headers: corsHeaders,
+      });
+    }
+  }
+
+  // POST /api/wallet/bind - Verify signature and bind wallet address
+  if (request.method === "POST" && url.pathname === "/api/wallet/bind") {
+    try {
+      const auth = createAuth(
+        env.DB,
+        {
+          GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
+          GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
+          BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
+          BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+          APP_URL: env.APP_URL,
+          RESEND_API_KEY: env.RESEND_API_KEY,
+          FROM_EMAIL: env.FROM_EMAIL,
+        },
+        ctx,
+      );
+      const session = await auth.api.getSession({ headers: request.headers });
+      if (!session?.user) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: corsHeaders,
+        });
+      }
+      const userId = session.user.id;
+      const body = (await request.json()) as {
+        address: string;
+        publicKey: string;
+        signature: string;
+        nonce: string;
+      };
+
+      // Validate nonce
+      const nonceRow = (await env.DB.prepare(
+        "SELECT nonce, expires_at FROM wallet_nonces WHERE user_id = ? AND nonce = ?",
+      )
+        .bind(userId, body.nonce)
+        .first()) as { nonce: string; expires_at: number } | null;
+
+      if (!nonceRow) {
+        return new Response(
+          JSON.stringify({ error: "Invalid or expired nonce" }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+      if (nonceRow.expires_at < Math.floor(Date.now() / 1000)) {
+        await env.DB.prepare("DELETE FROM wallet_nonces WHERE user_id = ?")
+          .bind(userId)
+          .run();
+        return new Response(JSON.stringify({ error: "Nonce expired" }), {
+          status: 400,
+          headers: corsHeaders,
+        });
+      }
+
+      // Verify Alephium signature
+      const message = `Bind wallet to Alphland: ${body.nonce}`;
+      const isValid = verifySignedMessage(
+        message,
+        "alephium",
+        body.publicKey,
+        body.signature,
+      );
+      if (!isValid) {
+        return new Response(JSON.stringify({ error: "Invalid signature" }), {
+          status: 400,
+          headers: corsHeaders,
+        });
+      }
+
+      // Check address not already bound to another account
+      const existing = (await env.DB.prepare(
+        "SELECT user_id FROM user_profiles WHERE wallet_address = ? AND user_id != ?",
+      )
+        .bind(body.address, userId)
+        .first()) as { user_id: string } | null;
+      if (existing) {
+        return new Response(
+          JSON.stringify({
+            error: "This wallet address is already bound to another account",
+          }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+
+      // Consume nonce and save wallet address
+      const now = Math.floor(Date.now() / 1000);
+      await env.DB.prepare("DELETE FROM wallet_nonces WHERE user_id = ?")
+        .bind(userId)
+        .run();
+      await env.DB.prepare(
+        "UPDATE user_profiles SET wallet_address = ?, updated_at = ? WHERE user_id = ?",
+      )
+        .bind(body.address, now, userId)
+        .run();
+
+      console.log(
+        `[POST /api/wallet/bind] Wallet ${body.address} bound to user ${userId}`,
+      );
+      return new Response(JSON.stringify({ success: true }), {
+        headers: corsHeaders,
+      });
+    } catch (error: any) {
+      console.error("[POST /api/wallet/bind] Error:", error);
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
+        headers: corsHeaders,
+      });
+    }
+  }
+
+  // POST /api/wallet/unbind - Remove bound wallet address
+  if (request.method === "POST" && url.pathname === "/api/wallet/unbind") {
+    try {
+      const auth = createAuth(
+        env.DB,
+        {
+          GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
+          GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
+          BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
+          BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+          APP_URL: env.APP_URL,
+          RESEND_API_KEY: env.RESEND_API_KEY,
+          FROM_EMAIL: env.FROM_EMAIL,
+        },
+        ctx,
+      );
+      const session = await auth.api.getSession({ headers: request.headers });
+      if (!session?.user) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: corsHeaders,
+        });
+      }
+      const userId = session.user.id;
+      const now = Math.floor(Date.now() / 1000);
+      await env.DB.prepare(
+        "UPDATE user_profiles SET wallet_address = NULL, updated_at = ? WHERE user_id = ?",
+      )
+        .bind(now, userId)
+        .run();
+
+      console.log(
+        `[POST /api/wallet/unbind] Wallet unbound for user ${userId}`,
+      );
+      return new Response(JSON.stringify({ success: true }), {
+        headers: corsHeaders,
+      });
+    } catch (error: any) {
+      console.error("[POST /api/wallet/unbind] Error:", error);
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
+        headers: corsHeaders,
+      });
     }
   }
 

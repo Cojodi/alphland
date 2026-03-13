@@ -325,6 +325,8 @@ export default function EditProfile() {
   const [hasLoadedProfile, setHasLoadedProfile] = useState(false);
   const [isGoogleLinked, setIsGoogleLinked] = useState(false);
   const [googleName, setGoogleName] = useState<string | null>(null);
+  const [walletBindLoading, setWalletBindLoading] = useState(false);
+  const [walletBindError, setWalletBindError] = useState("");
 
   // Load existing profile data
   useEffect(() => {
@@ -606,6 +608,92 @@ export default function EditProfile() {
   );
 
   const bioCharactersLeft = 150 - formData.bio.length;
+
+  const handleBindWallet = async () => {
+    setWalletBindLoading(true);
+    setWalletBindError("");
+    try {
+      const win = window as any;
+      if (!win.alephium) {
+        setWalletBindError(
+          "Alephium Extension not found. Please install it from the Chrome Web Store.",
+        );
+        return;
+      }
+
+      // Connect and get account
+      const accounts = await win.alephium.enable({ networkId: "mainnet" });
+      const account = accounts?.[0];
+      if (!account?.address || !account?.publicKey) {
+        throw new Error("No account found in wallet");
+      }
+
+      // Get nonce from server
+      const nonceRes = await fetch("/api/wallet/nonce", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!nonceRes.ok) throw new Error("Failed to get nonce from server");
+      const { nonce } = await nonceRes.json();
+
+      // Sign the message
+      const message = `Bind wallet to Alphland: ${nonce}`;
+      const { signature } = await win.alephium.signMessage({
+        message,
+        messageHasher: "alephium",
+        signerAddress: account.address,
+      });
+
+      // Send to server for verification and binding
+      const bindRes = await fetch("/api/wallet/bind", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          address: account.address,
+          publicKey: account.publicKey,
+          signature,
+          nonce,
+        }),
+      });
+      const bindData = await bindRes.json();
+      if (!bindRes.ok)
+        throw new Error(bindData.error || "Failed to bind wallet");
+
+      setFormData((prev) => ({ ...prev, alphWalletAddress: account.address }));
+    } catch (err: any) {
+      if (
+        err?.message?.toLowerCase().includes("cancelled") ||
+        err?.message?.toLowerCase().includes("rejected")
+      ) {
+        setWalletBindError("Signing cancelled.");
+      } else {
+        setWalletBindError(err.message || "Failed to bind wallet");
+      }
+    } finally {
+      setWalletBindLoading(false);
+    }
+  };
+
+  const handleUnbindWallet = async () => {
+    setWalletBindLoading(true);
+    setWalletBindError("");
+    try {
+      const res = await fetch("/api/wallet/unbind", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to unbind wallet");
+      }
+      setFormData((prev) => ({ ...prev, alphWalletAddress: "" }));
+    } catch (err: any) {
+      setWalletBindError(err.message || "Failed to unbind wallet");
+    } finally {
+      setWalletBindLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -994,17 +1082,44 @@ export default function EditProfile() {
                 {/* Alph Wallet Address */}
                 <div>
                   <label className="block text-sm font-semibold text-black dark:text-white mb-2">
-                    Alph Wallet Address <span className="text-red-500">*</span>
+                    Alph Wallet Address
                   </label>
-                  <input
-                    type="text"
-                    name="alphWalletAddress"
-                    value={formData.alphWalletAddress}
-                    onChange={handleInputChange}
-                    placeholder="Enter your Alephium wallet address"
-                    required
-                    className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange font-mono text-sm"
-                  />
+                  {formData.alphWalletAddress ? (
+                    <div className="flex items-center gap-3 px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg">
+                      <span className="font-mono text-sm text-black dark:text-white truncate flex-1">
+                        {formData.alphWalletAddress}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleUnbindWallet}
+                        disabled={walletBindLoading}
+                        className="text-sm text-red-500 hover:text-red-400 font-medium shrink-0 disabled:opacity-50"
+                      >
+                        {walletBindLoading ? "..." : "Unbind"}
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleBindWallet}
+                      disabled={walletBindLoading}
+                      className="flex items-center gap-2 px-4 py-2 border border-border-grey dark:border-dark-charcoal rounded-lg bg-white dark:bg-light-black hover:bg-smoked-white dark:hover:bg-hero-dark transition-colors text-black dark:text-white text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {walletBindLoading ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                          Connecting...
+                        </>
+                      ) : (
+                        "Bind Alephium Wallet"
+                      )}
+                    </button>
+                  )}
+                  {walletBindError && (
+                    <p className="mt-2 text-sm text-red-500">
+                      {walletBindError}
+                    </p>
+                  )}
                 </div>
               </div>
             </section>
