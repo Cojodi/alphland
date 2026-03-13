@@ -705,6 +705,11 @@ const worker = {
         return handleUsersAPI(request, env, url, _ctx);
       }
 
+      // Wallet endpoints
+      if (url.pathname.startsWith("/api/wallet")) {
+        return handleUsersAPI(request, env, url, _ctx);
+      }
+
       // Submission endpoints
       if (url.pathname.startsWith("/api/submissions")) {
         return handleSubmissionsAPI(request, env, url);
