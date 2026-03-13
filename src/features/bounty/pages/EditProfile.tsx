@@ -327,6 +327,8 @@ export default function EditProfile() {
   const [googleName, setGoogleName] = useState<string | null>(null);
   const [walletBindLoading, setWalletBindLoading] = useState(false);
   const [walletBindError, setWalletBindError] = useState("");
+  const [walletMode, setWalletMode] = useState<"connect" | "manual">("connect");
+  const [manualWalletInput, setManualWalletInput] = useState("");
 
   // Load existing profile data
   useEffect(() => {
@@ -1099,21 +1101,88 @@ export default function EditProfile() {
                       </button>
                     </div>
                   ) : (
-                    <button
-                      type="button"
-                      onClick={handleBindWallet}
-                      disabled={walletBindLoading}
-                      className="flex items-center gap-2 px-4 py-2 border border-border-grey dark:border-dark-charcoal rounded-lg bg-white dark:bg-light-black hover:bg-smoked-white dark:hover:bg-hero-dark transition-colors text-black dark:text-white text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {walletBindLoading ? (
-                        <>
-                          <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                          Connecting...
-                        </>
+                    <>
+                      {/* Mode tabs */}
+                      <div className="flex gap-1 mb-3 p-1 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg w-fit">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setWalletMode("connect");
+                            setWalletBindError("");
+                          }}
+                          className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                            walletMode === "connect"
+                              ? "bg-white dark:bg-hero-dark text-black dark:text-white shadow-sm"
+                              : "text-light-charcoal dark:text-lightgrey hover:text-black dark:hover:text-white"
+                          }`}
+                        >
+                          Connect Wallet
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setWalletMode("manual");
+                            setWalletBindError("");
+                          }}
+                          className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                            walletMode === "manual"
+                              ? "bg-white dark:bg-hero-dark text-black dark:text-white shadow-sm"
+                              : "text-light-charcoal dark:text-lightgrey hover:text-black dark:hover:text-white"
+                          }`}
+                        >
+                          Enter Manually
+                        </button>
+                      </div>
+
+                      {walletMode === "connect" ? (
+                        <button
+                          type="button"
+                          onClick={handleBindWallet}
+                          disabled={walletBindLoading}
+                          className="flex items-center gap-2 px-4 py-2 border border-border-grey dark:border-dark-charcoal rounded-lg bg-white dark:bg-light-black hover:bg-smoked-white dark:hover:bg-hero-dark transition-colors text-black dark:text-white text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {walletBindLoading ? (
+                            <>
+                              <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                              Connecting...
+                            </>
+                          ) : (
+                            "Connect Alephium Wallet"
+                          )}
+                        </button>
                       ) : (
-                        "Bind Alephium Wallet"
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={manualWalletInput}
+                            onChange={(e) =>
+                              setManualWalletInput(e.target.value)
+                            }
+                            placeholder="Enter your Alephium wallet address"
+                            className="flex-1 px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-orange"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (!manualWalletInput.trim()) {
+                                setWalletBindError(
+                                  "Please enter a wallet address.",
+                                );
+                                return;
+                              }
+                              setFormData((prev) => ({
+                                ...prev,
+                                alphWalletAddress: manualWalletInput.trim(),
+                              }));
+                              setWalletBindError("");
+                            }}
+                            className="px-4 py-2 bg-orange text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                          >
+                            Confirm
+                          </button>
+                        </div>
                       )}
-                    </button>
+                    </>
                   )}
                   {walletBindError && (
                     <p className="mt-2 text-sm text-red-500">
