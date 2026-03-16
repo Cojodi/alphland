@@ -24,6 +24,7 @@ interface DappInfo {
   short_description: string;
   name: string;
   tags: string[];
+  keywords?: string[];
   group: string;
   contracts?: Contract[];
   goerliContracts?: Contract[];
@@ -133,6 +134,7 @@ interface DappCard {
   short_description: string;
   title: string;
   tags: string[];
+  keywords?: string[];
   url: string;
   image: string;
   logo: string;
@@ -141,4 +143,6 @@ interface DappCard {
   audits: Audit[];
   verified: boolean;
   councils_choice: boolean;
+  founded?: string;
+  links?: Links;
 }

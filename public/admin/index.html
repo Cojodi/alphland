@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Alphland CMS</title>
+  </head>
+  <body>
+    <!-- MUST set CMS_MANUAL_INIT BEFORE loading the CMS script -->
+    <script>window.CMS_MANUAL_INIT = true;</script>
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script>
+      // Environment detection
+      const host = window.location.hostname;
+      const isProduction = host === 'alph.land' || host === 'www.alph.land';
+      const targetBranch = isProduction ? 'develop' : 'bounty';
+
+      console.log('CMS Config:', { host, isProduction, targetBranch });
+
+      CMS.init({
+        config: {
+          load_config_file: true, // Load config.yml for collections
+          backend: {
+            name: 'github',
+            repo: 'alph-land/alphland',
+            branch: targetBranch,
+            base_url: window.location.origin,
+            auth_endpoint: 'api/auth',
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

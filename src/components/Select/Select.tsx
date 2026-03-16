@@ -1,17 +1,17 @@
-import { useOnClickOutside } from "../../hooks/useClickOutside"
-import React, { useEffect, useRef, useState } from "react"
+import { useOnClickOutside } from "../../hooks/useClickOutside";
+import React, { useEffect, useRef, useState } from "react";
 
 type Option = {
-  label: string
-  value: string
-}
+  label: string;
+  value: string;
+};
 
 type SelectProps = {
-  options: Option[]
-  placeholder: string
-  onChange?: (s: string) => void
-  defaultValue?: string | null
-}
+  options: Option[];
+  placeholder: string;
+  onChange?: (s: string) => void;
+  defaultValue?: string | null;
+};
 
 const Select = ({
   options,
@@ -19,36 +19,36 @@ const Select = ({
   onChange,
   defaultValue,
 }: SelectProps) => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<Option | null>(
     options.find((option) => option.value === defaultValue) || null,
-  )
+  );
 
   useEffect(() => {
-    const foundOption = options.find((option) => option.value === defaultValue)
+    const foundOption = options.find((option) => option.value === defaultValue);
     if (foundOption) {
-      setSelectedOption(foundOption)
+      setSelectedOption(foundOption);
       if (onChange) {
-        onChange(foundOption.value)
+        onChange(foundOption.value);
       }
     }
-  }, [defaultValue])
+  }, [defaultValue]);
 
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLDivElement>(null);
   useOnClickOutside(ref, (event) => {
-    setIsOpen(false)
-  })
+    setIsOpen(false);
+  });
 
   const handleSelect = (option: Option) => {
-    setSelectedOption(option)
-    setIsOpen(false)
+    setSelectedOption(option);
+    setIsOpen(false);
     if (onChange) {
-      onChange(option.value)
+      onChange(option.value);
     }
-  }
+  };
 
   return (
-    <div className="relative h-[38px] mb-8">
+    <div className="relative h-[46px]">
       <div
         className={
           "shadow-box-image-shadow rounded-lg absolute w-full z-50 select-none"
@@ -57,7 +57,7 @@ const Select = ({
       >
         <div
           className={`pl-4 pr-3 bg-white dark:bg-[#333] rounded-lg cursor-pointer relative shadow-outline-blue ${
-            !isOpen ? "py-2.5" : "pt-2.5 pb-2"
+            !isOpen ? "py-3" : "pt-3 pb-2"
           }`}
           onClick={() => setIsOpen(!isOpen)}
         >
@@ -95,7 +95,7 @@ const Select = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Select
+export default Select;

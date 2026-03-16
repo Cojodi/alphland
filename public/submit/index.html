@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Submit Your dApp - Alphland</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f5f7;
+      --bg-card: #ffffff;
+      --bg-input: #f9f9fb;
+      --border: #d1d1db;
+      --border-focus: #6366f1;
+      --text: #111118;
+      --text-muted: #6b6b80;
+      --accent: #6366f1;
+      --accent-hover: #4f51d8;
+      --error: #dc2626;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    .header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 24px 32px;
+    }
+    .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .header p { color: var(--text-muted); font-size: 14px; margin-bottom: 14px; }
+    .checklist { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; }
+    .checklist li {
+      background: #f0f0f5;
+      border: 1px solid #d1d1db;
+      border-radius: 6px;
+      color: #444455;
+      font-size: 12px;
+      padding: 3px 10px;
+    }
+    .checklist li::before { content: '✓ '; color: var(--accent); font-weight: 700; }
+
+    /* Main */
+    .main { max-width: 800px; margin: 0 auto; padding: 32px 24px 80px; }
+
+    /* Section card */
+    .section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Fields */
+    .field { margin-bottom: 18px; }
+    .field:last-child { margin-bottom: 0; }
+    .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+    .required { color: var(--accent); margin-left: 2px; }
+    .hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .field-error { font-size: 12px; color: var(--error); margin-top: 4px; display: none; }
+    .field.has-error .field-error { display: block; }
+    .field.has-error input,
+    .field.has-error textarea { border-color: var(--error) !important; }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="url"],
+    input[type="date"],
+    textarea {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus { border-color: var(--border-focus); }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); }
+    textarea { resize: vertical; min-height: 100px; }
+
+    /* Char counter */
+    .char-row { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 4px; }
+    .char-count { font-size: 11px; color: var(--text-muted); flex-shrink: 0; margin-left: 8px; }
+    .char-count.over { color: var(--error); }
+
+    /* Tags */
+    .tags-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+    }
+    .tag-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      user-select: none;
+      font-size: 13px;
+    }
+    .tag-option:hover { border-color: var(--accent); }
+    .tag-option input[type="checkbox"] {
+      width: 15px; height: 15px;
+      margin: 0; padding: 0;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+    .tag-option.selected { border-color: var(--accent); background: rgba(99,102,241,0.1); }
+    .tags-error { font-size: 12px; color: var(--error); margin-top: 10px; display: none; }
+
+    /* Links grid */
+    .links-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .links-grid .field { margin-bottom: 0; }
+
+    /* Team grid */
+    .team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+    .team-grid .field { margin-bottom: 0; }
+
+    /* Checkbox */
+    .checkbox-label {
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; font-size: 13px;
+    }
+    .checkbox-label input[type="checkbox"] {
+      width: 18px; height: 18px;
+      margin: 0; padding: 0;
+      accent-color: var(--accent);
+    }
+
+    /* Upload areas */
+    .media-grid {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .media-full { grid-column: 1 / -1; }
+
+    .upload-wrap { position: relative; }
+    .upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: var(--bg-input);
+      overflow: hidden;
+      position: relative;
+    }
+    .upload-area:hover { border-color: var(--accent); }
+    .upload-area.dragover { border-color: var(--accent); background: rgba(99,102,241,0.06); }
+    .upload-area.has-file { border-style: solid; border-color: var(--border-focus); }
+
+    .upload-trigger {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
+    .upload-placeholder {
+      padding: 24px 16px;
+      pointer-events: none;
+    }
+    .upload-icon { font-size: 28px; margin-bottom: 8px; }
+    .upload-text { font-size: 13px; margin-bottom: 4px; }
+    .upload-subtext { font-size: 11px; color: var(--text-muted); }
+    .upload-preview {
+      width: 100%;
+      display: none;
+      object-fit: cover;
+    }
+    .upload-area.has-file .upload-placeholder { display: none; }
+    .upload-area.has-file .upload-preview { display: block; }
+    .upload-area.logo-area .upload-preview { height: 110px; object-fit: contain; padding: 8px; }
+    .upload-area.banner-area .upload-preview { height: 110px; object-fit: cover; }
+    .upload-area.screenshot-area .upload-preview { height: 140px; object-fit: cover; }
+
+    .upload-remove {
+      position: absolute;
+      top: 8px; right: 8px;
+      z-index: 10;
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 26px; height: 26px;
+      font-size: 16px; line-height: 1;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .upload-area.has-file ~ .upload-remove { display: flex; }
+
+    .upload-converting {
+      position: absolute; inset: 0;
+      background: rgba(15,15,26,0.85);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      border-radius: 8px;
+    }
+    .upload-converting.active { display: flex; }
+    .spinner-sm {
+      width: 22px; height: 22px;
+      border: 2px solid #333;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+    .converting-label { font-size: 11px; color: var(--text-muted); margin-top: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Submit button */
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    }
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(99,102,241,0.4);
+    }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* Error banner */
+    .error-banner {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid var(--error);
+      border-radius: 8px;
+      color: var(--error);
+      font-size: 14px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .error-banner.visible { display: block; }
+
+    /* Loading overlay */
+    .loading-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .loading-overlay.visible { display: flex; }
+    .loading-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      max-width: 340px;
+      width: 90%;
+    }
+    .spinner-lg {
+      width: 48px; height: 48px;
+      border: 3px solid #333;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      margin: 0 auto 20px;
+    }
+    .loading-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .loading-step { font-size: 13px; color: var(--text-muted); }
+
+    /* Success overlay */
+    .success-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .success-overlay.visible { display: flex; }
+    .success-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .success-icon {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+    .success-icon svg { width: 40px; height: 40px; }
+    .success-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
+    .success-message { color: var(--text-muted); font-size: 15px; line-height: 1.6; margin-bottom: 28px; }
+    .pr-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
+      color: #fff;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .pr-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99,102,241,0.4); }
+    .back-link { display: block; margin-top: 16px; color: var(--text-muted); text-decoration: none; font-size: 14px; }
+    .back-link:hover { color: var(--accent); }
+
+    /* Responsive */
+    @media (max-width: 620px) {
+      .links-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: 1fr; }
+      .media-grid { grid-template-columns: 1fr; }
+      .main { padding: 20px 14px 60px; }
+      .section { padding: 20px; }
+      .header { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Submit Your dApp to Alphland</h1>
+    <p>Fill in the form below. A Pull Request will be created for our team to review — no GitHub account needed.</p>
+    <ul class="checklist">
+      <li>Logo (512×512px)</li>
+      <li>Banner (1200×400px)</li>
+      <li>Preview screenshot (1200×800px)</li>
+      <li>Website URL &amp; social links</li>
+      <li>Short tagline (max 60 chars)</li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class="error-banner" id="error-banner"></div>
+
+    <form id="submit-form" novalidate>
+
+      <!-- Basic Info -->
+      <div class="section">
+        <div class="section-title">Basic Information</div>
+
+        <div class="field" id="field-name">
+          <label>dApp Name <span class="required">*</span></label>
+          <input type="text" id="name" placeholder="e.g. Ayin DEX" maxlength="100" />
+          <div class="field-error">dApp name is required</div>
+        </div>
+
+        <div class="field" id="field-description">
+          <label>Description <span class="required">*</span></label>
+          <textarea id="description" rows="5" placeholder="Full description of your dApp — features, what problem it solves, how to use it, etc. No length limit."></textarea>
+          <div class="field-error">Description is required</div>
+        </div>
+
+        <div class="field" id="field-short_description">
+          <label>Short Description <span class="required">*</span></label>
+          <input type="text" id="short_description" placeholder="Brief tagline (max 60 characters)" maxlength="80" />
+          <div class="char-row">
+            <div class="field-error" style="display:none" id="short-desc-error">Required and must be 60 characters or fewer</div>
+            <div class="char-count" id="short-desc-count">0 / 60</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="section">
+        <div class="section-title">Tags <span class="required">*</span></div>
+        <div class="tags-grid" id="tags-grid"></div>
+        <div class="tags-error" id="tags-error">Please select at least one tag</div>
+        <div class="hint" style="margin-top:8px">Select all that apply</div>
+      </div>
+
+      <!-- Links -->
+      <div class="section">
+        <div class="section-title">Links</div>
+
+        <div class="field" id="field-website">
+          <label>Website <span class="required">*</span></label>
+          <input type="url" id="website" placeholder="https://yourproject.com" />
+          <div class="field-error">Website URL is required</div>
+        </div>
+
+        <div class="links-grid">
+          <div class="field">
+            <label>Twitter</label>
+            <input type="url" id="link-twitter" placeholder="https://twitter.com/yourproject" />
+          </div>
+          <div class="field">
+            <label>Discord</label>
+            <input type="url" id="link-discord" placeholder="https://discord.gg/..." />
+          </div>
+          <div class="field">
+            <label>Telegram</label>
+            <input type="url" id="link-telegram" placeholder="https://t.me/..." />
+          </div>
+          <div class="field">
+            <label>GitHub</label>
+            <input type="url" id="link-github" placeholder="https://github.com/..." />
+          </div>
+          <div class="field">
+            <label>Documentation</label>
+            <input type="url" id="link-docs" placeholder="https://docs.yourproject.com" />
+          </div>
+          <div class="field">
+            <label>YouTube</label>
+            <input type="url" id="link-youtube" placeholder="https://youtube.com/@..." />
+          </div>
+          <div class="field">
+            <label>Medium</label>
+            <input type="url" id="link-medium" placeholder="https://medium.com/@..." />
+          </div>
+          <div class="field">
+            <label>Mirror</label>
+            <input type="url" id="link-mirror" placeholder="https://mirror.xyz/..." />
+          </div>
+          <div class="field">
+            <label>LinkedIn</label>
+            <input type="url" id="link-linkedin" placeholder="https://linkedin.com/company/..." />
+          </div>
+          <div class="field">
+            <label>Careers</label>
+            <input type="text" id="link-careers" placeholder="URL or mailto:contact@..." />
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label>Twitter Username</label>
+          <input type="text" id="twitterName" placeholder="yourproject  (without @)" maxlength="50" />
+        </div>
+      </div>
+
+      <!-- Team Info -->
+      <div class="section">
+        <div class="section-title">Team Information</div>
+        <div class="team-grid">
+          <div class="field">
+            <label>Contact Email</label>
+            <input type="email" id="contactEmail" placeholder="contact@yourproject.com" />
+            <div class="hint">Optional — for follow-up questions</div>
+          </div>
+          <div class="field">
+            <label>Founded Date</label>
+            <input type="date" id="founded" />
+          </div>
+        </div>
+        <div class="field" style="margin-top:14px">
+          <label class="checkbox-label">
+            <input type="checkbox" id="anonymous" />
+            <span>Anonymous Team (team identity is not public)</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Media -->
+      <div class="section">
+        <div class="section-title">Media <span class="required">*</span></div>
+        <div class="media-grid">
+
+          <!-- Logo -->
+          <div>
+            <div class="field" id="field-logo">
+              <label>Logo <span class="required">*</span></label>
+              <div class="upload-wrap">
+                <div class="upload-area logo-area" id="logo-area">
+                  <input class="upload-trigger" type="file" id="logo-input" accept="image/*" />
+                  <div class="upload-placeholder">
+                    <div class="upload-icon">🖼️</div>
+                    <div class="upload-text">Click to upload</div>
+                    <div class="upload-subtext">512×512px recommended</div>
+                  </div>
+                  <img class="upload-preview" id="logo-preview" alt="Logo preview" />
+                  <div class="upload-converting" id="logo-converting">
+                    <div class="spinner-sm"></div>
+                    <div class="converting-label">Converting to WebP…</div>
+                  </div>
+                </div>
+                <button type="button" class="upload-remove" id="logo-remove">×</button>
+              </div>
+              <div class="field-error">Logo is required</div>
+            </div>
+          </div>
+
+          <!-- Banner -->
+          <div>
+            <div class="field" id="field-banner">
+              <label>Banner <span class="required">*</span></label>
+              <div class="upload-wrap">
+                <div class="upload-area banner-area" id="banner-area">
+                  <input class="upload-trigger" type="file" id="banner-input" accept="image/*" />
+                  <div class="upload-placeholder">
+                    <div class="upload-icon">🖼️</div>
+                    <div class="upload-text">Click to upload</div>
+                    <div class="upload-subtext">1200×400px recommended</div>
+                  </div>
+                  <img class="upload-preview" id="banner-preview" alt="Banner preview" />
+                  <div class="upload-converting" id="banner-converting">
+                    <div class="spinner-sm"></div>
+                    <div class="converting-label">Converting to WebP…</div>
+                  </div>
+                </div>
+                <button type="button" class="upload-remove" id="banner-remove">×</button>
+              </div>
+              <div class="field-error">Banner is required</div>
+            </div>
+          </div>
+
+          <!-- Preview screenshot -->
+          <div class="media-full">
+            <div class="field" id="field-screenshot">
+              <label>Preview Screenshot <span class="required">*</span></label>
+              <div class="upload-wrap">
+                <div class="upload-area screenshot-area" id="screenshot-area">
+                  <input class="upload-trigger" type="file" id="screenshot-input" accept="image/*" />
+                  <div class="upload-placeholder">
+                    <div class="upload-icon">🖼️</div>
+                    <div class="upload-text">Click to upload preview screenshot</div>
+                    <div class="upload-subtext">1200×800px recommended</div>
+                  </div>
+                  <img class="upload-preview" id="screenshot-preview" alt="Preview screenshot" />
+                  <div class="upload-converting" id="screenshot-converting">
+                    <div class="spinner-sm"></div>
+                    <div class="converting-label">Converting to WebP…</div>
+                  </div>
+                </div>
+                <button type="button" class="upload-remove" id="screenshot-remove">×</button>
+              </div>
+              <div class="field-error">Preview screenshot is required</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="hint" style="margin-top:8px">All images are automatically converted to WebP before upload.</div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submit-btn">Submit dApp</button>
+    </form>
+  </div>
+
+  <!-- Loading overlay -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-card">
+      <div class="spinner-lg"></div>
+      <div class="loading-title">Submitting your dApp…</div>
+      <div class="loading-step" id="loading-step">Uploading images to GitHub</div>
+    </div>
+  </div>
+
+  <!-- Success overlay -->
+  <div class="success-overlay" id="success-overlay">
+    <div class="success-card">
+      <div class="success-icon">
+        <svg fill="none" stroke="white" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+      <h2 class="success-title">dApp Submitted!</h2>
+      <p class="success-message">
+        Your dApp has been submitted and a Pull Request has been created on GitHub. Our team will review it shortly.
+      </p>
+      <a id="pr-link" href="#" target="_blank" rel="noopener noreferrer" class="pr-btn">View Pull Request</a>
+      <a href="/" class="back-link">← Back to Alphland</a>
+    </div>
+  </div>
+
+  <script>
+    // ── State ──────────────────────────────────────────────────────────────────
+    const imageData = { logo: null, banner: null, screenshot: null };
+    const selectedTags = new Set();
+
+    // ── Tags ───────────────────────────────────────────────────────────────────
+    const ALL_TAGS = [
+      'Mining','Tools','Infrastructure','Bridges','Analytics','Wallets',
+      'DeFi','Security','Onramps','Games','Quests','NFTs','Ai',
+      'Education','Social','ComingSoon'
+    ];
+
+    const tagsGrid = document.getElementById('tags-grid');
+    ALL_TAGS.forEach(tag => {
+      const label = document.createElement('label');
+      label.className = 'tag-option';
+      label.innerHTML = `<input type="checkbox" value="${tag}" /><span>${tag}</span>`;
+      const cb = label.querySelector('input');
+      cb.addEventListener('change', () => {
+        if (cb.checked) { selectedTags.add(tag); label.classList.add('selected'); }
+        else { selectedTags.delete(tag); label.classList.remove('selected'); }
+        document.getElementById('tags-error').style.display = 'none';
+      });
+      tagsGrid.appendChild(label);
+    });
+
+    // ── Char counter ───────────────────────────────────────────────────────────
+    const shortDescInput = document.getElementById('short_description');
+    const charCountEl = document.getElementById('short-desc-count');
+    shortDescInput.addEventListener('input', () => {
+      const n = shortDescInput.value.length;
+      charCountEl.textContent = `${n} / 60`;
+      charCountEl.className = n > 60 ? 'char-count over' : 'char-count';
+    });
+
+    // ── Image helpers ──────────────────────────────────────────────────────────
+    function convertToWebP(file) {
+      return new Promise(resolve => {
+        if (file.type === 'image/webp') { resolve(file); return; }
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          canvas.getContext('2d').drawImage(img, 0, 0);
+          URL.revokeObjectURL(url);
+          canvas.toBlob(blob => {
+            const name = file.name.replace(/\.[^.]+$/, '.webp');
+            resolve(new File([blob], name, { type: 'image/webp' }));
+          }, 'image/webp', 0.85);
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+        img.src = url;
+      });
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleImageUpload(type, file) {
+      if (!file || !file.type.startsWith('image/')) return;
+      const area = document.getElementById(`${type}-area`);
+      const preview = document.getElementById(`${type}-preview`);
+      const converting = document.getElementById(`${type}-converting`);
+      const fieldEl = document.getElementById(`field-${type}`);
+
+      converting.classList.add('active');
+      try {
+        const webp = await convertToWebP(file);
+        const base64 = await fileToBase64(webp);
+        imageData[type] = base64;
+        preview.src = base64;
+        area.classList.add('has-file');
+        fieldEl.classList.remove('has-error');
+      } catch (err) {
+        console.error('Image processing error:', err);
+      } finally {
+        converting.classList.remove('active');
+      }
+    }
+
+    function clearImage(type) {
+      const area = document.getElementById(`${type}-area`);
+      const preview = document.getElementById(`${type}-preview`);
+      const input = document.getElementById(`${type}-input`);
+      imageData[type] = null;
+      preview.src = '';
+      area.classList.remove('has-file');
+      input.value = '';
+    }
+
+    // ── Wire up upload areas ───────────────────────────────────────────────────
+    ['logo', 'banner', 'screenshot'].forEach(type => {
+      const input = document.getElementById(`${type}-input`);
+      const area = document.getElementById(`${type}-area`);
+      const removeBtn = document.getElementById(`${type}-remove`);
+
+      input.addEventListener('change', e => {
+        if (e.target.files[0]) handleImageUpload(type, e.target.files[0]);
+      });
+
+      removeBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        clearImage(type);
+      });
+
+      area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
+      area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+      area.addEventListener('drop', e => {
+        e.preventDefault();
+        area.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        if (file) handleImageUpload(type, file);
+      });
+    });
+
+    // ── Form submission ────────────────────────────────────────────────────────
+    function setLoading(on, step) {
+      document.getElementById('loading-overlay').classList.toggle('visible', on);
+      if (step) document.getElementById('loading-step').textContent = step;
+      document.getElementById('submit-btn').disabled = on;
+    }
+
+    function showSuccess(prUrl, prNumber) {
+      const link = document.getElementById('pr-link');
+      link.href = prUrl;
+      link.textContent = `View Pull Request #${prNumber}`;
+      document.getElementById('success-overlay').classList.add('visible');
+    }
+
+    document.getElementById('submit-form').addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const description = document.getElementById('description').value.trim();
+      const short_description = shortDescInput.value.trim();
+      const website = document.getElementById('website').value.trim();
+      const tags = [...selectedTags];
+
+      let valid = true;
+      const errBanner = document.getElementById('error-banner');
+      errBanner.classList.remove('visible');
+
+      function setFieldError(fieldId, hasError) {
+        document.getElementById(fieldId).classList.toggle('has-error', hasError);
+        if (hasError) valid = false;
+      }
+
+      setFieldError('field-name', !name);
+      setFieldError('field-description', !description);
+
+      const shortDescOk = short_description.length > 0 && short_description.length <= 60;
+      const shortDescErrorEl = document.getElementById('short-desc-error');
+      document.getElementById('field-short_description').classList.toggle('has-error', !shortDescOk);
+      shortDescErrorEl.style.display = shortDescOk ? 'none' : 'block';
+      if (!shortDescOk) valid = false;
+
+      if (tags.length === 0) {
+        document.getElementById('tags-error').style.display = 'block';
+        valid = false;
+      }
+
+      setFieldError('field-website', !website);
+      setFieldError('field-logo', !imageData.logo);
+      setFieldError('field-banner', !imageData.banner);
+      setFieldError('field-screenshot', !imageData.screenshot);
+
+      if (!valid) {
+        errBanner.textContent = 'Please fill in all required fields before submitting.';
+        errBanner.classList.add('visible');
+        document.querySelector('.has-error, .tags-error[style*="block"]')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      setLoading(true, 'Uploading images to GitHub…');
+
+      try {
+        const payload = {
+          name,
+          description,
+          short_description,
+          tags,
+          links: {
+            website,
+            twitter:  document.getElementById('link-twitter').value.trim(),
+            discord:  document.getElementById('link-discord').value.trim(),
+            telegram: document.getElementById('link-telegram').value.trim(),
+            github:   document.getElementById('link-github').value.trim(),
+            docs:     document.getElementById('link-docs').value.trim(),
+            youtube:  document.getElementById('link-youtube').value.trim(),
+            medium:   document.getElementById('link-medium').value.trim(),
+            mirror:   document.getElementById('link-mirror').value.trim(),
+            linkedin: document.getElementById('link-linkedin').value.trim(),
+            careers:  document.getElementById('link-careers').value.trim(),
+          },
+          twitterName: document.getElementById('twitterName').value.trim(),
+          teamInfo: {
+            contactEmail: document.getElementById('contactEmail').value.trim(),
+            founded:      document.getElementById('founded').value,
+            anonymous:    document.getElementById('anonymous').checked,
+          },
+          logoImage:       imageData.logo,
+          bannerImage:     imageData.banner,
+          previewImage:    imageData.screenshot,
+        };
+
+        document.getElementById('loading-step').textContent = 'Creating pull request…';
+
+        const res = await fetch('/api/submit-dapp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Submission failed');
+
+        setLoading(false);
+        showSuccess(data.prUrl, data.prNumber);
+      } catch (err) {
+        setLoading(false);
+        errBanner.textContent = err.message || 'An error occurred. Please try again.';
+        errBanner.classList.add('visible');
+        errBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  </script>
+</body>
+</html>

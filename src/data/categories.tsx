@@ -1,11 +1,13 @@
+import analytics from "../assets/icons/analytics.svg";
+import analyticsLight from "../assets/icons/analyticsLight.svg";
 import bridges from "../assets/icons/bridges.svg";
 import bridgesLight from "../assets/icons/bridgesLight.svg";
 import card from "../assets/icons/card.svg";
 import cardLight from "../assets/icons/cardLight.svg";
-import contacts from "../assets/icons/contacts.svg";
-import contactsLight from "../assets/icons/contactsLight.svg";
 import database from "../assets/icons/database.svg";
 import databaseLight from "../assets/icons/databaseLight.svg";
+import education from "../assets/icons/education.svg";
+import educationLight from "../assets/icons/educationLight.svg";
 import gallery from "../assets/icons/gallery.svg";
 import galleryLight from "../assets/icons/galleryLight.svg";
 import gaming from "../assets/icons/gaming.svg";
@@ -20,33 +22,30 @@ import lock from "../assets/icons/lock.svg";
 import lockLight from "../assets/icons/lockLight.svg";
 import profile from "../assets/icons/profile.svg";
 import profileLight from "../assets/icons/profileLight.svg";
+import quests from "../assets/icons/quests.svg";
+import questsLight from "../assets/icons/questsLight.svg";
 import star from "../assets/icons/starFilled.svg";
-import stats from "../assets/icons/stats.svg";
-import statsLight from "../assets/icons/statsLight.svg";
 import swap from "../assets/icons/swap.svg";
 import swapLight from "../assets/icons/swapLight.svg";
 import time from "../assets/icons/time.svg";
 import timeLight from "../assets/icons/timeLight.svg";
+import tools from "../assets/icons/tools.svg";
+import toolsLight from "../assets/icons/toolsLight.svg";
 import verified from "../assets/icons/verified.svg";
 import verifiedLight from "../assets/icons/verifiedLight.svg";
+import ai from "../assets/icons/crystal-ball.svg";
+import aiLight from "../assets/icons/crystal-ball-light.svg";
 import wallet from "../assets/icons/wallet.svg";
 import walletLight from "../assets/icons/walletLight.svg";
 
 export const categories = [
-  { key: "onramps", name: "Onramps", icon: card, iconDark: cardLight },
   { key: "bridges", name: "Bridges", icon: bridges, iconDark: bridgesLight },
-  { key: "defi", name: "DeFi", icon: swap, iconDark: swapLight },
-  { key: "games", name: "Games", icon: gaming, iconDark: gamingLight },
-  { key: "nfts", name: "NFTs", icon: gallery, iconDark: galleryLight },
-  { key: "social", name: "Social", icon: heart, iconDark: heartLight },
-  { key: "wallets", name: "Wallets", icon: wallet, iconDark: walletLight },
-  { key: "security", name: "Security", icon: lock, iconDark: lockLight },
-  { key: "stats", name: "Stats", icon: stats, iconDark: statsLight },
+  { key: "tools", name: "Tools", icon: tools, iconDark: toolsLight },
   {
-    key: "hashrate",
-    name: "Hashrate",
-    icon: hashrate,
-    iconDark: hashrateLight,
+    key: "analytics",
+    name: "Analytics",
+    icon: analytics,
+    iconDark: analyticsLight,
   },
   {
     key: "infrastructure",
@@ -54,7 +53,27 @@ export const categories = [
     icon: database,
     iconDark: databaseLight,
   },
-  { key: "daos", name: "DAOs", icon: contacts, iconDark: contactsLight },
+  { key: "wallets", name: "Wallets", icon: wallet, iconDark: walletLight },
+  {
+    key: "education",
+    name: "Education",
+    icon: education,
+    iconDark: educationLight,
+  },
+  { key: "defi", name: "DeFi", icon: swap, iconDark: swapLight },
+  { key: "quests", name: "Quests", icon: quests, iconDark: questsLight },
+  { key: "social", name: "Social", icon: heart, iconDark: heartLight },
+  { key: "onramps", name: "Onramps", icon: card, iconDark: cardLight },
+  { key: "nfts", name: "NFTs", icon: gallery, iconDark: galleryLight },
+  {
+    key: "mining",
+    name: "Mining",
+    icon: hashrate,
+    iconDark: hashrateLight,
+  },
+  { key: "ai", name: "Ai", icon: ai, iconDark: aiLight },
+  { key: "security", name: "Security", icon: lock, iconDark: lockLight },
+  { key: "games", name: "Games", icon: gaming, iconDark: gamingLight },
   { key: "soon", name: "ComingSoon", icon: time, iconDark: timeLight },
 ];
 

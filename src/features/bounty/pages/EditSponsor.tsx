@@ -1,0 +1,791 @@
+"use client";
+
+import Layout from "@/components/Layout";
+import { useSession } from "@/lib/auth-client";
+import { Upload, X, Info, ArrowLeft } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useState, useCallback, useEffect } from "react";
+import { normalizeUrl } from "../utils/validators";
+
+interface FormData {
+  name: string;
+  username: string;
+  description: string;
+  entity_name: string;
+  industry: string;
+  website: string;
+  twitter: string;
+  contact_username: string;
+  contact_telegram: string;
+  contact_email: string;
+}
+
+interface ImageFile {
+  file: File | null;
+  preview: string;
+}
+
+const INDUSTRIES = [
+  "Mining",
+  "Tools",
+  "Infrastructure",
+  "Bridges",
+  "Analytics",
+  "Wallets",
+  "DeFi",
+  "Security",
+  "Onramps",
+  "Games",
+  "Quests",
+  "NFTs",
+  "Ai",
+  "Education",
+  "Social",
+  "Other",
+];
+
+const MAX_BIO_LENGTH = 180;
+
+export default function EditSponsorProfile() {
+  const router = useRouter();
+  const { data: session, isPending } = useSession();
+  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
+  const [sponsorId, setSponsorId] = useState<string | null>(null);
+  const [logoFile, setLogoFile] = useState<ImageFile | null>(null);
+  const [bannerFile, setBannerFile] = useState<ImageFile | null>(null);
+  const [dragActive, setDragActive] = useState(false);
+  const [bannerDragActive, setBannerDragActive] = useState(false);
+  const [bannerRemoved, setBannerRemoved] = useState(false);
+  const [userPersonalUsername, setUserPersonalUsername] = useState<string>("");
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    username: "",
+    description: "",
+    entity_name: "",
+    industry: "",
+    website: "",
+    twitter: "",
+    contact_username: "",
+    contact_telegram: "",
+    contact_email: "",
+  });
+
+  // Fetch existing sponsor data and user profile
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!session?.user?.id) {
+        setFetching(false);
+        return;
+      }
+
+      try {
+        // Fetch both sponsor data and user profile in parallel
+        const [sponsorResponse, profileResponse] = await Promise.all([
+          fetch(`/api/sponsors/user/${session.user.id}`),
+          fetch("/api/users/me"),
+        ]);
+
+        // Handle user profile response
+        if (profileResponse.ok) {
+          const profileData = await profileResponse.json();
+          setUserPersonalUsername(profileData.user?.username || "");
+        }
+
+        // Handle sponsor response
+        if (sponsorResponse.ok) {
+          const data = await sponsorResponse.json();
+          if (data.sponsor) {
+            setSponsorId(data.sponsor.id);
+            setFormData({
+              name: data.sponsor.name || "",
+              username: data.sponsor.username || "",
+              description: data.sponsor.description || "",
+              entity_name: data.sponsor.entity_name || "",
+              industry: data.sponsor.industry || "",
+              website: data.sponsor.website || "",
+              twitter: data.sponsor.twitter || "",
+              contact_username: data.sponsor.contact_username || "",
+              contact_telegram: data.sponsor.contact_telegram || "",
+              contact_email: data.sponsor.contact_email || "",
+            });
+            if (data.sponsor.logo_url) {
+              setLogoFile({
+                file: null,
+                preview: data.sponsor.logo_url,
+              });
+            }
+            if (data.sponsor.banner_url) {
+              setBannerFile({
+                file: null,
+                preview: data.sponsor.banner_url,
+              });
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setFetching(false);
+      }
+    };
+
+    if (!isPending) {
+      fetchData();
+    }
+  }, [session?.user?.id, isPending]);
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleLogoFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      handleLogoFile(e.target.files[0]);
+    }
+  };
+
+  const handleLogoFile = (file: File) => {
+    if (file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024) {
+      setLogoFile({
+        file,
+        preview: URL.createObjectURL(file),
+      });
+    }
+  };
+
+  const removeLogo = useCallback(() => {
+    if (logoFile?.file) {
+      URL.revokeObjectURL(logoFile.preview);
+    }
+    setLogoFile(null);
+  }, [logoFile]);
+
+  // Banner handlers
+  const handleBannerDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setBannerDragActive(true);
+    } else if (e.type === "dragleave") {
+      setBannerDragActive(false);
+    }
+  };
+
+  const handleBannerDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setBannerDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleBannerFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleBannerFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      handleBannerFile(e.target.files[0]);
+    }
+  };
+
+  const handleBannerFile = (file: File) => {
+    if (file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024) {
+      setBannerFile({
+        file,
+        preview: URL.createObjectURL(file),
+      });
+    }
+  };
+
+  const removeBanner = () => {
+    if (bannerFile?.file) {
+      URL.revokeObjectURL(bannerFile.preview);
+    }
+    setBannerFile(null);
+    setBannerRemoved(true);
+  };
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!session?.user?.id || !sponsorId) return;
+      setLoading(true);
+
+      try {
+        // Upload logo to R2 if a new one was selected
+        let logoUrl = null;
+        if (logoFile?.file) {
+          console.log("Uploading sponsor logo to R2...");
+          const file = logoFile.file; // Store in const for type narrowing
+          // Read file as base64
+          const reader = new FileReader();
+          const logoDataUrl = await new Promise<string>((resolve, reject) => {
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+
+          console.log("Logo data URL length:", logoDataUrl.length);
+
+          // Upload to R2
+          const uploadResponse = await fetch("/api/upload/image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              image: logoDataUrl,
+              fileName: file.name,
+              type: "sponsor",
+            }),
+          });
+
+          if (!uploadResponse.ok) {
+            const errorText = await uploadResponse.text();
+            console.error("Upload failed:", errorText);
+            alert("Failed to upload logo. Please try again.");
+            throw new Error("Failed to upload logo");
+          }
+
+          const uploadData = await uploadResponse.json();
+          logoUrl = uploadData.url;
+          console.log("Logo uploaded successfully:", logoUrl);
+        }
+
+        // Upload banner to R2 if a new one was selected
+        // undefined = keep existing, null = remove, string = new URL
+        let bannerUrl: string | null | undefined = bannerRemoved
+          ? null
+          : undefined;
+        if (bannerFile?.file) {
+          console.log("Uploading sponsor banner to R2...");
+          const file = bannerFile.file;
+          const reader = new FileReader();
+          const bannerDataUrl = await new Promise<string>((resolve, reject) => {
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+
+          const uploadResponse = await fetch("/api/upload/image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              image: bannerDataUrl,
+              fileName: file.name,
+              type: "sponsor-banner",
+            }),
+          });
+
+          if (!uploadResponse.ok) {
+            const errorText = await uploadResponse.text();
+            console.error("Banner upload failed:", errorText);
+            // Don't fail the whole submission, banner is optional
+          } else {
+            const uploadData = await uploadResponse.json();
+            bannerUrl = uploadData.url;
+            console.log("Banner uploaded successfully:", bannerUrl);
+          }
+        }
+
+        const updateData: Record<string, any> = {
+          name: formData.name,
+          description: formData.description,
+          logo_url: logoUrl,
+          website: formData.website,
+          twitter: formData.twitter,
+          contact_email: formData.contact_email || null,
+          contact_telegram: formData.contact_telegram || null,
+        };
+
+        // Only include banner_url if it changed (new upload or explicit removal)
+        if (bannerUrl !== undefined) {
+          updateData.banner_url = bannerUrl;
+        }
+
+        const response = await fetch(`/api/sponsors/${sponsorId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updateData),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to update sponsor profile");
+        }
+
+        // Redirect to dashboard
+        router.push("/bounty/sponsor/dashboard");
+      } catch (error) {
+        console.error("Error updating sponsor profile:", error);
+        alert("Failed to update sponsor profile. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [
+      formData,
+      logoFile,
+      bannerFile,
+      bannerRemoved,
+      router,
+      session?.user?.id,
+      sponsorId,
+    ],
+  );
+
+  const bioCharactersLeft = MAX_BIO_LENGTH - formData.description.length;
+
+  // Show loading state
+  if (isPending || fetching) {
+    return (
+      <Layout title="Edit Sponsor Profile - Alphland">
+        <div className="min-h-screen bg-smoked-white dark:bg-light-black flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-orange border-t-transparent" />
+        </div>
+      </Layout>
+    );
+  }
+
+  // Require login
+  if (!session?.user) {
+    return (
+      <Layout title="Edit Sponsor Profile - Alphland">
+        <div className="min-h-screen bg-smoked-white dark:bg-light-black flex items-center justify-center px-4">
+          <div className="text-center space-y-6 max-w-md">
+            <h1 className="text-3xl font-bold text-black dark:text-white">
+              Edit Sponsor Profile
+            </h1>
+            <p className="text-light-charcoal dark:text-lightgrey">
+              Please login to edit your sponsor profile.
+            </p>
+            <Link href="/auth/login?redirect=/bounty/sponsor/edit">
+              <a className="inline-block bg-orange hover:bg-orange/90 text-white font-semibold px-8 py-3 rounded-lg transition-colors">
+                Login to Continue
+              </a>
+            </Link>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Not a sponsor
+  if (!sponsorId) {
+    return (
+      <Layout title="Edit Sponsor Profile - Alphland">
+        <div className="min-h-screen bg-smoked-white dark:bg-light-black flex items-center justify-center px-4">
+          <div className="text-center space-y-6 max-w-md">
+            <h1 className="text-3xl font-bold text-black dark:text-white">
+              Not a Sponsor
+            </h1>
+            <p className="text-light-charcoal dark:text-lightgrey">
+              You don&apos;t have a sponsor profile yet. Create one to get
+              started.
+            </p>
+            <Link href="/bounty/sponsor">
+              <a className="inline-block bg-orange hover:bg-orange/90 text-white font-semibold px-8 py-3 rounded-lg transition-colors">
+                Become a Sponsor
+              </a>
+            </Link>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout
+      title="Edit Sponsor Profile - Alphland"
+      description="Update your sponsor profile on Alphland"
+    >
+      <div className="min-h-screen bg-smoked-white dark:bg-light-black py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto">
+          {/* Back Link */}
+          <Link href="/bounty/sponsor/dashboard">
+            <span className="inline-flex items-center gap-2 text-light-charcoal dark:text-lightgrey hover:text-orange transition-colors mb-6 cursor-pointer">
+              <ArrowLeft className="w-4 h-4" />
+              Back to Dashboard
+            </span>
+          </Link>
+
+          {/* Header */}
+          <div className="text-center mb-10">
+            <h1 className="text-3xl font-bold text-black dark:text-white mb-2">
+              Edit Sponsor Profile
+            </h1>
+            <p className="text-light-charcoal dark:text-lightgrey">
+              Update your sponsor profile information
+            </p>
+          </div>
+
+          <div className="bg-white dark:bg-hero-dark rounded-lg border border-border-grey dark:border-dark-charcoal">
+            <div className="p-6 sm:p-8">
+              <form onSubmit={handleSubmit} className="space-y-10">
+                {/* Company Information */}
+                <div className="space-y-6">
+                  <h2 className="text-xl font-bold text-black dark:text-white">
+                    Company Information
+                  </h2>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        Company Name <span className="text-orange">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            name: e.target.value,
+                          }))
+                        }
+                        className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                        placeholder="Company Name"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        Your Username{" "}
+                        <span className="text-xs font-normal text-light-charcoal dark:text-lightgrey">
+                          (from your profile)
+                        </span>
+                      </label>
+                      <input
+                        type="text"
+                        value={userPersonalUsername || "Not set"}
+                        disabled
+                        className="w-full px-4 py-2.5 bg-gray-200 dark:bg-gray-700 border border-border-grey dark:border-dark-charcoal rounded-lg text-light-charcoal dark:text-lightgrey cursor-not-allowed"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        Website
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.website}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            website: e.target.value,
+                          }))
+                        }
+                        onBlur={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            website: normalizeUrl(e.target.value),
+                          }))
+                        }
+                        className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                        placeholder="https://example.com"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        Twitter
+                      </label>
+                      <div className="flex">
+                        <span className="inline-flex items-center px-3 bg-smoked-white dark:bg-light-black border border-r-0 border-border-grey dark:border-dark-charcoal rounded-l-lg text-light-charcoal dark:text-lightgrey text-sm">
+                          x.com/
+                        </span>
+                        <input
+                          type="text"
+                          value={formData.twitter}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              twitter: e.target.value.replace("@", ""),
+                            }))
+                          }
+                          className="flex-1 px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                          placeholder="username"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Company Logo */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-black dark:text-white">
+                      Company Logo
+                    </label>
+
+                    {logoFile ? (
+                      <div className="flex items-center gap-4 p-4 border border-border-grey dark:border-dark-charcoal rounded-lg bg-smoked-white dark:bg-light-black">
+                        <Image
+                          src={logoFile.preview}
+                          alt="Company logo"
+                          width={64}
+                          height={64}
+                          className="w-16 h-16 rounded-lg object-cover"
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-black dark:text-white">
+                            {logoFile.file?.name || "Current logo"}
+                          </p>
+                          {logoFile.file && (
+                            <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                              {Math.round(logoFile.file.size / 1024)} KB
+                            </p>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={removeLogo}
+                          className="p-2 text-light-charcoal hover:text-orange transition-colors"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div
+                        onDragEnter={handleDrag}
+                        onDragLeave={handleDrag}
+                        onDragOver={handleDrag}
+                        onDrop={handleDrop}
+                        className={`border-2 border-dashed rounded-lg p-6 text-center transition-all cursor-pointer ${
+                          dragActive
+                            ? "border-orange bg-orange/5"
+                            : "border-border-grey dark:border-dark-charcoal hover:border-orange/50"
+                        }`}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileInput}
+                          className="hidden"
+                          id="logo-upload"
+                        />
+                        <label
+                          htmlFor="logo-upload"
+                          className="cursor-pointer flex items-center gap-4"
+                        >
+                          <div className="w-12 h-12 bg-smoked-white dark:bg-light-black rounded-lg flex items-center justify-center">
+                            <Upload className="w-5 h-5 text-light-charcoal dark:text-lightgrey" />
+                          </div>
+                          <div className="text-left">
+                            <p className="text-sm font-medium text-orange">
+                              Choose or drag and drop media
+                            </p>
+                            <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                              Maximum size 5 MB
+                            </p>
+                          </div>
+                        </label>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Profile Banner (Optional) */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-black dark:text-white">
+                      Profile Banner{" "}
+                      <span className="text-light-charcoal dark:text-lightgrey text-xs">
+                        (optional)
+                      </span>
+                    </label>
+                    <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                      Recommended size: 1200x300 pixels (4:1 aspect ratio)
+                    </p>
+
+                    {bannerFile ? (
+                      <div className="relative border border-border-grey dark:border-dark-charcoal rounded-lg overflow-hidden bg-smoked-white dark:bg-light-black">
+                        <Image
+                          src={bannerFile.preview}
+                          alt="Company banner"
+                          width={600}
+                          height={150}
+                          className="w-full h-32 object-cover"
+                        />
+                        <div className="absolute top-2 right-2">
+                          <button
+                            type="button"
+                            onClick={removeBanner}
+                            className="p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="p-3">
+                          <p className="text-sm font-medium text-black dark:text-white">
+                            {bannerFile.file?.name || "Current banner"}
+                          </p>
+                          {bannerFile.file && (
+                            <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                              {Math.round(bannerFile.file.size / 1024)} KB
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        onDragEnter={handleBannerDrag}
+                        onDragLeave={handleBannerDrag}
+                        onDragOver={handleBannerDrag}
+                        onDrop={handleBannerDrop}
+                        className={`border-2 border-dashed rounded-lg p-6 text-center transition-all cursor-pointer ${
+                          bannerDragActive
+                            ? "border-orange bg-orange/5"
+                            : "border-border-grey dark:border-dark-charcoal hover:border-orange/50"
+                        }`}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleBannerFileInput}
+                          className="hidden"
+                          id="banner-upload"
+                        />
+                        <label
+                          htmlFor="banner-upload"
+                          className="cursor-pointer flex items-center gap-4"
+                        >
+                          <div className="w-12 h-12 bg-smoked-white dark:bg-light-black rounded-lg flex items-center justify-center">
+                            <Upload className="w-5 h-5 text-light-charcoal dark:text-lightgrey" />
+                          </div>
+                          <div className="text-left">
+                            <p className="text-sm font-medium text-orange">
+                              Choose or drag and drop banner image
+                            </p>
+                            <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                              Maximum size 5 MB (Leave empty for default
+                              gradient)
+                            </p>
+                          </div>
+                        </label>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Company Short Bio */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-black dark:text-white">
+                      Company Short Bio
+                    </label>
+                    <textarea
+                      value={formData.description}
+                      onChange={(e) => {
+                        if (e.target.value.length <= MAX_BIO_LENGTH) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            description: e.target.value,
+                          }));
+                        }
+                      }}
+                      className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey resize-none focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                      placeholder="What does your company do?"
+                      rows={3}
+                    />
+                    <p className="text-xs text-light-charcoal dark:text-lightgrey text-right">
+                      {bioCharactersLeft} characters left
+                    </p>
+                  </div>
+                </div>
+
+                <hr className="border-border-grey dark:border-dark-charcoal" />
+
+                {/* Contact Information */}
+                <div className="space-y-6">
+                  <h2 className="text-xl font-bold text-black dark:text-white">
+                    Contact Information
+                  </h2>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        Email{" "}
+                        <span className="text-light-charcoal dark:text-lightgrey text-xs">
+                          (optional)
+                        </span>
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.contact_email}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            contact_email: e.target.value,
+                          }))
+                        }
+                        className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                        placeholder="email@example.com"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-black dark:text-white">
+                        Telegram{" "}
+                        <span className="text-light-charcoal dark:text-lightgrey text-xs">
+                          (optional)
+                        </span>
+                      </label>
+                      <div className="flex">
+                        <span className="inline-flex items-center px-3 bg-smoked-white dark:bg-light-black border border-r-0 border-border-grey dark:border-dark-charcoal rounded-l-lg text-light-charcoal dark:text-lightgrey text-sm">
+                          t.me/
+                        </span>
+                        <input
+                          type="text"
+                          value={formData.contact_telegram}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              contact_telegram: e.target.value,
+                            }))
+                          }
+                          className="flex-1 px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
+                          placeholder="username"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Submit */}
+                <div className="space-y-6">
+                  <button
+                    type="submit"
+                    className="w-full bg-orange hover:bg-orange/90 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={loading || !formData.name}
+                  >
+                    {loading ? (
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                        Saving Changes...
+                      </div>
+                    ) : (
+                      "Save Changes"
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Layout>
+  );
+}

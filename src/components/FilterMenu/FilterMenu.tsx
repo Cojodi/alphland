@@ -1,16 +1,16 @@
-import crossCircle from "../../assets/icons/crossCircle.svg"
-import crossCircleLight from "../../assets/icons/crossCircleLight.svg"
-import star from "../../assets/icons/starFilled.svg"
-import { categories, ratings, reputation } from "../../data/categories"
-import { checkIfCategoryExists, generateUrl } from "../../helpers/category"
-import { filterDappcardsByRating } from "../../helpers/rating"
-import { useCategoryStore } from "../../hooks/useCategoryStore"
-import { useDarkMode } from "../../hooks/useDarkMode"
-import Button from "../Button/Button"
-import Image from "next/image"
-import { useRouter } from "next/router"
-import { useEffect, useRef, useState } from "react"
-import styled from "styled-components"
+import crossCircle from "../../assets/icons/crossCircle.svg";
+import crossCircleLight from "../../assets/icons/crossCircleLight.svg";
+import star from "../../assets/icons/starFilled.svg";
+import { categories, ratings, reputation } from "../../data/categories";
+import { checkIfCategoryExists, generateUrl } from "../../helpers/category";
+import { filterDappcardsByRating } from "../../helpers/rating";
+import { useCategoryStore } from "../../hooks/useCategoryStore";
+import { useDarkMode } from "../../hooks/useDarkMode";
+import Button from "../Button/Button";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
 
 const CategoryContainer = styled.div`
   overflow: auto;
@@ -27,7 +27,7 @@ const CategoryContainer = styled.div`
   ul li.with-blur:not(.active):not(:hover) {
     opacity: 0.6;
   }
-`
+`;
 
 const MenuContainer = styled.div`
   box-shadow: none;
@@ -50,7 +50,7 @@ const MenuContainer = styled.div`
   .is-active-menu {
     display: flex;
   }
-`
+`;
 
 const MobileMenu = ({
   isMobileMenuOpen,
@@ -58,76 +58,76 @@ const MobileMenu = ({
   dappCards,
   dappRatings,
 }: {
-  isMobileMenuOpen: boolean
-  setIsMobileMenuOpen: (val: boolean) => void
-  dappCards: DappCard[]
-  dappRatings: { [key: string]: string[] }
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (val: boolean) => void;
+  dappCards: DappCard[];
+  dappRatings: { [key: string]: string[] };
 }) => {
-  const router = useRouter()
-  const { currentTheme, setTheme } = useDarkMode()
+  const router = useRouter();
+  const { currentTheme, setTheme } = useDarkMode();
 
-  const [isNavbarScrolled, setIsNavbarScrolled] = useState(false)
-  const [hovered, setHovered] = useState(false)
+  const [isNavbarScrolled, setIsNavbarScrolled] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
-  const selectedCategory = useCategoryStore((state) => state.selectedCategory)
-  const selectedRatings = useCategoryStore((state) => state.selectedRatings)
-  const changeCategory = useCategoryStore((state) => state.changeCategory)
-  const selectedFilters = useCategoryStore((state) => state.selectedFilters)
-  const selectedSort = useCategoryStore((state) => state.selectedSort)
-  const addFilter = useCategoryStore((state) => state.addFilter)
-  const addRating = useCategoryStore((state) => state.addRating)
+  const selectedCategory = useCategoryStore((state) => state.selectedCategory);
+  const selectedRatings = useCategoryStore((state) => state.selectedRatings);
+  const changeCategory = useCategoryStore((state) => state.changeCategory);
+  const selectedFilters = useCategoryStore((state) => state.selectedFilters);
+  const selectedSort = useCategoryStore((state) => state.selectedSort);
+  const addFilter = useCategoryStore((state) => state.addFilter);
+  const addRating = useCategoryStore((state) => state.addRating);
 
-  const nav = useRef<HTMLDivElement>(null)
+  const nav = useRef<HTMLDivElement>(null);
 
-  const [mounted, setMounted] = useState(false)
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   const handleScroll = () => {
-    const position = window.scrollY
+    const position = window.scrollY;
     if (nav.current) {
       if (position > 15) {
-        setIsNavbarScrolled(true)
+        setIsNavbarScrolled(true);
       } else {
-        setIsNavbarScrolled(false)
+        setIsNavbarScrolled(false);
       }
     }
-  }
+  };
 
   useEffect(() => {
-    handleScroll()
-    window.addEventListener("scroll", handleScroll)
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll)
-    }
-  }, [])
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const remainingFilters = reputation.filter(
     (rep) => !selectedFilters.includes(rep.key),
-  )
+  );
 
   const remainingRatings = ratings.filter(
     (rating) => !selectedRatings.includes(rating.key),
-  )
+  );
 
-  const combinedFilters = [...remainingFilters, ...remainingRatings]
+  const combinedFilters = [...remainingFilters, ...remainingRatings];
 
   const checkIfAnyCategoryIsActive = () =>
     [...categories, ...reputation, ...ratings].some(
       (category) => category.key === selectedCategory,
-    )
+    );
 
   const checkIfCategoryHasDapps = (
     category: Array<{ key: string; name: string; icon: any }>,
   ) => {
-    let activeCategories = 0
+    let activeCategories = 0;
     category.forEach((item) => {
-      if (renderCategoryCount(item.name) > 0) activeCategories++
-    })
-    return Boolean(activeCategories)
-  }
+      if (renderCategoryCount(item.name) > 0) activeCategories++;
+    });
+    return Boolean(activeCategories);
+  };
 
   const renderCategoryCount = (
     category: string,
@@ -141,27 +141,27 @@ const MobileMenu = ({
           selectedRatings,
           isMainCategory,
         })
-      : dappCards
+      : dappCards;
     const selectedCategoryName =
       selectedCategory !== "all"
         ? categories.find((cat) => cat.key === selectedCategory)?.name
-        : null
+        : null;
     const allFilters =
       selectedCategoryName && !isMainCategory
         ? [selectedCategoryName, category, ...selectedFilters]
-        : [category, ...selectedFilters]
+        : [category, ...selectedFilters];
     return dappCardsFilteredByRating.reduce((prevValue, currentValue) => {
       const filtersCount = allFilters.reduce((prevFiltersCount, nextFilter) => {
         const filterMatched = checkIfCategoryExists(
           currentValue,
           nextFilter,
           dappRatings,
-        )
-        return filterMatched ? prevFiltersCount + 1 : prevFiltersCount
-      }, 0)
-      return filtersCount === allFilters.length ? prevValue + 1 : prevValue
-    }, 0)
-  }
+        );
+        return filterMatched ? prevFiltersCount + 1 : prevFiltersCount;
+      }, 0);
+      return filtersCount === allFilters.length ? prevValue + 1 : prevValue;
+    }, 0);
+  };
 
   const getFilteredCategories = () => {
     return [...categories, ...reputation, ...ratings]
@@ -174,10 +174,10 @@ const MobileMenu = ({
       .map((category) => ({
         ...category,
         isRating: selectedRatings.includes(category.key),
-      }))
-  }
+      }));
+  };
 
-  const filteredCategories = getFilteredCategories()
+  const filteredCategories = getFilteredCategories();
 
   return (
     <MenuContainer
@@ -233,7 +233,7 @@ const MobileMenu = ({
                       tabIndex={0}
                       onClick={() => {
                         if (category.key === selectedCategory) {
-                          changeCategory("all")
+                          changeCategory("all");
                           router.push(
                             generateUrl({
                               selectedSort,
@@ -241,12 +241,14 @@ const MobileMenu = ({
                               selectedFilters,
                               selectedCategory: "all",
                             }),
-                          )
+                            undefined,
+                            { scroll: false },
+                          );
                         } else {
                           if (category.isRating) {
-                            addRating(category.key)
+                            addRating(category.key);
                           } else {
-                            addFilter(category.key)
+                            addFilter(category.key);
                           }
                         }
                       }}
@@ -327,7 +329,7 @@ const MobileMenu = ({
                           key={category.name}
                           tabIndex={0}
                           onClick={() => {
-                            addFilter(category.key)
+                            addFilter(category.key);
                           }}
                         >
                           <div className="flex items-center justify-between w-full py-4 px-4">
@@ -361,7 +363,7 @@ const MobileMenu = ({
                           key={category.name}
                           tabIndex={0}
                           onClick={() => {
-                            addRating(category.key)
+                            addRating(category.key);
                           }}
                         >
                           <div className="flex items-center justify-between w-full py-4 px-4">
@@ -394,7 +396,7 @@ const MobileMenu = ({
             withoutMobile
             className="w-full"
             onClick={() => {
-              setIsMobileMenuOpen(!isMobileMenuOpen)
+              setIsMobileMenuOpen(!isMobileMenuOpen);
             }}
           >
             Filter Dapps
@@ -402,7 +404,7 @@ const MobileMenu = ({
         </CategoryContainer>
       </div>
     </MenuContainer>
-  )
-}
+  );
+};
 
-export default MobileMenu
+export default MobileMenu;

@@ -16,11 +16,7 @@ import {
   filterDapps,
   generateUrl,
 } from "../../helpers/category";
-import {
-  filterDappcardsByRating,
-  getRatings,
-  getRatingsFromUser,
-} from "../../helpers/rating";
+import { filterDappcardsByRating, getRatings } from "../../helpers/rating";
 import sortByAttribute from "../../helpers/sort";
 import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { GetStaticPaths, GetStaticProps } from "next";
@@ -53,8 +49,9 @@ const CategoryPage = ({
 }) => {
   const router = useRouter();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [dappRatings, setDappRatings] = useState<{ [key: string]: string[] }>(
-    {}
+    {},
   );
   const selectedCategory = useCategoryStore((state) => state.selectedCategory);
   const changeCategory = useCategoryStore((state) => state.changeCategory);
@@ -79,7 +76,7 @@ const CategoryPage = ({
       selectedRatings,
     });
     if (router.isReady && selectedCategory !== "all" && router.asPath !== url) {
-      router.push(url);
+      router.push(url, undefined, { scroll: false });
     }
   }, [selectedFilters, selectedSort, selectedRatings]);
 
@@ -95,9 +92,23 @@ const CategoryPage = ({
 
   const categoryDapps = filterCategoryDapps({ dappCards, category });
 
+  // Filter by search query
+  const searchFilteredDapps = categoryDapps.filter((dapp) => {
+    if (searchQuery === "") return true;
+    return (
+      dapp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      dapp.short_description
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      dapp.tags?.some((tag) =>
+        tag.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    );
+  });
+
   // Check if all filters apply to a category
   const filteredDapps = filterDapps({
-    dappCards: categoryDapps,
+    dappCards: searchFilteredDapps,
     filters: selectedFilters,
   });
 
@@ -126,6 +137,8 @@ const CategoryPage = ({
             className="categories"
             dappCards={dappCards}
             dappRatings={dappRatings}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
           />
           <div className="cards">
             <h1 className="lg:hidden font-semibold text-xl leading-none mb-5 mt-8">
@@ -171,7 +184,7 @@ const CategoryPage = ({
 };
 
 export const getStaticProps: GetStaticProps<{ dappCards: DappCard[] }> = async (
-  context
+  context,
 ) => {
   const category = context?.params?.category as string;
 

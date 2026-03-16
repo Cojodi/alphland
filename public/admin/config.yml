@@ -1,0 +1,286 @@
+# Backend is configured dynamically in HTML files (admin/submit/report)
+# to support different OAuth App IDs for different domains
+
+# Media files will be stored in the public/dapps folder
+media_folder: "public/dapps"
+public_folder: "/dapps"
+
+collections:
+  - name: "dapps"
+    label: "dApps"
+    label_singular: "dApp"
+    folder: "data"
+    create: true
+    slug: "{{slug}}"
+    extension: "json"
+    format: "json"
+    editor:
+      preview: false
+    fields:
+      - { label: "Name", name: "name", widget: "string", required: true }
+      - {
+          label: "Description",
+          name: "description",
+          widget: "text",
+          required: true,
+          hint: "Full description of your dApp (2-3 sentences)"
+        }
+      - {
+          label: "Short Description",
+          name: "short_description",
+          widget: "string",
+          required: true,
+          hint: "Brief tagline (max 60 characters)"
+        }
+      - {
+          label: "Tags",
+          name: "tags",
+          widget: "select",
+          multiple: true,
+          required: true,
+          options: [
+            "Mining",
+            "Tools",
+            "Infrastructure",
+            "Bridges",
+            "Analytics",
+            "Wallets",
+            "DeFi",
+            "Security",
+            "Onramps",
+            "Games",
+            "Quests",
+            "NFTs",
+            "Ai",
+            "Education",
+            "Social",
+            "ComingSoon"
+          ]
+        }
+      # - {
+      #     label: "Verified",
+      #     name: "verified",
+      #     widget: "boolean",
+      #     default: false,
+      #     required: false,
+      #     hint: "Leave as false - will be reviewed by admins"
+      #   }
+      # - {
+      #     label: "DOTW (dApp of the Week)",
+      #     name: "dotw",
+      #     widget: "boolean",
+      #     default: false,
+      #     required: false,
+      #     hint: "Leave as false - assigned by admins"
+      #   }
+      # - {
+      #    label: "Council's Choice",
+      #    name: "councils_choice",
+      #    widget: "boolean",
+      #    default: false,
+      #    required: false,
+      #    hint: "Leave as false - assigned by admins"
+      #  }
+
+      - {
+          label: "Search Keywords",
+          name: "keywords",
+          widget: "list",
+          required: false,
+          hint: "Hidden keywords to improve search (e.g. dex, swap, lend, loan). Not displayed publicly.",
+          field: { label: "Keyword", name: "keyword", widget: "string" }
+        }
+
+      # Links Section
+      - label: "Links"
+        name: "links"
+        widget: "object"
+        fields:
+          - { label: "Website", name: "website", widget: "string", required: true }
+          - { label: "Careers Page", name: "careers", widget: "string", required: false, hint: "URL or mailto:email" }
+          - { label: "Twitter", name: "twitter", widget: "string", required: false }
+          - { label: "Telegram", name: "telegram", widget: "string", required: false }
+          - { label: "Discord", name: "discord", widget: "string", required: false }
+          - { label: "Documentation", name: "docs", widget: "string", required: false }
+          - { label: "GitHub", name: "github", widget: "string", required: false }
+          - { label: "YouTube", name: "youtube", widget: "string", required: false }
+          - { label: "Medium", name: "medium", widget: "string", required: false }
+          - { label: "Mirror", name: "mirror", widget: "string", required: false }
+          - { label: "LinkedIn", name: "linkedin", widget: "string", required: false }
+
+      - {
+          label: "Twitter Username",
+          name: "twitterName",
+          widget: "string",
+          required: false,
+          hint: "Without @ symbol"
+        }
+
+      # Team Info Section
+      - label: "Team Information"
+        name: "teamInfo"
+        widget: "object"
+        fields:
+          - { label: "Contact Email", name: "contactEmail", widget: "string", required: false }
+          - {
+              label: "Founded Date",
+              name: "founded",
+              widget: "datetime",
+              required: false,
+              format: "YYYY-MM-DDTHH:mm:ss.SSSZ"
+            }
+          - { label: "Anonymous Team", name: "anonymous", widget: "boolean", default: false }
+
+      # Media Section
+      - label: "Media"
+        name: "media"
+        widget: "object"
+        collapsed: false
+        fields:
+          - {
+              label: "Logo",
+              name: "logoUrl",
+              widget: "image",
+              required: true,
+              choose_url: false,
+              hint: "Square logo (recommended: 512x512px, WebP format)"
+            }
+          - {
+              label: "Banner",
+              name: "bannerUrl",
+              widget: "image",
+              required: true,
+              choose_url: false,
+              hint: "Wide banner (recommended: 1200x400px, WebP format)"
+            }
+          - {
+              label: "Preview Image",
+              name: "previewUrl",
+              widget: "image",
+              required: true,
+              choose_url: false,
+              hint: "Screenshot or preview (recommended: 1200x800px, WebP format)"
+            }
+          - {
+              label: "Video URL",
+              name: "videoUrl",
+              widget: "string",
+              required: false,
+              hint: "YouTube or Vimeo URL"
+            }
+          - {
+              label: "Gallery",
+              name: "gallery",
+              widget: "list",
+              required: false,
+              field: { label: "Image", name: "image", widget: "image", choose_url: false }
+            }
+
+      # Optional Advanced Fields
+      - label: "Smart Contracts"
+        name: "contracts"
+        widget: "list"
+        required: false
+        default: []
+        collapsed: true
+        fields:
+          - { label: "Contract Address", name: "address", widget: "string" }
+          - { label: "Contract Name", name: "name", widget: "string" }
+      - label: "Audits"
+        name: "audits"
+        widget: "list"
+        required: false
+        default: []
+        collapsed: true
+        fields:
+          - { label: "Auditor", name: "auditor", widget: "string" }
+          - { label: "Report URL", name: "url", widget: "string" }
+          - { label: "Date", name: "date", widget: "datetime" }
+      - label: "Tokens"
+        name: "tokens"
+        widget: "list"
+        required: false
+        default: []
+        collapsed: true
+        fields:
+          - { label: "Token Name", name: "name", widget: "string" }
+          - { label: "Token Symbol", name: "symbol", widget: "string" }
+          - { label: "Token ID", name: "id", widget: "string" }
+      - label: "NFT Collection"
+        name: "nft"
+        widget: "object"
+        required: false
+        default: {}
+        collapsed: true
+        fields:
+          - { label: "Collection Name", name: "name", widget: "string", required: false }
+          - { label: "Collection URL", name: "url", widget: "string", required: false }
+
+  # Reports Collection - for users to report issues
+  - name: "reports"
+    label: "Reports"
+    label_singular: "Report"
+    folder: "reports"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    editor:
+      preview: false
+    fields:
+      - {
+          label: "dApp Name",
+          name: "dapp",
+          widget: "string",
+          required: true,
+          hint: "Name of the dApp you're reporting about"
+        }
+      - {
+          label: "Issue Type",
+          name: "issueType",
+          widget: "select",
+          required: true,
+          options: [
+            "Security Vulnerability",
+            "Bug Report",
+            "Incorrect Information",
+            "Scam/Fraud",
+            "Broken Link",
+            "Other"
+          ]
+        }
+      - {
+          label: "Title",
+          name: "title",
+          widget: "string",
+          required: true,
+          hint: "Brief summary of the issue"
+        }
+      - {
+          label: "Description",
+          name: "body",
+          widget: "text",
+          required: true,
+          hint: "Detailed description of the issue"
+        }
+      - {
+          label: "Reporter Email",
+          name: "email",
+          widget: "string",
+          required: false,
+          hint: "Optional - for follow-up questions"
+        }
+      #- {
+      #    label: "Status",
+      #    name: "status",
+      #    widget: "select",
+      #    default: "pending",
+      #    options: ["pending", "reviewing", "resolved", "rejected"]
+      #  }
+      - {
+          label: "Submission Date",
+          name: "date",
+          widget: "datetime",
+          default: "{{year}}-{{month}}-{{day}}T{{hour}}:{{minute}}:{{second}}",
+          format: "YYYY-MM-DDTHH:mm:ss"
+        }

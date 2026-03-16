@@ -1,0 +1,137 @@
+name: Cleanup Orphan Media
+
+on:
+  # Check PRs targeting testing branch and post a warning comment
+  pull_request_target:
+    branches: [testing]
+    types: [opened, synchronize]
+  # Auto-delete after merge
+  push:
+    branches: [testing]
+    paths:
+      - 'public/dapps/**'
+      - 'data/**'
+
+jobs:
+  # ── PR check: post a comment listing orphan files ─────────────────────────
+  pr-check:
+    if: github.event_name == 'pull_request_target'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Checkout the PR branch safely (read-only, no code execution)
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Detect orphan media files
+        id: detect
+        run: |
+          # Files added in this PR that live in the flat root of public/dapps/
+          # (subdirectories = curated entries, root = new submissions)
+          ADDED=$(git diff --name-only --diff-filter=A \
+            "origin/${{ github.base_ref }}...HEAD" \
+            -- 'public/dapps/*' \
+            | grep -E '^public/dapps/[^/]+\.(webp|png|jpg|jpeg|gif)$' || true)
+
+          if [ -z "$ADDED" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Collect every /dapps/... reference from all JSON files
+          REFS=$(grep -roh '"/dapps/[^"]*"' data/ | tr -d '"' | sort -u)
+
+          ORPHANS=""
+          while IFS= read -r f; do
+            url="/${f#public/}"
+            if ! printf '%s\n' "$REFS" | grep -qxF "$url"; then
+              ORPHANS="${ORPHANS}\n- \`${f}\`"
+            fi
+          done <<< "$ADDED"
+
+          if [ -z "$ORPHANS" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            {
+              echo 'orphans<<EOF'
+              printf '%b' "$ORPHANS"
+              echo
+              echo EOF
+            } >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment on PR
+        if: steps.detect.outputs.orphans
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const orphans = `${{ steps.detect.outputs.orphans }}`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: [
+                '## ⚠️ Orphan media files detected',
+                '',
+                'The following image files were uploaded but are **not referenced** in any dApp JSON.',
+                'Please remove them before merging:\n',
+                orphans,
+                '',
+                '_This check runs automatically on every push to this PR._'
+              ].join('\n')
+            });
+
+  # ── Post-merge cleanup: auto-delete unreferenced files ────────────────────
+  cleanup:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2   # Need parent commit to diff
+
+      - name: Remove unreferenced root-level media files
+        id: cleanup
+        run: |
+          # Only look at flat files in public/dapps/ (not subdirectories)
+          ALL_ROOT_IMAGES=$(find public/dapps -maxdepth 1 -type f \
+            \( -name "*.webp" -o -name "*.png" -o -name "*.jpg" \
+               -o -name "*.jpeg" -o -name "*.gif" \))
+
+          if [ -z "$ALL_ROOT_IMAGES" ]; then
+            echo "No root-level images found."
+            exit 0
+          fi
+
+          REFS=$(grep -roh '"/dapps/[^"]*"' data/ | tr -d '"' | sort -u)
+
+          DELETED=""
+          while IFS= read -r f; do
+            url="/${f#public/}"
+            if ! printf '%s\n' "$REFS" | grep -qxF "$url"; then
+              echo "Deleting orphan: $f"
+              rm -f "$f"
+              DELETED="${DELETED} ${f}"
+            fi
+          done <<< "$ALL_ROOT_IMAGES"
+
+          if [ -n "$DELETED" ]; then
+            echo "deleted=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit deleted files
+        if: steps.cleanup.outputs.deleted
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: remove orphan media files"
+          git push

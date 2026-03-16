@@ -1,11 +1,16 @@
+import home from "../../../assets/icons/home.svg";
+import homeDark from "../../../assets/icons/home_dark.svg";
 import moon from "../../../assets/icons/moon.svg";
 import sun from "../../../assets/icons/sun.svg";
 import logoLight from "../../../assets/logo-alphland-light.svg";
 import logo from "../../../assets/logo-alphland.svg";
+import { useCategoryStore } from "../../../hooks/useCategoryStore";
+// import ConnectWallet from "../../Button/ConnectWallet";
+import AuthButton from "../../Button/AuthButton";
 import Button from "../../Button/Button";
-import ConnectWallet from "../../Button/ConnectWallet";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
@@ -45,7 +50,49 @@ type NavbarItem = {
 };
 
 const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
-  const navbarItems: NavbarItem[] = [];
+  const router = useRouter();
+  const navbarItems: NavbarItem[] = [
+    {
+      name: "Explore dApps",
+      href: "/",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+    {
+      name: "Bounties",
+      href: "/bounty",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+    {
+      name: "Resources",
+      href: "/resources",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+    // {
+    //   name: "Forum",
+    //   href: "/forum",
+    //   icon: currentTheme === "dark" ? homeDark : home,
+    // },
+    // {
+    //   name: "Agenda",
+    //   href: "/agenda",
+    //   icon: currentTheme === "dark" ? homeDark : home,
+    // },
+    {
+      name: "Ecosystem Map",
+      href: "/ecosystem-map",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+  ];
+
+  const setFilters = useCategoryStore((state) => state.setFilters);
+  const changeCategory = useCategoryStore((state) => state.changeCategory);
+  const setSort = useCategoryStore((state) => state.setSelectedSort);
+  const setRatings = useCategoryStore((state) => state.setRatings);
+
+  // Check if current page is bounty, sponsor, or user profile related
+  const isBountyPage =
+    router.pathname.startsWith("/bounty") ||
+    router.pathname.startsWith("/auth");
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isNavbarScrolled, setIsNavbarScrolled] = useState(false);
@@ -126,7 +173,18 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
             {navbarItems.map((item) => (
               <li key={item.name}>
                 <Link href={item.href}>
-                  <a className="flex items-center py-3 px-6 bg-white dark:bg-light-black uppercase font-medium font-base">
+                  <a
+                    className="flex items-center py-3 px-6 bg-white dark:bg-light-black uppercase font-medium font-base"
+                    onClick={() => {
+                      if (item.href === "/") {
+                        setFilters([]);
+                        setSort(null);
+                        setRatings([]);
+                        changeCategory("all");
+                      }
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
                     <Image src={item.icon} alt={item.name} />
                     <p>{item.name}</p>
                   </a>
@@ -150,20 +208,22 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
             </li>
           </ul>
           <div className="mx-7">
-            <Button
-              variant="primary"
-              className="w-full"
-              withoutMobile
-              href="https://github.com/cojodi/Alphland#-add-your-dapp-to-Alphland"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Add your Dapp
-            </Button>
+            {isBountyPage ? (
+              <AuthButton />
+            ) : (
+              <Button
+                variant="primary"
+                className="w-full"
+                withoutMobile
+                href="/submit"
+              >
+                Add your Dapp
+              </Button>
+            )}
           </div>
-          <div className="mx-7 mt-4">
+          {/* <div className="mx-7 mt-4">
             <ConnectWallet />
-          </div>
+          </div> */}
         </div>
       </MenuContainer>
       <div

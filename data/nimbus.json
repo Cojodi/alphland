@@ -2,10 +2,7 @@
   "name": "Nimbus",
   "description": "Nimbus is a portfolio management interface that tracks cryptocurrencies, NFTs, and DeFi positions. It consolidates valuations, exposures, and performance data into a unified dashboard.",
   "short_description": "A unified Web3 portfolio for Alephium",
-  "tags": [
-    "Infrastructure",
-    "Analytics"
-  ],
+  "tags": ["Infrastructure", "Analytics"],
   "verified": false,
   "dotw": false,
   "councils_choice": true,

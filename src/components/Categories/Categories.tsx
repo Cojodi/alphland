@@ -6,13 +6,17 @@ import { checkIfCategoryExists, generateUrl } from "../../helpers/category";
 import { filterDappcardsByRating } from "../../helpers/rating";
 import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { useDarkMode } from "../../hooks/useDarkMode";
+import SearchBar from "../SearchBar/SearchBar";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ReactNode } from "react";
 import styled from "styled-components";
 
-const CategoryContainer = styled.div`
+const CategoryContainer = styled.div<{
+  className?: string;
+  children?: ReactNode;
+}>`
   ul.hovered li {
     transition: opacity 0.2s ease-in-out;
     opacity: 0.6;
@@ -33,22 +37,28 @@ interface CategoriesProps {
   dappCards: DappCard[];
   isHome?: boolean;
   dappRatings: { [key: string]: string[] };
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
 }
 
 const Categories = ({
   className,
   dappCards,
   dappRatings,
-  isHome,
+  searchQuery = "",
+  onSearchChange,
 }: CategoriesProps) => {
   const router = useRouter();
   const [hovered, setHovered] = useState(false);
-
-  const [firstRun, setFirstRun] = useState(true);
   const { currentTheme } = useDarkMode();
 
   const selectedCategory = useCategoryStore((state) => state.selectedCategory);
   const changeCategory = useCategoryStore((state) => state.changeCategory);
+  const selectedCategories = useCategoryStore(
+    (state) => state.selectedCategories,
+  );
+  const addCategory = useCategoryStore((state) => state.addCategory);
+  const setCategories = useCategoryStore((state) => state.setCategories);
   const selectedSort = useCategoryStore((state) => state.selectedSort);
   const selectedFilters = useCategoryStore((state) => state.selectedFilters);
   const addFilter = useCategoryStore((state) => state.addFilter);
@@ -64,8 +74,10 @@ const Categories = ({
       const sortBy = router?.query?.sort as string;
       const category = (router?.query?.category as string) || "all";
       const ratings = (router?.query?.ratings as string)?.split(",") || [];
+      const cats = (router?.query?.categories as string)?.split(",") || [];
       setFilters(filters);
       setRatings(ratings);
+      setCategories(cats.filter((c) => c.length > 0));
       setSelectedSort(sortBy && sortBy.length ? sortBy : null);
       changeCategory(category);
     }
@@ -75,11 +87,12 @@ const Categories = ({
     router?.query?.sort,
     router?.query?.category,
     router?.query?.ratings,
+    router?.query?.categories,
   ]);
   const renderCategoryCount = (
     category: string,
     isMainCategory?: boolean,
-    isRatingCategory?: boolean
+    isRatingCategory?: boolean,
   ) => {
     const dappCardsFilteredByRating = !isRatingCategory
       ? filterDappcardsByRating({
@@ -102,7 +115,7 @@ const Categories = ({
         const filterMatched = checkIfCategoryExists(
           currentValue,
           nextFilter,
-          dappRatings
+          dappRatings,
         );
         return filterMatched ? prevFiltersCount + 1 : prevFiltersCount;
       }, 0);
@@ -112,13 +125,13 @@ const Categories = ({
 
   const checkIfAnyCategoryIsActive = () =>
     [...categories, ...reputation, ...ratings].some(
-      (category) => category.key === selectedCategory
+      (category) => category.key === selectedCategory,
     );
 
   const checkIfCategoryHasDapps = (
     category: Array<{ key: string; name: string; icon: any }>,
     isMainCategory?: boolean,
-    isRatingCategory?: boolean
+    isRatingCategory?: boolean,
   ) => {
     let activeCategories = 0;
     category.forEach((item) => {
@@ -140,11 +153,13 @@ const Categories = ({
         (category) =>
           selectedFilters.includes(category.key) ||
           selectedRatings.includes(category.key) ||
-          category.key === selectedCategory
+          selectedCategories.includes(category.key) ||
+          category.key === selectedCategory,
       )
       .map((category) => ({
         ...category,
         isRating: selectedRatings.includes(category.key),
+        isCategory: selectedCategories.includes(category.key),
       }));
   };
 
@@ -154,6 +169,25 @@ const Categories = ({
     <CategoryContainer
       className={["mb-4", className ? className : ""].join(" ")}
     >
+      {/* Search Bar and Total Count */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-xl leading-none lg:text-[22px] lg:font-bold">
+            All Projects
+          </h3>
+          <div className="text-sm font-semibold text-light-charcoal dark:text-clay">
+            {dappCards.length} dApps
+          </div>
+        </div>
+        {onSearchChange && (
+          <SearchBar
+            value={searchQuery}
+            onChange={onSearchChange}
+            placeholder="Search dApps..."
+          />
+        )}
+      </div>
+
       {filteredCategories.length > 0 && (
         <>
           <h3 className="hidden lg:block font-semibold text-xl leading-none pt-8 pb-4 lg:text-[22px] lg:font-bold">
@@ -161,8 +195,8 @@ const Categories = ({
           </h3>
           <ul
             className={`hidden lg:block ${hovered ? "hovered" : ""}`}
-            onMouseOver={(e) => !hovered && setHovered(true)}
-            onMouseLeave={(e) => hovered && setHovered(false)}
+            onMouseOver={() => !hovered && setHovered(true)}
+            onMouseLeave={() => hovered && setHovered(false)}
           >
             {filteredCategories.map((category) => (
               <li
@@ -179,11 +213,15 @@ const Categories = ({
                         selectedFilters: selectedFilters,
                         selectedRatings: selectedRatings,
                         selectedCategory: "all",
-                      })
+                      }),
+                      undefined,
+                      { scroll: false },
                     );
                   } else {
                     if (category.isRating) {
                       addRating(category.key);
+                    } else if (category.isCategory) {
+                      addCategory(category.key);
                     } else {
                       addFilter(category.key);
                     }
@@ -194,7 +232,7 @@ const Categories = ({
                   <div className="flex items-center">
                     {category.isRating ? (
                       <div className="flex items-center gap-1.5">
-                        {[...Array(parseInt(category.name))].map((val, i) => (
+                        {[...Array(parseInt(category.name))].map((_, i) => (
                           <Image
                             src={
                               currentTheme === "dark"
@@ -220,20 +258,33 @@ const Categories = ({
                       {category.isRating ? "" : category.name}
                     </p>
                   </div>
-                  <button
-                    role="button"
-                    className="p-0 m-0 outline-0 bg-none border-none flex"
-                    onClick={() => {}}
-                  >
-                    <Image
-                      width={16}
-                      height={16}
-                      alt="remove-button"
-                      src={
-                        currentTheme === "dark" ? crossCircleLight : crossCircle
-                      }
-                    />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <p className="text-light-charcoal dark:text-clay text-sm font-semibold leading-none">
+                      {category.key === selectedCategory
+                        ? renderCategoryCount(category.name, true)
+                        : category.isRating
+                          ? renderCategoryCount(category.name, false, true)
+                          : category.isCategory
+                            ? renderCategoryCount(category.name, true)
+                            : renderCategoryCount(category.name)}
+                    </p>
+                    <button
+                      role="button"
+                      className="p-0 m-0 outline-0 bg-none border-none flex"
+                      onClick={() => {}}
+                    >
+                      <Image
+                        width={16}
+                        height={16}
+                        alt="remove-button"
+                        src={
+                          currentTheme === "dark"
+                            ? crossCircleLight
+                            : crossCircle
+                        }
+                      />
+                    </button>
+                  </div>
                 </div>
               </li>
             ))}
@@ -249,58 +300,46 @@ const Categories = ({
         className={`flex overflow-x-scroll lg:flex-col lg:overflow-auto pb-2 lg:pb-0 ${
           hovered ? "hovered" : ""
         }`}
-        onMouseOver={(e) => !hovered && setHovered(true)}
-        onMouseLeave={(e) => hovered && setHovered(false)}
+        onMouseOver={() => !hovered && setHovered(true)}
+        onMouseLeave={() => hovered && setHovered(false)}
       >
         {categories
-          .filter((category) => category.key !== selectedCategory)
+          .filter((category) => !selectedCategories.includes(category.key))
           .map(
             (category) =>
               (renderCategoryCount(category.name, true) > 0 ||
                 selectedFilters.length ||
                 selectedRatings.length ||
+                selectedCategories.length ||
                 selectedCategory !== "all") && (
-                <Link
-                  href={generateUrl({
-                    selectedCategory: category.key,
-                    selectedRatings,
-                    selectedSort,
-                    selectedFilters,
-                  })}
-                  key={category.key}
+                <li
+                  className={`flex flex-col items-center justify-center bg-white dark:bg-white/10 shadow-box-image-shadow rounded-lg mr-2 min-w-[108px] cursor-pointer lg:flex-row lg:mb-2 lg:justify-start ${
+                    selectedCategories.includes(category.key) ? "active" : ""
+                  } ${checkIfAnyCategoryIsActive() ? "with-blur" : ""}`}
+                  key={category.name}
+                  tabIndex={0}
+                  onClick={() => addCategory(category.key)}
                 >
-                  <a>
-                    <li
-                      className={`flex flex-col items-center justify-center bg-white dark:bg-white/10 shadow-box-image-shadow rounded-lg mr-2 min-w-[108px] cursor-pointer lg:flex-row lg:mb-2 lg:justify-start ${
-                        selectedCategory === category.key ? "active" : ""
-                      } ${checkIfAnyCategoryIsActive() ? "with-blur" : ""}`}
-                      key={category.name}
-                      tabIndex={0}
-                    >
-                      <div className="flex items-center justify-center w-full lg:justify-between py-4 px-4">
-                        <div className="flex items-center flex-col lg:flex-row">
-                          <Image
-                            src={
-                              currentTheme === "dark"
-                                ? category.iconDark
-                                : category.icon
-                            }
-                            alt={category.name}
-                          />
-                          <p className="mt-2 font-semibold leading-none text-sm lg:ml-3 lg:mt-0 text-black dark:text-white">
-                            {category.name}
-                          </p>
-                        </div>
-                        <p className="text-light-charcoal dark:text-clay text-sm font-semibold leading-none ml-auto hidden lg:block">
-                          {!selectedFilters.length && !selectedRatings.length
-                            ? renderCategoryCount(category.name, true)
-                            : ""}
-                        </p>
-                      </div>
-                    </li>
-                  </a>
-                </Link>
-              )
+                  <div className="flex items-center justify-center w-full lg:justify-between py-4 px-4">
+                    <div className="flex items-center flex-col lg:flex-row">
+                      <Image
+                        src={
+                          currentTheme === "dark"
+                            ? category.iconDark
+                            : category.icon
+                        }
+                        alt={category.name}
+                      />
+                      <p className="mt-2 font-semibold leading-none text-sm lg:ml-3 lg:mt-0 text-black dark:text-white">
+                        {category.name}
+                      </p>
+                    </div>
+                    <p className="text-light-charcoal dark:text-clay text-sm font-semibold leading-none ml-auto hidden lg:block">
+                      {renderCategoryCount(category.name, true)}
+                    </p>
+                  </div>
+                </li>
+              ),
           )}
       </ul>
       {checkIfCategoryHasDapps(reputation) ||
@@ -311,8 +350,8 @@ const Categories = ({
       ) : null}
       <ul
         className={`hidden lg:block pb-5 ${hovered ? "hovered" : ""}`}
-        onMouseOver={(e) => !hovered && setHovered(true)}
-        onMouseLeave={(e) => hovered && setHovered(false)}
+        onMouseOver={() => !hovered && setHovered(true)}
+        onMouseLeave={() => hovered && setHovered(false)}
       >
         {reputation
           .filter((rep) => !selectedFilters.includes(rep.key))
@@ -348,12 +387,12 @@ const Categories = ({
                     </p>
                   </div>
                 </li>
-              )
+              ),
           )}
         {ratings
           .filter((rating) => !selectedRatings.includes(rating.key))
           .map(
-            (category, i) =>
+            (category) =>
               renderCategoryCount(category.name, false, true) > 0 && (
                 <li
                   className={`flex flex-col items-center justify-center bg-white dark:bg-white/10 shadow-box-image-shadow rounded-lg mr-2 min-w-[108px] cursor-pointer lg:flex-row lg:mb-2 lg:justify-start ${
@@ -368,7 +407,7 @@ const Categories = ({
                   <div className="flex items-center justify-between w-full py-4 px-4">
                     <div className="flex items-center">
                       <div className="flex items-center gap-1.5">
-                        {[...Array(parseInt(category.name))].map((val, i) => (
+                        {[...Array(parseInt(category.name))].map((_, i) => (
                           <Image
                             src={star}
                             alt={`${category.name}-star`}
@@ -382,7 +421,7 @@ const Categories = ({
                     </p>
                   </div>
                 </li>
-              )
+              ),
           )}
       </ul>
     </CategoryContainer>

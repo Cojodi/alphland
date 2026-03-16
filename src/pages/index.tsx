@@ -1,164 +1,87 @@
-import featuredDappImage from "../../public/dapps/elexium/elexium-banner.webp";
-import FilterButton from "../components/Button/FilterButton";
-import Card from "../components/Card/Card";
-import Categories from "../components/Categories/Categories";
-import DappOfTheMonth from "../components/FeaturedCard/DappOfTheMonth";
-import FilterMenu from "../components/FilterMenu/FilterMenu";
+import CategoriesSection from "../components/CategoriesSection/CategoriesSection";
+import FAQ from "../components/FAQ/FAQ";
+import Hero from "../components/Hero/Hero";
 import Layout from "../components/Layout";
-import Select from "../components/Select/Select";
+import Spotlight from "../components/Spotlight/Spotlight";
+import { categories } from "../data/categories";
 import { getAllDapps } from "../data/getAllDapps";
-import { filterDappcardsByRating, getRatings } from "../helpers/rating";
-import sortByAttribute from "../helpers/sort";
-import { useCategoryStore } from "../hooks/useCategoryStore";
+import { BY_ALEPHIUM_DAPPS, FEATURED_DAPPS } from "../data/featuredDapps";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import styled from "styled-components";
-import { never } from "zod";
+import { useState } from "react";
 
-const StyledSection = styled.section`
-  grid-template-areas:
-    "list header"
-    "list cards";
-  grid-template-columns: minmax(300px, 340px) 1fr;
-  grid-column-gap: 64px;
+// dApps shown in the Hero banner carousel (top of page)
+const BANNER_DAPPS = ["powfi", "linx-app"];
 
-  .featured {
-    grid-area: header;
-  }
+interface DappCard {
+  title: string;
+  short_description: string;
+  logo: string;
+  url: string;
+  tags: string[];
+  links?: {
+    website?: string;
+    twitter?: string;
+    discord?: string;
+    telegram?: string;
+    github?: string;
+  };
+}
 
-  .categories {
-    grid-area: list;
-  }
-`;
+// Keep SpotlightDapp as an alias for backwards compat with Spotlight component
+type SpotlightDapp = DappCard;
+
+interface CategoryCount {
+  [key: string]: number;
+}
 
 const Home = ({
-  dappCards,
-  featuredDapp,
+  bannerDapps,
+  byAlephiumDapps,
+  spotlightDapps,
+  totalDappCount,
+  categoryCounts,
 }: {
-  dappCards: DappCard[];
-  featuredDapp?: DappCard;
+  bannerDapps: DappCard[];
+  byAlephiumDapps: SpotlightDapp[];
+  spotlightDapps: SpotlightDapp[];
+  totalDappCount: number;
+  categoryCounts: CategoryCount;
 }) => {
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [ratings, setRatings] = useState<{ [key: string]: string[] }>({});
+  const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
-  const selectedFilters = useCategoryStore((state) => state.selectedFilters);
-  const selectedRatings = useCategoryStore((state) => state.selectedRatings);
-  const selectedSort = useCategoryStore((state) => state.selectedSort);
-  const selectedCategory = useCategoryStore((state) => state.selectedCategory);
-  const setSelectedSort = useCategoryStore((state) => state.setSelectedSort);
 
-  useEffect(() => {
-    const getAllRatings = async () => {
-      const ratings = await getRatings();
+  // Handle search - redirect to explore page with query
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    if (query.trim()) {
+      router.push(`/explore?search=${encodeURIComponent(query.trim())}`);
+    }
+  };
 
-      setRatings(ratings);
-    };
-    getAllRatings();
-  }, []);
-
-  useEffect(() => {
-    const allFilters = selectedFilters.join(",");
-    const allRatings = selectedRatings.join(",");
-    const sortBy = selectedSort;
-    let url = "/";
-    if (allFilters.length) {
-      url += `?filters=${allFilters}`;
-    }
-    if (sortBy && sortBy.length) {
-      url += `${allFilters.length ? "&" : "?"}sort=${sortBy}`;
-    }
-    if (selectedRatings.length) {
-      url += `${
-        allFilters.length || (sortBy && sortBy.length) ? "&" : "?"
-      }ratings=${allRatings}`;
-    }
-    if (router.isReady && selectedCategory === "all") {
-      router.push(url);
-    }
-  }, [selectedFilters, selectedSort, selectedCategory, selectedRatings]);
-
-  const filteredDapps = dappCards.filter((dapp) => {
-    return (
-      selectedFilters.reduce((acc, val) => {
-        if (val === "dotw" && dapp.featured) {
-          acc = acc + 1;
-        }
-        if (val === "doxxed" && !dapp.annonymous) {
-          acc = acc + 1;
-        }
-        if (val === "audited" && dapp.audits && dapp.audits.length > 0) {
-          acc = acc + 1;
-        }
-        if (val === "verified" && dapp.verified) {
-          acc = acc + 1;
-        }
-        if (val === "councils_choice" && dapp.councils_choice) {
-          acc = acc + 1;
-        }
-        return acc;
-      }, 0) === selectedFilters.length
-    );
-  });
-  const dappsByRating = filterDappcardsByRating({
-    dappCards: filteredDapps,
-    dappRatings: ratings,
-    isMainCategory: false,
-    selectedRatings,
-  });
-  const sortedDapps = sortByAttribute(dappsByRating, selectedSort);
-  const filterCount = selectedFilters.length + selectedRatings.length;
   return (
-    <Layout isHome>
+    <Layout isHome canonical="https://alph.land">
       <div className="container px-4 mx-auto mb-16 lg:mb-32">
-        <StyledSection className="lg:grid lg:mt-20">
-          <Categories
-            isHome
-            className="categories lg:max-w-[340px]"
-            dappCards={dappCards}
-            dappRatings={ratings}
+        <div className="mt-8 lg:mt-12">
+          <Hero
+            searchQuery={searchQuery}
+            onSearchChange={handleSearch}
+            dappCount={totalDappCount}
+            bannerDapps={bannerDapps}
           />
-          <div className="cards">
-            <DappOfTheMonth
-              name="Elexium Finance"
-              image={featuredDappImage}
-              url="/elexium"
-              className="featured"
-            />
-            <h3 className="lg:hidden font-semibold text-xl leading-none mb-5">
-              All projects
-            </h3>
-            <div className="lg:block flex w-full">
-              <FilterButton
-                onClick={() => setShowMobileFilters(true)}
-                filterCount={filterCount}
-              />
-              <div className="w-[164px] float-left lg:float-right">
-                <Select
-                  defaultValue={selectedSort}
-                  placeholder="Sort By"
-                  options={[
-                    { label: "A-Z", value: "A-Z" },
-                    { label: "Z-A", value: "Z-A" },
-                  ]}
-                  onChange={(sortBy) => setSelectedSort(sortBy)}
-                />
-              </div>
-            </div>
-            {showMobileFilters && (
-              <FilterMenu
-                dappRatings={ratings}
-                dappCards={dappCards}
-                isMobileMenuOpen={showMobileFilters}
-                setIsMobileMenuOpen={setShowMobileFilters}
-              />
-            )}
-            <div className="grid grid-cols-1 w-full gap-y-8 justify-center md:grid-cols-2 lg:grid-cols-1 lg:mx-0 gap-x-20 lg:gap-y-20 xl:grid-cols-2 2xl:grid-cols-3">
-              {sortedDapps.map((card) => (
-                <Card key={card.url} {...card} />
-              ))}
-            </div>
-          </div>
-        </StyledSection>
+        </div>
+
+        <Spotlight
+          dapps={byAlephiumDapps}
+          title="By Alephium"
+          subtitle="Essentials to start your Alephium journey"
+        />
+
+        <Spotlight dapps={spotlightDapps} />
+
+        <CategoriesSection categoryCounts={categoryCounts} />
+
+        {/* FAQ Section */}
+        <FAQ />
       </div>
     </Layout>
   );
@@ -166,27 +89,48 @@ const Home = ({
 
 export const getStaticProps = async () => {
   const dapps = await getAllDapps();
-  const ratingsParsed = await getRatings();
 
-  const parsedDapps = dapps.map((dapp: DappInfo & { url: string }) => ({
-    short_description: dapp.short_description,
-    title: dapp.name,
-    tags: dapp.tags,
-    url: dapp.url,
-    logo: dapp.media.logoUrl,
-    image: dapp.media.previewUrl,
-    featured: dapp.dotw,
-    annonymous: dapp.teamInfo.anonymous,
-    audits: dapp.audits,
-    verified: dapp.verified,
-    councils_choice: dapp.councils_choice,
-  }));
+  // Build hero banner dApps
+  const mapDapp = (slug: string) => {
+    const dapp = dapps.find((d) => d.url === slug);
+    if (!dapp) return null;
+    return {
+      title: dapp.name,
+      short_description: dapp.short_description,
+      logo: dapp.media.logoUrl,
+      url: `/${dapp.url}`,
+      tags: dapp.tags,
+      links: dapp.links,
+    };
+  };
+
+  const bannerDapps = BANNER_DAPPS.map(mapDapp).filter(Boolean) as DappCard[];
+
+  // Build By Alephium section dApps
+  const byAlephiumDapps = BY_ALEPHIUM_DAPPS.map(mapDapp).filter(
+    Boolean,
+  ) as SpotlightDapp[];
+
+  // Filter and map featured dApps for spotlight
+  const spotlightDapps = FEATURED_DAPPS.map(mapDapp).filter(
+    Boolean,
+  ) as SpotlightDapp[];
+
+  // Calculate category counts
+  const categoryCounts: CategoryCount = {};
+  categories.forEach((cat) => {
+    categoryCounts[cat.key] = dapps.filter((dapp) =>
+      dapp.tags.includes(cat.name),
+    ).length;
+  });
 
   return {
     props: {
-      dappCards: parsedDapps,
-      featuredDapp: null, //parsedDapps.filter((dapp) => dapp.featured)[0],
-      ratings: ratingsParsed,
+      bannerDapps,
+      byAlephiumDapps,
+      spotlightDapps,
+      totalDappCount: dapps.length,
+      categoryCounts,
     },
   };
 };

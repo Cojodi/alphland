@@ -9,7 +9,7 @@ const srcDir = path.join(__dirname, "../src");
 
 // GitHub repository configuration
 const GITHUB_REPO =
-  "https://raw.githubusercontent.com/xbabyx/alphland/develop/public";
+  "https://raw.githubusercontent.com/alph-land/alphland/develop/public";
 
 /**
  * Convert relative media path to absolute GitHub URL
@@ -79,7 +79,7 @@ filenames
         // Filter valid audits (must have name and url)
         const validAudits = (parsedContent.audits || []).filter(
           (audit) =>
-            audit && typeof audit === "object" && audit.name && audit.url
+            audit && typeof audit === "object" && audit.name && audit.url,
         );
 
         // Filter valid contracts (must have name and address, and be an object not a string)
@@ -88,14 +88,14 @@ filenames
             contract &&
             typeof contract === "object" &&
             contract.name &&
-            contract.address
+            contract.address,
         );
 
         // Filter valid gallery items (must have url and description)
         const validGallery = (parsedContent.media?.gallery || [])
           .filter(
             (item) =>
-              item && typeof item === "object" && item.url && item.description
+              item && typeof item === "object" && item.url && item.description,
           )
           .map((item) => ({
             ...item,
@@ -120,7 +120,7 @@ filenames
                 (preview) => ({
                   ...preview,
                   image_url: convertToAbsoluteUrl(preview.image_url),
-                })
+                }),
               ),
             }
           : null;
@@ -153,10 +153,10 @@ filenames
             ...parsedContent.media,
             logoUrl: convertToAbsoluteUrl(parsedContent.media?.logoUrl || ""),
             bannerUrl: convertToAbsoluteUrl(
-              parsedContent.media?.bannerUrl || ""
+              parsedContent.media?.bannerUrl || "",
             ),
             previewUrl: convertToAbsoluteUrl(
-              parsedContent.media?.previewUrl || ""
+              parsedContent.media?.previewUrl || "",
             ),
             videoUrl: convertToAbsoluteUrl(parsedContent.media?.videoUrl),
             gallery: validGallery,

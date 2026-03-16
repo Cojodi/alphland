@@ -5,7 +5,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Alchemypay",
     description:
-      "Alchemy Pay bridges fiat and crypto with support for 170+ countries, enabling purchases via cards, mobile wallets, and local bank transfers, especially in developing regions.",
+      "Alchemypay is a fiat to crypto gateway that supports cards, mobile wallets, and bank transfers in more than 170 countries. It enables users to buy and sell cryptocurrency using familiar payment methods.",
     short_description:
       "Fiat-crypto gateway with strong emerging markets focus.",
     tags: ["Onramps"],
@@ -32,11 +32,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alchemypay/alchemypay-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alchemypay/alchemypay-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alchemypay/alchemypay-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alchemypay/alchemypay-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alchemypay/alchemypay-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alchemypay/alchemypay-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -48,10 +48,10 @@ export const dapps: DappInfo[] = [
   {
     name: "Alephium Bridge",
     description:
-      "The Alephium Bridge enables unlimited, decentralized cross-chain transfer of tokens",
+      "Alephium Bridge is a cross chain bridge that enables decentralized token transfers between supported networks (BNB chain and Ethereum). It provides a trust minimized mechanism for moving assets without centralized custodianship.",
     short_description:
-      "Unlimited, decentralized cross-chain transfer of tokens",
-    tags: ["Bridges"],
+      "Decentralized bridge to and from Ethereum and Binance Smart Chain.",
+    tags: ["Bridges", "Tools", "Infrastructure"],
     councils_choice: true,
     contracts: [
       {
@@ -106,11 +106,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-bridge/alephium-bridge-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-bridge/alephium-bridge-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-bridge/alephium-bridge-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-bridge/alephium-bridge-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-bridge/alephium-bridge-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-bridge/alephium-bridge-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -120,9 +120,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Alephium Decoder",
     description:
-      "Alephium Decoder can dissect the raw data for contracts and transactions. It can also replay transaction instructions step by step at the VM level.",
+      "Alephium Decoder is a technical tool that interprets raw transaction and contract data. It can replay contract instructions step by step for audit and debugging purposes.",
     short_description: "Decode contracts, decode and replay transactions",
-    tags: ["Infrastructure"],
+    tags: ["Tools"],
     councils_choice: true,
     verified: false,
     dotw: false,
@@ -146,11 +146,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-decoder/alephium-decoder-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-decoder/alephium-decoder-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-decoder/alephium-decoder-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-decoder/alephium-decoder-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-decoder/alephium-decoder-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-decoder/alephium-decoder-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -160,55 +160,11 @@ export const dapps: DappInfo[] = [
     url: "alephium-decoder",
   },
   {
-    name: "wrapped Alephium on Ethereum",
-    description: "Show wrapped ALPH",
-    short_description:
-      "Explore detailled stats about Alephium network on Ethereum side.",
-    tags: ["Stats"],
-    contracts: [],
-    audits: [],
-    verified: false,
-    councils_choice: true,
-    dotw: false,
-    links: {
-      website:
-        "https://etherscan.io/token/0x590f820444fa3638e022776752c5eef34e2f89a6#cards",
-      mirror: "",
-      twitter: "https://twitter.com/alephium",
-      telegram: "https://t.me/alephiumgroup",
-      discord: "https://discord.gg/3y8HvQ97s4",
-      github: "https://github.com/alephium/wormhole-fork",
-      youtube: "https://www.youtube.com/@alephium",
-      medium: "https://medium.com/@alephium",
-      careers: "",
-      linkedin: "https://ch.linkedin.com/company/alephium",
-      docs: "",
-    },
-    twitterName: "alephium",
-    teamInfo: {
-      contactEmail: "",
-      founded: "2024-08-01T00:00:00.000Z",
-      anonymous: false,
-    },
-    tokens: [],
-    media: {
-      logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-etherscan/alephium-etherscan-logo.webp",
-      bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-etherscan/alephium-etherscan-banner.webp",
-      previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-etherscan/alephium-etherscan-preview.webp",
-      gallery: [],
-      videoUrl: "",
-    },
-    url: "alephium-etherscan",
-  },
-  {
     name: "Alephium Explorer",
     description:
-      "This explorer leverages onchain data to showcase $ALPH development",
-    short_description: "Explore detailled stats about Alephium network",
-    tags: ["Stats"],
+      "Alephium Explorer is a block explorer showing blocks, transactions, addresses, and network metrics. It helps users view onchain activity and follow ALPH usage across the network.",
+    short_description: "Explore and search the Alephium blockchain.",
+    tags: ["Analytics"],
     contracts: [],
     audits: [],
     verified: false,
@@ -236,11 +192,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-explorer/alephium-explorer-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-explorer/alephium-explorer-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-explorer/alephium-explorer-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-explorer/alephium-explorer-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-explorer/alephium-explorer-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-explorer/alephium-explorer-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -249,9 +205,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Alephium Name Service",
     description:
-      "The open source and zero revenue Name Service on Alephium. Buy your Name and link it to your wallet.",
+      "Alephium Name Service is a naming system that lets users register human readable names linked to wallet addresses. It simplifies address sharing and identity management across the ecosystem.",
     short_description: "Alephium Name Service is a name system on Alephium",
-    tags: ["Infrastructure", "NFTs"],
+    tags: ["Infrastructure"],
     contracts: [],
     audits: [],
     verified: false,
@@ -288,11 +244,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-name-service/alephium-name-service-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-name-service/alephium-name-service-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-name-service/alephium-name-service-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-name-service/alephium-name-service-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-name-service/alephium-name-service-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-name-service/alephium-name-service-preview.webp",
       gallery: [],
     },
     url: "alephium-name-service",
@@ -303,12 +259,12 @@ export const dapps: DappInfo[] = [
       collectionPreview: [
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-name-service/ALEPHIUM.webp",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-name-service/ALEPHIUM.webp",
           name: "Alephium",
         },
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-name-service/SPLINTER.webp",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-name-service/SPLINTER.webp",
           name: "Splinter",
         },
       ],
@@ -317,9 +273,8 @@ export const dapps: DappInfo[] = [
   {
     name: "Alephium Official Wallets",
     description:
-      "Stay in control of Alephium assets and connect to dApps of the Alephium ecosystem. Designed with simplicity and usability in mind, even complex actions are easy to perform. The Alephium wallets are fully self-custodial, only you have access to your seeds and private keys.",
-    short_description:
-      "The Alephium wallets are your keys to the Alephium ecosystem",
+      "Alephium Official Wallets are self custodial applications that allow users to store, send, and receive Alephium assets. They support dApp interactions while keeping private keys under user control.",
+    short_description: "Mobile, desktop, and browser extension wallet.",
     tags: ["Wallets"],
     councils_choice: true,
     verified: true,
@@ -344,11 +299,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-official-wallets/alephium-official-wallets-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-official-wallets/alephium-official-wallets-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-official-wallets/alephium-official-wallets-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-official-wallets/alephium-official-wallets-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-official-wallets/alephium-official-wallets-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-official-wallets/alephium-official-wallets-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -360,9 +315,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Alephium Toolkit - Multi-Sig GUI",
     description:
-      " A simple interface to easily create, transact and manage multi-signature wallets on Alephium.",
+      "Alephium Toolkit Multi Sig GUI is an interface for creating and managing multi signature wallets",
     short_description: "Alephium Multi-sig GUI",
-    tags: ["Infrastructure"],
+    tags: ["Tools"],
     contracts: [],
     verified: true,
     dotw: false,
@@ -388,11 +343,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-toolkit/alephium-toolkit-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-toolkit/alephium-toolkit-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-toolkit/alephium-toolkit-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-toolkit/alephium-toolkit-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-toolkit/alephium-toolkit-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-toolkit/alephium-toolkit-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -402,9 +357,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Alephium.World",
     description:
-      "Embark on your Alephium journey today. Access the tools, insights, and community support to unlock the full potential of your blockchain endeavors.",
+      "Alephium.World is a dashboard that displays real time information about a subset of nodes connected to the Alephium network. It shows their locations on a map along with connection details and basic network metrics.",
     short_description: "Vizualize fullnodes all around the world!",
-    tags: ["Infrastructure", "Stats"],
+    tags: ["Analytics"],
     councils_choice: true,
     contracts: [],
     audits: [],
@@ -432,21 +387,63 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-world/alephium-world-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-world/alephium-world-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-world/alephium-world-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-world/alephium-world-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alephium-world/alephium-world-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alephium-world/alephium-world-preview.webp",
       gallery: [],
     },
     url: "alephium-world",
   },
   {
+    name: "ALPH 2048 Arena",
+    description:
+      "ALPH 2048 Arena is like regular 2048, but turned into a live competition with real stakes.\n\nThink of it like this:\n\nYou walk into an arcade where one machine has a “top score of the day.”\nAnyone can pay to play, and if you beat the top score, your name goes to the top and you win from the prize pot.\n\nThat’s basically what ALPH 2048 Arena does, but on Alephium and on-chain.\n\nHow it works (simple)\n\n1. You connect your wallet.\n2. You start a ranked run by paying the current entry fee.\n3. You play 2048 for up to 8 minutes.\n4. You submit your score on-chain.\n5. If your score beats #1, you become the new leader and can win from the pot.\n\nWhat is the “pot”?\n\nThe pot is the reward pool that makes competition fun.\n\n• It grows as people play.\n• People can also boost it directly.\n• The app shows Current Pot / Payout so it’s easy to see what’s in play.\n\nWhy people keep playing\n\n• You can try to take #1.\n• If you’re #1, others try to dethrone you.\n• Pot incentives + leaderboard pride create a constant back-and-forth.\n\n24-hour reset rule (important)\n\nTo keep competition active, rounds reset if the leaderboard goes quiet:\n\n• If no one beats the top score for 24 hours, the leaderboard resets — but the pot carries forward.\n• A new round begins, so everyone gets another shot at #1.\n• Since the pot remains, early players in a fresh round can sometimes win with comparatively lower scores.\n\nSo old dead rounds don’t stay frozen forever — there’s always a fresh competition cycle.\n\nIt keeps the game familiar (still 2048), but adds:\n\n• real competition,\n• visible rewards,\n• transparent on-chain submissions,\n• and ongoing round cycles so it doesn’t get stale.",
+    short_description: "It is a competitive on-chain 2048 game on Alephium.",
+    tags: ["Games"],
+    verified: false,
+    dotw: false,
+    councils_choice: false,
+    links: {
+      website: "https://alph2048.alehpium.org/",
+      mirror: "",
+      twitter: "",
+      telegram: "",
+      discord: "",
+      github: "",
+      youtube: "",
+      medium: "",
+      careers: "",
+      linkedin: "",
+      docs: "",
+    },
+    twitterName: "",
+    teamInfo: {
+      contactEmail: "diomark0@gmail.com",
+      founded: "2026-03-11T00:00:00.000Z",
+      anonymous: true,
+    },
+    media: {
+      logoUrl:
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alph-2048-arena/alph-2048-arena-logo.webp",
+      bannerUrl:
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alph-2048-arena/alph-2048-arena-banner.webp",
+      previewUrl:
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alph-2048-arena/alph-2048-arena-preview.webp",
+      gallery: [],
+    },
+    contracts: [],
+    audits: [],
+    tokens: [],
+    url: "alph-2048-arena",
+  },
+  {
     name: "Alphaday",
     description:
-      "Alphaday is a powerful crypto workflow aggregator that pulls in news, on-chain data, social media, web3 services and much more into one customizable UI.",
+      "Alphaday is an information dashboard aggregating news, onchain data, social media, and crypto tools into a customizable interface. It centralizes research and monitoring workflows for users.",
     short_description: "All-in-one crypto workflow dashboard",
-    tags: ["Infrastructure", "Stats"],
+    tags: ["Analytics"],
     verified: false,
     dotw: false,
     councils_choice: true,
@@ -472,11 +469,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphaday/alphaday-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphaday/alphaday-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphaday/alphaday-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphaday/alphaday-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphaday/alphaday-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphaday/alphaday-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -485,71 +482,10 @@ export const dapps: DappInfo[] = [
     url: "alphaday",
   },
   {
-    name: "ALPHAGA",
-    description:
-      "Alphaga is a decentralized NFT marketplace on #Alephium blockchain $ALPH 🚀",
-    short_description: "Decentralized NFT Marketplace",
-    tags: ["DeFi", "NFTs"],
-    councils_choice: true,
-    contracts: [
-      {
-        name: "Alphaga token",
-        address: "26Mirs33zojnVMRkqVDJtMZvVZcbAFVyxGojGw7UtWp2K",
-      },
-      {
-        name: "ALPH/ALPHAGA",
-        address: "23cXw23ZjRqKc7i185ZoH8vh9KT4XTumVRWpVLUecgLMd",
-      },
-      {
-        name: "ALPH",
-        address: "23cXw23ZjRqKc7i185ZoH8vh9KT4XTumVRWpVLUecgLMd",
-      },
-    ],
-    audits: [],
-    verified: false,
-    dotw: false,
-    links: {
-      website: "https://alphaga.app/",
-      mirror: "",
-      twitter: "https://twitter.com/AlphagaMarket",
-      telegram: "https://t.me/ALPHAGAAnnoncement",
-      discord: "https://discord.gg/ctkjBKrbvp",
-      github: "",
-      youtube: "",
-      medium: "",
-      careers: "",
-      linkedin: "",
-      docs: "",
-    },
-    twitterName: "AlphagaMarket",
-    teamInfo: {
-      contactEmail: "",
-      founded: "2023-12-20T00:00:00.000Z",
-      anonymous: true,
-    },
-    tokens: [
-      {
-        address: "26Mirs33zojnVMRkqVDJtMZvVZcbAFVyxGojGw7UtWp2K",
-        symbol: "ALPHAGA",
-      },
-    ],
-    media: {
-      logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphaga/alphaga-logo.webp",
-      bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphaga/alphaga-banner.webp",
-      previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphaga/alphaga-preview.webp",
-      gallery: [],
-      videoUrl: "",
-    },
-    url: "alphaga",
-  },
-  {
     name: "AlphBanX",
     description:
-      "The AlphBanX Dollar (ABD) is a secure, overcollateralized stablecoin on the Alephium blockchain, pegged 1:1 to USD. It offers reliable payments, backed by ALPH collateral and a three-level stabilization system, ensuring consistent value and trust.",
-    short_description: "A next-generation form of stable currency.",
+      "AlphBanX is a lending and borrowing platform that lets users deposit ALPH as collateral to borrow ABD, an overcollateralized stablecoin pegged to the US dollar. It includes customizable interest rates, liquidation auctions for under-collateralized positions, and yield opportunities.",
+    short_description: "Borrow the native ABD stablecoin using your ALPH.",
     tags: ["DeFi"],
     contracts: [],
     councils_choice: true,
@@ -578,11 +514,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphbanx/alphbanx-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphbanx/alphbanx-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphbanx/alphbanx-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphbanx/alphbanx-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphbanx/alphbanx-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphbanx/alphbanx-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -591,10 +527,10 @@ export const dapps: DappInfo[] = [
   {
     name: "AlphIQ",
     description:
-      "Unified platform for blockchain analytics, quests, and learning empowering users to explore, engage, and educate through real time insights and gamified onchain experiences.",
+      "AlphIQ is a platform combining analytics, quests, and educational modules. It provides real time data alongside gamified learning activities.",
     short_description:
       "AlphIQ: Making sense of Alephium so you can spend less time staring at charts.",
-    tags: ["Quests", "Analytics", "Education", "Social", "Stats", "Games"],
+    tags: ["Quests"],
     contracts: [],
     audits: [],
     verified: false,
@@ -622,11 +558,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphiq/alphiq-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphiq/alphiq-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphiq/alphiq-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphiq/alphiq-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphiq/alphiq-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphiq/alphiq-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -635,9 +571,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Alphland",
     description:
-      "Alphland is a dApp and project aggregator on the Alephium blockchain",
+      "Alphland is an ecosystem discovery hub that showcases all applications, tools, and services built on Alephium. It helps users easily explore, understand, and access products, acting as a gateway to the entire Alephium ecosystem.",
     short_description: "Project/dApp aggregator for Alephium",
-    tags: ["Infrastructure"],
+    tags: ["Education", "Quests"],
     contracts: [],
     audits: [],
     verified: false,
@@ -665,11 +601,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphland/alphland-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphland/alphland-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphland/alphland-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphland/alphland-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphland/alphland-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphland/alphland-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -678,10 +614,9 @@ export const dapps: DappInfo[] = [
   {
     name: "AlphPad",
     description:
-      "AlphPad is poised to redefine project launching within the Alephium ecosystem. This advanced launchpad platform combines ease of use with a comprehensive, secure, and efficient system, designed to benefit both project developers and investors.",
-    short_description:
-      "The Premier Launchpad on Alephium - Elevating Projects to New Heights!",
-    tags: ["DeFi", "Infrastructure"],
+      "AlphPad is a decentralized launchpad that facilitates IDOs for projects in the Alephium ecosystem. It enables projects to run token sales under standardized terms and uses a tiered participation system based on locking the APAD token.",
+    short_description: "Launchpad for IDOs.",
+    tags: ["Infrastructure"],
     contracts: [],
     audits: [
       {
@@ -719,11 +654,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphpad/alphpad-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphpad/alphpad-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphpad/alphpad-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphpad/alphpad-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphpad/alphpad-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphpad/alphpad-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -731,9 +666,10 @@ export const dapps: DappInfo[] = [
   },
   {
     name: "AlphPost",
-    description: "Social Network and task based marketplace on Alephium Chain.",
+    description:
+      "AlphPost is a social and task based marketplace where users create posts, complete activities, and interact socially. It integrates content creation with an internal task system.",
     short_description: "Social Network and task based marketplace.",
-    tags: ["Social", "ComingSoon", "Infrastructure", "DeFi"],
+    tags: ["Social", "ComingSoon"],
     contracts: [],
     audits: [],
     verified: false,
@@ -761,11 +697,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphpost/alphpost-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphpost/alphpost-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphpost/alphpost-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphpost/alphpost-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphpost/alphpost-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphpost/alphpost-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -774,9 +710,9 @@ export const dapps: DappInfo[] = [
   {
     name: "ALPH Tracker",
     description:
-      "A dashboard that tracks $ALPH investor groups over time, helping users analyze trends and movements in the ecosystem.",
+      " ALPH Tracker is an analytics dashboard that categorizes ALPH holders and tracks investor group movements over time. It helps users observe behavioral trends and distribution shifts.",
     short_description: "$ALPH investor tracker",
-    tags: ["Infrastructure", "Stats"],
+    tags: ["Analytics"],
     verified: false,
     dotw: false,
     councils_choice: true,
@@ -802,11 +738,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphtracker/alphtracker-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphtracker/alphtracker-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphtracker/alphtracker-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphtracker/alphtracker-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphtracker/alphtracker-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphtracker/alphtracker-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -817,9 +753,9 @@ export const dapps: DappInfo[] = [
   {
     name: "ALPH Trading Bot",
     description:
-      "The Alephium Trading Bot empowers traders to navigate the Alephium ecosystem efficiently. Whether you are a seasoned trader or a newcomer, this bot can enhance your trading experience.",
+      "ALPH Trading Bot is a Telegram based trading tool that allows users to set automated buy orders, including sniping orders for new token launches. It supports scheduled and trigger based executions so users can automate entry conditions without manual monitoring.",
     short_description: "Your Gateway to Alephium Blockchain",
-    tags: ["Social", "Infrastructure", "NFTs"],
+    tags: ["Tools"],
     contracts: [],
     audits: [],
     councils_choice: true,
@@ -847,66 +783,22 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphtradingbot/alphtradingbot-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphtradingbot/alphtradingbot-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphtradingbot/alphtradingbot-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphtradingbot/alphtradingbot-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphtradingbot/alphtradingbot-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/alphtradingbot/alphtradingbot-preview.webp",
       gallery: [],
       videoUrl: "",
     },
     url: "alphtradingbot",
   },
   {
-    name: "Alphy",
-    description:
-      "Alphy is your one-stop crypto gaming fair on Alephium! Packed with games like lottery, coinflip, dice, and more, Alphy delivers nonstop fun with fair, verifiable results. Test your luck across a variety of games and win big rewards in the Alephium ecosystem!",
-    short_description: "Decentralized Game Hub",
-    tags: ["DeFi", "Games", "NFTs", "Social", "ComingSoon"],
-    group: "Group 0",
-    audits: [],
-    verified: false,
-    councils_choice: true,
-    dotw: false,
-    links: {
-      website: "https://alphyhub.com",
-      mirror: "",
-      twitter: "https://x.com/alphyhub",
-      telegram: "https://t.me/+KFE8GHy3rzkwNWRk",
-      discord: "https://discord.com/invite/BcsUQRg8pZ",
-      github: "",
-      youtube: "",
-      medium: "",
-      careers: "",
-      linkedin: "",
-      docs: "",
-    },
-    twitterName: "alphyecosystem",
-    teamInfo: {
-      contactEmail: "captainralph42@gmail.com",
-      founded: "2024-06-21T00:00:00.000Z",
-      anonymous: true,
-    },
-    tokens: [],
-    media: {
-      logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphy/alphy-logo.webp",
-      bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphy/alphy-banner.webp",
-      previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/alphy/alphy-preview.webp",
-      gallery: [],
-      videoUrl: "",
-    },
-    contracts: [],
-    url: "alphy",
-  },
-  {
     name: "Amolyus",
     description:
-      "Set to be at the forefront of new blockchain technologies, creating innovative, artistic products with novel mechanics and concepts.",
+      "Amolyus is a project that produces NFT collections on Alephium and develops token utilities around them. It issues the LFG token, which is used for governance, in app utility, and revenue distribution within the project.",
     short_description: "Community Driven Digital Assets",
-    tags: ["DeFi", "NFTs", "Games", "DAOs", "Infrastructure"],
+    tags: ["NFTs"],
     group: "Group 0",
     contracts: [
       {
@@ -957,11 +849,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/amolyus/amolyus-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/amolyus/amolyus-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/amolyus/amolyus-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/amolyus/amolyus-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/amolyus/amolyus-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/amolyus/amolyus-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -970,9 +862,9 @@ export const dapps: DappInfo[] = [
   {
     name: "ANS",
     description:
-      "ANS aims to provide a pivotal solution designed to enhance accessibility within the Alephium DeFi ecosystem for users across all proficiency levels. ANS simplifies this process by replacing lengthy and intricate public addresses with concise, user-friendly names.",
+      "ANS is a naming system that replaces long wallet addresses with short readable names. It enhances usability by simplifying address sharing across the ecosystem.",
     short_description: "The Alephium name service.",
-    tags: ["Infrastructure", "Social"],
+    tags: ["Infrastructure"],
     contracts: [],
     audits: [
       {
@@ -1010,11 +902,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ans/ans-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ans/ans-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ans/ans-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ans/ans-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ans/ans-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ans/ans-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1023,10 +915,10 @@ export const dapps: DappInfo[] = [
   {
     name: "ANTPOOL",
     description:
-      "Established in 2014, we are one of the largest PoW mining pools committed to serving global customers.",
+      " ANTPOOL is a global mining pool supporting multiple proof of work cryptocurrencies. It provides mining distribution, payout systems, and monitoring tools.",
     short_description:
       "Technology brings infinite possibilities to the blockchain world",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -1054,11 +946,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/antpool/antpool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/antpool/antpool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/antpool/antpool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/antpool/antpool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/antpool/antpool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/antpool/antpool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1067,9 +959,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Aura",
     description:
-      "Aura is your gateway to decentralized prediction markets built on Alephium, empowering users to predict future events across diverse categories, including real-world occurrences and crypto market movements. Aura leverages a robust, transparent, and scalable system designed to reward accurate predictions, incentivize market creation, and encourage active community governance.",
-    short_description: "Predict on Alephium",
-    tags: ["DeFi", "ComingSoon"],
+      "Aura is a decentralized prediction market protocol allowing users to create and trade event based markets. It rewards correct predictions and supports community governed market creation.",
+    short_description: "Decentralized prediction marketplace.",
+    tags: ["DeFi"],
     contracts: [],
     audits: [],
     verified: false,
@@ -1097,81 +989,20 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/aura/logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/aura/logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/aura/banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/aura/banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/aura/preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/aura/preview.webp",
       gallery: [],
       videoUrl: "",
     },
     url: "aura",
   },
   {
-    name: "AYIN",
-    description:
-      "Welcome to Ayin: Bringing liquidity to life on Alephium. Seamlessly swap Alephium native token pairs, earn, and explore our ecosystem. Enter app to explore the different options for trading, staking, utility functions and more.",
-    short_description: "DEX",
-    tags: ["DeFi", "Infrastructure", "Bridges"],
-    councils_choice: true,
-    contracts: [
-      {
-        name: "AYIN token",
-        address: "vT49PY8ksoUL6NcXiZ1t2wAmC7tTPRfFfER8n3UCLvXy",
-      },
-      {
-        name: "ALPH/AYIN",
-        address: "25ywM8iGxKpZWuGA5z6DXKGcZCXtPBmnbQyJEsjvjjWTy",
-      },
-      {
-        name: "ALPH/USDT",
-        address: "2A5R8KZQ3rhKYrW7bAS4JTjY9FCFLJg6HjQpqSFZBqACX",
-      },
-    ],
-    audits: [],
-    verified: false,
-    dotw: false,
-    links: {
-      website: "https://ayin.app",
-      mirror: "",
-      twitter: "https://x.com/ayincoin",
-      telegram: "https://t.me/ayintoken",
-      discord: "https://discord.gg/UwNbpht5rM",
-      github: "",
-      youtube: "",
-      medium: "",
-      careers: "",
-      linkedin: "",
-      docs: "",
-    },
-    twitterName: "",
-    teamInfo: {
-      contactEmail: "<Email address>",
-      founded: "2023-07-31T00:00:00.000Z",
-      anonymous: true,
-    },
-    tokens: [
-      {
-        address: "vT49PY8ksoUL6NcXiZ1t2wAmC7tTPRfFfER8n3UCLvXy",
-        symbol: "AYIN",
-      },
-    ],
-    media: {
-      logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ayin/ayin-logo.webp",
-      bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ayin/ayin-banner.webp",
-      previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ayin/ayin-preview.webp",
-      gallery: [],
-      videoUrl: "",
-    },
-    url: "ayin",
-  },
-  {
     name: "Banxa",
     description:
-      "Banxa provides a fully compliant fiat-to-crypto on/off-ramp with support for bank transfers, cards, and local payment options, ensuring high conversion rates and low friction.",
+      "Banxa is a fiat to crypto onramp supporting card payments, bank transfers, and regional methods. It enables simple cryptocurrency purchases across many countries.",
     short_description:
       "Global fiat-to-crypto gateway with local payment methods.",
     tags: ["Onramps"],
@@ -1198,11 +1029,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/banxa/banxa-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/banxa/banxa-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/banxa/banxa-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/banxa/banxa-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/banxa/banxa-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/banxa/banxa-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -1212,63 +1043,19 @@ export const dapps: DappInfo[] = [
     url: "banxa",
   },
   {
-    name: "Black Paper",
-    description:
-      "We help web3 builders in their smart contract security and provide a all-in-one solution for keeping their projects safe.",
-    short_description: "Smart Contract Audit",
-    tags: ["Security"],
-    group: "",
-    contracts: [],
-    audits: [],
-    verified: false,
-    dotw: false,
-    councils_choice: false,
-    links: {
-      website: "https://www.black-paper.xyz/",
-      mirror: "",
-      twitter: "",
-      telegram: "",
-      discord: "",
-      github: "",
-      youtube: "",
-      medium: "",
-      careers: "mailto:apply@black-paper.xyz",
-      linkedin: "",
-      docs: "",
-    },
-    twitterName: "",
-    teamInfo: {
-      contactEmail: "contact@black-paper.xyz",
-      founded: "2022-05-24T00:00:00.000Z",
-      anonymous: true,
-    },
-    tokens: [],
-    media: {
-      logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/black-paper/black-paper-logo.webp",
-      bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/black-paper/black-paper-banner.webp",
-      previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/black-paper/black-paper-preview.webp",
-      gallery: [],
-      videoUrl: "",
-    },
-    url: "black-paper",
-  },
-  {
     name: "Blockflow Visualizer",
     description:
-      "This app visualizes Blockflow, Alephiums sharding algorithm in 3D and exposes a websocket stream for other developers.",
+      "Blockflow Visualizer is a 3D tool showing Alephium’s sharding algorithm and real time chain activity. It also exposes a websocket stream for developer integrations.",
     short_description:
       "Blockflow 3D visualizer & public block stream websocket",
-    tags: ["Stats"],
+    tags: ["Analytics"],
     contracts: [],
     audits: [],
     verified: false,
     councils_choice: true,
     dotw: false,
     links: {
-      website: "https://visualizer.alph.land/",
+      website: "https://visualizer.fugashu.dev/",
       mirror: "",
       twitter: "https://twitter.com/fugashu_codes",
       telegram: "",
@@ -1289,11 +1076,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/blockflow-visualizer/blockflow-visualizer-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/blockflow-visualizer/blockflow-visualizer-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/blockflow-visualizer/blockflow-visualizer-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/blockflow-visualizer/blockflow-visualizer-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/blockflow-visualizer/blockflow-visualizer-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/blockflow-visualizer/blockflow-visualizer-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1302,10 +1089,10 @@ export const dapps: DappInfo[] = [
   {
     name: "Cedric Crispin Pool",
     description:
-      "Cedric Crispin Pool is a multi-chain mining pool that supports several blockchains, including Alephium, with secure infrastructure, transparent stats, and reliable payouts.",
+      "Cedric Crispin Pool is a multi chain mining pool offering stable infrastructure and transparent statistics. It supports Alephium and other mineable networks.",
     short_description:
       "Mining pool for Alephium, offering secure infrastructure and transparent stats",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -1333,20 +1120,64 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/cedric-crispin-pool/cedric-crispin-pool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/cedric-crispin-pool/cedric-crispin-pool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/cedric-crispin-pool/cedric-crispin-pool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/cedric-crispin-pool/cedric-crispin-pool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/cedric-crispin-pool/cedric-crispin-pool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/cedric-crispin-pool/cedric-crispin-pool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
     url: "cedric-crispin-pool",
   },
   {
+    name: "Chain Reaction",
+    description:
+      "Chain Reaction is a last-player-wins game on Alephium. Someone starts a chain by choosing a token, setting an entry price, countdown duration, and price increase percentage. Players join by paying an escalating entry price which resets the timer. When the countdown expires, the last player wins the entire pot.",
+    short_description: "Last-player-wins game.",
+    tags: ["Games"],
+    councils_choice: false,
+    contracts: [],
+    audits: [],
+    verified: false,
+    dotw: false,
+    links: {
+      website: "https://game.notrustverify.ch",
+      mirror: "",
+      twitter: "https://x.com/notrustverif",
+      telegram: "",
+      discord: "",
+      github: "https://github.com/notrustverify/chainreaction",
+      youtube: "",
+      medium: "",
+      careers: "",
+      linkedin: "",
+      docs: "",
+    },
+    twitterName: "notrustverify",
+    teamInfo: {
+      contactEmail: "",
+      founded: "2021-01-01T00:00:00.000Z",
+      anonymous: false,
+      name: "No Trust Verify",
+    },
+    tokens: [],
+    media: {
+      logoUrl:
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/chain-reaction/chain-reaction-logo.webp",
+      bannerUrl:
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/chain-reaction/chain-reaction-banner.webp",
+      previewUrl:
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/chain-reaction/chain-reaction-preview.webp",
+      gallery: [],
+      videoUrl: "",
+    },
+    url: "chain-reaction",
+  },
+  {
     name: "ChangeNOW",
     description:
-      "ChangeNOW is an instant crypto exchange that supports over 900 coins, enabling fast and secure swaps without any registration or limits.",
+      "ChangeNOW is a non custodial exchange that performs fast swaps across more than 900 assets. It operates without registration and supports large asset conversions.",
     short_description: "Instant, account-free crypto exchange for 900+ coins.",
     tags: ["Bridges"],
     councils_choice: false,
@@ -1372,11 +1203,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/changenow/changenow-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/changenow/changenow-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/changenow/changenow-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/changenow/changenow-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/changenow/changenow-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/changenow/changenow-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -1388,10 +1219,10 @@ export const dapps: DappInfo[] = [
   {
     name: "CoinMore",
     description:
-      "Benefit from high performance, enhanced security, and energy efficiency. Access detailed mining statistics and easily export CSV data for your tax reporting needs. Join us and start mining Alephium today for maximum profitability.",
+      "CoinMore is a mining pool that supports Alephium mining and provides detailed performance statistics, hashrate tracking, and payout options. It allows miners to join the network via dedicated servers and export data for reporting.",
     short_description:
       "Experience the power of Alephium's sharded blockchain technology with CoinMore.io",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -1419,11 +1250,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/coinmore/coinmore-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/coinmore/coinmore-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/coinmore/coinmore-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/coinmore/coinmore-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/coinmore/coinmore-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/coinmore/coinmore-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1432,7 +1263,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Cyberscope",
     description:
-      "Cyberscope provides smart contract audit and cybersecurity services, helping projects secure their blockchain infrastructure. By enhancing trust and transparency, Cyberscope contributes to a safer and more reliable web3 ecosystem.",
+      "Cyberscope is a cybersecurity and smart contract auditing firm analyzing codebases and infrastructure for vulnerabilities. It provides assessments and reports to help projects improve safety.",
     short_description: "Smart Contract Audits",
     tags: ["Security"],
     contracts: [],
@@ -1467,11 +1298,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/cyberscope/cyberscope-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/cyberscope/cyberscope-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/cyberscope/cyberscope-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/cyberscope/cyberscope-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/cyberscope/cyberscope-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/cyberscope/cyberscope-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1480,7 +1311,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Dappnode",
     description:
-      "Run decentralized networks like Ethereum and Bitcoin and earn rewards.",
+      "Dappnode is a platform for hosting decentralized infrastructure such as full nodes and validators. It allows users to operate blockchain services and earn associated rewards.",
     short_description: "Zero hassle, it just works",
     tags: ["Infrastructure"],
     contracts: [],
@@ -1510,11 +1341,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dappnode/dappnode-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dappnode/dappnode-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dappnode/dappnode-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dappnode/dappnode-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dappnode/dappnode-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dappnode/dappnode-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1523,8 +1354,8 @@ export const dapps: DappInfo[] = [
   {
     name: "Deadrare",
     description:
-      "DeadRare is an NFT marketplace for the Alephium blockchain, allowing anyone to buy and sell Alephium NFTs. DeadRare aims to promote innovation within the NFT space such as AI, dynamic NFTs, and DeFi Gaming.",
-    short_description: "NFT Marketplace",
+      "Deadrare is an NFT marketplace enabling users to mint, buy, and sell NFTs. It supports dynamic NFTs and offers secondary market trading and collection management.",
+    short_description: "NFT marketplace.",
     tags: ["NFTs"],
     contracts: [],
     audits: [],
@@ -1553,11 +1384,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/deadrare/deadrare-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/deadrare/deadrare-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/deadrare/deadrare-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/deadrare/deadrare-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/deadrare/deadrare-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/deadrare/deadrare-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1569,17 +1400,17 @@ export const dapps: DappInfo[] = [
       collectionPreview: [
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/deadrare/collection-nft-01.webp",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/deadrare/collection-nft-01.webp",
           name: "ALPHatauri #4",
         },
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/deadrare/collection-nft-02.webp",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/deadrare/collection-nft-02.webp",
           name: "ALPHatauri #42",
         },
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/deadrare/collection-nft-03.webp",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/deadrare/collection-nft-03.webp",
           name: "ALPHatauri #18",
         },
       ],
@@ -1588,9 +1419,9 @@ export const dapps: DappInfo[] = [
   {
     name: "DefiLlama",
     description:
-      "DefiLlama is the largest TVL aggregator for DeFi (Decentralized Finance). Our data is fully open-source and maintained by a team of passionate individuals and contributors from hundreds of protocols.",
+      "DefiLlama is a data analytics platform that tracks total value locked (TVL), fees, revenue, and usage across thousands of DeFi protocols and multiple blockchains. It provides open-source metrics and tools to compare chains, protocols, and financial activity in decentralized finance.",
     short_description: "Open and transparent DeFi analytics.",
-    tags: ["Stats"],
+    tags: ["Analytics"],
     contracts: [],
     audits: [],
     verified: false,
@@ -1618,11 +1449,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/defillama/defillama-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/defillama/defillama-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/defillama/defillama-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/defillama/defillama-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/defillama/defillama-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/defillama/defillama-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1631,8 +1462,8 @@ export const dapps: DappInfo[] = [
   {
     name: "DIA Oracle",
     description:
-      "DIA is an open-source, cross-chain oracle provider that sources granular market data from diverse exchanges, including CEXs and DEXs. Its data sourcing is thorough, enabling unparalleled transparency and customizability for resilient price feeds for 20,000+ assets. Its versatile data processing and delivery ensures adaptability and reliability for any decentralized application.",
-    short_description: "Cross-chain oracles for Web3",
+      "DIA Oracle is a cross-chain oracle system that provides token price feeds, verifiable randomness, and real-world asset data. It aggregates information from multiple sources and delivers customizable oracles for applications requiring external inputs.",
+    short_description: "Cross-chain oracle.",
     tags: ["Infrastructure"],
     councils_choice: true,
     verified: true,
@@ -1658,11 +1489,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dia/dia-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dia/dia-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dia/dia-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dia/dia-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dia/dia-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dia/dia-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -1674,9 +1505,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Digital Asset Forge",
     description:
-      "Digital Asset Forge is a collection of tools to make creating tokens easier.  Currently two features have been deployed. Token List Automation and Airdrop Manager.  Token List Automation makes it easy for the user to list their tokens on Alephium's official list and create a PR on the Alephium token list.  Airdrop Manager is the first full featured Airdrop tool.  It provides multiple methods to include addresses in an airdrop.  Addresses can be manually added, added using a CSV file, or add addresses of NFT holders or token holders using the contract address or contract id of the NFT collection or token.",
+      "Digital Asset Forge is a toolkit for token creation and management. It includes automated token list submission and a full featured airdrop manager supporting CSV uploads and contract holder imports.",
     short_description: "The Alephium Fair Launch Foundry",
-    tags: ["DeFi", "Infrastructure"],
+    tags: ["Tools"],
     group: "",
     audits: [],
     verified: false,
@@ -1704,11 +1535,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/digital-asset-forge/digital-asset-forge-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/digital-asset-forge/digital-asset-forge-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/digital-asset-forge/digital-asset-forge-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/digital-asset-forge/digital-asset-forge-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/digital-asset-forge/digital-asset-forge-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/digital-asset-forge/digital-asset-forge-preview.webp",
       gallery: [],
     },
     contracts: [],
@@ -1716,9 +1547,10 @@ export const dapps: DappInfo[] = [
   },
   {
     name: "DOH",
-    description: "DOH.Money",
+    description:
+      "DOH is a website that provides price data, charts, and coin information for the Alephium ecosystem, with access granted to users who hold the DOH token.",
     short_description: "DeFi. Nodes.",
-    tags: ["DeFi", "Infrastructure", "ComingSoon", "Stats"],
+    tags: ["Analytics"],
     tokens: [
       {
         address: "24e7wScJTd8vLzMdtvUCWtat4M4WUQtWGUTLsxWuiFjvP",
@@ -1751,11 +1583,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/doh/doh-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/doh/doh-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/doh/doh-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/doh/doh-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/doh/doh-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/doh/doh-preview.webp",
       gallery: [],
     },
     url: "doh",
@@ -1763,9 +1595,9 @@ export const dapps: DappInfo[] = [
   {
     name: "DxPool",
     description:
-      "DxPool is a mining pool built on stability, transparency, and innovation. Its distributed infrastructure delivers 24/7 reliable service, while detailed statistics ensure miners have full visibility into hash rate, income, and block data. By supporting innovative projects, DxPool continuously evolves to meet the real needs of miners.",
+      "DxPool is a mining pool offering distributed infrastructure, stable uptime, and detailed mining statistics. It supports multiple mining algorithms and transparent performance reporting.",
     short_description: "Worry-free mining on DxPool",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -1793,11 +1625,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dxpool/dxpool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dxpool/dxpool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dxpool/dxpool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dxpool/dxpool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/dxpool/dxpool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/dxpool/dxpool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1806,8 +1638,8 @@ export const dapps: DappInfo[] = [
   {
     name: "Elexium Finance",
     description:
-      "Welcome to Elexium: The People's Choice. Enter the arena to explore what aims to be Alephium's liquidity centre, steeped in Ancient Greek wisdom and Demokratia. Utilising a vote escrowed model, we are for the people, by the people, and your Elexium NFT locks serve as your ticket to the ecosystem.",
-    short_description: "Elexium: The People's Choice",
+      "Elexium Finance is a decentralized exchange on Alephium that operates as a veDEX (vote-escrowed DEX), using locked tokens to manage governance and incentives. It supports token swaps, liquidity provision, and governance participation through the EX locking system. The platform also enables bribe-based voting incentives and offers both standard and stable liquidity pools.",
+    short_description: "v33 AMM DEX.",
     tags: ["DeFi"],
     contracts: [],
     audits: [],
@@ -1841,11 +1673,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/elexium/elexium-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/elexium/elexium-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/elexium/elexium-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/elexium/banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/elexium/elexium-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/elexium/elexium-preview.webp",
       gallery: [],
     },
     url: "elexium",
@@ -1853,10 +1685,10 @@ export const dapps: DappInfo[] = [
   {
     name: "EMCD",
     description:
-      "EMCD.io is a comprehensive cryptocurrency ecosystem founded in 2017, featuring one of the world's top 7 Bitcoin mining pools. EMCD offers secure wallet storage for over 20 assets, P2P trading with fiat conversions, RWA, Crypto Bank Cards, and Coinhold savings accounts yielding up to 14% APY, all backed by advanced security measures and 24/7 support.",
+      "EMCD is a cryptocurrency service platform that includes a major mining pool, digital asset wallet, and financial products such as savings accounts and cards. It supports multiple assets and offers infrastructure tools.",
     short_description:
       "EMCD.io — leading crypto mining pool and ecosystem for digital assets.",
-    tags: ["Hashrate"],
+    tags: ["Mining", "Bridges"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -1884,23 +1716,65 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/emcd/emcd-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/emcd/emcd-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/emcd/emcd-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/emcd/emcd-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/emcd/emcd-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/emcd/emcd-preview.webp",
       gallery: [],
       videoUrl: "",
     },
     url: "emcd",
   },
   {
+    name: "Exolix",
+    description:
+      "Exolix is a leading multi-chain swap aggregator with access to 4M+ pairs, 2K+ assets, and 200+ chains, using compliant and private Web3 routes through CEXs and DEXs to deliver the best rates, privacy, and full interoperability.",
+    short_description: "Ultimate multi-chain swap aggregator",
+    tags: ["Bridges"],
+    councils_choice: false,
+    verified: false,
+    dotw: false,
+    links: {
+      website: "https://exolix.com/",
+      mirror: "",
+      twitter: "https://x.com/exolix_com",
+      telegram: "https://t.me/exolixcom",
+      discord: "",
+      github: "",
+      youtube: "",
+      medium: "",
+      careers: "",
+      linkedin: "",
+      docs: "",
+    },
+    teamInfo: {
+      contactEmail: "",
+      founded: "2018-01-10T00:00:00.000Z",
+      anonymous: false,
+    },
+    media: {
+      logoUrl:
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/exolix/exolix-logo.webp",
+      bannerUrl:
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/exolix/exolix-banner.webp",
+      previewUrl:
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/exolix/exolix-preview.webp",
+      gallery: [],
+    },
+    audits: [],
+    tokens: [],
+    twitterName: "",
+    contracts: [],
+    url: "exolix",
+  },
+  {
     name: "Alephium Bridge Explorer",
     description:
-      "Explore real-time movement of information and value around the Alephium bridge.",
+      "Alephium Bridge Explorer is a monitoring interface displaying real time token flows and transaction activity across the Alephium Bridge. It helps users visualize cross chain movement and bridge usage.",
     short_description:
       "Explore real-time movement of information and value around the Alephium bridge.",
-    tags: ["Stats"],
+    tags: ["Infrastructure", "Bridges", "Tools"],
     councils_choice: true,
     contracts: [],
     verified: true,
@@ -1926,11 +1800,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/explorer-alephium-bridge/explorer-alephium-bridge-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/explorer-alephium-bridge/explorer-alephium-bridge-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/explorer-alephium-bridge/explorer-alephium-bridge-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/explorer-alephium-bridge/explorer-alephium-bridge-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/explorer-alephium-bridge/explorer-alephium-bridge-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/explorer-alephium-bridge/explorer-alephium-bridge-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -1940,10 +1814,10 @@ export const dapps: DappInfo[] = [
   {
     name: "F2Pool",
     description:
-      "Proudly securing Bitcoin and other PoW blockchains since 2013. 1,300,000 BTC mined and counting…",
+      "F2Pool is a long running mining pool supporting Bitcoin and other proof of work networks. It provides mining payouts, hashpower distribution, and statistical dashboards.",
     short_description:
       "Join the world’s leading mining pool to secure a decentralized future",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -1971,11 +1845,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/f2pool/f2pool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/f2pool/f2pool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/f2pool/f2pool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/f2pool/f2pool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/f2pool/f2pool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/f2pool/f2pool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -1984,7 +1858,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Flux",
     description:
-      "Flux is a decentralized Web3 cloud infrastructure comprised of user-operated, scalable and globally distributed computational nodes.",
+      "Flux is a decentralized cloud infrastructure network using user operated nodes to provide compute resources. It enables deployment of applications and distributed services.",
     short_description: "Host your Alephium Full Node on the Flux Cloud!",
     tags: ["Infrastructure"],
     councils_choice: false,
@@ -2010,11 +1884,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/fluxnode/fluxnode-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/fluxnode/fluxnode-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/fluxnode/fluxnode-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/fluxnode/fluxnode-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/fluxnode/fluxnode-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/fluxnode/fluxnode-preview.webp",
       gallery: [],
     },
     audits: [
@@ -2029,9 +1903,69 @@ export const dapps: DappInfo[] = [
     url: "fluxnode",
   },
   {
+    name: "Furnace",
+    description:
+      "Token Furnace is a platform designed to permanently remove tokens from circulation. Users can connect their wallet and burn tokens, reducing token supply which can impact tokenomics and market dynamics.",
+    short_description: "Token Burner",
+    tags: ["Tools"],
+    councils_choice: false,
+    contracts: [
+      {
+        name: "Furnace Contract",
+        address: "21ekPmzVCwV3fH1XmajtCVWjnDsLxHt14PWdwodk16Zyh",
+      },
+      {
+        name: "Furnace Contract",
+        address: "21toXY23zRXeTKZnEKtfVMCzM3h8kZhrrJV3fMf31VoiY",
+      },
+      {
+        name: "Furnace Contract",
+        address: "x7DamzDESbTq7S2WqmuNMj1m3SCEwNLx4uttipyWgQjT",
+      },
+      {
+        name: "Furnace Contract",
+        address: "26MPtth6JVpNMV4EWFUDyrBPMQWpVfSUWPZNE9Kqvymw8",
+      },
+    ],
+    audits: [],
+    verified: false,
+    dotw: false,
+    links: {
+      website: "https://furnace.notrustverify.ch",
+      mirror: "",
+      twitter: "https://x.com/notrustverif",
+      telegram: "",
+      discord: "",
+      github: "https://github.com/notrustverify/token-furnace",
+      youtube: "",
+      medium: "",
+      careers: "",
+      linkedin: "",
+      docs: "",
+    },
+    twitterName: "notrustverif",
+    teamInfo: {
+      contactEmail: "",
+      founded: "2021-01-01T00:00:00.000Z",
+      anonymous: true,
+    },
+    tokens: [],
+    media: {
+      logoUrl:
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/furnace/furnace-logo.gif",
+      bannerUrl:
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/furnace/furnace-banner.webp",
+      previewUrl:
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/furnace/furnace-preview.webp",
+      gallery: [],
+      videoUrl: "",
+    },
+    url: "furnace",
+  },
+  {
     name: "FxWallet",
     description:
-      "FxWallet is a fully decentralized multi-cryptocurrency blockchain wallet. It is a mobile wallet. Currently supporting 50+ public chains, it also offers the ability to custom add Ethereum-based public chains and tokens. User-friendly for beginners, it features an NFT management DApp browser, supports asset staking, and prioritizes network security. ",
+      "FxWallet is a mobile multi chain wallet supporting more than 50 networks. It includes staking options, token management, and an integrated dApp browser for interacting with web3 applications.",
     short_description:
       "FxWallet is a fully decentralized multi-cryptocurrency blockchain wallet.",
     tags: ["Wallets"],
@@ -2062,11 +1996,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/fxwallet/fxwallet-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/fxwallet/fxwallet-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/fxwallet/fxwallet-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/fxwallet/fxwallet-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/fxwallet/fxwallet-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/fxwallet/fxwallet-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2075,7 +2009,7 @@ export const dapps: DappInfo[] = [
   {
     name: "GateConnect",
     description:
-      "Gate Connect offers a seamless fiat-crypto conversion experience with Visa/Mastercard support, competitive rates, and quick purchases in 20+ fiat currencies.",
+      "GateConnect is a fiat to crypto conversion service supporting card payments in many currencies. It provides fast settlement and simple purchase workflows.",
     short_description: "Gate.io’s fast, low-fee fiat-to-crypto onramp.",
     tags: ["Onramps"],
     councils_choice: false,
@@ -2101,11 +2035,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/gateconnect/gateconnect-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/gateconnect/gateconnect-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/gateconnect/gateconnect-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/gateconnect/gateconnect-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/gateconnect/gateconnect-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/gateconnect/gateconnect-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -2117,7 +2051,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Godex",
     description:
-      "Godex is an online crypto exchange that enables fast, secure, and anonymous swaps of over 300 coins without requiring registration or personal data.",
+      "Godex is a non custodial exchange that performs anonymous swaps across more than 300 assets. It does not require registration and offers fast conversion routes.",
     short_description: "Anonymous crypto swap service for 300+ coins.",
     tags: ["Bridges"],
     councils_choice: false,
@@ -2143,11 +2077,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/godex/godex-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/godex/godex-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/godex/godex-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/godex/godex-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/godex/godex-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/godex/godex-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -2159,7 +2093,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Goldshell Wallet",
     description:
-      "Air-gapped, open-source, and ultra-secure with QR transactions, fingerprint unlock, and light-triggered protection—your crypto, your control.",
+      "Goldshell Wallet is an air gapped hardware wallet supporting offline signing and QR based transactions. It uses biometric and hardware based protection for secure asset storage.",
     short_description: "Your Bedrock of Crypto",
     tags: ["Wallets"],
     contracts: [],
@@ -2189,11 +2123,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/goldshell-wallet/goldshell-wallet-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/goldshell-wallet/goldshell-wallet-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/goldshell-wallet/goldshell-wallet-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/goldshell-wallet/goldshell-wallet-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/goldshell-wallet/goldshell-wallet-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/goldshell-wallet/goldshell-wallet-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2202,9 +2136,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Grumpy Fortunes",
     description:
-      "Grumpy is a meme token launched on the Alephium blockchain in May. With a fair launch, Grumpy introduced a series of unique Video NFTs that captured attention. But the innovation didn't stop there—Grumpy also developed 'The First AI-Powered Oracle on Alephium' through its exciting new dApp, Grumpy Fortunes. This interactive platform offers users a fun and creative way to get AI-driven price predictions for the future value of Alephium, blending technology and entertainment.",
+      "Grumpy Fortunes is an onchain application that generates AI based price prediction messages for ALPH. It offers an interactive interface combining entertainment with experimental forecasting features. It is part of the broader Grumpy ecosystem.",
     short_description: "The First AI Powered Oracle on Alephium",
-    tags: ["DeFi", "NFTs", "Games"],
+    tags: ["Games"],
     group: "",
     audits: [],
     verified: false,
@@ -2232,11 +2166,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/grumpy-fortunes/grumpy-fortunes-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/grumpy-fortunes/grumpy-fortunes-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/grumpy-fortunes/grumpy-fortunes-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/grumpy-fortunes/grumpy-fortunes-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/grumpy-fortunes/grumpy-fortunes-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/grumpy-fortunes/grumpy-fortunes-preview.webp",
       gallery: [],
     },
     contracts: [],
@@ -2245,9 +2179,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Grumpy Ralph",
     description:
-      "Grumpy is a meme token launched on the Alephium blockchain in May of 2024. Grumpy is a very active and productive cat.  Grumpy created a series of unique Video NFTs that captured Alephium's attention. Then Grumpy created Grumpy Fortunes, 'The First AI-Powered Oracle on Alephium'. Our latest innovation is Grumpy Ralph 'The first AI Contract Creation Tool on Alephium'.",
+      "Grumpy Ralph is an AI assisted contract creation tool that helps users generate and deploy basic smart contracts. It automates portions of Ralph code creation and simplifies deployment steps for non technical users.",
     short_description: "The First AI Contract Creation Tool on Alephium",
-    tags: ["DeFi", "NFTs", "Infrastructure"],
+    tags: ["Tools", "Ai"],
     group: "",
     audits: [],
     verified: false,
@@ -2275,11 +2209,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/grumpy-ralph/grumpy-ralph-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/grumpy-ralph/grumpy-ralph-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/grumpy-ralph/grumpy-ralph-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/grumpy-ralph/grumpy-ralph-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/grumpy-ralph/grumpy-ralph-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/grumpy-ralph/grumpy-ralph-preview.webp",
       gallery: [],
     },
     contracts: [],
@@ -2288,7 +2222,7 @@ export const dapps: DappInfo[] = [
   {
     name: "GuardPay",
     description:
-      "GuardPay is a batch payment tool that allows users to send $ALPH to multiple addresses in a single transaction. This tool is perfect for businesses, developers, and anyone who needs to make mass payments quickly and efficiently. With GuardPay, you can save time and money by reducing the number of transactions you need to make.",
+      "GuardPay is a batch payment tool that enables users to send ALPH to multiple addresses in one transaction. It reduces the number of transactions needed for mass payouts and is suitable for teams and businesses.",
     short_description: "Send Your $ALPH in Batch",
     tags: ["DeFi", "Tools"],
     councils_choice: false,
@@ -2314,11 +2248,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/guardpay/guardpay-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/guardpay/guardpay-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/guardpay/guardpay-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/guardpay/guardpay-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/guardpay/guardpay-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/guardpay/guardpay-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -2330,7 +2264,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Hacken",
     description:
-      "Hacken, a trusted blockchain security auditor, is dedicated to making Web3 safer. We’re a vertically-integrated company, delivering high-quality solutions at every level of blockchain security covering Smart Contract Audits, Blockchain Protocol Audits, dApp Audits, Penetration Testing, CCSS Audits, Tokenomics Audits and more. By contributing to EEA EthTrust Security Levels Specification and promoting transparent Web3, we continue raising the bar for blockchain security.",
+      "Hacken is a blockchain security company providing smart contract audits, protocol assessments, penetration testing, and security consulting. It supports transparent security practices and improves risk management for web3 projects.",
     short_description: "WE MAKE WEB3 A SAFER PLACE",
     tags: ["Security"],
     group: "",
@@ -2371,11 +2305,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hacken/hacken-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hacken/hacken-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hacken/hacken-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hacken/hacken-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hacken/hacken-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hacken/hacken-preview.webp",
       gallery: [],
       videoUrl: "https://x.com/hackenclub/status/1871579631209664637",
     },
@@ -2384,7 +2318,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Halborn",
     description:
-      "Halborn is an award-winning, elite cybersecurity for emerging technologies. Security never ends. Halborn serves as a third-party partner to continuously assess an organization’s most vital assets, drive maximum value and provide world-class cybersecurity consulting and execution every step of the way — far beyond smart contracts.",
+      "Halborn is a cybersecurity firm offering audits, penetration testing, infrastructure reviews, and incident response for blockchain organizations. It helps secure applications, protocols, and operational processes across the ecosystem.",
     short_description:
       "ENABLING THE NEXT DIGITAL TRANSFORMATION FOR FINANCIAL SERVICES",
     tags: ["Security"],
@@ -2416,11 +2350,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/halborn/halborn-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/halborn/halborn-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/halborn/halborn-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/halborn/halborn-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/halborn/halborn-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/halborn/halborn-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2429,7 +2363,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Hashlock",
     description:
-      "Hashlock was born with the vision of conducting the most comprehensive blockchain security research possible and applying it with our clients to boost safe innovation. The founders and team quickly learned that this learning process will never end. Hashlock aims to influence blockchain innovation, regulation and usage to best reflect web3s original core values.",
+      "Hashlock is a smart contract security auditor performing detailed code reviews and security research. It focuses on identifying vulnerabilities and strengthening protocol safety through structured audit reports.",
     short_description:
       "We are on a mission to ensure that all stakeholders in blockchain innovation can utilise web3 securely.",
     tags: ["Security"],
@@ -2461,11 +2395,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hashlock/hashlock-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hashlock/hashlock-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hashlock/hashlock-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hashlock/hashlock-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hashlock/hashlock-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hashlock/hashlock-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2474,9 +2408,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Hearst",
     description:
-      "Hearst aim to create a cleaner, smarter world through renewable energy and innovative technologies. Our mission is to create a cleaner, smarter world by integrating renewable energy, responsible innovation, and game-changing technologies. We aim to build a strategic Bitcoin reserve that supports the growth of financial institutions, while advancing blockchain, AI, and sustainable finance solutions. We are committed to transparency, sustainability, and technological excellence to empower the global transition to a net-zero economy.",
+      "Hearst is a company developing renewable energy solutions and financial infrastructure tools. Its initiatives include Bitcoin reserve strategies, sustainable energy integration, and advanced technology frameworks.",
     short_description: "We make Crypto Mining More Sustainable",
-    tags: ["Hashrate", "Infrastructure"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -2504,11 +2438,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hearst/hearst-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hearst/hearst-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hearst/hearst-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hearst/hearst-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hearst/hearst-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/hearst/hearst-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2517,10 +2451,9 @@ export const dapps: DappInfo[] = [
   {
     name: "HenryCoder",
     description:
-      "HenryCoder opens the door to Alephium for EVM developers, providing an AI service specifically trained for translation to Ralph. With Henry's help you can save more than 80% of work and cost when moving your EVM project to Alephium. HenryCoder is your number one assistant in moving from EVM based chain to Alephium.",
-    short_description:
-      "Your number one assistant in moving from EVM to Alephium.",
-    tags: ["Utility", "Infrastructure"],
+      "HenryCoder is an AI powered development assistant that translates EVM based code into Ralph. It helps developers migrate applications to Alephium by reducing manual rewriting and improving development efficiency.",
+    short_description: "EVM to Alephium migration AI tool.",
+    tags: ["Tools", "Ai"],
     contracts: [],
     councils_choice: true,
     audits: [],
@@ -2548,66 +2481,22 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/henrycoder/henrycoder-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/henrycoder/henrycoder-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/henrycoder/henrycoder-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/henrycoder/henrycoder-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/henrycoder/henrycoder-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/henrycoder/henrycoder-preview.webp",
       gallery: [],
       videoUrl: "",
     },
     url: "henrycoder",
   },
   {
-    name: "Hermes",
-    description:
-      "Hermes is a fun dApp that lets you generate and mint unique crypto-themed compliments or punchlines, then send them to your friends for a laugh. Customize each punchline, turn it into an NFT, and share crypto humor on the Alephium blockchain!",
-    short_description:
-      "Generate, mint, and share crypto-themed punchlines as NFTs!",
-    tags: ["NFTs", "ComingSoon"],
-    group: "Group 0",
-    audits: [],
-    verified: false,
-    councils_choice: true,
-    dotw: false,
-    links: {
-      website: "https://www.hermesonchain.com/",
-      mirror: "",
-      twitter: "https://x.com/HermesOnChain",
-      telegram: "",
-      discord: "",
-      github: "https://github.com/captainralph42/HERMES",
-      youtube: "",
-      medium: "",
-      careers: "",
-      linkedin: "",
-      docs: "",
-    },
-    twitterName: "HermesOnChain",
-    teamInfo: {
-      contactEmail: "hermes.alph@gmail.com",
-      founded: "2024-09-09T00:00:00.000Z",
-      anonymous: true,
-    },
-    tokens: [],
-    media: {
-      logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hermes/hermes-logo.webp",
-      bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hermes/hermes-banner.webp",
-      previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/hermes/hermes-preview.webp",
-      gallery: [],
-      videoUrl: "",
-    },
-    contracts: [],
-    url: "hermes",
-  },
-  {
     name: "HeroMiners Pool",
-    description: "HeroMiners - CryptoCurrency Mining Pools for Altcoins",
+    description:
+      "HeroMiners Pool is a mining pool supporting many GPU and ASIC compatible cryptocurrencies. It offers distributed servers, reward tracking, and multi coin mining support.",
     short_description: "We stand for miners!",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -2635,11 +2524,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/herominers-pool/herominers-pool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/herominers-pool/herominers-pool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/herominers-pool/herominers-pool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/herominers-pool/herominers-pool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/herominers-pool/herominers-pool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/herominers-pool/herominers-pool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2648,9 +2537,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Houdini Swap",
     description:
-      "Houdini Swap is the leading compliant, non-custodial, cross-chain liquidity aggregator with a unique set of privacy features",
+      "Houdini Swap is a non custodial cross chain liquidity aggregator with privacy preserving features. It enables users to perform asset swaps across multiple networks while minimizing data exposure.",
     short_description: "Transact Freely",
-    tags: ["Bridges", "Infrastructure"],
+    tags: ["Bridges"],
     councils_choice: false,
     verified: true,
     dotw: false,
@@ -2674,11 +2563,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/houdini-swap/houdini-swap-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/houdini-swap/houdini-swap-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/houdini-swap/houdini-swap-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/houdini-swap/houdini-swap-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/houdini-swap/houdini-swap-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/houdini-swap/houdini-swap-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -2690,9 +2579,9 @@ export const dapps: DappInfo[] = [
   {
     name: "HumPool",
     description:
-      "HumPool is the world's leading digital currency mining pool, providing stable and secure mining services to global customers.",
+      "HumPool is a digital currency mining pool offering stable mining servers and performance tracking. It supports global miners and provides multi asset mining capabilities.",
     short_description: "A Better Cryptocurrency Mining Pool",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -2720,11 +2609,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/humpool/humpool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/humpool/humpool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/humpool/humpool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/humpool/humpool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/humpool/humpool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/humpool/humpool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2733,7 +2622,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Inference",
     description:
-      "Inference (https://inference.ag) delivers thorough and high quality smart contract audits to ensure the integrity and security of your blockchain applications. With deep expertise in Alephium, Tezos and EVM based ecosystems, we conduct comprehensive assessments ranging from simple token contracts to complex systems such as DEXs, AMMs, bridge protocols, and routing aggregators. Our detailed reports provide actionable insights to help you secure your code, minimize risk, and build trust with your users. Whether you are launching a new project or scaling an existing one, our tailored approach strengthens the safety and performance of your decentralized platform.",
+      "Inference is a smart contract auditing service that conducts in depth security evaluations for blockchain applications. It covers token contracts, DEXs, AMMs, bridging protocols, and complex systems with detailed vulnerability reporting.",
     short_description: "Security assessments for the decentralised world.",
     tags: ["Security"],
     group: "",
@@ -2764,11 +2653,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/inference/inference-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/inference/inference-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/inference/inference-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/inference/inference-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/inference/inference-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/inference/inference-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2777,9 +2666,9 @@ export const dapps: DappInfo[] = [
   {
     name: "JJPool",
     description:
-      "JJPool is a French mining pool using the PPLNS reward system, designed to provide fair payouts and a straightforward mining experience.",
+      "JJPool is a mining pool using the PPLNS payout method. It offers predictable rewards and simple configuration for miners seeking steady distribution.",
     short_description: "PPLNS French mining pool made for makers",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -2807,11 +2696,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/jjpool/jjpool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/jjpool/jjpool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/jjpool/jjpool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/jjpool/jjpool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/jjpool/jjpool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/jjpool/jjpool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2820,9 +2709,9 @@ export const dapps: DappInfo[] = [
   {
     name: "K1Pool",
     description:
-      "K1Pool.com aims to make access to the mining easier for miners, providing a friendly interface that allows to choose algorithms or coins easier and in more efficient and with organized way.",
+      "K1Pool is a mining pool supporting multiple mining algorithms and streamlined miner setup. It provides organized dashboards and simplified access to multi asset mining operations.",
     short_description: "Easy to join, easy to get started",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -2850,11 +2739,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/k1pool/k1pool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/k1pool/k1pool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/k1pool/k1pool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/k1pool/k1pool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/k1pool/k1pool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/k1pool/k1pool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2863,10 +2752,10 @@ export const dapps: DappInfo[] = [
   {
     name: "Kryptex Pool",
     description:
-      "Mine cryptocurrency with Kryptex and get paid with BTC and USDT.",
+      "Kryptex Pool is a mining service allowing users to mine cryptocurrencies and receive payouts in BTC or USDT. It supports various mining algorithms and automatic payout conversions.",
     short_description:
       "More ways to mine. More ways to earn. With Kryptex Pool",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -2894,11 +2783,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/kryptex-pool/kryptex-pool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/kryptex-pool/kryptex-pool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/kryptex-pool/kryptex-pool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/kryptex-pool/kryptex-pool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/kryptex-pool/kryptex-pool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/kryptex-pool/kryptex-pool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2907,9 +2796,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Learnify",
     description:
-      "Learnify is an education platform that rewards you for learning.",
-    short_description: "Learn and Earn",
-    tags: ["Social", "Games"],
+      "Learnify is an educational platform that rewards users for completing learning modules. It offers structured lessons and incentives to encourage continued progress.",
+    short_description: "Learn-and-earn platform with mini-games.",
+    tags: ["Quests", "Education"],
     contracts: [],
     audits: [],
     verified: false,
@@ -2937,11 +2826,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/learnify/learnify-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/learnify/learnify-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/learnify/learnify-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/learnify/learnify-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/learnify/learnify-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/learnify/learnify-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2950,8 +2839,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Ledger Wallet",
     description:
-      "We believe in a world where users, creators and enterprises manage their value with ownership and freedom.",
-    short_description: "We Are Ledger",
+      "Ledger is a hardware wallet used for offline storage of digital assets. It supports a wide range of cryptocurrencies and connects to companion applications for transaction signing and portfolio management.",
+    short_description:
+      "Hardware wallet support of all Alephium tokens and dApps.",
     tags: ["Wallets"],
     contracts: [],
     audits: [],
@@ -2980,11 +2870,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ledger-wallet/ledger-wallet-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ledger-wallet/ledger-wallet-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ledger-wallet/ledger-wallet-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ledger-wallet/ledger-wallet-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ledger-wallet/ledger-wallet-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ledger-wallet/ledger-wallet-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -2993,7 +2883,7 @@ export const dapps: DappInfo[] = [
   {
     name: "LetsExchange",
     description:
-      "LetsExchange is an instant multi-currency exchange service that requires no registration, offering fast swaps across thousands of cryptocurrencies.",
+      "LetsExchange is an instant multi asset exchange service that performs fast swaps without requiring user registration. It supports thousands of trading pairs and automated routing.",
     short_description: "Instant, registration-free crypto exchange.",
     tags: ["Bridges"],
     councils_choice: false,
@@ -3019,11 +2909,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/letsexchange/letsexchange-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/letsexchange/letsexchange-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/letsexchange/letsexchange-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/letsexchange/letsexchange-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/letsexchange/letsexchange-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/letsexchange/letsexchange-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -3035,9 +2925,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Linx App",
     description:
-      "Manage your digital assets, get instant loans, and grow your wealth – all from a single app.",
-    short_description: "True DeFi in one app",
-    tags: ["Onramps", "Bridges", "DeFi", "Wallets"],
+      "Linx App is a financial application that consolidates digital asset management, lending, and borrowing tools. It allows users to access multiple financial services from one interface.",
+    short_description: "Wallet, DEX aggregator, and lending protocol.",
+    tags: ["DeFi", "Bridges"],
     verified: false,
     dotw: false,
     councils_choice: false,
@@ -3063,11 +2953,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-app/logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-app/logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-app/banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-app/banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-app/preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-app/preview.webp",
       gallery: [],
     },
     audits: [],
@@ -3078,7 +2968,7 @@ export const dapps: DappInfo[] = [
   {
     name: "LinxOTC",
     description:
-      "LinxOTC facilitates secure over-the-counter trades without any escrow needed and P2P loans.",
+      "LinxOTC is a peer to peer trading platform enabling direct asset swaps without escrow. It also supports user defined lending agreements with crypto collateral between individuals.",
     short_description: "Escrow-free OTC trades and secure peer-to-peer loans.",
     tags: ["DeFi"],
     contracts: [],
@@ -3087,7 +2977,7 @@ export const dapps: DappInfo[] = [
     dotw: false,
     councils_choice: false,
     links: {
-      website: "https://linxotc.com",
+      website: "https://otc.linxlabs.org",
       mirror: "",
       twitter: "https://x.com/linx_labs",
       telegram: "https://t.me/linx_wallet_chat",
@@ -3108,11 +2998,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-otc/linx-otc-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-otc/linx-otc-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-otc/linx-otc-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-otc/linx-otc-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-otc/linx-otc-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-otc/linx-otc-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3121,7 +3011,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Linx Wallet",
     description:
-      "Experience the first and only chainless, gas-free and non-custodial wallet for Alephium blockchains. Easily transfer, manage, swap your assets and interact with protocols from the Kadena and Alephium ecosystems.",
+      "Linx Wallet is a non custodial wallet operating in a chainless and gas free environment. It supports transfers, swaps, and dApp interactions.",
     short_description: "A truly smart wallet",
     tags: ["Wallets"],
     verified: false,
@@ -3149,11 +3039,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-wallet/logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-wallet/logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-wallet/banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-wallet/banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/linx-wallet/preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/linx-wallet/preview.webp",
       gallery: [],
     },
     audits: [],
@@ -3162,59 +3052,11 @@ export const dapps: DappInfo[] = [
     url: "linx-wallet",
   },
   {
-    name: "mined.fi",
-    description:
-      "Mined.fi is a DePIN project—a liquid mining platform that democratizes ASIC mining by decentralizing operations and redistributing rewards to individuals via vaults. Scalable to any PoW coins, users can stake tokens in vaults with a few clicks to earn rewards without mining hardware or technical expertise. Beyond accessibility, mined.fi is committed to sustainability, powering mining with green energy and employing carbon offsetting solutions where necessary.",
-    short_description: "Mining made liquid",
-    tags: ["ComingSoon", "DeFi", "Infrastructure"],
-    contracts: [],
-    councils_choice: true,
-    audits: [],
-    verified: false,
-    dotw: false,
-    links: {
-      website: "https://www.mined.fi/",
-      mirror: "",
-      twitter: "https://x.com/mined_fi",
-      telegram: "https://t.me/minedfi",
-      discord: "",
-      github: "",
-      youtube: "",
-      medium: "https://medium.com/@mined.fi",
-      careers: "",
-      linkedin: "",
-      docs: "",
-    },
-    twitterName: "@mined_fi",
-    teamInfo: {
-      contactEmail: "minedfi@proton.me",
-      founded: "2024-09",
-      anonymous: true,
-    },
-    tokens: [
-      {
-        address: "",
-        symbol: "",
-      },
-    ],
-    media: {
-      logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/minedfi/minedfi-logo.webp",
-      bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/minedfi/minedfi-banner.webp",
-      previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/minedfi/minedfi-preview.webp",
-      gallery: [],
-      videoUrl: "",
-    },
-    url: "minedfi",
-  },
-  {
     name: "Mobula",
     description:
-      "Mobula is the premier indexer crypto website, offering comprehensive blockchain data, analytics, and indexing services. Our data is fully open-source and maintained by a dedicated team of experts.",
+      "Mobula is a blockchain data indexer and analytics platform providing open source market and onchain information. It aggregates data across many networks and offers tools for developers and analysts.",
     short_description: "Comprehensive crypto indexing and analytics.",
-    tags: ["Stats", "Infrastructure"],
+    tags: ["Infrastructure", "Analytics"],
     contracts: [],
     audits: [],
     verified: false,
@@ -3242,11 +3084,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/mobula/mobula-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/mobula/mobula-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/mobula/mobula-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/mobula/mobula-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/mobula/mobula-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/mobula/mobula-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3255,7 +3097,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Myonion",
     description:
-      "myOnion.fun is a groundbreaking platform built on the Alephium blockchain, inspired by the popular pump.fun. It offers users the ability to create their own meme tokens, trade them instantly, and graduate them to a fully integrated mini-DEX within the platform for long-term trading and growth. With its user-friendly interface and playful community, myOnion.fun redefines meme token creation and trading by combining creativity, accessibility, and its very own decentralized exchange.",
+      "Myonion is a meme token creation and trading platform inspired by pump.fun. It allows users to generate tokens, trade them instantly, and migrate them into a built in mini DEX for long term liquidity. It combines token creation and trading within one interface.",
     short_description:
       "myOnion.fun is a groundbreaking platform built on the Alephium blockchain, inspired by the popular pump.fun.",
     tags: ["DeFi"],
@@ -3286,11 +3128,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/myonion/myonion-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/myonion/myonion-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/myonion/myonion-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/myonion/myonion-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/myonion/myonion-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/myonion/myonion-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3299,10 +3141,10 @@ export const dapps: DappInfo[] = [
   {
     name: "NiceHash",
     description:
-      "NiceHash is the world’s leading hashrate marketplace, connecting sellers (miners) with buyers of hashrate. Our platform offers a comprehensive toolkit for miners at every scale, streamlining operations and maximizing efficiency. Everything you need in one place. Based and regulated in Switzerland.",
+      "NiceHash is a hashrate marketplace connecting miners with buyers of computing power. It offers mining tools, marketplace listings, performance analytics, and hashpower purchasing options.",
     short_description:
       "The world’s largest hashrate marketplace, connecting buyers and miners",
-    tags: ["Hashrate", "Infrastructure"],
+    tags: ["Mining", "Infrastructure"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -3330,11 +3172,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nicehash/nicehash-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nicehash/nicehash-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nicehash/nicehash-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nicehash/nicehash-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nicehash/nicehash-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nicehash/nicehash-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3342,8 +3184,9 @@ export const dapps: DappInfo[] = [
   },
   {
     name: "Nightshade",
-    description: "The Orderbook DEX on the Alephium Blockchain",
-    short_description: "The Orderbook DEX on the Alephium Blockchain",
+    description:
+      "Nightshade is an orderbook based decentralized exchange supporting trades through limit and market orders. It enables token trading without centralized custody or order matching.",
+    short_description: "Orderbook DEX.",
     tags: ["DeFi"],
     tokens: [],
     contracts: [],
@@ -3372,11 +3215,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nightshade/nightshade-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nightshade/nightshade-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nightshade/nightshade-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nightshade/nightshade-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nightshade/nightshade-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nightshade/nightshade-preview.webp",
       gallery: [],
     },
     url: "nightshade",
@@ -3384,9 +3227,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Nimbus",
     description:
-      "A tool for tracking and managing all your crypto assets, NFTs, and DeFi positions in one unified Web3 portfolio",
+      "Nimbus is a portfolio management interface that tracks cryptocurrencies, NFTs, and DeFi positions. It consolidates valuations, exposures, and performance data into a unified dashboard.",
     short_description: "A unified Web3 portfolio for Alephium",
-    tags: ["Infrastructure", "Stats"],
+    tags: ["Infrastructure", "Analytics"],
     verified: false,
     dotw: false,
     councils_choice: true,
@@ -3412,11 +3255,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nimbus/nimbus-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nimbus/nimbus-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nimbus/nimbus-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nimbus/nimbus-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/nimbus/nimbus-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/nimbus/nimbus-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3427,7 +3270,7 @@ export const dapps: DappInfo[] = [
   {
     name: "NOWNodes",
     description:
-      "NOWNodes is a blockchain infrastructure that provides access to Full Nodes and Block Explorers via API. It provides access to over 100 popular blockchain networks including ALPH, BTC, ETH, DOGE, and BSC, which practically means almost every single coin and token from TOP100 CoinMarketCap.",
+      "NOWNodes is an API provider giving access to full nodes and block explorers for over one hundred blockchains. It lets developers query chain data and interact with networks without self hosting nodes.",
     short_description:
       "Instant access to 100+ RPC nodes for all your Web3 development needs. Get an API key and start building!",
     tags: ["Infrastructure"],
@@ -3454,11 +3297,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/now-nodes/now-nodes-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/now-nodes/now-nodes-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/now-nodes/now-nodes-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/now-nodes/now-nodes-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/now-nodes/now-nodes-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/now-nodes/now-nodes-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -3470,10 +3313,10 @@ export const dapps: DappInfo[] = [
   {
     name: "NTMiner Pool",
     description:
-      "NTMiner Pool is a global mining pool from the Open-Source Miner family, offering low-latency infrastructure, 24/7 technical monitoring, and a PPS+ payout model for stable and optimized returns. With years of blockchain R&D, it provides consistent hashrate performance and supports a wide range of GPU- and ASIC-minable coins.",
+      "NTMiner Pool is a mining pool using the PPS+ reward system. It provides low latency infrastructure, 24 hour monitoring, and consistent payouts for GPU and ASIC miners.",
     short_description:
       "NTMiner Pool delivers stable PPS+ mining with global infrastructure and 24/7 monitoring",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -3501,11 +3344,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntminer/ntminer-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntminer/ntminer-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntminer/ntminer-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntminer/ntminer-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntminer/ntminer-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntminer/ntminer-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3514,10 +3357,10 @@ export const dapps: DappInfo[] = [
   {
     name: "No Trust Verify Dune dashboard",
     description:
-      "This Dashboard leverages onchain data to showcase $ALPH development and usage on Ethereum",
+      "No Trust Verify Dune Dashboard is an analytics page on Ethereum showing wrapped ALPH usage and related metrics. It helps users understand ALPH activity outside the native chain.",
     short_description:
       "Explore detailled stats about Alephium network on Ethereum side.",
-    tags: ["Stats"],
+    tags: ["Analytics"],
     contracts: [],
     audits: [],
     verified: false,
@@ -3545,11 +3388,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntv-dune/ntv-dune-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntv-dune/ntv-dune-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntv-dune/ntv-dune-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntv-dune/ntv-dune-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntv-dune/ntv-dune-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntv-dune/ntv-dune-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3557,9 +3400,10 @@ export const dapps: DappInfo[] = [
   },
   {
     name: "No Trust Verify dashboard",
-    description: "Explore detailled stats about Alephium network.",
+    description:
+      "No Trust Verify Dashboard is an analytics interface showing Alephium network metrics such as block activity, transaction volume, and address statistics. It provides insight into network performance and onchain behavior.",
     short_description: "Explore detailled stats about Alephium network.",
-    tags: ["Stats"],
+    tags: ["Analytics"],
     contracts: [],
     audits: [],
     verified: false,
@@ -3588,11 +3432,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntv-overalldashboard/ntv-overalldashboard-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntv-overalldashboard/ntv-overalldashboard-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntv-overalldashboard/ntv-overalldashboard-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntv-overalldashboard/ntv-overalldashboard-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ntv-overalldashboard/ntv-overalldashboard-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ntv-overalldashboard/ntv-overalldashboard-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3601,9 +3445,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Okminer Pool",
     description:
-      "Integrated services for workers, mine owners, and operators, facilitating the integration and upgrade of the mining ecosystem",
+      "Okminer Pool is an operational service for miners offering management tools, monitoring dashboards, and support for mining farms.",
     short_description: "Leader of Next Mining Era",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -3631,11 +3475,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/okminer-pool/okminer-pool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/okminer-pool/okminer-pool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/okminer-pool/okminer-pool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/okminer-pool/okminer-pool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/okminer-pool/okminer-pool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/okminer-pool/okminer-pool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3644,8 +3488,9 @@ export const dapps: DappInfo[] = [
   {
     name: "OneKey Wallet",
     description:
-      "OneKey is a open source project of a decentralized wallet that allows users to self-custody their own digital assets. ",
-    short_description: "Open source crypto wallet. Trusted by millions.",
+      "OneKey is an open source wallet offering hardware and software products for secure asset management. It enables users to self custody cryptocurrencies through offline signing and multi platform support.",
+    short_description:
+      "Hardware and software wallet support of all Alephium tokens and dApps.",
     tags: ["Wallets"],
     contracts: [],
     audits: [],
@@ -3674,42 +3519,42 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/onekey-wallet-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/onekey-wallet-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/onekey-wallet-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/onekey-wallet-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/onekey-wallet-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/onekey-wallet-preview.webp",
       gallery: [
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-1.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-1.webp",
           description: "OneKey Wallet",
         },
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-2.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-2.webp",
           description: "OneKey Wallet Supported Chains",
         },
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-3.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-3.webp",
           description: "OneKey Wallet Features",
         },
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-4.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-4.webp",
           description: "OneKey Wallet Features",
         },
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-5.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-5.webp",
           description: "OneKey Wallet Support Hardware Wallet",
         },
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-6.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-6.webp",
           description: "Wallet Wallet Features",
         },
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-7.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-7.webp",
           description: "Wallet Wallet Features",
         },
         {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onekey-wallet/screenshot-8.webp",
+          url: "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onekey-wallet/screenshot-8.webp",
           description: "Wallet Wallet Features",
         },
       ],
@@ -3720,7 +3565,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Onramper",
     description:
-      "Onramper connects users to multiple fiat-to-crypto onramps through a single integration, offering seamless access to crypto purchases across 190+ countries.",
+      "Onramper is a fiat to crypto aggregator connecting users to multiple onramps through a single integration. It supports global payment methods and offers fast crypto purchasing flows.",
     short_description:
       "Aggregated fiat-to-crypto onramp with 130+ payment methods.",
     tags: ["Onramps"],
@@ -3747,11 +3592,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onramper/onramper-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onramper/onramper-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onramper/onramper-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onramper/onramper-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/onramper/onramper-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/onramper/onramper-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -3762,8 +3607,9 @@ export const dapps: DappInfo[] = [
   },
   {
     name: "Phoenix Finance",
-    description: "Platform for degen finance",
-    short_description: "DeFi Games",
+    description:
+      "Phoenix Finance is a DeFi platform on the ALPH blockchain that lets users deposit ALPH to receive hodlALPH, a token whose value is designed to increase over time as more ALPH is claimed.",
+    short_description: "A DeFi Game",
     tags: ["DeFi"],
     contracts: [
       {
@@ -3806,11 +3652,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/phoenix-finance/phoenix-finance-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/phoenix-finance/phoenix-finance-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/phoenix-finance/phoenix-finance-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/phoenix-finance/phoenix-finance-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/phoenix-finance/phoenix-finance-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/phoenix-finance/phoenix-finance-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3819,7 +3665,7 @@ export const dapps: DappInfo[] = [
   {
     name: "PixelPlex",
     description:
-      "PixelPlex is a custom software development company with over 16 years of expertise. With a team of more than 130 certified professionals, they deliver solutions and consulting services in blockchain, artificial intelligence, machine learning, and emerging domains including Web3 and metaverse. Their extensive portfolio of over 450 successful projects spans industries such as fintech, healthcare, retail, and supply chain.",
+      "PixelPlex provides professional blockchain auditing services, including full smart-contract audits, security reviews, and vulnerability assessments. They analyze code, test logic, check for exploits, and deliver detailed audit reports.",
     short_description: "Client-focused, Results-driven",
     tags: ["Security"],
     group: "",
@@ -3850,22 +3696,64 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/pixelplex/pixelplex-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/pixelplex/pixelplex-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/pixelplex/pixelplex-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/pixelplex/pixelplex-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/pixelplex/pixelplex-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/pixelplex/pixelplex-preview.webp",
       gallery: [],
       videoUrl: "",
     },
     url: "pixelplex",
   },
   {
+    name: "Powfi",
+    description:
+      "Powfi is the unifying DeFi layer of Alephium, a composable CLMM DEX and Staking layer where ecosystem growth strengthens ALPH and rewards long term participants.",
+    short_description: "CLMM DEX & staked ALPH platform.",
+    tags: ["DeFi", "Bridges", "Infrastructure"],
+    councils_choice: true,
+    verified: true,
+    dotw: false,
+    links: {
+      website: "https://powfi.alephium.org",
+      mirror: "",
+      twitter: "https://twitter.com/alephium",
+      telegram: "https://t.me/alephiumgroup",
+      discord: "https://alephium.org/discord",
+      github: "https://github.com/alephium",
+      youtube: "",
+      medium: "",
+      careers: "",
+      linkedin: "https://ch.linkedin.com/company/alephium",
+      docs: "",
+    },
+    teamInfo: {
+      contactEmail: "info@alephium.org",
+      founded: "2021-09-01T00:00:00.000Z",
+      anonymous: false,
+    },
+    media: {
+      logoUrl:
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/powfi/powfi-logo.webp",
+      bannerUrl:
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/powfi/powfi-banner.webp",
+      previewUrl:
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/powfi/powfi-preview.webp",
+      gallery: [],
+    },
+    audits: [],
+    tokens: [],
+    twitterName: "",
+    contracts: [],
+    url: "powfi",
+  },
+  {
     name: "Presence Protocol",
     description:
-      "Presence Protocol is built on the foundation of POAP, designed to leverage the power of the Alephium blockchain to provide verifiable proof of event attendance, known as a Presence.",
-    short_description: "Proof You Were There. Powered by Alephium.",
-    tags: ["NFTs", "Social"],
+      "Presence Protocol is an attendance verification system issuing event based proof of presence tokens. It records participation data onchain for both digital and in person events.",
+    short_description: "NFT proof-of-attendance protocol.",
+    tags: ["NFTs", "Tools"],
     group: "Group 0",
     audits: [],
     verified: false,
@@ -3893,11 +3781,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/presenceprotocol/presenceprotocol-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/presenceprotocol/presenceprotocol-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/presenceprotocol/presenceprotocol-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/presenceprotocol/presenceprotocol-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/presenceprotocol/presenceprotocol-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/presenceprotocol/presenceprotocol-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -3907,9 +3795,9 @@ export const dapps: DappInfo[] = [
   {
     name: "PrimeVault",
     description:
-      "The new age financial stack: wallet, liquidity and market connectivity infrastructure on blockchain rails",
+      "PrimeVault is an institutional grade infrastructure layer combining wallet services, liquidity access, and market connectivity. It enables users to interact with blockchain financial systems from a unified environment.",
     short_description: "Powerful infrastructure to build onchain",
-    tags: ["Wallets", "Infrastructure"],
+    tags: ["Infrastructure", "Wallets"],
     contracts: [],
     audits: [],
     verified: false,
@@ -3937,66 +3825,22 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/primevault/primevault-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/primevault/primevault-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/primevault/primevault-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/primevault/primevault-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/primevault/primevault-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/primevault/primevault-preview.webp",
       gallery: [],
       videoUrl: "",
     },
     url: "primevault",
   },
   {
-    name: "Proxima Universe",
-    description:
-      "NFT sci-fi shooter. The Tellurian, The Celestial, The Machina take on the evil Satoshi Empire. Building on MultiVAC and Alephium",
-    short_description: "Play To Own",
-    tags: ["Bridges", "DeFi", "Games", "NFTs", "Social", "ComingSoon"],
-    group: "",
-    verified: false,
-    dotw: false,
-    councils_choice: false,
-    links: {
-      website: "https://linktr.ee/ProximaUniverse",
-      mirror: "",
-      twitter: "https://x.com/ProximaUniverse",
-      telegram: "https://t.me/Proxima_Univers",
-      discord: "https://discord.gg/GwjcGKCzz5",
-      github: "https://github.com/CKPROXIMA?tab=repositories",
-      youtube: "",
-      medium: "https://medium.com/@ProximaUniverse",
-      careers: "",
-      linkedin: "",
-      docs: "",
-    },
-    twitterName: "ProximaUniverse",
-    teamInfo: {
-      contactEmail: "Team@proximathegame.com",
-      founded: "2022-02-28T00:00:00.000Z",
-      anonymous: true,
-    },
-    media: {
-      logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/proximauniverse/proximauniverse-logo.webp",
-      bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/proximauniverse/proximauniverse-banner.webp",
-      previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/proximauniverse/proximauniverse-preview.webp",
-      gallery: [],
-      videoUrl: "",
-    },
-    audits: [],
-    contracts: [],
-    tokens: [],
-    url: "proximauniverse",
-  },
-  {
     name: "Pyreplay",
     description:
-      "Pyreplay is the first Player vs. Player Arcade Hall on Alephium, created by Fugashu, the founder of Alphland and the Blockflow visualizer.",
+      "Pyreplay is an arcade style player versus player gaming platform. It allows users to participate in competitive matches using blockchain verified interactions and game logic.",
     short_description: "Player vs. Player Gaming/Betting Platform",
-    tags: ["Games", "Social"],
+    tags: ["Games"],
     group: "Group 0",
     contracts: [],
     audits: [],
@@ -4025,11 +3869,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/pyreplay/pyreplay-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/pyreplay/pyreplay-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/pyreplay/pyreplay-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/pyreplay/pyreplay-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/pyreplay/pyreplay-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/pyreplay/pyreplay-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4038,10 +3882,10 @@ export const dapps: DappInfo[] = [
   {
     name: "RalphBuilder",
     description:
-      "RalphBuilder is a platform for building and deploying smart contracts using AI on the Alephium blockchain. It allows users to create, deploy, and manage their own smart contracts.",
+      "RalphBuilder is an AI assisted contract development tool enabling users to create, deploy, and manage Ralph smart contracts. It automates parts of the coding process and simplifies deployment workflows.",
     short_description:
       "RalphBuilder is a platform for building and deploying smart contracts using AI on the Alephium blockchain.",
-    tags: ["Utility", "Infrastructure", "ComingSoon"],
+    tags: ["Tools", "Ai"],
     contracts: [],
     councils_choice: true,
     audits: [],
@@ -4069,11 +3913,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ralphbuilder/ralphbuilder-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ralphbuilder/ralphbuilder-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ralphbuilder/ralphbuilder-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ralphbuilder/ralphbuilder-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/ralphbuilder/ralphbuilder-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/ralphbuilder/ralphbuilder-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4082,10 +3926,10 @@ export const dapps: DappInfo[] = [
   {
     name: "Alephium Richlist",
     description:
-      "Explore real-time insights into the Alephium ecosystem with detailed metrics and statistics on address distribution and network activity.",
+      "Alephium Richlist is an analytics tool that displays address distribution, large holder rankings, and concentration metrics. It helps users understand wealth dispersion within the network.",
     short_description:
       "Explore real-time insights into the Alephium ecosystem.",
-    tags: ["Stats"],
+    tags: ["Analytics"],
     contracts: [],
     audits: [],
     verified: false,
@@ -4113,11 +3957,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/richlist/richlist-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/richlist/richlist-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/richlist/richlist-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/richlist/richlist-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/richlist/richlist-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/richlist/richlist-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4126,9 +3970,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Ron's LP Tool",
     description:
-      "A tool to help you track the value of your Alephium LP Tokens",
+      "Ron's LP Tool is a calculator that tracks the value and composition of Alephium liquidity pool tokens. It helps users understand current holdings and changes in LP value.",
     short_description: "LP Token Calculator",
-    tags: ["DeFi", "Infrastructure"],
+    tags: ["Tools"],
     contracts: [],
     audits: [],
     verified: false,
@@ -4156,11 +4000,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/rons-lp-tool/rons-lp-tool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/rons-lp-tool/rons-lp-tool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/rons-lp-tool/rons-lp-tool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/rons-lp-tool/rons-lp-tool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/rons-lp-tool/rons-lp-tool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/rons-lp-tool/rons-lp-tool-preview.webp",
       gallery: [],
     },
     url: "rons-lp-tool",
@@ -4168,9 +4012,10 @@ export const dapps: DappInfo[] = [
   {
     name: "SafePal Wallet",
     description:
-      "SafePal is a comprehensive crypto wallet suite with hardware wallet, mobile app, and browser extension wallet solutions empowering 20M+ users to manage and secure their assets across 100+ blockchains",
-    short_description: "SafePal is a comprehensive crypto wallet suite",
-    tags: ["Wallets", "NFTs", "DeFi"],
+      "SafePal is a suite of crypto wallets including hardware devices, mobile apps, and browser extensions. It supports more than one hundred blockchains and offers secure asset management tools.",
+    short_description:
+      "Hardware and software wallet support of all Alephium tokens and dApps.",
+    tags: ["Wallets"],
     group: "Group 0",
     contracts: [],
     audits: [],
@@ -4199,11 +4044,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/safepal-wallet/safepal-wallet-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/safepal-wallet/safepal-wallet-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/safepal-wallet/safepal-wallet-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/safepal-wallet/safepal-wallet-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/safepal-wallet/safepal-wallet-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/safepal-wallet/safepal-wallet-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4212,7 +4057,7 @@ export const dapps: DappInfo[] = [
   {
     name: "$exy Pixels",
     description:
-      "$EXY PIXELS is a social experiment and game for the Alephium Community in which users paint a picture on the same canvas pixel by pixel. It's purpose is to make the act of burning tokens fun. Users burn $EXY to mint pixels and claim their territory on the canvas. It draws inspiration from the iconic r/place experiment, where communities collaborated pixel by pixel to create art.",
+      "$exy Pixels is an onchain collaborative pixel canvas where users burn EXY to place pixels. It lets participants contribute pixel art to a shared grid. The project turns token burning into a collective creative activity.",
     short_description: "Burn to Play",
     tags: ["Games"],
     group: "0",
@@ -4252,11 +4097,11 @@ export const dapps: DappInfo[] = [
     ],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/sexy-pixels/sexy-pixels-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/sexy-pixels/sexy-pixels-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/sexy-pixels/sexy-pixels-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/sexy-pixels/sexy-pixels-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/sexy-pixels/sexy-pixels-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/sexy-pixels/sexy-pixels-preview.webp",
       gallery: [],
       videoUrl: "https://files.catbox.moe/r34zoy.mp4",
     },
@@ -4266,7 +4111,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Sezame Wallet",
     description:
-      "Alph first mobile wallet. Fully open source, non custodial wallet and multi-asset. Its simple UI makes it ideal for everyday usage.",
+      "Sezame Wallet is a non custodial mobile wallet for managing multiple crypto assets. It provides simple interfaces for transfers, balance tracking, and everyday usage.",
     short_description: "A non custodial wallet for digital assets",
     tags: ["Wallets"],
     contracts: [],
@@ -4296,11 +4141,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/sezame-wallet/sezame-wallet-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/sezame-wallet/sezame-wallet-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/sezame-wallet/sezame-wallet-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/sezame-wallet/sezame-wallet-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/sezame-wallet/sezame-wallet-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/sezame-wallet/sezame-wallet-preview.webp",
       gallery: [
         {
           url: "https://sezame.app/wp-content/uploads/2022/05/1.webp",
@@ -4334,7 +4179,7 @@ export const dapps: DappInfo[] = [
   {
     name: "SimpleSwap",
     description:
-      "SimpleSwap is a non-custodial cryptocurrency exchange that enables instant swaps of over 1,500 cryptocurrencies without registration.",
+      "SimpleSwap is a non custodial exchange supporting instant swaps for more than fifteen hundred assets. It performs conversions without requiring user registration.",
     short_description:
       "Instant, registration-free crypto exchange with 1500+ coins.",
     tags: ["Bridges"],
@@ -4361,11 +4206,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/simpleswap/simpleswap-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/simpleswap/simpleswap-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/simpleswap/simpleswap-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/simpleswap/simpleswap-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/simpleswap/simpleswap-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/simpleswap/simpleswap-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -4375,106 +4220,9 @@ export const dapps: DappInfo[] = [
     url: "simpleswap",
   },
   {
-    name: "SoloPool",
-    description:
-      "SoloPool is a solo mining platform designed for professional miners who prefer to work independently and claim full block rewards.",
-    short_description: "Solo Mining Pools For Professional Miners",
-    tags: ["Hashrate"],
-    contracts: [],
-    councils_choice: false,
-    audits: [],
-    verified: false,
-    dotw: false,
-    links: {
-      website: "https://alph.solopool.org/",
-      mirror: "",
-      twitter: "https://twitter.com/solopool_org",
-      telegram: "https://t.me/solopool_org",
-      discord: "",
-      github: "",
-      youtube: "",
-      medium: "",
-      careers: "",
-      linkedin: "",
-      docs: "",
-    },
-    twitterName: "@solopool_org",
-    teamInfo: {
-      contactEmail: "support@solopool.org",
-      founded: "2018-01",
-      anonymous: true,
-    },
-    tokens: [],
-    media: {
-      logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/solopool/solopool-logo.webp",
-      bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/solopool/solopool-banner.webp",
-      previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/solopool/solopool-preview.webp",
-      gallery: [],
-      videoUrl: "",
-    },
-    url: "solopool",
-  },
-  {
-    name: "Squirrel",
-    description:
-      "Squirrel is a community coin on the Alephium Blockchain. SQRL is supposed to represent that classic east coast squirrel. That squirrel that works hard all year long to ensure it will survive the severe winter. That squirrel commited to adapting and learning through trial-and-error.",
-    short_description: "Your Passive-Aggressive Backyard Squirrel",
-    tags: ["DeFi", "NFTs", "DAOs", "Infrastructure"],
-    group: "Group 0",
-    contracts: [
-      {
-        name: "Faucet",
-        address: "28CpCaDdpMas96ahyQ6xzNxF1QydLD9Erxfp1DKghmPjd",
-      },
-    ],
-    audits: [],
-    councils_choice: true,
-    verified: false,
-    dotw: false,
-    links: {
-      website: "https://www.alphsquirrel.com/",
-      mirror: "",
-      twitter: "https://twitter.com/SquirrelALPH",
-      telegram: "",
-      discord: "",
-      github: "",
-      youtube: "",
-      medium: "",
-      careers: "",
-      linkedin: "",
-      docs: "",
-    },
-    twitterName: "SquirrelALPH",
-    teamInfo: {
-      contactEmail: "",
-      founded: "2024-02-24T00:00:00.000Z",
-      anonymous: true,
-    },
-    tokens: [
-      {
-        address: "2A8RXH3bRZcSAVdVhu93vEUENxH1kizJbTcdVxmsAZwAF",
-        symbol: "SQRL",
-      },
-    ],
-    media: {
-      logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/squirrel/squirrel-logo.webp",
-      bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/squirrel/squirrel-banner.webp",
-      previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/squirrel/squirrel-preview.webp",
-      gallery: [],
-      videoUrl: "",
-    },
-    url: "squirrel",
-  },
-  {
     name: "StealthEX",
     description:
-      "StealthEX is a non-custodial instant crypto exchange supporting over 700 assets, enabling secure and anonymous swaps without registration or limits.",
+      "StealthEX is a swap service enabling anonymous and registration free exchanges between more than 700 cryptocurrencies. It supports fast conversions without user accounts.",
     short_description: "Non-custodial crypto exchange with 700+ assets.",
     tags: ["Bridges"],
     councils_choice: false,
@@ -4500,11 +4248,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/stealthex/stealthex-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/stealthex/stealthex-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/stealthex/stealthex-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/stealthex/stealthex-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/stealthex/stealthex-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/stealthex/stealthex-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -4516,10 +4264,10 @@ export const dapps: DappInfo[] = [
   {
     name: "Suricata Rally",
     description:
-      "Suricata Rally is the hottest new tap to earn game on Telegram and it's not just any game, it's your gateway to the Alephium blockchain and its ecosystem. Here is how it works. Tap to collect coins, buy boosts to skyrocket your balance and complete tasks to earn even more. But wait, there is more, the more you play the more you will be rewarded in the upcoming token launch. That's right, most of the supply will be distributed to the games players. Invite friends and family to join and watch your balance to soar even higher. Suricata Rally isn't just a game, it's a chance to be part of something bigger. Dive into Suricata Rally today and start tapping your way to earning tokens. Let's rally up and get tapping!",
+      "Suricata Rally is a tap to earn Telegram based game. Users tap to collect coins, complete tasks, buy boosts, and earn rewards tied to an upcoming token. It links casual gameplay with ecosystem incentives.",
     short_description:
       "Suricata Rally is a new tap to earn game that will bring you closer to the Alephium blockchain and its ecosystem!",
-    tags: ["Games", "NFTs", "Social"],
+    tags: ["Games"],
     contracts: [],
     audits: [],
     verified: false,
@@ -4547,11 +4295,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/suricata-rally/suricata-rally-avatar.png",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/suricata-rally/suricata-rally-avatar.png",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/suricata-rally/suricata-rally-banner.png",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/suricata-rally/suricata-rally-banner.png",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/suricata-rally/suricata-rally-preview.png",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/suricata-rally/suricata-rally-preview.png",
       gallery: [],
       videoUrl: "https://suricata.bot/img/SuricataRally-boost-level2.mp4",
     },
@@ -4564,22 +4312,22 @@ export const dapps: DappInfo[] = [
       collectionPreview: [
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Caveman.png",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Caveman.png",
           name: "Hunter - Acacia Grove Booster NFT",
         },
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Jinn.png",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Jinn.png",
           name: "Jinn - Desert Dunes Booster NFT",
         },
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Hunter.png",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Hunter.png",
           name: "Hunter - Acacia Grove Booster NFT",
         },
         {
           image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Trooper.png",
+            "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/suricata-rally/suricata-booster-nft-collection-Trooper.png",
           name: "Trooper - Grassland Plains Booster NFT",
         },
       ],
@@ -4588,9 +4336,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Linx swap",
     description:
-      "Frontend implementation of a DEX aggregator for the Alephium blockchain. This interface connects to the Linx Labs API to provide optimal token swaps across multiple DEXs.",
+      "Linx Swap is a frontend for a DEX aggregator that finds the optimal swap route across multiple decentralized exchanges. It uses the Linx Labs API to source the best available prices.",
     short_description: "No BS. Just smooth swaps.",
-    tags: ["DeFi"],
+    tags: ["Tools"],
     contracts: [],
     audits: [],
     verified: false,
@@ -4618,11 +4366,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/swap/swap-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/swap/swap-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/swap/swap-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/swap/swap-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/swap/swap-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/swap/swap-preview.webp",
       gallery: [],
     },
     url: "swap",
@@ -4630,7 +4378,7 @@ export const dapps: DappInfo[] = [
   {
     name: "SwapSpace",
     description:
-      "SwapSpace is a crypto exchange aggregator that connects 38 swap services and over 2,200 coins, providing fast and optimal swaps without any registration or KYC.",
+      "SwapSpace is a crypto swap aggregator connecting dozens of exchange services and routing the best available conversion path. It supports more than two thousand assets and performs swaps seamlessly.",
     short_description: "Exchange aggregator for 38 services and 2,200+ coins.",
     tags: ["Bridges"],
     councils_choice: false,
@@ -4656,11 +4404,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/swapspace/swapspace-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/swapspace/swapspace-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/swapspace/swapspace-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/swapspace/swapspace-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/swapspace/swapspace-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/swapspace/swapspace-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -4672,8 +4420,8 @@ export const dapps: DappInfo[] = [
   {
     name: "Tangem Wallet",
     description:
-      "Slim as a bank card, secure as a bank vault. Store, buy, earn, transfer and swap thousands of coins and tokens.",
-    short_description: "Your Secure Crypto & Hardware Wallet",
+      "Tangem Wallet is a hardware wallet in a card form that keeps your private keys securely offline. It supports a wide range of digital assets and enables safe storage, sending, receiving, and swap functionality.",
+    short_description: "Hardware and software wallet support of ALPH.",
     tags: ["Wallets"],
     contracts: [],
     audits: [],
@@ -4702,11 +4450,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tangem-wallet/tangem-wallet-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tangem-wallet/tangem-wallet-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tangem-wallet/tangem-wallet-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tangem-wallet/tangem-wallet-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tangem-wallet/tangem-wallet-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tangem-wallet/tangem-wallet-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4715,9 +4463,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Tin.network",
     description:
-      "Your one stop for #Defi. Easily track and visualize all your Assets, Liabilities and NFTs in one simple interface.",
+      "Tin Network is a DeFi dashboard that tracks assets, liabilities, and NFT holdings in a single unified view. It helps users monitor portfolio health and onchain activity.",
     short_description: "Easily track and visualize all your Assets.",
-    tags: ["Stats", "DeFi"],
+    tags: ["Analytics"],
     contracts: [],
     audits: [],
     verified: false,
@@ -4745,11 +4493,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tinnetwork/tinnetwork-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tinnetwork/tinnetwork-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tinnetwork/tinnetwork-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tinnetwork/tinnetwork-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tinnetwork/tinnetwork-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tinnetwork/tinnetwork-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4758,9 +4506,9 @@ export const dapps: DappInfo[] = [
   {
     name: "TipALPH",
     description:
-      "Enables Telegram users to tip $ALPH or any coin on Alephium. Create your wallet now and start tipping!",
+      "TipALPH is a Telegram bot that lets users tip others using ALPH and any token issued on the Alephium blockchain directly inside Telegram chats.",
     short_description: "Tipping bot for Alephium",
-    tags: ["Onramps", "Social"],
+    tags: ["Tools"],
     dotw: false,
     verified: false,
     councils_choice: false,
@@ -4787,11 +4535,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tipalph/tipalph-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tipalph/tipalph-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tipalph/tipalph-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tipalph/tipalph-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/tipalph/tipalph-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/tipalph/tipalph-preview.webp",
       gallery: [],
     },
     contracts: [],
@@ -4800,7 +4548,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Transfi",
     description:
-      "TransFi enables crypto purchases using region-specific payment methods like mobile apps and QR codes, maximizing accessibility and conversion in high-growth regions.",
+      "Transfi is a fiat to crypto purchase solution supporting region specific methods such as QR code payments and mobile apps. It focuses on improving accessibility in emerging markets.",
     short_description: "Localized fiat-to-crypto onramp for emerging markets.",
     tags: ["Onramps"],
     councils_choice: false,
@@ -4826,11 +4574,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/transfi/transfi-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/transfi/transfi-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/transfi/transfi-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/transfi/transfi-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/transfi/transfi-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/transfi/transfi-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -4842,7 +4590,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Trocador",
     description:
-      "Trocador is a privacy-focused crypto exchange aggregator offering anonymous, account-free swaps at competitive rates.",
+      "Trocador is a privacy focused cryptocurrency exchange aggregator offering anonymous swaps without accounts. It provides routing across multiple swap providers for optimal rates.",
     short_description: "Privacy-focused crypto exchange aggregator.",
     tags: ["Bridges"],
     councils_choice: false,
@@ -4868,11 +4616,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/trocador/trocador-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/trocador/trocador-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/trocador/trocador-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/trocador/trocador-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/trocador/trocador-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/trocador/trocador-preview.webp",
       gallery: [],
     },
     audits: [],
@@ -4884,17 +4632,17 @@ export const dapps: DappInfo[] = [
   {
     name: "TWAlph",
     description:
-      "Claim testnet $ALPH directly to your wallet via web or Telegram.",
+      "TWAlph is a tool allowing users to claim testnet ALPH through a web interface or Telegram bot. It supports developers and testers by providing token access for experimentation.",
     short_description:
       "Claim testnet $ALPH directly to your wallet via web or Telegram.",
-    tags: ["Infrastructure"],
+    tags: ["Tools"],
     contracts: [],
     audits: [],
     verified: false,
     councils_choice: true,
     dotw: false,
     links: {
-      website: "https://twalph.alph.land/",
+      website: "https://twalph.fugashu.dev/",
       mirror: "",
       twitter: "https://twitter.com/fugashu_codes",
       telegram: "https://t.me/alphland_bot/TWAlph",
@@ -4915,11 +4663,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/twalph/twalph-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/twalph/twalph-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/twalph/twalph-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/twalph/twalph-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/twalph/twalph-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/twalph/twalph-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4928,9 +4676,9 @@ export const dapps: DappInfo[] = [
   {
     name: "TW Pool",
     description:
-      "TWPool is an altcoin mining pool that provides a platform for miners to connect and mine various alternative cryptocurrencies.",
+      "TW Pool is a cryptocurrency mining pool offering stable hashrate distribution, transparent payouts, and real-time performance monitoring. It supports multiple Proof-of-Work assets and provides miners with reliable infrastructure for consistent earnings.",
     short_description: "TW Altcoin Pool",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -4958,11 +4706,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/twpool/twpool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/twpool/twpool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/twpool/twpool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/twpool/twpool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/twpool/twpool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/twpool/twpool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -4971,9 +4719,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Vipor",
     description:
-      "Leading Mining Pool with 19+ Global Stratums, Unmatched Transparency, UI, and Stats that Set Us Apart.",
+      "Vipor is a mining pool offering multiple global stratum endpoints and detailed mining metrics. It emphasizes transparent statistics and reliable infrastructure.",
     short_description: "We've got the world covered, so you can get the coins",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -5001,11 +4749,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/vipor/vipor-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/vipor/vipor-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/vipor/vipor-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/vipor/vipor-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/vipor/vipor-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/vipor/vipor-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -5014,7 +4762,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Voltpay",
     description:
-      "Convert Cryptocurrency to Gift Cards & Prepaid Cards and Pay with Crypto",
+      "Voltpay is a service that converts cryptocurrency into gift cards and prepaid cards. It allows users to spend digital assets through conventional retail channels.",
     short_description: "voltpay: One stop solution for DeFi payments",
     tags: ["DeFi"],
     contracts: [],
@@ -5043,65 +4791,22 @@ export const dapps: DappInfo[] = [
     twitterName: "voltpay_",
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/voltpay/voltpay-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/voltpay/voltpay-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/voltpay/voltpay-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/voltpay/voltpay-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/voltpay/voltpay-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/voltpay/voltpay-preview.webp",
       gallery: [],
     },
     tokens: [],
     url: "voltpay",
   },
   {
-    name: "Vordex",
-    description:
-      "Vordex is the first Perpetuals DEX on Alephium, integrating an advanced governance model based on Vote Escrow (veDEX). It combines perpetual trading with optimized incentives, creating a comprehensive platform for traders and liquidity providers.",
-    short_description: "Vordex is the first Perpetuals DEX on Alephium",
-    tags: ["DeFi", "ComingSoon"],
-    contracts: [],
-    councils_choice: false,
-    audits: [],
-    verified: false,
-    dotw: false,
-    links: {
-      website: "https://vordex.app/",
-      mirror: "",
-      twitter: "https://twitter.com/VordexAlph",
-      telegram: "https://t.me/VordexAlph",
-      discord: "",
-      github: "https://github.com/VordexAlph",
-      youtube: "",
-      medium: "",
-      careers: "",
-      linkedin: "",
-      docs: "",
-    },
-    twitterName: "@VordexAlph",
-    teamInfo: {
-      contactEmail: "",
-      founded: "",
-      anonymous: true,
-    },
-    tokens: [],
-    media: {
-      logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/vordex/vordex-logo.webp",
-      bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/vordex/vordex-banner.webp",
-      previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/vordex/vordex-preview.webp",
-      gallery: [],
-      videoUrl: "",
-    },
-    url: "vordex",
-  },
-  {
     name: "WeMine",
     description:
-      "Mining was once an exclusive investment limited to those with access to high capital and expertise. Not anymore. WeMine is bringing together the largest community of cryptocurrency miners to build the most advanced platform that facilitates participation in cryptocurrency mining: simple, accessible, and sustainable.",
-    short_description: "WeMine, you earn!",
-    tags: ["ComingSoon", "Hashrate", "DeFi", "Infrastructure"],
+      "WeMine offers access to Bitcoin mining through “Mining Power” units (represented as NFTs) that link to institutional-grade mining infrastructure. Investors can buy these units and earn rewards based on mining performance without needing to manage the hardware themselves.",
+    short_description: "PoW mining made accessible through NFTs.",
+    tags: ["DeFi", "Mining", "ComingSoon"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -5129,11 +4834,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/wemine/wemine-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/wemine/wemine-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/wemine/wemine-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/wemine/wemine-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/wemine/wemine-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/wemine/wemine-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -5142,9 +4847,9 @@ export const dapps: DappInfo[] = [
   {
     name: "WhalePool",
     description:
-      "WhalePool, the most efficient mining pool with low fees and high rewards.",
+      "WhalePool is a mining pool offering low fees and consistent block rewards. It supports miners with performance tracking and a variety of proof of work coins.",
     short_description: "The Global Leading Mining Service Provider",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -5172,102 +4877,22 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/whalepool/whalepool-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/whalepool/whalepool-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/whalepool/whalepool-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/whalepool/whalepool-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/whalepool/whalepool-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/whalepool/whalepool-preview.webp",
       gallery: [],
       videoUrl: "",
     },
     url: "whalepool",
   },
   {
-    name: "What The Duck",
-    description:
-      "A flock of 128 generative ducks that have migrated to the Alephium blockchain. The Nest is a custom rarity explorer where you have the opportunity to design your own custom duck with all available traits at your disposal and find out what the rarity would be. Quack Attack (beta) is the first game on Alephium blockchain and allows each holder to play as their duck in a growing interactive online multiplayer world. Visit The Duck Lounge where each duck is unique and has its own personality.",
-    short_description:
-      "A flock of 128 generative ducks that migrated to the Alephium blockchain",
-    tags: ["Games", "NFTs", "Social"],
-    contracts: [],
-    audits: [],
-    verified: false,
-    councils_choice: true,
-    dotw: false,
-    links: {
-      website: "https://theducklounge.com",
-      mirror: "",
-      twitter: "https://twitter.com/alph_ducks",
-      telegram: "",
-      discord: "https://discord.com/invite/T4jKfTKYEx",
-      github: "https://github.com/the-duck-lounge",
-      youtube: "",
-      medium: "",
-      careers: "",
-      linkedin: "",
-      docs: "",
-    },
-    twitterName: "@alph_ducks",
-    teamInfo: {
-      contactEmail: "reed@theducklounge.com",
-      founded: "2023-12-08T00:00:00.000Z",
-      anonymous: true,
-    },
-    tokens: [],
-    media: {
-      logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/what-the-duck-logo.webp",
-      bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/what-the-duck-banner.webp",
-      previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/what-the-duck-preview.webp",
-      gallery: [
-        {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/nest.webp",
-          description: "The Nest",
-        },
-        {
-          url: "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/game.webp",
-          description: "Quack Attack",
-        },
-      ],
-      videoUrl: "https://theducklounge.com/grass.mp4",
-    },
-    url: "what-the-duck",
-    nft: {
-      collectionContract: "22W9Xqz3BZE9fsCEtgqsk6CTRHktF2tFYb5wc1RWWCa8X",
-      collectionLink: "https://deadrare.io/collection/what-the-duck",
-      collectionName: "What The Duck",
-      collectionPreview: [
-        {
-          image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/collection-nft-37.webp",
-          name: "Duck: 37",
-        },
-        {
-          image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/collection-nft-14.webp",
-          name: "Duck: 14",
-        },
-        {
-          image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/collection-nft-73.webp",
-          name: "Duck: 73",
-        },
-        {
-          image_url:
-            "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/what-the-duck/collection-nft-02.webp",
-          name: "Duck: 2",
-        },
-      ],
-    },
-  },
-  {
     name: "Wooly Pooly",
     description:
-      "WoolyPooly stands out as an exceptionally lucrative pool, concentrating on diminishing commission fees for both PPLNS and SOLO reward structures.",
+      "Wooly Pooly is a mining pool optimized for reducing commission fees across PPLNS and solo modes. It offers flexible payout options and real time mining performance data.",
     short_description: "Mine ALPH With Low Fees",
-    tags: ["Hashrate"],
+    tags: ["Mining"],
     contracts: [],
     councils_choice: false,
     audits: [],
@@ -5295,11 +4920,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/woolypooly/woolypooly-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/woolypooly/woolypooly-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/woolypooly/woolypooly-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/woolypooly/woolypooly-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/woolypooly/woolypooly-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/woolypooly/woolypooly-preview.webp",
       gallery: [],
       videoUrl: "",
     },
@@ -5308,9 +4933,9 @@ export const dapps: DappInfo[] = [
   {
     name: "Yodh",
     description:
-      "Yodh is a dApp with the mission of facilitating and promoting the adoption of Alephium among the general public. Its primary goal is to democratize access to the Alephium blockchain by providing a simple and intuitive way to send and receive cryptocurrencies.\nWith Yodh, users are able to create digital gift cards, allowing the transfer of $ALPH as well as other tokens from the Alephium ecosystem.",
+      "Yodh is a dApp that lets users create digital gift cards using ALPH or other tokens on the Alephium blockchain. It allows senders to choose an amount, attach a message, and generate a redeemable link for recipients.",
     short_description: "DigitALPH Gift Card",
-    tags: ["Onramps", "Social"],
+    tags: ["Tools"],
     dotw: false,
     verified: false,
     group: "Group 0",
@@ -5344,11 +4969,11 @@ export const dapps: DappInfo[] = [
     tokens: [],
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/yodh/yodh-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/yodh/yodh-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/yodh/yodh-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/yodh/yodh-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/yodh/yodh-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/yodh/yodh-preview.webp",
       gallery: [],
     },
     url: "yodh",
@@ -5356,7 +4981,7 @@ export const dapps: DappInfo[] = [
   {
     name: "Zelcore Wallet",
     description:
-      "Zelcore makes it effortless to find, manage, trade, and truly own your digital assets and information. Experience the ultimate control and convenience with our all-in-one platform.",
+      "Zelcore Wallet is a multi asset platform providing portfolio tracking, trading tools, and asset management. It supports numerous blockchains and consolidates user control into a single interface.",
     short_description: "Zelcore – the ultimate wallet for Web3",
     tags: ["Wallets"],
     councils_choice: false,
@@ -5382,11 +5007,11 @@ export const dapps: DappInfo[] = [
     },
     media: {
       logoUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/zelcore/zelcore-logo.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/zelcore/zelcore-logo.webp",
       bannerUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/zelcore/zelcore-banner.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/zelcore/zelcore-banner.webp",
       previewUrl:
-        "https://raw.githubusercontent.com/xbabyx/alphland/develop/public/dapps/zelcore/zelcore-preview.webp",
+        "https://raw.githubusercontent.com/alph-land/alphland/develop/public/dapps/zelcore/zelcore-preview.webp",
       gallery: [],
     },
     audits: [],

@@ -79,16 +79,46 @@ export interface DappInfo {
   url: string;
 }
 
-export interface DappCard {
-  short_description: string;
-  title: string;
-  tags: string[];
-  url: string;
-  image: string;
-  logo: string;
-  featured: boolean;
-  annonymous: boolean;
-  audits: Audit[];
-  verified: boolean;
-  councils_choice: boolean;
+export interface DappDirectory {
+  slug: string;
+  isFeatured: boolean;
+  name: string;
+  description?: string;
+  short_description?: string;
+  tags?: string[];
+  councils_choice?: boolean;
+  verified?: boolean;
+  dotw?: boolean;
+  links?: {
+    website?: string;
+    twitter?: string;
+    telegram?: string;
+    discord?: string;
+    github?: string;
+    youtube?: string;
+    medium?: string;
+    mirror?: string;
+    linkedin?: string;
+    docs?: string;
+    careers?: string;
+  };
+  teamInfo?: {
+    name?: string;
+    contactEmail?: string;
+    anonymous?: boolean;
+    founded?: string;
+  };
+  media?: {
+    logoUrl?: string;
+    bannerUrl?: string;
+    previewUrl?: string;
+    videoUrl?: string;
+    gallery?: unknown[];
+  };
+  contracts?: unknown[];
+  audits?: unknown[];
+  tokens?: unknown[];
+  nft?: unknown;
+  twitterName?: string;
+  group?: string;
 }

@@ -18,7 +18,7 @@
 
 # production
 /build
-
+/sql
 # misc
 .DS_Store
 *.pem
@@ -43,3 +43,21 @@ next-env.d.ts
 .env.local
 .env.development
 .env.production
+*.md
+
+# wrangler
+/.wrangler/
+*.toml
+.dev.vars
+src/worker/node_modules/.cache/
+src/worker/node_modules/.mf/
+
+.claude
+/migrations/*.sql
+*.png
+/d1-manager-main
+*.sh
+migrations/
+*.xlsx
+alephium-brand-guide
+deploy.md

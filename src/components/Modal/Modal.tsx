@@ -1,10 +1,10 @@
-import React from "react"
+import React from "react";
 
 type Props = {
-  isOpen: boolean
-  onClose: () => void
-  children: React.ReactNode
-}
+  isOpen: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+};
 
 export default function Modal({ isOpen, onClose, children }: Props) {
   return (
@@ -13,10 +13,10 @@ export default function Modal({ isOpen, onClose, children }: Props) {
         <>
           <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-[5] outline-none focus:outline-none">
             <div className="relative w-full my-6 mx-auto max-w-[646px]">
-              <div className="border-0 h-full rounded-xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+              <div className="border-0 h-full rounded-xl shadow-lg relative flex flex-col w-full bg-white dark:bg-hero-dark outline-none focus:outline-none">
                 <div className="flex items-start justify-between p-5 rounded-t">
                   <button
-                    className="absolute top-0 right-0 p-2 rounded-full text-black"
+                    className="absolute top-0 right-0 p-2 rounded-full text-black dark:text-white"
                     onClick={onClose}
                   >
                     <svg
@@ -43,5 +43,5 @@ export default function Modal({ isOpen, onClose, children }: Props) {
         </>
       ) : null}
     </>
-  )
+  );
 }

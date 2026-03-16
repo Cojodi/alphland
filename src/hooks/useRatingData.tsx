@@ -11,28 +11,29 @@ type ResponseData = {
   ratingData?: RatingWidgetData;
 };
 
+// Rating API functionality temporarily disabled due to API unavailability
 const useRatingData = (dappName: string): ResponseData => {
   const [ratingData, setRatingData] = useState<RatingWidgetData>();
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false); // Set to false since we're not loading
 
-  useEffect(() => {
-    const fetchReviews = async (): Promise<any> => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings/name/${dappName}`
-        );
-        const data = (await response.json()) as RatingWidgetData;
-        setRatingData(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (dappName) {
-      void fetchReviews();
-    }
-  }, [dappName]);
+  // useEffect(() => {
+  //   const fetchReviews = async (): Promise<any> => {
+  //     try {
+  //       const response = await fetch(
+  //         `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings/name/${dappName}`
+  //       );
+  //       const data = (await response.json()) as RatingWidgetData;
+  //       setRatingData(data);
+  //     } catch (error) {
+  //       console.error(error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   if (dappName) {
+  //     void fetchReviews();
+  //   }
+  // }, [dappName]);
   return { ratingData, isLoading };
 };
 

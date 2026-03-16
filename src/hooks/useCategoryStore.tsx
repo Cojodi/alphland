@@ -3,6 +3,9 @@ import { create } from "zustand";
 interface CategoryState {
   selectedCategory: string;
   changeCategory: (category: string) => void;
+  selectedCategories: string[];
+  addCategory: (category: string) => void;
+  setCategories: (s: string[]) => void;
   selectedFilters: string[];
   selectedRatings: string[];
   setRatings: (s: string[]) => void;
@@ -18,6 +21,28 @@ export const useCategoryStore = create<CategoryState>((set) => ({
   changeCategory: (category) =>
     set(() => ({
       selectedCategory: category,
+    })),
+  selectedCategories: [],
+  addCategory: (category) =>
+    set((state) => {
+      const foundCategory = state.selectedCategories.find(
+        (cat) => cat === category,
+      );
+      if (!foundCategory) {
+        return {
+          selectedCategories: [...state.selectedCategories, category],
+        };
+      } else {
+        return {
+          selectedCategories: state.selectedCategories.filter(
+            (cat) => cat !== category,
+          ),
+        };
+      }
+    }),
+  setCategories: (s) =>
+    set(() => ({
+      selectedCategories: s,
     })),
   selectedSort: null,
   setSelectedSort: (sortBy) =>
@@ -37,7 +62,7 @@ export const useCategoryStore = create<CategoryState>((set) => ({
   addRating: (category) =>
     set((state) => {
       const foundFilter = state.selectedRatings.find(
-        (filter) => filter === category
+        (filter) => filter === category,
       );
       if (!foundFilter) {
         return {
@@ -46,7 +71,7 @@ export const useCategoryStore = create<CategoryState>((set) => ({
       } else {
         return {
           selectedRatings: state.selectedRatings.filter(
-            (filter) => filter !== category
+            (filter) => filter !== category,
           ),
         };
       }
@@ -54,7 +79,7 @@ export const useCategoryStore = create<CategoryState>((set) => ({
   addFilter: (category) =>
     set((state) => {
       const foundFilter = state.selectedFilters.find(
-        (filter) => filter === category
+        (filter) => filter === category,
       );
       if (!foundFilter) {
         return {
@@ -63,7 +88,7 @@ export const useCategoryStore = create<CategoryState>((set) => ({
       } else {
         return {
           selectedFilters: state.selectedFilters.filter(
-            (filter) => filter !== category
+            (filter) => filter !== category,
           ),
         };
       }

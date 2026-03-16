@@ -38,7 +38,6 @@ const DappPageDetails = ({ dappInfo }: { dappInfo: DappInfo }) => {
       className={`bg-white dark:bg-white/10 rounded-2xl shadow-box-image-shadow mt-16`}
     >
       <div className="details-box">
-        <h3 className="font-bold text-[22px] leading-normal">Team</h3>
         <p className="text-light-charcoal dark:text-clay font-medium text-xl leading-6 mt-8 lg:mt-10">
           Founded
         </p>
@@ -63,7 +62,6 @@ const DappPageDetails = ({ dappInfo }: { dappInfo: DappInfo }) => {
       <div className="divider bg-clay dark:bg-white/30"></div>
 
       <div className="details-box">
-        <h3 className="font-bold text-[22px] leading-normal">Safety checks</h3>
         <p className="text-light-charcoal dark:text-clay font-medium text-xl leading-6 mt-8 lg:mt-10">
           Audits
         </p>
@@ -124,7 +122,6 @@ const DappPageDetails = ({ dappInfo }: { dappInfo: DappInfo }) => {
 
       <div className="divider bg-clay dark:bg-white/30"></div>
       <div className="details-box">
-        <h3 className="font-bold text-[22px] leading-normal">Token info</h3>
         <p className="text-light-charcoal dark:text-clay font-medium text-xl leading-6 mt-8 lg:mt-10">
           Has a token?
         </p>

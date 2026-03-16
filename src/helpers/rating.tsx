@@ -1,11 +1,13 @@
+// Rating API functionality temporarily disabled due to API unavailability
 export const getRatingForDapp = async (name: string) => {
-  try {
-    return await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings/name/${name}`
-    ).then((res) => res.json());
-  } catch (error) {
-    return [];
-  }
+  return [];
+  // try {
+  //   return await fetch(
+  //     `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings/name/${name}`
+  //   ).then((res) => res.json());
+  // } catch (error) {
+  //   return [];
+  // }
 };
 
 export const getRatingsFromUser = async ({
@@ -15,43 +17,45 @@ export const getRatingsFromUser = async ({
   account: string;
   dappKey: string;
 }) => {
-  const data = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings/key/${dappKey}?account_id=${account}`
-  ).then((res) => res.json());
-  return data?.userRating || null;
+  return null;
+  // const data = await fetch(
+  //   `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings/key/${dappKey}?account_id=${account}`
+  // ).then((res) => res.json());
+  // return data?.userRating || null;
 };
 
 export const getRatings = async () => {
-  let data;
-  try {
-    data = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings`
-    ).then((res) => res.json());
-  } catch (error) {}
+  return {};
+  // let data;
+  // try {
+  //   data = await fetch(
+  //     `${process.env.NEXT_PUBLIC_API_URL}/tokens/dapps/ratings`
+  //   ).then((res) => res.json());
+  // } catch (error) {}
 
-  const ratings: Rating[] = data?.ratings || [];
+  // const ratings: Rating[] = data?.ratings || [];
 
-  const ratingsMap = new Map();
+  // const ratingsMap = new Map();
 
-  ratings.forEach((rating) => {
-    const key = Math.round(rating.average_rating);
-    if (!ratingsMap.get(key)) {
-      ratingsMap.set(key, []);
-    }
-    ratingsMap.set(key, [...ratingsMap.get(key), rating]);
-  });
-  const ratingEntries: {
-    [key: string]: Rating[];
-  } = Object.fromEntries(ratingsMap);
-  const dappsByRating: {
-    [key: string]: string[];
-  } = {};
+  // ratings.forEach((rating) => {
+  //   const key = Math.round(rating.average_rating);
+  //   if (!ratingsMap.get(key)) {
+  //     ratingsMap.set(key, []);
+  //   }
+  //   ratingsMap.set(key, [...ratingsMap.get(key), rating]);
+  // });
+  // const ratingEntries: {
+  //   [key: string]: Rating[];
+  // } = Object.fromEntries(ratingsMap);
+  // const dappsByRating: {
+  //   [key: string]: string[];
+  // } = {};
 
-  Object.keys(ratingEntries).forEach((key) => {
-    const dappKeys = ratingEntries[key].map((obj) => obj.dappKey);
-    dappsByRating[key] = dappKeys;
-  });
-  return dappsByRating;
+  // Object.keys(ratingEntries).forEach((key) => {
+  //   const dappKeys = ratingEntries[key].map((obj) => obj.dappKey);
+  //   dappsByRating[key] = dappKeys;
+  // });
+  // return dappsByRating;
 };
 
 export const filterDappcardsByRating = ({

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Report an Issue - Alphland</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: #1e1e2e;
+        border-radius: 16px;
+        padding: 40px;
+        max-width: 600px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        border: 1px solid #333;
+      }
+
+      h1 {
+        color: #fff;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        text-align: center;
+      }
+
+      .subtitle {
+        color: #a0a0a0;
+        font-size: 14px;
+        text-align: center;
+        margin-bottom: 32px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        color: #e0e0e0;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+
+      label .required {
+        color: #ef4444;
+      }
+
+      input, select, textarea {
+        width: 100%;
+        padding: 12px 16px;
+        background: #2a2a3e;
+        border: 1px solid #444;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 14px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      }
+
+      input::placeholder, textarea::placeholder {
+        color: #666;
+      }
+
+      select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 16px;
+        padding-right: 40px;
+      }
+
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .hint {
+        color: #666;
+        font-size: 12px;
+        margin-top: 6px;
+      }
+
+      .submit-btn {
+        width: 100%;
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        margin-top: 12px;
+      }
+
+      .submit-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+      }
+
+      .submit-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #6366f1;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .back-link:hover {
+        text-decoration: underline;
+      }
+
+      /* Success state */
+      .success-container {
+        text-align: center;
+        display: none;
+      }
+
+      .success-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #00c853 0%, #00e676 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+      }
+
+      .success-icon svg {
+        width: 40px;
+        height: 40px;
+        color: white;
+      }
+
+      .success-title {
+        color: #fff;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+
+      .success-message {
+        color: #a0a0a0;
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 24px;
+      }
+
+      .issue-link {
+        display: inline-block;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+        text-decoration: none;
+        padding: 14px 28px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 15px;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .issue-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+      }
+
+      /* Error state */
+      .error-message {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        margin-bottom: 20px;
+        display: none;
+      }
+
+      /* Loading spinner */
+      .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-right: 8px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Form -->
+      <div id="form-container">
+        <h1>Report an Issue</h1>
+        <p class="subtitle">Help us improve Alphland by reporting problems or concerns</p>
+
+        <div id="error-message" class="error-message"></div>
+
+        <form id="report-form">
+          <div class="form-group">
+            <label for="email">Your Email <span class="required">*</span></label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="your@email.com"
+              required
+            />
+            <p class="hint">We may contact you for more details about this report</p>
+          </div>
+
+          <div class="form-group">
+            <label for="dapp">dApp Name <span class="required">*</span></label>
+            <input
+              type="text"
+              id="dapp"
+              name="dapp"
+              placeholder="e.g., AlphSwap"
+              required
+            />
+            <p class="hint">Name of the dApp you're reporting about</p>
+          </div>
+
+          <div class="form-group">
+            <label for="issueType">Issue Type <span class="required">*</span></label>
+            <select id="issueType" name="issueType" required>
+              <option value="">Select an issue type...</option>
+              <option value="Security Vulnerability">Security Vulnerability</option>
+              <option value="Bug Report">Bug Report</option>
+              <option value="Incorrect Information">Incorrect Information</option>
+              <option value="Scam/Fraud">Scam/Fraud</option>
+              <option value="Broken Link">Broken Link</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="title">Title <span class="required">*</span></label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              placeholder="Brief summary of the issue"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description <span class="required">*</span></label>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Please provide a detailed description of the issue..."
+              required
+            ></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submit-btn">
+            Submit Report
+          </button>
+        </form>
+
+        <a href="/" class="back-link">← Back to Alphland</a>
+      </div>
+
+      <!-- Success -->
+      <div id="success-container" class="success-container">
+        <div class="success-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <h2 class="success-title">Report Submitted!</h2>
+        <p class="success-message">
+          Thank you for helping improve Alphland. Our team will review your report shortly.
+        </p>
+        <a id="issue-link" href="#" target="_blank" class="issue-link">
+          View Issue on GitHub
+        </a>
+        <a href="/" class="back-link">← Back to Alphland</a>
+      </div>
+    </div>
+
+    <script>
+      // Prefill dApp name from URL param
+      const urlParams = new URLSearchParams(window.location.search);
+      const prefillDapp = urlParams.get('dapp');
+      if (prefillDapp) {
+        document.getElementById('dapp').value = prefillDapp;
+      }
+
+      // Store referrer for back link
+      const referrer = document.referrer;
+      if (referrer && !referrer.includes('/report')) {
+        document.querySelectorAll('.back-link').forEach(link => {
+          link.href = referrer;
+        });
+      }
+
+      // Form submission
+      const form = document.getElementById('report-form');
+      const submitBtn = document.getElementById('submit-btn');
+      const errorDiv = document.getElementById('error-message');
+      const formContainer = document.getElementById('form-container');
+      const successContainer = document.getElementById('success-container');
+      const issueLink = document.getElementById('issue-link');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Get form data
+        const email = document.getElementById('email').value.trim();
+        const dapp = document.getElementById('dapp').value.trim();
+        const issueType = document.getElementById('issueType').value;
+        const title = document.getElementById('title').value.trim();
+        const description = document.getElementById('description').value.trim();
+
+        // Validate
+        if (!email || !dapp || !issueType || !title || !description) {
+          showError('Please fill in all required fields.');
+          return;
+        }
+
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          showError('Please enter a valid email address.');
+          return;
+        }
+
+        // Disable button and show loading
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner"></span>Submitting...';
+        errorDiv.style.display = 'none';
+
+        // Build issue body
+        const issueTitle = `[Report] ${dapp}: ${title}`;
+        const issueBody = `## Report Details
+
+**dApp Name:** ${dapp}
+
+**Issue Type:** ${issueType}
+
+**Title:** ${title}
+
+### Description
+${description}
+
+---
+
+> **Reporter:** \`${email}\`
+
+*Submitted via [Alphland Report Form](https://alph.land/report)*`;
+
+        try {
+          const response = await fetch('/api/github/issues', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              title: issueTitle,
+              body: issueBody,
+              labels: ['report', issueType.toLowerCase().replace(/[^a-z0-9]/g, '-')],
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || 'Failed to submit report');
+          }
+
+          // Show success
+          formContainer.style.display = 'none';
+          successContainer.style.display = 'block';
+          if (data.issue_url) {
+            issueLink.href = data.issue_url;
+            issueLink.style.display = 'inline-block';
+          } else {
+            issueLink.style.display = 'none';
+          }
+        } catch (error) {
+          console.error('Error submitting report:', error);
+          showError(error.message || 'Failed to submit report. Please try again.');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Submit Report';
+        }
+      });
+
+      function showError(message) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+      }
+    </script>
+  </body>
+</html>

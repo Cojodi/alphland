@@ -1,0 +1,311 @@
+{
+  "alephium-bridge": [
+    {
+      "title": "Alephium Bridge: The Tutorial",
+      "link": "https://alephium.org/news/post/alephium-bridge-the-tutorial-28e7b92b339a/",
+      "format": "Article",
+      "topic": "Infra / Tools",
+      "language": "English"
+    },
+    {
+      "title": "How to Use the Alephium Bridge",
+      "link": "https://www.youtube.com/watch?v=xoYVzbwBAjg",
+      "format": "Video",
+      "topic": "Infra / Tools",
+      "language": "English"
+    },
+    {
+      "title": "How to use Alephium to Ethereum Bridge",
+      "link": "https://www.youtube.com/watch?v=JiDLB_NLysg",
+      "format": "Video",
+      "topic": "Infra / Tools",
+      "language": "English"
+    }
+  ],
+  "ledger-wallet": [
+    {
+      "title": "Create your first Alephium ALPH account with a Ledger device",
+      "link": "https://support.ledger.com/article/Alephium-ALPH",
+      "format": "Article",
+      "topic": "Infra / Tools",
+      "language": "English"
+    }
+  ],
+  "antpool": [
+    {
+      "title": "Alephium (ALPH) Mining Tutorial on ANTPOOL",
+      "link": "https://antpoolsupport-hc.zendesk.com/hc/en-us/articles/33026304706841-ANTPOOL-ALPH-Alephium-Mining-Tutorial",
+      "format": "Article",
+      "topic": "Nodes / Mining",
+      "language": "English"
+    }
+  ],
+  "cedric-crispin-pool": [
+    {
+      "title": "How To Start Mining Alephium (ALPH) on Cédric Crispin Pool",
+      "link": "https://alephium.cedric-crispin.com/start-mining/",
+      "format": "Article",
+      "topic": "Nodes / Mining",
+      "language": "English"
+    }
+  ],
+  "coinmore": [
+    {
+      "title": "How To Start Mining Alephium (ALPH) on CoinMore",
+      "link": "https://coinmore.io/coin/alephium/instructions/",
+      "format": "Article",
+      "topic": "Nodes / Mining",
+      "language": "English"
+    }
+  ],
+  "dxpool": [
+    {
+      "title": "How To Start Mining Alephium (ALPH) on DXPool",
+      "link": "https://www.dxpool.com/help/en/alph-mining-tutorial",
+      "format": "Article",
+      "topic": "Nodes / Mining",
+      "language": "English"
+    }
+  ],
+  "f2pool": [
+    {
+      "title": "How To Start Mining Alephium (ALPH) on F2Pool",
+      "link": "https://f2pool.zendesk.com/hc/en-us/articles/29518911466265-How-to-mine-Alephium",
+      "format": "Article",
+      "topic": "Nodes / Mining",
+      "language": "English"
+    }
+  ],
+  "humpool": [
+    {
+      "title": "How To Start Mining Alephium (ALPH) on HumPool",
+      "link": "https://www.humpool.com/pool/help?type=alph",
+      "format": "Article",
+      "topic": "Nodes / Mining",
+      "language": "English"
+    }
+  ],
+  "k1pool": [
+    {
+      "title": "How To Start Mining Alephium (ALPH) on K1Pool",
+      "link": "https://k1pool.com/pool/alph/how-to-start",
+      "format": "Article",
+      "topic": "Nodes / Mining",
+      "language": "English"
+    }
+  ],
+  "kryptex-pool": [
+    {
+      "title": "How To Create an Alephium (ALPH) Wallet on Kryptex",
+      "link": "https://pool.kryptex.com/en/articles/alephium-wallet-en",
+      "format": "Article",
+      "topic": "Nodes / Mining",
+      "language": "English"
+    },
+    {
+      "title": "How To Start Mining Alephium (ALPH) on Kryptex",
+      "link": "https://pool.kryptex.com/en/articles/how-to-mine-alephium-en",
+      "format": "Article",
+      "topic": "Nodes / Mining",
+      "language": "English"
+    }
+  ],
+  "alphbanx": [
+    {
+      "title": "(French) Four DeFi Loop Strategies Explained on AlphBanX",
+      "link": "https://www.youtube.com/watch?v=wtkSTv_tFXw",
+      "format": "Video",
+      "topic": "DeFi",
+      "language": "French"
+    },
+    {
+      "title": "(French) Passive Yield Strategies Using AlphBanX",
+      "link": "https://www.youtube.com/watch?v=Mfpi67tvSvo",
+      "format": "Video",
+      "topic": "DeFi",
+      "language": "French"
+    },
+    {
+      "title": "AlphBanX Overview",
+      "link": "https://www.youtube.com/watch?v=GqWaMFN5pig",
+      "format": "Video",
+      "topic": "DeFi",
+      "language": "English"
+    }
+  ],
+  "elexium": [
+    {
+      "title": "(French) Elexium Overview",
+      "link": "https://www.youtube.com/watch?v=03sqqe7ekW0",
+      "format": "Video",
+      "topic": "DeFi",
+      "language": "French"
+    },
+    {
+      "title": "How To Use Elexium",
+      "link": "https://www.youtube.com/watch?v=GLhtAPqN9SY",
+      "format": "Video",
+      "topic": "DeFi",
+      "language": "English"
+    },
+    {
+      "title": "How To Swap on Elexium",
+      "link": "https://www.youtube.com/watch?v=E1EF4iYjozc",
+      "format": "Video",
+      "topic": "DeFi",
+      "language": "English"
+    },
+    {
+      "title": "Liquidity Providing & Staking on Elexium",
+      "link": "https://www.youtube.com/watch?v=n4EzodJ1_ew",
+      "format": "Video",
+      "topic": "DeFi",
+      "language": "English"
+    },
+    {
+      "title": "Elexium Lock Functions Explained",
+      "link": "https://www.youtube.com/watch?v=KkxeS4fqSOQ",
+      "format": "Video",
+      "topic": "DeFi",
+      "language": "English"
+    },
+    {
+      "title": "How to Withdraw, Lock & Vote on Elexium",
+      "link": "https://www.youtube.com/watch?v=RZt7w8FQnmA",
+      "format": "Video",
+      "topic": "DeFi",
+      "language": "English"
+    },
+    {
+      "title": "How & Why to Bribe on Elexium",
+      "link": "https://www.youtube.com/watch?v=xAyEyWQ-5I8",
+      "format": "Video",
+      "topic": "DeFi",
+      "language": "English"
+    }
+  ],
+  "alphtradingbot": [
+    {
+      "title": "How to Trade with Alephium Trading Bot",
+      "link": "https://docs.alphtradingbot.com/trading-bot-instruction/trading-tool",
+      "format": "Article",
+      "topic": "Other",
+      "language": "English"
+    }
+  ],
+  "fluxnode": [
+    {
+      "title": "Steps to Host Alephium Node on Flux Marketplace",
+      "link": "https://www.youtube.com/watch?v=xelpHE1Z0hA",
+      "format": "Video",
+      "topic": "Infra / Tools",
+      "language": "English"
+    }
+  ],
+  "linx-app": [
+    {
+      "title": "How to Start on Linx",
+      "link": "https://x.com/linx_labs/status/2011818068180119994",
+      "format": "Article",
+      "topic": "DeFi",
+      "language": "English"
+    },
+    {
+      "title": "Crypto Lending vs Borrowing: Earn Interest or Unlock Cash Without Selling",
+      "link": "https://x.com/linx_labs/status/2016154215773564994",
+      "format": "Article",
+      "topic": "DeFi",
+      "language": "English"
+    }
+  ],
+  "deadrare": [
+    {
+      "title": "Minting Guide: For Creators",
+      "link": "https://x.com/DeadRareNFT/status/1727731782055768194",
+      "format": "Tweet",
+      "topic": "NFT",
+      "language": "English"
+    }
+  ],
+  "alphpad": [
+    {
+      "title": "Welcome to AlphPad",
+      "link": "https://x.com/alphpad/status/1868607608640164291",
+      "format": "Tweet",
+      "topic": "DeFi",
+      "language": "English"
+    }
+  ],
+  "dia": [
+    {
+      "title": "Information on Usage of DIA Oracles on Alephium",
+      "link": "https://docs.alephium.org/infrastructure/Oracles/#introduction-to-dia",
+      "format": "Technical documentation",
+      "topic": "Infra / Tools",
+      "language": "English"
+    }
+  ],
+  "learnify": [
+    {
+      "title": "Learn, Play, Earn. What is Learnify?",
+      "link": "https://x.com/alephium/status/1953408949572555018",
+      "format": "Article",
+      "topic": "Other",
+      "language": "English"
+    }
+  ],
+  "safepal-wallet": [
+    {
+      "title": "Technical Documentation",
+      "link": "https://www.safepal.com/en/blog/alephium-alph-integration",
+      "format": "Technical documentation",
+      "topic": "Other",
+      "language": "English"
+    }
+  ],
+  "onekey-wallet": [
+    {
+      "title": "OneKey's Compatibility",
+      "link": "https://onekey.so/cryptos/6732d8c9339780efc159fb06/",
+      "format": "Article",
+      "topic": "Other",
+      "language": "English"
+    }
+  ],
+  "alephium-official-wallets": [
+    {
+      "title": "Mobile dApp Discovery",
+      "link": "https://x.com/alephium/status/1958177465173426602",
+      "format": "Video",
+      "topic": "Other",
+      "language": "English"
+    }
+  ],
+  "tangem-wallet": [
+    {
+      "title": "How to secure your Alephium with Tangem?",
+      "link": "https://tangem.com/en/wallet-for/alephium/",
+      "format": "Technical documentation",
+      "topic": "Other",
+      "language": "English"
+    }
+  ],
+  "wemine": [
+    {
+      "title": "Mining Power: How it works",
+      "link": "https://medium.com/@wemine.fi/mining-power-how-it-works-d0a5a05647a6",
+      "format": "Article",
+      "topic": "Nodes / Mining",
+      "language": "English"
+    }
+  ],
+  "_general": [
+    {
+      "title": "Starting an Alephium Devnet Node & Local Explorer",
+      "link": "https://www.youtube.com/watch?v=8sob5L7wnGs",
+      "format": "Video",
+      "topic": "Nodes / Mining",
+      "language": "English"
+    }
+  ]
+}

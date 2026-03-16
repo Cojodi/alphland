@@ -2,9 +2,7 @@
   "name": "ALPH Tracker",
   "description": " ALPH Tracker is an analytics dashboard that categorizes ALPH holders and tracks investor group movements over time. It helps users observe behavioral trends and distribution shifts.",
   "short_description": "$ALPH investor tracker",
-  "tags": [
-    "Analytics"
-  ],
+  "tags": ["Analytics"],
   "verified": false,
   "dotw": false,
   "councils_choice": true,
