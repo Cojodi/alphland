@@ -126,6 +126,3 @@ export const DAPP_LIST: DappListItem[] = DEDUPED.reduce<DappListItem[]>(
   },
   [],
 );
-
-// Full dapp data (same shape as /api/dapps, filtered to spotlight + By Alephium)
-export const FEATURED_DAPPS_FULL: DappData[] = DEDUPED;

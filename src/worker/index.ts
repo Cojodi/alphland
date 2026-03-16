@@ -4,7 +4,7 @@
  */
 import { createAuth } from "./auth";
 import { verifySignedMessage } from "@alephium/web3";
-import { DAPP_LIST, FEATURED_DAPPS_FULL } from "./dappList";
+import { DAPP_LIST } from "./dappList";
 import {
   handleSubmissionsAPI,
   handleCommentsAPI,
@@ -868,18 +868,6 @@ const worker = {
       // Apple App Store compliance list: name, developer, url only
       if (url.pathname === "/api/dapp-list" && request.method === "GET") {
         return new Response(JSON.stringify(DAPP_LIST), {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store",
-            ...corsHeaders,
-          },
-        });
-      }
-
-      // Full dapp data for spotlight + By Alephium dApps
-      if (url.pathname === "/api/featured-dapps" && request.method === "GET") {
-        return new Response(JSON.stringify(FEATURED_DAPPS_FULL), {
           status: 200,
           headers: {
             "Content-Type": "application/json",
