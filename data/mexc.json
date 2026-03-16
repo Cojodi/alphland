@@ -1,0 +1,32 @@
+{
+  "name": "MEXC",
+  "description": "MEXC is a centralized cryptocurrency exchange that allows users to buy, sell, and trade a wide range of digital assets. It provides spot trading, derivatives markets, and custodial account services through its trading platform.",
+  "short_description": "Your Easiest Way to Crypto",
+  "tags": ["Bridges", "CEX"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://www.mexc.com/",
+    "careers": "https://www.linkedin.com/company/mexcofficial/",
+    "twitter": "https://x.com/MEXC_Official",
+    "telegram": "https://t.me/MEXCEnglish",
+    "discord": "https://discord.gg/gaxHGrCC5T",
+    "github": "",
+    "youtube": "https://www.youtube.com/@MEXCofficial",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "business@mexc.com",
+    "founded": "2018-01-01T00:00:00.000Z",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/mexc/mexc-logo.webp",
+    "bannerUrl": "/dapps/mexc/mexc-banner.webp",
+    "previewUrl": "/dapps/mexc/mexc-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}
