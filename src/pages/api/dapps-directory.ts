@@ -1,6 +1,9 @@
 import { readdirSync, readFileSync } from "fs";
 import path from "path";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { BY_ALEPHIUM_DAPPS, FEATURED_DAPPS } from "../../data/featuredDapps";
+
+const FEATURED_SLUGS = new Set([...BY_ALEPHIUM_DAPPS, ...FEATURED_DAPPS]);
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
@@ -17,6 +20,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           const content = readFileSync(path.join(dataDir, file), "utf8");
           const data = JSON.parse(content);
           if (!data.name) return null;
+          const slug = file.replace(/\.json$/, "");
           const baseUrl = `https://${req.headers.host}`;
           if (data.media) {
             const toAbsolute = (url: string) =>
@@ -28,7 +32,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
               previewUrl: toAbsolute(data.media.previewUrl),
             };
           }
-          return { slug: file.replace(/\.json$/, ""), ...data };
+          return { slug, isFeatured: FEATURED_SLUGS.has(slug), ...data };
         } catch {
           return null;
         }
