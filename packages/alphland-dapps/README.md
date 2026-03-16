@@ -16,6 +16,8 @@ yarn add @alphland/dapps
 
 ## Usage
 
+### Using the bundled dApp list
+
 ```typescript
 import { dapps, DappInfo } from '@alphland/dapps';
 
@@ -33,6 +35,20 @@ const verifiedDapps = dapps.filter(dapp => dapp.verified);
 
 // Get dApps with audits
 const auditedDapps = dapps.filter(dapp => dapp.audits.length > 0);
+```
+
+### Using the API (`/api/dapps-directory`)
+
+Use the `DappDirectory` type when consuming the `GET https://alph.land/api/dapps-directory` endpoint, which returns all dApps with `slug`, `isFeatured`, and absolute media URLs.
+
+```typescript
+import type { DappDirectory } from '@alphland/dapps';
+
+const res = await fetch('https://alph.land/api/dapps-directory');
+const dapps: DappDirectory[] = await res.json();
+
+// Show featured dApps first
+const sorted = [...dapps].sort((a, b) => Number(b.isFeatured) - Number(a.isFeatured));
 ```
 
 ## Data Structure
@@ -72,7 +88,7 @@ Each dApp contains the following information:
 This package includes full TypeScript type definitions.
 
 ```typescript
-import type { DappInfo, Audit, Contract, Links, Media } from '@alphland/dapps';
+import type { DappInfo, DappDirectory, Audit, Contract, Links, Media } from '@alphland/dapps';
 ```
 
 ## Data Source

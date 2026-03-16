@@ -1,6 +1,6 @@
 {
   "name": "@alphland/dapps",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "List of dApps on the Alephium blockchain from Alphland",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
