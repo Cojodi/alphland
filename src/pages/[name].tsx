@@ -158,6 +158,9 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo, dappResources }) => {
           <div className="lg:col-span-2 space-y-12">
             {/* Hero Section */}
             <section>
+              <h1 className="text-3xl font-bold dark:text-white mb-4">
+                {dappInfo.name}
+              </h1>
               <p className="text-lg dark:text-white/90 mb-6 leading-relaxed whitespace-pre-wrap">
                 {dappInfo.description}
               </p>
