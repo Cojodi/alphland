@@ -19,22 +19,22 @@ yarn add @alphland/dapps
 ### Using the bundled dApp list
 
 ```typescript
-import { dapps, DappInfo } from '@alphland/dapps';
+import { dapps, DappDirectory } from '@alphland/dapps';
 
 // Get all dApps
 console.log(dapps);
 
 // Filter by tag
-const defiDapps = dapps.filter(dapp => dapp.tags.includes('DeFi'));
+const defiDapps = dapps.filter(dapp => dapp.tags?.includes('DeFi'));
 
 // Find a specific dApp
-const ayin = dapps.find(dapp => dapp.url === 'ayin');
+const ayin = dapps.find(dapp => dapp.slug === 'ayin');
 
 // Get verified dApps
 const verifiedDapps = dapps.filter(dapp => dapp.verified);
 
-// Get dApps with audits
-const auditedDapps = dapps.filter(dapp => dapp.audits.length > 0);
+// Get featured dApps first
+const sorted = [...dapps].sort((a, b) => Number(b.isFeatured) - Number(a.isFeatured));
 ```
 
 ### Using the API (`/api/dapps-directory`)
@@ -55,6 +55,8 @@ const sorted = [...dapps].sort((a, b) => Number(b.isFeatured) - Number(a.isFeatu
 
 Each dApp contains the following information:
 
+- **slug**: Unique identifier (filename without `.json`)
+- **isFeatured**: Whether the dApp is featured (Spotlight or By Alephium)
 - **name**: Name of the dApp
 - **description**: Full description
 - **short_description**: One-liner description
@@ -66,7 +68,6 @@ Each dApp contains the following information:
 - **links**: Social media and documentation links
 - **media**: Logos, banners, and preview images
 - **teamInfo**: Team and project information
-
 ## Available Tags
 
 - `Onramps`
@@ -88,7 +89,7 @@ Each dApp contains the following information:
 This package includes full TypeScript type definitions.
 
 ```typescript
-import type { DappInfo, DappDirectory, Audit, Contract, Links, Media } from '@alphland/dapps';
+import type { DappDirectory, DappInfo, Audit, Contract, Links, Media } from '@alphland/dapps';
 ```
 
 ## Data Source

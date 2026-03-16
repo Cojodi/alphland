@@ -7,6 +7,26 @@ const dataDir = path.join(rootDir, "data");
 const distDir = path.join(__dirname, "../dist");
 const srcDir = path.join(__dirname, "../src");
 
+// Read featured slugs from featuredDapps.ts
+const featuredPath = path.join(rootDir, "src/data/featuredDapps.ts");
+const featuredSource = fs.readFileSync(featuredPath, "utf8");
+
+function extractArray(name) {
+  const re = new RegExp(`export const ${name}\\s*=\\s*\\[([\\s\\S]*?)\\];`);
+  const match = featuredSource.match(re);
+  if (!match) throw new Error(`Could not find ${name} in featuredDapps.ts`);
+  return match[1]
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.startsWith('"'))
+    .map((l) => l.replace(/^"|",?$/g, ""));
+}
+
+const FEATURED_SLUGS = new Set([
+  ...extractArray("BY_ALEPHIUM_DAPPS"),
+  ...extractArray("FEATURED_DAPPS"),
+]);
+
 // GitHub repository configuration
 const GITHUB_REPO =
   "https://raw.githubusercontent.com/alph-land/alphland/develop/public";
@@ -51,7 +71,7 @@ filenames
     if (content) {
       try {
         const parsedContent = JSON.parse(content);
-        const url = filename.replace(/\.json$/, "").toLowerCase();
+        const slug = filename.replace(/\.json$/, "").toLowerCase();
 
         // Ensure all required Links properties are present
         const defaultLinks = {
@@ -140,6 +160,7 @@ filenames
 
         const dapp = {
           ...restOfParsedContent,
+          isFeatured: FEATURED_SLUGS.has(slug),
           twitterName: parsedContent.twitterName || "",
           audits: validAudits,
           contracts: validContracts,
@@ -165,7 +186,7 @@ filenames
             ...teamInfo,
             anonymous: anonymous,
           },
-          url: url,
+          slug: slug,
         };
 
         // Only include nft if it's valid
@@ -188,9 +209,9 @@ filenames
 
 // Generate dapps.ts file
 const dappsContent = `// This file is auto-generated. Do not edit manually.
-import { DappInfo } from './types';
+import { DappDirectory } from './types';
 
-export const dapps: DappInfo[] = ${JSON.stringify(dapps, null, 2)};
+export const dapps: DappDirectory[] = ${JSON.stringify(dapps, null, 2)};
 `;
 
 fs.writeFileSync(path.join(srcDir, "dapps.ts"), dappsContent);
@@ -218,8 +239,8 @@ export const dapps = ${JSON.stringify(dapps, null, 2)};
 fs.writeFileSync(path.join(distDir, "dapps.js"), dappsJsContent);
 
 // Create dapps.d.ts
-const dappsDtsContent = `import { DappInfo } from './types';
-export declare const dapps: DappInfo[];
+const dappsDtsContent = `import { DappDirectory } from './types';
+export declare const dapps: DappDirectory[];
 `;
 fs.writeFileSync(path.join(distDir, "dapps.d.ts"), dappsDtsContent);
 
