@@ -38,6 +38,17 @@ const faqData: FAQItem[] = [
     ),
   },
   {
+    question: "How to modify a dApp's info?",
+    answer: (
+      <>
+        The fastest way is to click{" "}
+        <strong>&ldquo;Report an issue&rdquo;</strong> on the dApp&apos;s page,
+        describe the changes needed, then share the issue link in the partner
+        group. We&apos;ll process it promptly.
+      </>
+    ),
+  },
+  {
     question: "How can I update or correct information about a listed project?",
     answer: (
       <>

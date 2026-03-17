@@ -76,7 +76,8 @@ export interface DappInfo {
   councils_choice: boolean;
   twitterName: string;
   nft?: NFT;
-  url: string;
+  slug: string;
+  isFeatured: boolean;
 }
 
 export interface DappDirectory {
