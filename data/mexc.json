@@ -2,7 +2,7 @@
   "name": "MEXC",
   "description": "MEXC is a centralized cryptocurrency exchange that allows users to buy, sell, and trade a wide range of digital assets. It provides spot trading, derivatives markets, and custodial account services through its trading platform.",
   "short_description": "Your Easiest Way to Crypto",
-  "tags": ["Bridges", "CEX"],
+  "tags": ["CEX", "Bridges"],
   "councils_choice": false,
   "verified": false,
   "dotw": false,
