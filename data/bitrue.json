@@ -1,0 +1,32 @@
+{
+  "name": "Bitrue",
+  "description": "Bitrue is a centralized cryptocurrency exchange that enables users to buy, sell, and trade digital assets through spot and derivatives markets. It provides custodial trading services and supports multiple cryptocurrencies.",
+  "short_description": "Unlock The Limitless Of Crypto",
+  "tags": ["CEX", "Bridges"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://bitrue.com/",
+    "careers": "https://www.linkedin.com/company/bitrue/jobs/",
+    "twitter": "https://twitter.com/BitrueOfficial",
+    "telegram": "https://t.me/Bitrue_official/",
+    "discord": "",
+    "github": "",
+    "youtube": "https://www.youtube.com/@BitrueOfficial",
+    "medium": "https://medium.com/@bitrue",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "support@bitrue.com",
+    "founded": "2018-01-01T00:00:00.000Z",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/bitrue/bitrue-logo.webp",
+    "bannerUrl": "/dapps/bitrue/bitrue-banner.webp",
+    "previewUrl": "/dapps/bitrue/bitrue-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}
