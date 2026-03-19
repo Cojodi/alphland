@@ -74,7 +74,6 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo, dappResources }) => {
   const linkOrder = [
     "website",
     "twitter",
-    "linkedin",
     "telegram",
     "medium",
     "discord",
