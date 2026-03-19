@@ -1035,11 +1035,15 @@ async function handleBountiesAPI(
       }
 
       // Verify sponsor exists and is verified
-      const sponsor = await env.DB.prepare(
+      const sponsor = (await env.DB.prepare(
         "SELECT id, is_verified, is_banned FROM sponsors WHERE id = ?",
       )
         .bind(body.sponsor_id)
-        .first<{ id: string; is_verified: number; is_banned: number }>();
+        .first()) as {
+        id: string;
+        is_verified: number;
+        is_banned: number;
+      } | null;
 
       if (!sponsor) {
         return new Response(
