@@ -68,6 +68,19 @@ export async function handleSubmissionsAPI(
         );
       }
 
+      const existing = await env.DB.prepare(
+        `SELECT id FROM bounty_submissions WHERE bounty_id = ? AND user_id = ?`,
+      )
+        .bind(body.bounty_id, body.submitted_by || body.user_id)
+        .first();
+
+      if (existing) {
+        return new Response(
+          JSON.stringify({ error: "Already submitted to this bounty" }),
+          { status: 409, headers: corsHeaders },
+        );
+      }
+
       const id = crypto.randomUUID();
       const now = Math.floor(Date.now() / 1000);
 
