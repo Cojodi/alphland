@@ -286,6 +286,102 @@ export async function handleSubmissionsAPI(
     const body = (await request.json()) as any;
     const now = Math.floor(Date.now() / 1000);
 
+    // Verify transaction on Alephium if transaction_hash is provided
+    if (body.transaction_hash && body.status === "approved") {
+      // Fetch submission + winner wallet address in one query
+      const submissionWithWallet = (await env.DB.prepare(
+        `SELECT bs.user_id, bs.bounty_id, up.wallet_address
+         FROM bounty_submissions bs
+         LEFT JOIN user_profiles up ON bs.user_id = up.user_id
+         WHERE bs.id = ?`,
+      )
+        .bind(id)
+        .first()) as {
+        user_id: string;
+        bounty_id: string;
+        wallet_address: string | null;
+      } | null;
+
+      if (!submissionWithWallet?.wallet_address) {
+        return new Response(
+          JSON.stringify({
+            error:
+              "Winner has no wallet address on file. Cannot verify payment.",
+          }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+
+      // Call Alephium Explorer API to verify the transaction
+      let txData: any;
+      try {
+        const txRes = await fetch(
+          `https://backend.mainnet.alephium.org/transactions/${body.transaction_hash}`,
+          { headers: { Accept: "application/json" } },
+        );
+        if (!txRes.ok) {
+          return new Response(
+            JSON.stringify({
+              error:
+                "Transaction not found on Alephium. Please check the tx hash.",
+            }),
+            { status: 400, headers: corsHeaders },
+          );
+        }
+        txData = await txRes.json();
+      } catch {
+        return new Response(
+          JSON.stringify({
+            error: "Failed to reach Alephium Explorer. Please try again.",
+          }),
+          { status: 502, headers: corsHeaders },
+        );
+      }
+
+      // Must be confirmed (has a blockHash)
+      if (!txData.blockHash) {
+        return new Response(
+          JSON.stringify({
+            error:
+              "Transaction is not confirmed yet. Please wait for it to be included in a block.",
+          }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+
+      // Find output matching the winner's wallet address
+      const outputs: any[] = txData.outputs || [];
+      const matchingOutput = outputs.find(
+        (o: any) => o.address === submissionWithWallet.wallet_address,
+      );
+
+      if (!matchingOutput) {
+        return new Response(
+          JSON.stringify({
+            error: `Transaction does not contain a payment to the winner's address (${submissionWithWallet.wallet_address}).`,
+          }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+
+      // Verify amount if reward_amount is provided (1 ALPH = 10^18 attoALPH)
+      if (body.reward_amount) {
+        const expectedAtto = BigInt(
+          Math.round(parseFloat(body.reward_amount) * 1e18),
+        );
+        const actualAtto = BigInt(matchingOutput.attoAlphAmount || "0");
+        if (actualAtto < expectedAtto) {
+          const actualAlph = (Number(actualAtto) / 1e18).toFixed(4);
+          return new Response(
+            JSON.stringify({
+              error: `Payment amount mismatch. Expected ${body.reward_amount} ALPH but transaction only sent ${actualAlph} ALPH to the winner.`,
+            }),
+            { status: 400, headers: corsHeaders },
+          );
+        }
+      }
+    }
+
     await env.DB.prepare(
       `UPDATE bounty_submissions
        SET status = ?,
