@@ -35,6 +35,7 @@ const categoryConfig: { [key: string]: { order: number; cols: number } } = {
   Education: { order: 14, cols: 5 },
   Social: { order: 15, cols: 5 },
   ComingSoon: { order: 16, cols: 5 },
+  CEX: { order: 17, cols: 5 },
 };
 
 const EcosystemMapPage = ({

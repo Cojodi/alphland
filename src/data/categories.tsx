@@ -37,6 +37,8 @@ import ai from "../assets/icons/crystal-ball.svg";
 import aiLight from "../assets/icons/crystal-ball-light.svg";
 import wallet from "../assets/icons/wallet.svg";
 import walletLight from "../assets/icons/walletLight.svg";
+import stats from "../assets/icons/stats.svg";
+import statsLight from "../assets/icons/statsLight.svg";
 
 export const categories = [
   { key: "bridges", name: "Bridges", icon: bridges, iconDark: bridgesLight },
@@ -75,6 +77,7 @@ export const categories = [
   { key: "security", name: "Security", icon: lock, iconDark: lockLight },
   { key: "games", name: "Games", icon: gaming, iconDark: gamingLight },
   { key: "soon", name: "ComingSoon", icon: time, iconDark: timeLight },
+  { key: "cex", name: "CEX", icon: stats, iconDark: statsLight },
 ];
 
 export const reputation = [
