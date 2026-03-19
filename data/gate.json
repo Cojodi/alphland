@@ -1,0 +1,32 @@
+{
+  "name": "Gate",
+  "description": "Gate.io is a centralized cryptocurrency exchange that enables users to trade digital assets across spot and derivatives markets. It provides custodial trading services and supports a wide range of cryptocurrencies.",
+  "short_description": "Gateway to Crypto",
+  "tags": ["CEX", "Bridges"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://www.gate.com",
+    "careers": "",
+    "twitter": "https://x.com/Gate",
+    "telegram": "https://t.me/GateCom_EN#",
+    "discord": "https://discord.gg/93WU6kt29u",
+    "github": "https://github.com/gate",
+    "youtube": "https://www.youtube.com/@GateExchange",
+    "medium": "https://gateio.medium.com/",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "support@gate.com",
+    "founded": "2013-01-01T00:00:00.000Z",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/gate/gate-logo.webp",
+    "bannerUrl": "/dapps/gate/gate-banner.webp",
+    "previewUrl": "/dapps/gate/gate-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}

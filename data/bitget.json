@@ -1,0 +1,32 @@
+{
+  "name": "Bitget",
+  "description": "Bitget is a centralized cryptocurrency exchange that allows users to trade digital assets through spot and derivatives markets. It also supports copy trading features that allow users to follow and replicate strategies from other traders.",
+  "short_description": "Trade smarter",
+  "tags": ["CEX", "Bridges"],
+  "councils_choice": false,
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://www.bitget.com",
+    "careers": "https://www.linkedin.com/company/bitget-global/",
+    "twitter": "https://x.com/bitget",
+    "telegram": "https://t.me/BitgetEnglishOfficial3",
+    "discord": "https://discord.gg/bitget",
+    "github": "",
+    "youtube": "https://www.youtube.com/@Bitget",
+    "medium": "",
+    "mirror": ""
+  },
+  "teamInfo": {
+    "contactEmail": "support@bitget.com",
+    "founded": "2018-01-01T00:00:00.000Z",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/bitget/bitget-logo.webp",
+    "bannerUrl": "/dapps/bitget/bitget-banner.webp",
+    "previewUrl": "/dapps/bitget/bitget-preview.webp"
+  },
+  "audits": [],
+  "tokens": []
+}
