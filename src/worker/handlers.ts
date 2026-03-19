@@ -956,6 +956,7 @@ export async function handleSponsorsAPI(
   // GET /api/sponsors - List all sponsors (for admin)
   if (request.method === "GET" && pathname === "/api/sponsors") {
     const isBanned = url.searchParams.get("is_banned");
+    const isPending = url.searchParams.get("pending");
 
     let query = `SELECT s.*, b.bounty_count,
                         u.email as user_email, u.name as user_name, u.image as user_image
@@ -969,7 +970,9 @@ export async function handleSponsorsAPI(
 
     // Try to filter by is_banned if param provided
     // Use COALESCE to handle case where column might not exist or is NULL
-    if (isBanned === "true") {
+    if (isPending === "true") {
+      query += ` WHERE COALESCE(s.is_verified, 0) = 0 AND COALESCE(s.is_banned, 0) = 0`;
+    } else if (isBanned === "true") {
       query += ` WHERE COALESCE(s.is_banned, 0) = 1`;
     } else if (isBanned === "false") {
       query += ` WHERE COALESCE(s.is_banned, 0) = 0`;
