@@ -129,7 +129,7 @@ interface UserDetail {
   bookmarks: any[];
 }
 
-type SponsorFilter = "active" | "banned";
+type SponsorFilter = "active" | "banned" | "pending";
 type AdminTab = "sponsors" | "users";
 
 export default function AdminDashboard() {
@@ -210,8 +210,13 @@ export default function AdminDashboard() {
   // Fetch sponsors
   const fetchSponsors = useCallback(async () => {
     try {
-      const isBanned = sponsorFilter === "banned" ? "true" : "false";
-      const url = `/api/sponsors?is_banned=${isBanned}`;
+      let url: string;
+      if (sponsorFilter === "pending") {
+        url = `/api/sponsors?pending=true`;
+      } else {
+        const isBanned = sponsorFilter === "banned" ? "true" : "false";
+        url = `/api/sponsors?is_banned=${isBanned}`;
+      }
       const response = await fetch(url);
       const data = await response.json();
       setSponsors(data.sponsors || []);
@@ -670,7 +675,7 @@ export default function AdminDashboard() {
             <div className="space-y-6">
               {/* Filter Buttons */}
               <div className="flex flex-wrap gap-2">
-                {(["active", "banned"] as const).map((filter) => (
+                {(["pending", "active", "banned"] as const).map((filter) => (
                   <button
                     key={filter}
                     onClick={() => setSponsorFilter(filter)}

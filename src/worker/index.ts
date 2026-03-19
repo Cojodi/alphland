@@ -1034,12 +1034,16 @@ async function handleBountiesAPI(
         );
       }
 
-      // Verify sponsor exists
-      const sponsor = await env.DB.prepare(
-        "SELECT id FROM sponsors WHERE id = ?",
+      // Verify sponsor exists and is verified
+      const sponsor = (await env.DB.prepare(
+        "SELECT id, is_verified, is_banned FROM sponsors WHERE id = ?",
       )
         .bind(body.sponsor_id)
-        .first();
+        .first()) as {
+        id: string;
+        is_verified: number;
+        is_banned: number;
+      } | null;
 
       if (!sponsor) {
         return new Response(
@@ -1048,6 +1052,19 @@ async function handleBountiesAPI(
           }),
           {
             status: 404,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      if (!sponsor.is_verified) {
+        return new Response(
+          JSON.stringify({
+            error:
+              "Sponsor account is pending review. Please wait for admin approval before creating bounties.",
+          }),
+          {
+            status: 403,
             headers: corsHeaders,
           },
         );
