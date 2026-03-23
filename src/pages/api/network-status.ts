@@ -143,7 +143,7 @@ export default async function handler(
       chainTo: number;
       mainChain: boolean;
     }>;
-  }>(`${ALPH_EXPLORER}/blocks?page=1&limit=50`);
+  }>(`${ALPH_EXPLORER}/blocks?page=1&limit=200`);
 
   const blocks = blocksResult.data?.blocks ?? [];
   const lastBlockByChain: Record<string, number> = {};
@@ -160,11 +160,8 @@ export default async function handler(
   for (let from = 0; from < 4; from++) {
     for (let to = 0; to < 4; to++) {
       const lastTs = lastBlockByChain[`${from}-${to}`] ?? null;
-      const secondsSince = lastTs
-        ? Math.floor((now - lastTs) / 1000)
-        : blocks.length > 0
-          ? 300
-          : null;
+      // If chain not found in 200 blocks, it's genuinely unknown (not a fake 5m default)
+      const secondsSince = lastTs ? Math.floor((now - lastTs) / 1000) : null;
       chains.push({
         fromGroup: from,
         toGroup: to,
