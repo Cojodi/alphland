@@ -3,7 +3,7 @@
  *
  * Served directly by Next.js/Vercel (takes precedence over the /api/* → Worker rewrite).
  * Checks Alephium public node + explorer health, hashrate trend, per-chain block times,
- * and optionally sends Slack alerts via SLACK_WEBHOOK_URL env var.
+ * and optionally sends Slack alerts via network_status_alert env var.
  *
  * Slack alert debounce uses module-level state — best-effort within a warm serverless
  * instance. For production-grade debounce, swap for Vercel KV / Cloudflare KV.
@@ -23,7 +23,7 @@ const _alertDebounce: Record<string, number> = {};
 const ALERT_DEBOUNCE_MS = 10 * 60 * 1000;
 
 async function sendSlackAlert(text: string, key: string): Promise<void> {
-  const webhookUrl = process.env.SLACK_WEBHOOK_URL;
+  const webhookUrl = process.env.network_status_alert;
   if (!webhookUrl) return;
   const now = Date.now();
   if (_alertDebounce[key] && now - _alertDebounce[key] < ALERT_DEBOUNCE_MS)
