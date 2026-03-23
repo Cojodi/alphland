@@ -351,10 +351,31 @@ export default function StatusPage() {
               <h2 className="text-xs font-semibold uppercase tracking-wider text-light-charcoal dark:text-white/40 mb-3">
                 Services
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {data.services.map((svc) => (
-                  <ServiceCard key={svc.name} svc={svc} />
-                ))}
+              <div className="space-y-4">
+                <div>
+                  <p className="text-[11px] text-light-charcoal dark:text-white/30 mb-2 pl-1">
+                    Mainnet
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {data.services
+                      .filter((s) => !s.name.toLowerCase().includes("testnet"))
+                      .map((svc) => (
+                        <ServiceCard key={svc.name} svc={svc} />
+                      ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-[11px] text-light-charcoal dark:text-white/30 mb-2 pl-1">
+                    Testnet
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {data.services
+                      .filter((s) => s.name.toLowerCase().includes("testnet"))
+                      .map((svc) => (
+                        <ServiceCard key={svc.name} svc={svc} />
+                      ))}
+                  </div>
+                </div>
               </div>
             </section>
 

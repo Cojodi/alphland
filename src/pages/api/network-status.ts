@@ -12,6 +12,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 const ALPH_NODE = "https://node.mainnet.alephium.org";
 const ALPH_EXPLORER = "https://backend.mainnet.alephium.org";
+const ALPH_TESTNET_NODE = "https://node.testnet.alephium.org";
+const ALPH_TESTNET_EXPLORER = "https://backend.testnet.alephium.org";
 const BLOCK_DELAY_THRESHOLD_S = 60;
 const HASHRATE_CHANGE_THRESHOLD_PCT = 50; // hourly fluctuation >50% is unusual
 
@@ -74,11 +76,18 @@ export default async function handler(
 
   const now = Date.now();
 
-  // 1. Service health checks
-  const [nodeResult, explorerResult] = await Promise.all([
-    fetchJSON<{ releaseVersion: string }>(`${ALPH_NODE}/infos/version`),
-    fetchJSON<{ totalTransactions: number }>(`${ALPH_EXPLORER}/infos`),
-  ]);
+  // 1. Service health checks (mainnet + testnet, parallel)
+  const [nodeResult, explorerResult, testnetNodeResult, testnetExplorerResult] =
+    await Promise.all([
+      fetchJSON<{ releaseVersion: string }>(`${ALPH_NODE}/infos/version`),
+      fetchJSON<{ totalTransactions: number }>(`${ALPH_EXPLORER}/infos`),
+      fetchJSON<{ releaseVersion: string }>(
+        `${ALPH_TESTNET_NODE}/infos/version`,
+      ),
+      fetchJSON<{ totalTransactions: number }>(
+        `${ALPH_TESTNET_EXPLORER}/infos`,
+      ),
+    ]);
 
   const services = [
     {
@@ -90,6 +99,16 @@ export default async function handler(
       name: "Public Explorer Backend",
       up: explorerResult.ok,
       latency: explorerResult.latency,
+    },
+    {
+      name: "Public Testnet Node",
+      up: testnetNodeResult.ok,
+      latency: testnetNodeResult.latency,
+    },
+    {
+      name: "Testnet Explorer Backend",
+      up: testnetExplorerResult.ok,
+      latency: testnetExplorerResult.latency,
     },
   ];
 
