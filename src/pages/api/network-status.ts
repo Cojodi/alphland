@@ -15,7 +15,8 @@ const ALPH_EXPLORER = "https://backend.mainnet.alephium.org";
 const ALPH_TESTNET_NODE = "https://node.testnet.alephium.org";
 const ALPH_TESTNET_EXPLORER = "https://backend.testnet.alephium.org";
 const BLOCK_DELAY_THRESHOLD_S = 60;
-const HASHRATE_CHANGE_THRESHOLD_PCT = 50; // hourly fluctuation >50% is unusual
+const HASHRATE_1H_THRESHOLD_PCT = 5; // alert if 1h change exceeds ±5%
+const HASHRATE_24H_THRESHOLD_PCT = 15; // alert if 24h change exceeds ±15%
 
 // ── Alert debounce (module-level, best-effort in serverless) ─────────────────
 const _alertDebounce: Record<string, number> = {};
@@ -112,26 +113,39 @@ export default async function handler(
     },
   ];
 
-  // 2. Hashrate trend (last 2 hours, hourly buckets)
+  // 2. Hashrate — fetch 25 hours of hourly data to support 1h and 24h comparisons
   const hrResult = await fetchJSON<Array<{ value: number }>>(
-    `${ALPH_EXPLORER}/charts/hashrates?fromTs=${now - 2 * 3600_000}&toTs=${now}&interval-type=hourly`,
+    `${ALPH_EXPLORER}/charts/hashrates?fromTs=${now - 25 * 3600_000}&toTs=${now}&interval-type=hourly`,
   );
   const hrData = hrResult.data ?? [];
   const currentHps = hrData[hrData.length - 1]?.value ?? 0;
-  const previousHps =
+  const hps1hAgo =
     hrData.length >= 2 ? (hrData[hrData.length - 2]?.value ?? null) : null;
-  let trendPct: number | null = null;
-  let trendDirection: "up" | "down" | "stable" | null = null;
-  if (previousHps && previousHps > 0) {
-    trendPct = ((currentHps - previousHps) / previousHps) * 100;
-    trendDirection =
-      Math.abs(trendPct) < 1 ? "stable" : trendPct > 0 ? "up" : "down";
-  }
+  const hps24hAgo =
+    hrData.length >= 25 ? (hrData[hrData.length - 25]?.value ?? null) : null;
+
+  const calcTrend = (current: number, prev: number | null) => {
+    if (!prev || prev === 0) return null;
+    return ((current - prev) / prev) * 100;
+  };
+
+  const trend1h = calcTrend(currentHps, hps1hAgo);
+  const trend24h = calcTrend(currentHps, hps24hAgo);
+
+  const trendDirection =
+    trend1h === null
+      ? null
+      : Math.abs(trend1h) < 1
+        ? "stable"
+        : trend1h > 0
+          ? "up"
+          : "down";
+
   const hashrate = {
     currentHps,
-    previousHps,
     currentFormatted: currentHps > 0 ? formatHashrate(currentHps) : "N/A",
-    trendPct,
+    trend1h,
+    trend24h,
     trendDirection,
   };
 
@@ -217,20 +231,34 @@ export default async function handler(
     }
   }
 
-  if (
-    trendPct !== null &&
-    Math.abs(trendPct) >= HASHRATE_CHANGE_THRESHOLD_PCT
-  ) {
-    const dir = trendPct > 0 ? "increased" : "decreased";
-    const id = "hashrate_anomaly";
+  // 1h hashrate alert: ±5%
+  if (trend1h !== null && Math.abs(trend1h) >= HASHRATE_1H_THRESHOLD_PCT) {
+    const dir = trend1h > 0 ? "surged" : "dropped";
+    const id = `hashrate_1h_${trend1h > 0 ? "up" : "down"}`;
     alerts.push({
       id,
       type: "hashrate_anomaly",
-      message: `Hashrate ${dir} by ${Math.abs(trendPct).toFixed(1)}% in the last hour (${hashrate.currentFormatted})`,
+      message: `Hashrate ${dir} ${Math.abs(trend1h).toFixed(1)}% in the last hour (now ${hashrate.currentFormatted})`,
       severity: "warning",
     });
     await sendSlackAlert(
-      `:warning: *Aleph.land Network Alert*\n*Hashrate Anomaly*: Hashrate ${dir} by ${Math.abs(trendPct).toFixed(1)}% in the last hour\nCurrent: ${hashrate.currentFormatted}\n<https://alph.land/status|View Status Page>`,
+      `:warning: *Aleph.land Network Alert*\n*Hashrate 1h ${dir}*: ${Math.abs(trend1h).toFixed(1)}% change in the last hour\nCurrent: ${hashrate.currentFormatted}\n<https://alph.land/status|View Status Page>`,
+      id,
+    );
+  }
+
+  // 24h hashrate alert: ±15%
+  if (trend24h !== null && Math.abs(trend24h) >= HASHRATE_24H_THRESHOLD_PCT) {
+    const dir = trend24h > 0 ? "surged" : "dropped";
+    const id = `hashrate_24h_${trend24h > 0 ? "up" : "down"}`;
+    alerts.push({
+      id,
+      type: "hashrate_anomaly",
+      message: `Hashrate ${dir} ${Math.abs(trend24h).toFixed(1)}% over 24 hours (now ${hashrate.currentFormatted})`,
+      severity: "warning",
+    });
+    await sendSlackAlert(
+      `:warning: *Aleph.land Network Alert*\n*Hashrate 24h ${dir}*: ${Math.abs(trend24h).toFixed(1)}% change over 24 hours\nCurrent: ${hashrate.currentFormatted}\n<https://alph.land/status|View Status Page>`,
       id,
     );
   }

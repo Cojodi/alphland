@@ -20,9 +20,9 @@ type ChainStatus = {
 
 type HashrateInfo = {
   currentHps: number;
-  previousHps: number | null;
   currentFormatted: string;
-  trendPct: number | null;
+  trend1h: number | null;
+  trend24h: number | null;
   trendDirection: "up" | "down" | "stable" | null;
 };
 
@@ -104,35 +104,60 @@ function ServiceCard({ svc }: { svc: ServiceStatus }) {
   );
 }
 
+function TrendBadge({
+  pct,
+  label,
+  threshold,
+}: {
+  pct: number | null;
+  label: string;
+  threshold: number;
+}) {
+  if (pct === null) return null;
+  const isAlert = Math.abs(pct) >= threshold;
+  const isUp = pct > 0;
+  const color = isAlert
+    ? isUp
+      ? "text-orange"
+      : "text-danger-red"
+    : "text-light-charcoal dark:text-white/50";
+  return (
+    <div className="flex items-center gap-1">
+      <span className={`text-xs font-mono font-medium ${color}`}>
+        {pct > 0 ? "+" : ""}
+        {pct.toFixed(1)}%
+      </span>
+      <span className="text-[10px] text-light-charcoal dark:text-white/30">
+        {label}
+      </span>
+    </div>
+  );
+}
+
 function HashrateCard({ hr }: { hr: HashrateInfo }) {
-  const TrendIcon = () => {
-    if (!hr.trendDirection || hr.trendDirection === "stable")
-      return <span className="text-light-charcoal">→</span>;
-    if (hr.trendDirection === "up")
-      return <span className="text-accessible-green">↑</span>;
-    return <span className="text-danger-red">↓</span>;
-  };
+  const arrow =
+    hr.trendDirection === "up" ? "↑" : hr.trendDirection === "down" ? "↓" : "→";
+  const arrowColor =
+    hr.trendDirection === "up"
+      ? "text-accessible-green"
+      : hr.trendDirection === "down"
+        ? "text-danger-red"
+        : "text-light-charcoal";
 
   return (
     <div className="bg-white dark:bg-hero-dark border border-border-grey dark:border-white/10 rounded-xl p-5">
-      <p className="text-xs text-light-charcoal dark:text-white/50 uppercase tracking-wider mb-1">
+      <p className="text-xs text-light-charcoal dark:text-white/50 uppercase tracking-wider mb-2">
         Network Hashrate
       </p>
-      <div className="flex items-baseline gap-2">
+      <div className="flex items-baseline gap-2 mb-3">
         <span className="text-2xl font-bold text-black dark:text-white font-mono">
           {hr.currentFormatted}
         </span>
-        <span className="text-lg font-semibold">
-          <TrendIcon />
-        </span>
-        {hr.trendPct !== null && Math.abs(hr.trendPct) >= 1 && (
-          <span
-            className={`text-xs font-medium ${hr.trendDirection === "up" ? "text-accessible-green" : hr.trendDirection === "down" ? "text-danger-red" : "text-light-charcoal"}`}
-          >
-            {hr.trendPct > 0 ? "+" : ""}
-            {hr.trendPct.toFixed(1)}% vs 1h ago
-          </span>
-        )}
+        <span className={`text-lg font-semibold ${arrowColor}`}>{arrow}</span>
+      </div>
+      <div className="flex gap-4">
+        <TrendBadge pct={hr.trend1h} label="vs 1h ago" threshold={5} />
+        <TrendBadge pct={hr.trend24h} label="vs 24h ago" threshold={15} />
       </div>
     </div>
   );
