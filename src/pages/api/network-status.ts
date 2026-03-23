@@ -15,8 +15,8 @@ const ALPH_EXPLORER = "https://backend.mainnet.alephium.org";
 const ALPH_TESTNET_NODE = "https://node.testnet.alephium.org";
 const ALPH_TESTNET_EXPLORER = "https://backend.testnet.alephium.org";
 const BLOCK_DELAY_THRESHOLD_S = 60;
-const HASHRATE_1H_THRESHOLD_PCT = 0.1; // alert if 1h change exceeds ±0.1% (temp: force trigger)
-const HASHRATE_24H_THRESHOLD_PCT = 0.1; // alert if 24h change exceeds ±0.1% (temp: force trigger)
+const HASHRATE_1H_THRESHOLD_PCT = 5; // alert if 1h change exceeds ±0.1% (temp: force trigger)
+const HASHRATE_24H_THRESHOLD_PCT = 15; // alert if 24h change exceeds ±0.1% (temp: force trigger)
 
 // ── Alert debounce (module-level, best-effort in serverless) ─────────────────
 const _alertDebounce: Record<string, number> = {};
