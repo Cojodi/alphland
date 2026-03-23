@@ -36,6 +36,57 @@ export interface Env {
   FROM_EMAIL?: string;
   GITHUB_ISSUES_TOKEN?: string; // GitHub token for creating issues
   GITHUB_BOT_TOKEN?: string; // unused — dApp submissions use GITHUB_ISSUES_TOKEN
+  SLACK_WEBHOOK_URL?: string; // Slack incoming webhook for network alerts
+}
+
+// ── Network Status: alert debounce (best-effort within a warm execution context) ──
+const _alertDebounce: Record<string, number> = {};
+const ALERT_DEBOUNCE_MS = 10 * 60 * 1000; // 10 minutes
+
+async function sendSlackAlert(
+  webhookUrl: string,
+  text: string,
+  key: string,
+): Promise<void> {
+  const now = Date.now();
+  if (_alertDebounce[key] && now - _alertDebounce[key] < ALERT_DEBOUNCE_MS)
+    return;
+  _alertDebounce[key] = now;
+  try {
+    await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+  } catch {}
+}
+
+function formatHashrate(hps: number): string {
+  if (hps >= 1e15) return `${(hps / 1e15).toFixed(2)} PH/s`;
+  if (hps >= 1e12) return `${(hps / 1e12).toFixed(2)} TH/s`;
+  if (hps >= 1e9) return `${(hps / 1e9).toFixed(2)} GH/s`;
+  if (hps >= 1e6) return `${(hps / 1e6).toFixed(2)} MH/s`;
+  return `${hps.toFixed(0)} H/s`;
+}
+
+async function fetchWithTimeout(
+  url: string,
+  timeoutMs = 5000,
+): Promise<{ ok: boolean; data: any; latency: number }> {
+  const start = Date.now();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timer);
+    const latency = Date.now() - start;
+    if (!res.ok) return { ok: false, data: null, latency };
+    const data = await res.json();
+    return { ok: true, data, latency };
+  } catch {
+    clearTimeout(timer);
+    return { ok: false, data: null, latency: Date.now() - start };
+  }
 }
 
 // Note: Do NOT cache auth instance globally
@@ -2218,6 +2269,191 @@ async function handleUsersAPI(
         headers: corsHeaders,
       });
     }
+  }
+
+  // ─────────────────────────────────────────────────────
+  // GET /api/network-status — Alephium network health check
+  // ─────────────────────────────────────────────────────
+  if (url.pathname === "/api/network-status" && request.method === "GET") {
+    const ALPH_NODE = "https://node.mainnet.alephium.org";
+    const ALPH_EXPLORER = "https://backend.mainnet.alephium.org";
+    const BLOCK_DELAY_THRESHOLD_S = 60;
+    const HASHRATE_CHANGE_THRESHOLD_PCT = 20;
+
+    const now = Date.now();
+
+    // 1. Service health checks (parallel)
+    const [nodeResult, explorerResult] = await Promise.all([
+      fetchWithTimeout(`${ALPH_NODE}/infos/version`),
+      fetchWithTimeout(`${ALPH_EXPLORER}/infos`),
+    ]);
+
+    const services = [
+      {
+        name: "Public Mainnet Node",
+        up: nodeResult.ok,
+        latency: nodeResult.latency,
+      },
+      {
+        name: "Public Explorer Backend",
+        up: explorerResult.ok,
+        latency: explorerResult.latency,
+      },
+    ];
+
+    // 2. Hashrate trend (last 2 hours, hourly buckets)
+    const toTs = now;
+    const fromTs = now - 2 * 60 * 60 * 1000;
+    const hrResult = await fetchWithTimeout(
+      `${ALPH_EXPLORER}/charts/hashrates?fromTs=${fromTs}&toTs=${toTs}&interval-type=hourly`,
+    );
+    const hrData: Array<{ value: number }> = hrResult.ok
+      ? (hrResult.data ?? [])
+      : [];
+    const currentHps: number = hrData[hrData.length - 1]?.value ?? 0;
+    const previousHps: number | null =
+      hrData.length >= 2 ? (hrData[hrData.length - 2]?.value ?? null) : null;
+    let trendPct: number | null = null;
+    let trendDirection: "up" | "down" | "stable" | null = null;
+    if (previousHps && previousHps > 0) {
+      trendPct = ((currentHps - previousHps) / previousHps) * 100;
+      trendDirection =
+        Math.abs(trendPct) < 1 ? "stable" : trendPct > 0 ? "up" : "down";
+    }
+    const hashrate = {
+      currentHps,
+      previousHps,
+      currentFormatted: currentHps > 0 ? formatHashrate(currentHps) : "N/A",
+      trendPct,
+      trendDirection,
+    };
+
+    // 3. Recent blocks → last-block timestamp per chain
+    const blocksResult = await fetchWithTimeout(
+      `${ALPH_EXPLORER}/blocks?page=1&limit=50`,
+    );
+    const blocks: Array<{
+      timestamp: number;
+      chainFrom: number;
+      chainTo: number;
+      mainChain: boolean;
+    }> = blocksResult.ok ? (blocksResult.data?.blocks ?? []) : [];
+
+    const lastBlockByChain: Record<string, number> = {};
+    for (const b of blocks) {
+      if (!b.mainChain) continue;
+      const key = `${b.chainFrom}-${b.chainTo}`;
+      if (!lastBlockByChain[key] || b.timestamp > lastBlockByChain[key]) {
+        lastBlockByChain[key] = b.timestamp;
+      }
+    }
+
+    // Build per-chain status (4 groups × 4 groups = 16 chains)
+    const chains = [];
+    for (let from = 0; from < 4; from++) {
+      for (let to = 0; to < 4; to++) {
+        const key = `${from}-${to}`;
+        const lastTs = lastBlockByChain[key] ?? null;
+        // If not found in last 50 blocks but blocks were returned, treat as 5 min delayed
+        const secondsSince = lastTs
+          ? Math.floor((now - lastTs) / 1000)
+          : blocks.length > 0
+            ? 300
+            : null;
+        chains.push({
+          fromGroup: from,
+          toGroup: to,
+          lastBlockTimestamp: lastTs,
+          secondsSinceBlock: secondsSince,
+          delayed:
+            secondsSince !== null
+              ? secondsSince > BLOCK_DELAY_THRESHOLD_S
+              : false,
+        });
+      }
+    }
+
+    // 4. Generate alerts and send Slack notifications
+    const alerts: Array<{
+      id: string;
+      type: "block_delay" | "hashrate_anomaly" | "service_down";
+      message: string;
+      severity: "warning" | "critical";
+    }> = [];
+
+    const slackUrl = env.SLACK_WEBHOOK_URL;
+
+    for (const svc of services) {
+      if (!svc.up) {
+        const id = `service_down_${svc.name.replace(/\s+/g, "_").toLowerCase()}`;
+        alerts.push({
+          id,
+          type: "service_down",
+          message: `${svc.name} is unreachable`,
+          severity: "critical",
+        });
+        if (slackUrl) {
+          await sendSlackAlert(
+            slackUrl,
+            `:rotating_light: *Aleph.land Network Alert*\n*Service Down*: ${svc.name} is unreachable\n<https://alph.land/status|View Status Page>`,
+            id,
+          );
+        }
+      }
+    }
+
+    for (const chain of chains) {
+      if (chain.delayed) {
+        const id = `block_delay_${chain.fromGroup}_${chain.toGroup}`;
+        const mins = Math.floor((chain.secondsSinceBlock ?? 0) / 60);
+        const secs = (chain.secondsSinceBlock ?? 0) % 60;
+        alerts.push({
+          id,
+          type: "block_delay",
+          message: `Chain ${chain.fromGroup}→${chain.toGroup}: no block for ${mins}m ${secs}s`,
+          severity: "warning",
+        });
+        if (slackUrl) {
+          await sendSlackAlert(
+            slackUrl,
+            `:warning: *Aleph.land Network Alert*\n*Block Delay*: Chain ${chain.fromGroup}→${chain.toGroup} has not produced a block in ${mins}m ${secs}s (threshold: 60s)\n<https://alph.land/status|View Status Page>`,
+            id,
+          );
+        }
+      }
+    }
+
+    if (
+      trendPct !== null &&
+      Math.abs(trendPct) >= HASHRATE_CHANGE_THRESHOLD_PCT
+    ) {
+      const direction = trendPct > 0 ? "increased" : "decreased";
+      const id = "hashrate_anomaly";
+      alerts.push({
+        id,
+        type: "hashrate_anomaly",
+        message: `Hashrate ${direction} by ${Math.abs(trendPct).toFixed(1)}% in the last hour (${hashrate.currentFormatted})`,
+        severity: "warning",
+      });
+      if (slackUrl) {
+        await sendSlackAlert(
+          slackUrl,
+          `:warning: *Aleph.land Network Alert*\n*Hashrate Anomaly*: Hashrate ${direction} by ${Math.abs(trendPct).toFixed(1)}% in the last hour\nCurrent: ${hashrate.currentFormatted}\n<https://alph.land/status|View Status Page>`,
+          id,
+        );
+      }
+    }
+
+    return new Response(
+      JSON.stringify({ services, hashrate, chains, alerts, checkedAt: now }),
+      {
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+        },
+      },
+    );
   }
 
   return new Response(JSON.stringify({ error: "Method not allowed" }), {

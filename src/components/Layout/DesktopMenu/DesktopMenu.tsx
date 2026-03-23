@@ -194,6 +194,21 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
               Ecosystem Map
             </span>
           </Link>
+          <Link href="/status">
+            <span
+              className={`px-4 py-2 text-sm font-medium uppercase transition-colors cursor-pointer flex items-center gap-1.5 ${
+                isActivePath("/status")
+                  ? "text-orange dark:text-orange font-bold"
+                  : "text-black dark:text-white hover:text-orange dark:hover:text-orange"
+              }`}
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accessible-green opacity-60" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-accessible-green" />
+              </span>
+              Status
+            </span>
+          </Link>
         </div>
         <div className="flex gap-3.5 z-[2] items-center">
           <button

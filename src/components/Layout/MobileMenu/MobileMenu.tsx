@@ -97,6 +97,11 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
       href: "/ecosystem-map",
       icon: currentTheme === "dark" ? homeDark : home,
     },
+    {
+      name: "Status",
+      href: "/status",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
   ];
 
   // Check if current page is bounty, sponsor, or user profile related
