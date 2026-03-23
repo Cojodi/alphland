@@ -169,7 +169,6 @@ function ChainGrid({ chains }: { chains: ChainStatus[] }) {
               (c) => c.fromGroup === from && c.toGroup === to,
             );
             if (!chain) return <div key={to} />;
-            const isNormal = !chain.delayed && chain.secondsSinceBlock !== null;
             const isDelayed = chain.delayed;
             const isUnknown = chain.secondsSinceBlock === null;
             const bgColor = isDelayed
@@ -389,9 +388,7 @@ export default function StatusPage() {
 
             {/* Footer note */}
             <p className="text-xs text-center text-light-charcoal dark:text-white/30 pt-2">
-              Data sourced from{" "}
-              <span className="font-mono">node.mainnet.alephium.org</span> and{" "}
-              <span className="font-mono">backend.mainnet.alephium.org</span>.
+              Data sourced from Alephium public mainnet node &amp; explorer.
               Alerts are pushed to Slack when anomalies are detected.
             </p>
           </div>
