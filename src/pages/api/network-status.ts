@@ -157,7 +157,7 @@ export default async function handler(
       chainTo: number;
       mainChain: boolean;
     }>;
-  }>(`${ALPH_EXPLORER}/blocks?page=1&limit=200`, 15000);
+  }>(`${ALPH_EXPLORER}/blocks?page=1&limit=100`, 15000);
 
   const blocks = blocksResult.data?.blocks ?? [];
   const lastBlockByChain: Record<string, number> = {};
