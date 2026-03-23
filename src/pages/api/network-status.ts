@@ -207,7 +207,7 @@ export default async function handler(
         severity: "critical",
       });
       await sendSlackAlert(
-        `:rotating_light: *Aleph.land Network Alert*\n*Service Down*: ${svc.name} is unreachable\n<https://alph.land/status|View Status Page>`,
+        `:rotating_light: *Network Alert*\n*Service Down*: ${svc.name} is unreachable\n<https://alph.land/status|View Status Page>`,
         id,
       );
     }
@@ -225,7 +225,7 @@ export default async function handler(
         severity: "warning",
       });
       await sendSlackAlert(
-        `:warning: *Aleph.land Network Alert*\n*Block Delay*: Chain ${chain.fromGroup}→${chain.toGroup} has not produced a block in ${mins}m ${secs}s\n<https://alph.land/status|View Status Page>`,
+        `:warning: *Network Status Alert*\n*Block Delay*: Chain ${chain.fromGroup}→${chain.toGroup} has not produced a block in ${mins}m ${secs}s\n<https://alph.land/status|View Status Page>`,
         id,
       );
     }
@@ -242,7 +242,7 @@ export default async function handler(
       severity: "warning",
     });
     await sendSlackAlert(
-      `:warning: *Aleph.land Network Alert*\n*Hashrate 1h ${dir}*: ${Math.abs(trend1h).toFixed(1)}% change in the last hour\nCurrent: ${hashrate.currentFormatted}\n<https://alph.land/status|View Status Page>`,
+      `:warning: *Network Status Alert*\n*Hashrate 1h ${dir}*: ${Math.abs(trend1h).toFixed(1)}% change in the last hour\nCurrent: ${hashrate.currentFormatted}\n<https://alph.land/status|View Status Page>`,
       id,
     );
   }
@@ -258,7 +258,7 @@ export default async function handler(
       severity: "warning",
     });
     await sendSlackAlert(
-      `:warning: *Aleph.land Network Alert*\n*Hashrate 24h ${dir}*: ${Math.abs(trend24h).toFixed(1)}% change over 24 hours\nCurrent: ${hashrate.currentFormatted}\n<https://alph.land/status|View Status Page>`,
+      `:warning: *Network Status Alert*\n*Hashrate 24h ${dir}*: ${Math.abs(trend24h).toFixed(1)}% change over 24 hours\nCurrent: ${hashrate.currentFormatted}\n<https://alph.land/status|View Status Page>`,
       id,
     );
   }
