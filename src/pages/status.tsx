@@ -144,7 +144,7 @@ function ChainGrid({ chains }: { chains: ChainStatus[] }) {
       <p className="text-xs text-light-charcoal dark:text-white/50 uppercase tracking-wider mb-4">
         Time From Last Block — All 16 Chains
       </p>
-      <div className="grid grid-cols-4 gap-1 mb-2">
+      <div className="grid grid-cols-5 gap-1 mb-2">
         <div className="text-center text-[10px] text-light-charcoal dark:text-white/30">
           ↓ From \ To →
         </div>
@@ -158,7 +158,7 @@ function ChainGrid({ chains }: { chains: ChainStatus[] }) {
         ))}
       </div>
       {[0, 1, 2, 3].map((from) => (
-        <div key={from} className="grid grid-cols-4 gap-1 mb-1">
+        <div key={from} className="grid grid-cols-5 gap-1 mb-1">
           <div className="flex items-center justify-center">
             <span className="text-[10px] font-mono text-light-charcoal dark:text-white/40">
               G{from}

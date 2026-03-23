@@ -13,7 +13,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 const ALPH_NODE = "https://node.mainnet.alephium.org";
 const ALPH_EXPLORER = "https://backend.mainnet.alephium.org";
 const BLOCK_DELAY_THRESHOLD_S = 60;
-const HASHRATE_CHANGE_THRESHOLD_PCT = 20;
+const HASHRATE_CHANGE_THRESHOLD_PCT = 50; // hourly fluctuation >50% is unusual
 
 // ── Alert debounce (module-level, best-effort in serverless) ─────────────────
 const _alertDebounce: Record<string, number> = {};
