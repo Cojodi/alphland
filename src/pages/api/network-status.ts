@@ -14,9 +14,9 @@ const ALPH_NODE = "https://node.mainnet.alephium.org";
 const ALPH_EXPLORER = "https://backend.mainnet.alephium.org";
 const ALPH_TESTNET_NODE = "https://node.testnet.alephium.org";
 const ALPH_TESTNET_EXPLORER = "https://backend.testnet.alephium.org";
-const BLOCK_DELAY_THRESHOLD_S = 120;
-const HASHRATE_1H_THRESHOLD_PCT = 5; // alert if 1h change exceeds ±0.1% (temp: force trigger)
-const HASHRATE_24H_THRESHOLD_PCT = 15; // alert if 24h change exceeds ±0.1% (temp: force trigger)
+const BLOCK_DELAY_THRESHOLD_S = 180;
+const HASHRATE_1H_THRESHOLD_PCT = 15; // alert if 1h change exceeds ±15%
+const HASHRATE_24H_THRESHOLD_PCT = 25; // alert if 24h change exceeds ±25%
 
 // ── Alert debounce (module-level, best-effort in serverless) ─────────────────
 const _alertDebounce: Record<string, number> = {};
@@ -81,12 +81,14 @@ export default async function handler(
   const [nodeResult, explorerResult, testnetNodeResult, testnetExplorerResult] =
     await Promise.all([
       fetchJSON<{ releaseVersion: string }>(`${ALPH_NODE}/infos/version`),
-      fetchJSON<{ totalTransactions: number }>(`${ALPH_EXPLORER}/infos`),
+      fetchJSON<{ txNumber: number }>(
+        `${ALPH_EXPLORER}/addresses/1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH`,
+      ),
       fetchJSON<{ releaseVersion: string }>(
         `${ALPH_TESTNET_NODE}/infos/version`,
       ),
-      fetchJSON<{ totalTransactions: number }>(
-        `${ALPH_TESTNET_EXPLORER}/infos`,
+      fetchJSON<{ txNumber: number }>(
+        `${ALPH_TESTNET_EXPLORER}/addresses/1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH`,
       ),
     ]);
 
