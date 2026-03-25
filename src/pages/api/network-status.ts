@@ -44,6 +44,7 @@ async function updateServiceState(
   try {
     const checksKey = `checks:${serviceKey}`;
     const stateKey = `state:${serviceKey}`;
+    const consecOkKey = `consec_ok:${serviceKey}`;
 
     await kv.lpush(checksKey, isOk ? 1 : 0);
     await kv.ltrim(checksKey, 0, FAILURE_WINDOW - 1);
@@ -58,12 +59,24 @@ async function updateServiceState(
 
     if (isHighFailRate && storedState !== "down") {
       await kv.set(stateKey, "down");
+      await kv.del(consecOkKey); // reset consecutive ok counter
       return { alertDown: true, alertRecovery: false };
     }
-    if (!isHighFailRate && isOk && storedState === "down") {
-      await kv.set(stateKey, "up");
-      return { alertDown: false, alertRecovery: true };
+
+    if (storedState === "down") {
+      if (isOk) {
+        const consecOk = await kv.incr(consecOkKey);
+        await kv.expire(consecOkKey, 3600);
+        if (consecOk >= 3) {
+          await kv.set(stateKey, "up");
+          await kv.del(consecOkKey);
+          return { alertDown: false, alertRecovery: true };
+        }
+      } else {
+        await kv.del(consecOkKey); // failed again, reset counter
+      }
     }
+
     return { alertDown: false, alertRecovery: false };
   } catch {
     return { alertDown: false, alertRecovery: false };
