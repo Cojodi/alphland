@@ -56,8 +56,8 @@ const Footer = ({ currentTheme }: FooterProps) => {
           <Link href="/privacy" className="inline-block my-4 mx-4">
             <a className="inline-block mx-2">Privacy policy</a>
           </Link>
-          <Link href="/status" className="inline-block my-4 mx-4">
-            <a className="inline-block mx-2 flex items-center gap-1.5">
+          <Link href="/status">
+            <a className="inline-flex items-center gap-1.5 mx-2">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accessible-green opacity-60" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-accessible-green" />
