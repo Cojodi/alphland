@@ -5,30 +5,84 @@
  * Checks Alephium public node + explorer health, hashrate trend, per-chain block times,
  * and optionally sends Slack alerts via network_status_alert env var.
  *
- * Slack alert debounce uses module-level state — best-effort within a warm serverless
- * instance. For production-grade debounce, swap for Vercel KV / Cloudflare KV.
+ * Alert logic: fires when ≥3 of last 5 checks fail (60% failure rate).
+ * Recovery alert: fires when failure rate drops back below threshold.
+ * Debounce and state stored in Upstash KV (persistent across serverless cold starts).
  */
 import type { NextApiRequest, NextApiResponse } from "next";
+import { Redis } from "@upstash/redis";
 
 const ALPH_NODE = "https://node.mainnet.alephium.org";
 const ALPH_EXPLORER = "https://backend.mainnet.alephium.org";
 const ALPH_TESTNET_NODE = "https://node.testnet.alephium.org";
 const ALPH_TESTNET_EXPLORER = "https://backend.testnet.alephium.org";
 const BLOCK_DELAY_THRESHOLD_S = 180;
-const HASHRATE_1H_THRESHOLD_PCT = 10; // alert if 1h change exceeds ±10%
-const HASHRATE_24H_THRESHOLD_PCT = 20; // alert if 24h change exceeds ±20%
+const HASHRATE_1H_THRESHOLD_PCT = 10;
+const HASHRATE_24H_THRESHOLD_PCT = 20;
+const FAILURE_WINDOW = 5; // track last 5 checks per service
+const FAILURE_RATE_THRESHOLD = 0.6; // alert if ≥60% of checks failed
+const DEBOUNCE_TTL_S = 10 * 60; // 10 min debounce via KV TTL
 
-// ── Alert debounce (module-level, best-effort in serverless) ─────────────────
-const _alertDebounce: Record<string, number> = {};
-const ALERT_DEBOUNCE_MS = 10 * 60 * 1000;
+// ── KV client ────────────────────────────────────────────────────────────────
+let redis: Redis | null = null;
+function getRedis(): Redis | null {
+  if (redis) return redis;
+  const url = process.env.STATUS_STORAGE_KV_REST_API_URL;
+  const token = process.env.STATUS_STORAGE_KV_REST_API_TOKEN;
+  if (!url || !token) return null;
+  redis = new Redis({ url, token });
+  return redis;
+}
 
+// ── KV: record check result and detect state transitions ─────────────────────
+async function updateServiceState(
+  serviceKey: string,
+  isOk: boolean,
+): Promise<{ alertDown: boolean; alertRecovery: boolean }> {
+  const kv = getRedis();
+  if (!kv) return { alertDown: false, alertRecovery: false };
+  try {
+    const checksKey = `checks:${serviceKey}`;
+    const stateKey = `state:${serviceKey}`;
+
+    await kv.lpush(checksKey, isOk ? 1 : 0);
+    await kv.ltrim(checksKey, 0, FAILURE_WINDOW - 1);
+    await kv.expire(checksKey, 3600);
+
+    const checks = await kv.lrange<number>(checksKey, 0, FAILURE_WINDOW - 1);
+    if (checks.length < 3) return { alertDown: false, alertRecovery: false };
+
+    const failCount = checks.filter((v) => v === 0).length;
+    const isHighFailRate = failCount / checks.length >= FAILURE_RATE_THRESHOLD;
+    const storedState = await kv.get<string>(stateKey);
+
+    if (isHighFailRate && storedState !== "down") {
+      await kv.set(stateKey, "down");
+      return { alertDown: true, alertRecovery: false };
+    }
+    if (!isHighFailRate && isOk && storedState === "down") {
+      await kv.set(stateKey, "up");
+      return { alertDown: false, alertRecovery: true };
+    }
+    return { alertDown: false, alertRecovery: false };
+  } catch {
+    return { alertDown: false, alertRecovery: false };
+  }
+}
+
+// ── Slack alert with KV-backed debounce ───────────────────────────────────────
 async function sendSlackAlert(text: string, key: string): Promise<void> {
   const webhookUrl = process.env.network_status_alert;
   if (!webhookUrl) return;
-  const now = Date.now();
-  if (_alertDebounce[key] && now - _alertDebounce[key] < ALERT_DEBOUNCE_MS)
-    return;
-  _alertDebounce[key] = now;
+  const kv = getRedis();
+  if (kv) {
+    try {
+      const debounceKey = `debounce:${key}`;
+      const exists = await kv.exists(debounceKey);
+      if (exists) return;
+      await kv.set(debounceKey, 1, { ex: DEBOUNCE_TTL_S });
+    } catch {}
+  }
   try {
     await fetch(webhookUrl, {
       method: "POST",
@@ -76,6 +130,7 @@ export default async function handler(
   }
 
   const now = Date.now();
+  const STATUS_URL = "https://alph.land/status";
 
   // 1. Service health checks (mainnet + testnet, parallel)
   const [nodeResult, explorerResult, testnetNodeResult, testnetExplorerResult] =
@@ -115,7 +170,23 @@ export default async function handler(
     },
   ];
 
-  // 2. Hashrate — fetch 25 hours of hourly data to support 1h and 24h comparisons
+  // 2. Update KV failure history for each service
+  const [nodeState, explorerState, testnetNodeState, testnetExplorerState] =
+    await Promise.all([
+      updateServiceState("mainnet_node", nodeResult.ok),
+      updateServiceState("mainnet_explorer", explorerResult.ok),
+      updateServiceState("testnet_node", testnetNodeResult.ok),
+      updateServiceState("testnet_explorer", testnetExplorerResult.ok),
+    ]);
+
+  const serviceStates = [
+    nodeState,
+    explorerState,
+    testnetNodeState,
+    testnetExplorerState,
+  ];
+
+  // 3. Hashrate — fetch 25 hours of hourly data to support 1h and 24h comparisons
   const hrResult = await fetchJSON<Array<{ value: number }>>(
     `${ALPH_EXPLORER}/charts/hashrates?fromTs=${now - 25 * 3600_000}&toTs=${now}&interval-type=hourly`,
   );
@@ -151,7 +222,7 @@ export default async function handler(
     trendDirection,
   };
 
-  // 3. Recent blocks → last-block timestamp per chain
+  // 4. Recent blocks → last-block timestamp per chain
   const blocksResult = await fetchJSON<{
     blocks: Array<{
       timestamp: number;
@@ -171,12 +242,10 @@ export default async function handler(
     }
   }
 
-  // Build per-chain status (4 × 4 = 16 chains)
   const chains = [];
   for (let from = 0; from < 4; from++) {
     for (let to = 0; to < 4; to++) {
       const lastTs = lastBlockByChain[`${from}-${to}`] ?? null;
-      // If chain not found in 200 blocks, it's genuinely unknown (not a fake 5m default)
       const secondsSince = lastTs ? Math.floor((now - lastTs) / 1000) : null;
       chains.push({
         fromGroup: from,
@@ -191,7 +260,7 @@ export default async function handler(
     }
   }
 
-  // 4. Generate alerts + Slack notifications
+  // 5. Alerts + Slack notifications
   const alerts: Array<{
     id: string;
     type: "block_delay" | "hashrate_anomaly" | "service_down";
@@ -199,22 +268,38 @@ export default async function handler(
     severity: "warning" | "critical";
   }> = [];
 
-  for (const svc of services) {
-    if (!svc.up) {
-      const id = `service_down_${svc.name.replace(/\s+/g, "_").toLowerCase()}`;
+  // Service alerts: based on failure rate (KV) not single check
+  for (let i = 0; i < services.length; i++) {
+    const svc = services[i];
+    const state = serviceStates[i];
+    const id = `service_down_${svc.name.replace(/\s+/g, "_").toLowerCase()}`;
+
+    if (state.alertDown) {
       alerts.push({
         id,
         type: "service_down",
-        message: `${svc.name} is unreachable`,
+        message: `${svc.name} is degraded`,
         severity: "critical",
       });
       await sendSlackAlert(
-        `:rotating_light: *Network Alert*\n*Service Down*: ${svc.name} is unreachable\n<https://alphland-git-network-status-babys-projects-0571b35a.vercel.app/status|View Status Page>`,
+        `:rotating_light: *Network Alert*\n*Service Degraded*: ${svc.name} — ≥3 of last 5 checks failed\n<${STATUS_URL}|View Status Page>`,
         id,
+      );
+    } else if (state.alertRecovery) {
+      alerts.push({
+        id: `${id}_recovery`,
+        type: "service_down",
+        message: `${svc.name} recovered`,
+        severity: "warning",
+      });
+      await sendSlackAlert(
+        `:white_check_mark: *Network Alert*\n*Service Recovered*: ${svc.name} is back online\n<${STATUS_URL}|View Status Page>`,
+        `${id}_recovery`,
       );
     }
   }
 
+  // Block delay alerts
   for (const chain of chains) {
     if (chain.delayed) {
       const id = `block_delay_${chain.fromGroup}_${chain.toGroup}`;
@@ -227,13 +312,13 @@ export default async function handler(
         severity: "warning",
       });
       await sendSlackAlert(
-        `:warning: *Network Status Alert*\n*Block Delay*: Chain ${chain.fromGroup}→${chain.toGroup} has not produced a block in ${mins}m ${secs}s\n<https://alphland-git-network-status-babys-projects-0571b35a.vercel.app/status|View Status Page>`,
+        `:warning: *Network Status Alert*\n*Block Delay*: Chain ${chain.fromGroup}→${chain.toGroup} has not produced a block in ${mins}m ${secs}s\n<${STATUS_URL}|View Status Page>`,
         id,
       );
     }
   }
 
-  // 1h hashrate alert: ±5%
+  // Hashrate alerts
   if (trend1h !== null && Math.abs(trend1h) >= HASHRATE_1H_THRESHOLD_PCT) {
     const dir = trend1h > 0 ? "surged" : "dropped";
     const id = `hashrate_1h_${trend1h > 0 ? "up" : "down"}`;
@@ -244,12 +329,11 @@ export default async function handler(
       severity: "warning",
     });
     await sendSlackAlert(
-      `:warning: *Network Status Alert*\n*Hashrate 1h ${dir}*: ${Math.abs(trend1h).toFixed(1)}% change in the last hour\nCurrent: ${hashrate.currentFormatted}\n<https://alphland-git-network-status-babys-projects-0571b35a.vercel.app/status|View Status Page>`,
+      `:warning: *Network Status Alert*\n*Hashrate 1h ${dir}*: ${Math.abs(trend1h).toFixed(1)}% change in the last hour\nCurrent: ${hashrate.currentFormatted}\n<${STATUS_URL}|View Status Page>`,
       id,
     );
   }
 
-  // 24h hashrate alert: ±15%
   if (trend24h !== null && Math.abs(trend24h) >= HASHRATE_24H_THRESHOLD_PCT) {
     const dir = trend24h > 0 ? "surged" : "dropped";
     const id = `hashrate_24h_${trend24h > 0 ? "up" : "down"}`;
@@ -260,7 +344,7 @@ export default async function handler(
       severity: "warning",
     });
     await sendSlackAlert(
-      `:warning: *Network Status Alert*\n*Hashrate 24h ${dir}*: ${Math.abs(trend24h).toFixed(1)}% change over 24 hours\nCurrent: ${hashrate.currentFormatted}\n<https://alphland-git-network-status-babys-projects-0571b35a.vercel.app/status|View Status Page>`,
+      `:warning: *Network Status Alert*\n*Hashrate 24h ${dir}*: ${Math.abs(trend24h).toFixed(1)}% change over 24 hours\nCurrent: ${hashrate.currentFormatted}\n<${STATUS_URL}|View Status Page>`,
       id,
     );
   }
