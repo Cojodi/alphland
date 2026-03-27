@@ -105,6 +105,28 @@ async function sendSlackAlert(text: string, key: string): Promise<void> {
   } catch {}
 }
 
+// ── WhatsApp alert via Make.com → Green API ───────────────────────────────────
+async function sendWhatsAppAlert(text: string, key: string): Promise<void> {
+  const webhookUrl = process.env.WHATSAPP_ALERT_WEBHOOK;
+  if (!webhookUrl) return;
+  const kv = getRedis();
+  if (kv) {
+    try {
+      const debounceKey = `wa_debounce:${key}`;
+      const exists = await kv.exists(debounceKey);
+      if (exists) return;
+      await kv.set(debounceKey, 1, { ex: DEBOUNCE_TTL_S });
+    } catch {}
+  }
+  try {
+    await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+  } catch {}
+}
+
 // ── Utilities ────────────────────────────────────────────────────────────────
 function formatHashrate(hps: number): string {
   if (hps >= 1e15) return `${(hps / 1e15).toFixed(2)} PH/s`;
@@ -294,10 +316,16 @@ export default async function handler(
         message: `${svc.name} is degraded`,
         severity: "critical",
       });
-      await sendSlackAlert(
-        `:rotating_light: *Network Alert*\n*Service Degraded*: ${svc.name} — ≥3 of last 5 checks failed\n<${STATUS_URL}|View Status Page>`,
-        id,
-      );
+      await Promise.all([
+        sendSlackAlert(
+          `:rotating_light: *Network Alert*\n*Service Degraded*: ${svc.name} — ≥3 of last 5 checks failed\n<${STATUS_URL}|View Status Page>`,
+          id,
+        ),
+        sendWhatsAppAlert(
+          `🚨 Network Alert\nService Degraded: ${svc.name}\n≥3 of last 5 checks failed\n${STATUS_URL}`,
+          id,
+        ),
+      ]);
     } else if (state.alertRecovery) {
       alerts.push({
         id: `${id}_recovery`,
@@ -305,10 +333,16 @@ export default async function handler(
         message: `${svc.name} recovered`,
         severity: "warning",
       });
-      await sendSlackAlert(
-        `:white_check_mark: *Network Alert*\n*Service Recovered*: ${svc.name} is back online\n<${STATUS_URL}|View Status Page>`,
-        `${id}_recovery`,
-      );
+      await Promise.all([
+        sendSlackAlert(
+          `:white_check_mark: *Network Alert*\n*Service Recovered*: ${svc.name} is back online\n<${STATUS_URL}|View Status Page>`,
+          `${id}_recovery`,
+        ),
+        sendWhatsAppAlert(
+          `✅ Network Alert\nService Recovered: ${svc.name} is back online\n${STATUS_URL}`,
+          `${id}_recovery`,
+        ),
+      ]);
     }
   }
 
@@ -324,10 +358,16 @@ export default async function handler(
         message: `Chain ${chain.fromGroup}→${chain.toGroup}: no block for ${mins}m ${secs}s`,
         severity: "warning",
       });
-      await sendSlackAlert(
-        `:warning: *Network Status Alert*\n*Block Delay*: Chain ${chain.fromGroup}→${chain.toGroup} has not produced a block in ${mins}m ${secs}s\n<${STATUS_URL}|View Status Page>`,
-        id,
-      );
+      await Promise.all([
+        sendSlackAlert(
+          `:warning: *Network Status Alert*\n*Block Delay*: Chain ${chain.fromGroup}→${chain.toGroup} has not produced a block in ${mins}m ${secs}s\n<${STATUS_URL}|View Status Page>`,
+          id,
+        ),
+        sendWhatsAppAlert(
+          `⚠️ Network Alert\nBlock Delay: Chain ${chain.fromGroup}→${chain.toGroup} no block for ${mins}m ${secs}s\n${STATUS_URL}`,
+          id,
+        ),
+      ]);
     }
   }
 
@@ -341,10 +381,16 @@ export default async function handler(
       message: `Hashrate ${dir} ${Math.abs(trend1h).toFixed(1)}% in the last hour (now ${hashrate.currentFormatted})`,
       severity: "warning",
     });
-    await sendSlackAlert(
-      `:warning: *Network Status Alert*\n*Hashrate 1h ${dir}*: ${Math.abs(trend1h).toFixed(1)}% change in the last hour\nCurrent: ${hashrate.currentFormatted}\n<${STATUS_URL}|View Status Page>`,
-      id,
-    );
+    await Promise.all([
+      sendSlackAlert(
+        `:warning: *Network Status Alert*\n*Hashrate 1h ${dir}*: ${Math.abs(trend1h).toFixed(1)}% change in the last hour\nCurrent: ${hashrate.currentFormatted}\n<${STATUS_URL}|View Status Page>`,
+        id,
+      ),
+      sendWhatsAppAlert(
+        `⚠️ Network Alert\nHashrate 1h ${dir}: ${Math.abs(trend1h).toFixed(1)}% in the last hour\nCurrent: ${hashrate.currentFormatted}\n${STATUS_URL}`,
+        id,
+      ),
+    ]);
   }
 
   if (trend24h !== null && Math.abs(trend24h) >= HASHRATE_24H_THRESHOLD_PCT) {
@@ -356,10 +402,16 @@ export default async function handler(
       message: `Hashrate ${dir} ${Math.abs(trend24h).toFixed(1)}% over 24 hours (now ${hashrate.currentFormatted})`,
       severity: "warning",
     });
-    await sendSlackAlert(
-      `:warning: *Network Status Alert*\n*Hashrate 24h ${dir}*: ${Math.abs(trend24h).toFixed(1)}% change over 24 hours\nCurrent: ${hashrate.currentFormatted}\n<${STATUS_URL}|View Status Page>`,
-      id,
-    );
+    await Promise.all([
+      sendSlackAlert(
+        `:warning: *Network Status Alert*\n*Hashrate 24h ${dir}*: ${Math.abs(trend24h).toFixed(1)}% change over 24 hours\nCurrent: ${hashrate.currentFormatted}\n<${STATUS_URL}|View Status Page>`,
+        id,
+      ),
+      sendWhatsAppAlert(
+        `⚠️ Network Alert\nHashrate 24h ${dir}: ${Math.abs(trend24h).toFixed(1)}% over 24 hours\nCurrent: ${hashrate.currentFormatted}\n${STATUS_URL}`,
+        id,
+      ),
+    ]);
   }
 
   res.setHeader("Cache-Control", "no-store");
