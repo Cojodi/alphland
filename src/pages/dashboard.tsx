@@ -2,7 +2,7 @@ import Layout from "../components/Layout";
 import { useEffect, useState, useCallback } from "react";
 import type { DashboardStats } from "./api/dashboard-stats";
 
-const POLL_INTERVAL_MS = 5 * 60_000; // 5 minutes
+const POLL_INTERVAL_MS = 24 * 60 * 60_000; // 24 hours
 
 function formatUsd(value: number): string {
   if (value >= 1e9) return `$${(value / 1e9).toFixed(2)}B`;
@@ -94,7 +94,7 @@ export default function DashboardPage() {
                 Alephium Dashboard
               </h1>
               <p className="text-sm text-light-charcoal dark:text-white/50 mt-1">
-                Public ecosystem metrics — refreshes every 5 minutes
+                Public ecosystem metrics — refreshes every 24 hours
               </p>
             </div>
           </div>
@@ -120,7 +120,7 @@ export default function DashboardPage() {
         )}
 
         {/* Stat Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <StatCard
             label="Total Value Locked"
             value={data?.tvlUsd != null ? formatUsd(data.tvlUsd) : null}
@@ -128,19 +128,29 @@ export default function DashboardPage() {
             loading={loading}
           />
           <StatCard
-            label="Active Addresses (24h)"
-            value={
-              data?.activeAddresses24h != null
-                ? formatCount(data.activeAddresses24h)
-                : null
-            }
-            sub="Source: Alephium explorer"
-            loading={loading}
-          />
-          <StatCard
             label="Listed dApps"
             value={data != null ? String(data.dappCount) : null}
             sub="Tracked on alph.land"
+            loading={loading}
+          />
+          <StatCard
+            label="Weekly Active Addresses"
+            value={
+              data?.activeAddresses7d != null
+                ? formatCount(data.activeAddresses7d)
+                : null
+            }
+            sub="Last 7 days · Alephium explorer"
+            loading={loading}
+          />
+          <StatCard
+            label="Monthly Active Addresses"
+            value={
+              data?.activeAddresses30d != null
+                ? formatCount(data.activeAddresses30d)
+                : null
+            }
+            sub="Last 30 days · Alephium explorer"
             loading={loading}
           />
         </div>

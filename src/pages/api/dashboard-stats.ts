@@ -15,7 +15,8 @@ const DEFILLAMA_TVL = "https://api.llama.fi/tvl/alephium";
 
 export type DashboardStats = {
   tvlUsd: number | null;
-  activeAddresses24h: number | null;
+  activeAddresses7d: number | null;
+  activeAddresses30d: number | null;
   dappCount: number;
   checkedAt: number;
 };
@@ -52,22 +53,33 @@ export default async function handler(
   }
 
   const now = Date.now();
-  const dayAgo = now - 24 * 3600_000;
+  const weekAgo = now - 7 * 24 * 3600_000;
+  const monthAgo = now - 30 * 24 * 3600_000;
 
+  type AddressChartEntry = { totalAddresses: number; timestamp: number };
   const [tvlRaw, activeAddrsRaw] = await Promise.all([
     fetchJSON<number>(DEFILLAMA_TVL),
-    fetchJSON<Array<{ totalAddresses: number; timestamp: number }>>(
-      `${ALPH_EXPLORER}/charts/addresses-active?fromTs=${dayAgo}&toTs=${now}&interval-type=daily`,
+    fetchJSON<AddressChartEntry[]>(
+      `${ALPH_EXPLORER}/charts/addresses-active?fromTs=${monthAgo}&toTs=${now}&interval-type=daily`,
     ),
   ]);
 
   // DeFi Llama returns a plain number for /tvl/:chain
   const tvlUsd = typeof tvlRaw === "number" ? tvlRaw : null;
 
-  // Explorer chart returns an array; take the most recent entry
-  const activeAddresses24h =
+  const sumAddresses = (entries: AddressChartEntry[], fromTs: number) =>
+    entries
+      .filter((d) => d.timestamp >= fromTs)
+      .reduce((sum, d) => sum + (d.totalAddresses ?? 0), 0);
+
+  const activeAddresses7d =
     Array.isArray(activeAddrsRaw) && activeAddrsRaw.length > 0
-      ? (activeAddrsRaw[activeAddrsRaw.length - 1]?.totalAddresses ?? null)
+      ? sumAddresses(activeAddrsRaw, weekAgo)
+      : null;
+
+  const activeAddresses30d =
+    Array.isArray(activeAddrsRaw) && activeAddrsRaw.length > 0
+      ? sumAddresses(activeAddrsRaw, monthAgo)
       : null;
 
   const dappCount = countDapps();
@@ -75,7 +87,8 @@ export default async function handler(
   res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=60");
   return res.status(200).json({
     tvlUsd,
-    activeAddresses24h,
+    activeAddresses7d,
+    activeAddresses30d,
     dappCount,
     checkedAt: now,
   });
