@@ -17,6 +17,10 @@ const ALPH_EXPLORER = "https://backend.mainnet.alephium.org";
 const ALPH_TESTNET_NODE = "https://node.testnet.alephium.org";
 const ALPH_TESTNET_EXPLORER = "https://backend.testnet.alephium.org";
 const BLOCK_DELAY_THRESHOLD_S = 180;
+const ACTIVE_ADDR_BACKFILL_MS = 31 * 24 * 3600_000;
+const ACTIVE_ADDR_EXTRA_PAGES = 5;
+const ACTIVE_ADDR_CONCURRENCY = 15;
+const WORKER_URL = "https://alphland-bounty-api.alephium.workers.dev";
 const HASHRATE_1H_THRESHOLD_PCT = 10;
 const HASHRATE_24H_THRESHOLD_PCT = 20;
 const FAILURE_WINDOW = 5; // track last 5 checks per service
@@ -155,6 +159,111 @@ async function fetchJSON<T>(
   }
 }
 
+// ── Active address indexing ───────────────────────────────────────────────────
+type IndexBlock = {
+  hash: string;
+  timestamp: number;
+  txNumber: number;
+  mainChain: boolean;
+};
+type TxInput = { address?: string };
+
+async function indexActiveAddresses(
+  page1Blocks: IndexBlock[],
+  now: number,
+): Promise<void> {
+  const secret = process.env.INTERNAL_SECRET;
+  if (!secret) return;
+
+  // Read cursor from Worker / D1
+  const countsRes = await fetch(
+    `${WORKER_URL}/api/internal/active-addresses/counts`,
+    { headers: { Authorization: `Bearer ${secret}` } },
+  ).catch(() => null);
+  if (!countsRes?.ok) return;
+  const countsData = (await countsRes.json()) as { cursor: number | null };
+  const cursorTs = countsData.cursor ?? now - ACTIVE_ADDR_BACKFILL_MS;
+
+  // Collect blocks newer than cursor, starting from already-fetched page 1
+  const newBlocks: IndexBlock[] = [];
+  let maxTs = cursorTs;
+  let page1HasOld = false;
+
+  for (const b of page1Blocks) {
+    if (!b.mainChain) continue;
+    if (b.timestamp <= cursorTs) {
+      page1HasOld = true;
+      break;
+    }
+    newBlocks.push(b);
+    if (b.timestamp > maxTs) maxTs = b.timestamp;
+  }
+
+  // If cursor is behind page 1's oldest block, fetch more pages to backfill
+  if (!page1HasOld) {
+    for (let p = 2; p <= ACTIVE_ADDR_EXTRA_PAGES + 1; p++) {
+      const pageResult = await fetchJSON<{ blocks: IndexBlock[] }>(
+        `${ALPH_EXPLORER}/blocks?page=${p}&limit=100`,
+        10000,
+      );
+      if (!pageResult.data?.blocks?.length) break;
+      let hitOld = false;
+      for (const b of pageResult.data.blocks) {
+        if (!b.mainChain) continue;
+        if (b.timestamp <= cursorTs) {
+          hitOld = true;
+          break;
+        }
+        newBlocks.push(b);
+        if (b.timestamp > maxTs) maxTs = b.timestamp;
+      }
+      if (hitOld) break;
+    }
+  }
+
+  if (newBlocks.length === 0) return;
+
+  // Only fetch transactions for blocks that have real txs (txNumber > 1)
+  const txBlocks = newBlocks.filter((b) => b.txNumber > 1);
+  const addressEntries: [number, string][] = [];
+
+  // Fetch with limited concurrency
+  for (let i = 0; i < txBlocks.length; i += ACTIVE_ADDR_CONCURRENCY) {
+    const batch = txBlocks.slice(i, i + ACTIVE_ADDR_CONCURRENCY);
+    const results = await Promise.all(
+      batch.map((b) =>
+        fetchJSON<Array<{ inputs: TxInput[] }>>(
+          `${ALPH_EXPLORER}/blocks/${b.hash}/transactions?page=1&limit=100`,
+          8000,
+        ),
+      ),
+    );
+    for (let j = 0; j < results.length; j++) {
+      const txs = results[j]?.data ?? [];
+      const blockTs = batch[j]!.timestamp;
+      for (const tx of txs) {
+        if (!tx.inputs?.length) continue; // coinbase — no inputs
+        for (const inp of tx.inputs) {
+          if (inp.address) addressEntries.push([blockTs, inp.address]);
+        }
+      }
+    }
+  }
+
+  // POST addresses + cursor to Worker → D1
+  await fetch(`${WORKER_URL}/api/internal/active-addresses`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${secret}`,
+    },
+    body: JSON.stringify({
+      addresses: addressEntries.map(([ts, address]) => ({ address, ts })),
+      cursor: maxTs,
+    }),
+  }).catch(() => {});
+}
+
 // ── Handler ───────────────────────────────────────────────────────────────────
 export default async function handler(
   req: NextApiRequest,
@@ -260,9 +369,11 @@ export default async function handler(
   // 4. Recent blocks → last-block timestamp per chain
   const blocksResult = await fetchJSON<{
     blocks: Array<{
+      hash: string;
       timestamp: number;
       chainFrom: number;
       chainTo: number;
+      txNumber: number;
       mainChain: boolean;
     }>;
   }>(`${ALPH_EXPLORER}/blocks?page=1&limit=100`, 15000);
@@ -413,6 +524,9 @@ export default async function handler(
       ),
     ]);
   }
+
+  // 6. Incrementally index active addresses into D1 via Worker (fire-and-forget)
+  indexActiveAddresses(blocksResult.data?.blocks ?? [], now).catch(() => {});
 
   res.setHeader("Cache-Control", "no-store");
   return res

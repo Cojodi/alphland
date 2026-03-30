@@ -36,6 +36,7 @@ export interface Env {
   FROM_EMAIL?: string;
   GITHUB_ISSUES_TOKEN?: string; // GitHub token for creating issues
   GITHUB_BOT_TOKEN?: string; // unused — dApp submissions use GITHUB_ISSUES_TOKEN
+  INTERNAL_SECRET?: string; // shared secret for internal Vercel → Worker calls
 }
 
 // Note: Do NOT cache auth instance globally
@@ -2214,6 +2215,125 @@ async function handleUsersAPI(
     } catch (error: any) {
       console.error("[POST /api/wallet/unbind] Error:", error);
       return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
+        headers: corsHeaders,
+      });
+    }
+  }
+
+  // ── Internal: active address indexing ──────────────────────────────────────
+  // POST /api/internal/active-addresses — batch upsert addresses + update cursor
+  if (
+    url.pathname === "/api/internal/active-addresses" &&
+    request.method === "POST"
+  ) {
+    const authHeader = request.headers.get("Authorization");
+    if (
+      !env.INTERNAL_SECRET ||
+      authHeader !== `Bearer ${env.INTERNAL_SECRET}`
+    ) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
+    try {
+      const body = (await request.json()) as {
+        addresses?: { address: string; ts: number }[];
+        cursor?: number;
+      };
+      const { addresses = [], cursor } = body;
+
+      // Batch upsert — keep the most recent last_seen_at per address
+      if (addresses.length > 0) {
+        const stmt = env.DB.prepare(
+          `INSERT INTO active_addresses (address, last_seen_at) VALUES (?, ?)
+           ON CONFLICT(address) DO UPDATE
+             SET last_seen_at = MAX(last_seen_at, excluded.last_seen_at)`,
+        );
+        await env.DB.batch(
+          addresses.map(({ address, ts }: { address: string; ts: number }) =>
+            stmt.bind(address, ts),
+          ),
+        );
+      }
+
+      // Update cursor
+      if (cursor != null) {
+        await env.DB.prepare(
+          `INSERT INTO indexer_state (key, value) VALUES ('active_addr_cursor', ?)
+           ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+        )
+          .bind(String(cursor))
+          .run();
+      }
+
+      // Clean up entries older than 31 days
+      await env.DB.prepare(
+        `DELETE FROM active_addresses WHERE last_seen_at < ?`,
+      )
+        .bind(Date.now() - 31 * 24 * 3600_000)
+        .run();
+
+      return new Response(
+        JSON.stringify({ ok: true, indexed: addresses.length }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    } catch (err: any) {
+      return new Response(JSON.stringify({ error: err.message }), {
+        status: 500,
+        headers: corsHeaders,
+      });
+    }
+  }
+
+  // GET /api/internal/active-addresses/counts — return 7d/30d unique address counts
+  if (
+    url.pathname === "/api/internal/active-addresses/counts" &&
+    request.method === "GET"
+  ) {
+    const authHeader = request.headers.get("Authorization");
+    if (
+      !env.INTERNAL_SECRET ||
+      authHeader !== `Bearer ${env.INTERNAL_SECRET}`
+    ) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
+    try {
+      const now = Date.now();
+      const [r7d, r30d, cursorRow] = (await Promise.all([
+        env.DB.prepare(
+          `SELECT COUNT(*) as c FROM active_addresses WHERE last_seen_at > ?`,
+        )
+          .bind(now - 7 * 24 * 3600_000)
+          .first(),
+        env.DB.prepare(
+          `SELECT COUNT(*) as c FROM active_addresses WHERE last_seen_at > ?`,
+        )
+          .bind(now - 30 * 24 * 3600_000)
+          .first(),
+        env.DB.prepare(
+          `SELECT value FROM indexer_state WHERE key = 'active_addr_cursor'`,
+        ).first(),
+      ])) as [
+        { c: number } | null,
+        { c: number } | null,
+        { value: string } | null,
+      ];
+
+      return new Response(
+        JSON.stringify({
+          count7d: r7d?.c ?? 0,
+          count30d: r30d?.c ?? 0,
+          cursor: cursorRow?.value ? Number(cursorRow.value) : null,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    } catch (err: any) {
+      return new Response(JSON.stringify({ error: err.message }), {
         status: 500,
         headers: corsHeaders,
       });

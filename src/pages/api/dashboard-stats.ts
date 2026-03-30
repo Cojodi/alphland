@@ -10,8 +10,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { readdirSync } from "fs";
 import path from "path";
 
-const ALPH_EXPLORER = "https://backend.mainnet.alephium.org";
 const DEFILLAMA_CHAINS = "https://api.llama.fi/v2/chains";
+const WORKER_URL = "https://alphland-bounty-api.alephium.workers.dev";
 
 export type DashboardStats = {
   tvlUsd: number | null;
@@ -53,37 +53,28 @@ export default async function handler(
   }
 
   const now = Date.now();
-  const weekAgo = now - 7 * 24 * 3600_000;
-  const monthAgo = now - 30 * 24 * 3600_000;
 
-  type AddressChartEntry = { totalAddresses: number; timestamp: number };
   type DefiLlamaChain = { name: string; tvl: number };
-  const [chainsRaw, activeAddrsRaw] = await Promise.all([
+  type AddrCounts = { count7d: number; count30d: number };
+  const secret = process.env.INTERNAL_SECRET;
+
+  const [chainsRaw, addrCounts] = await Promise.all([
     fetchJSON<DefiLlamaChain[]>(DEFILLAMA_CHAINS),
-    fetchJSON<AddressChartEntry[]>(
-      `${ALPH_EXPLORER}/charts/addresses-active?fromTs=${monthAgo}&toTs=${now}&interval-type=daily`,
-    ),
+    secret
+      ? fetch(`${WORKER_URL}/api/internal/active-addresses/counts`, {
+          headers: { Authorization: `Bearer ${secret}` },
+        })
+          .then((r) => (r.ok ? (r.json() as Promise<AddrCounts>) : null))
+          .catch(() => null)
+      : Promise.resolve(null),
   ]);
 
-  // Find Alephium entry in the chains array
   const tvlUsd = Array.isArray(chainsRaw)
     ? (chainsRaw.find((c) => c.name === "Alephium")?.tvl ?? null)
     : null;
 
-  const sumAddresses = (entries: AddressChartEntry[], fromTs: number) =>
-    entries
-      .filter((d) => d.timestamp >= fromTs)
-      .reduce((sum, d) => sum + (d.totalAddresses ?? 0), 0);
-
-  const activeAddresses7d =
-    Array.isArray(activeAddrsRaw) && activeAddrsRaw.length > 0
-      ? sumAddresses(activeAddrsRaw, weekAgo)
-      : null;
-
-  const activeAddresses30d =
-    Array.isArray(activeAddrsRaw) && activeAddrsRaw.length > 0
-      ? sumAddresses(activeAddrsRaw, monthAgo)
-      : null;
+  const activeAddresses7d = addrCounts?.count7d ?? null;
+  const activeAddresses30d = addrCounts?.count30d ?? null;
 
   const dappCount = countDapps();
 
