@@ -11,7 +11,7 @@ import { readdirSync } from "fs";
 import path from "path";
 
 const ALPH_EXPLORER = "https://backend.mainnet.alephium.org";
-const DEFILLAMA_TVL = "https://api.llama.fi/tvl/alephium";
+const DEFILLAMA_CHAINS = "https://api.llama.fi/v2/chains";
 
 export type DashboardStats = {
   tvlUsd: number | null;
@@ -57,15 +57,18 @@ export default async function handler(
   const monthAgo = now - 30 * 24 * 3600_000;
 
   type AddressChartEntry = { totalAddresses: number; timestamp: number };
-  const [tvlRaw, activeAddrsRaw] = await Promise.all([
-    fetchJSON<number>(DEFILLAMA_TVL),
+  type DefiLlamaChain = { name: string; tvl: number };
+  const [chainsRaw, activeAddrsRaw] = await Promise.all([
+    fetchJSON<DefiLlamaChain[]>(DEFILLAMA_CHAINS),
     fetchJSON<AddressChartEntry[]>(
       `${ALPH_EXPLORER}/charts/addresses-active?fromTs=${monthAgo}&toTs=${now}&interval-type=daily`,
     ),
   ]);
 
-  // DeFi Llama returns a plain number for /tvl/:chain
-  const tvlUsd = typeof tvlRaw === "number" ? tvlRaw : null;
+  // Find Alephium entry in the chains array
+  const tvlUsd = Array.isArray(chainsRaw)
+    ? (chainsRaw.find((c) => c.name === "Alephium")?.tvl ?? null)
+    : null;
 
   const sumAddresses = (entries: AddressChartEntry[], fromTs: number) =>
     entries
