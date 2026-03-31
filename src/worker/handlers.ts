@@ -349,19 +349,50 @@ export async function handleSubmissionsAPI(
         );
       }
 
-      // Find output matching the winner's wallet address
+      // Find output matching the winner's wallet address (exact match first)
       const outputs: any[] = txData.outputs || [];
-      const matchingOutput = outputs.find(
+      let matchingOutput = outputs.find(
         (o: any) => o.address === submissionWithWallet.wallet_address,
       );
 
+      // Fallback: groupless addresses (type 4) may resolve to a different
+      // group-specific address in the Explorer output. Verify via the
+      // address transaction history instead.
       if (!matchingOutput) {
-        return new Response(
-          JSON.stringify({
-            error: `Transaction does not contain a payment to the winner's address (${submissionWithWallet.wallet_address}).`,
-          }),
-          { status: 400, headers: corsHeaders },
-        );
+        let addressContainsTx = false;
+        try {
+          const addrTxRes = await fetch(
+            `https://backend.mainnet.alephium.org/addresses/${encodeURIComponent(submissionWithWallet.wallet_address)}/transactions?page=1&limit=20`,
+            { headers: { Accept: "application/json" } },
+          );
+          if (addrTxRes.ok) {
+            const addrTxData: any[] = await addrTxRes.json();
+            addressContainsTx =
+              Array.isArray(addrTxData) &&
+              addrTxData.some((tx: any) => tx.hash === body.transaction_hash);
+          }
+        } catch {
+          // ignore — fall through to error below
+        }
+
+        if (!addressContainsTx) {
+          return new Response(
+            JSON.stringify({
+              error: `Transaction does not contain a payment to the winner's address (${submissionWithWallet.wallet_address}).`,
+            }),
+            { status: 400, headers: corsHeaders },
+          );
+        }
+
+        // Find the output with the largest amount as the matching output for
+        // amount verification (groupless address resolved to a different form)
+        matchingOutput = outputs.reduce((best: any, o: any) => {
+          if (!best) return o;
+          return BigInt(o.attoAlphAmount || "0") >
+            BigInt(best.attoAlphAmount || "0")
+            ? o
+            : best;
+        }, null);
       }
 
       // Verify amount if reward_amount is provided (1 ALPH = 10^18 attoALPH)
