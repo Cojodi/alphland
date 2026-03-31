@@ -78,6 +78,7 @@ interface AdminUser {
   submission_count: number;
   approved_count: number;
   bookmark_count: number;
+  role: string | null;
 }
 
 interface SubmissionStats {
@@ -1271,10 +1272,15 @@ export default function AdminDashboard() {
                               </div>
                             )}
                             <div className="min-w-0">
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-2 flex-wrap">
                                 <p className="text-sm font-medium text-light-black dark:text-white truncate">
                                   {user.name || "No name"}
                                 </p>
+                                {user.role === "god" && (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-purple-500/15 text-purple-400 border border-purple-400/30">
+                                    GOD MODE
+                                  </span>
+                                )}
                                 {user.is_banned === 1 && (
                                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-orange/10 text-orange">
                                     <Ban className="w-3 h-3" />
