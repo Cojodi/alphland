@@ -88,10 +88,13 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo, dappResources }) => {
     const links = dappInfo.links;
     const orderedLinks: Array<{ name: keyof Links; link: string }> = [];
     linkOrder.forEach((link) => {
-      if (links[link]) {
-        orderedLinks.push({ name: link, link: links[link] });
-      } else {
-        orderedLinks.push({ name: link, link: "" });
+      // linkedin fallback: use careers field if linkedin is empty
+      const value =
+        link === "linkedin" && !links[link]
+          ? links.careers || ""
+          : links[link] || "";
+      if (value) {
+        orderedLinks.push({ name: link, link: value });
       }
     });
     return orderedLinks;

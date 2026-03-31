@@ -1,4 +1,10 @@
 {
+  "crons": [
+    {
+      "path": "/api/network-status",
+      "schedule": "* * * * *"
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/:path*",
