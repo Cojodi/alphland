@@ -21,6 +21,7 @@ import {
   X,
 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useState, useEffect, useCallback } from "react";
 import Layout from "@/components/Layout";
 
@@ -134,11 +135,16 @@ type SponsorFilter = "active" | "banned" | "pending";
 type AdminTab = "sponsors" | "users";
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [activeTab, setActiveTab] = useState<AdminTab>("sponsors");
+
+  // Derive active tab from URL: /admin/sponsors → "sponsors", /admin/users → "users"
+  const tabFromUrl =
+    (router.query.tab as string) === "users" ? "users" : "sponsors";
+  const [activeTab, setActiveTab] = useState<AdminTab>(tabFromUrl);
 
   // Sponsor state
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);
@@ -164,6 +170,14 @@ export default function AdminDashboard() {
   const [expandedSection, setExpandedSection] = useState<string | null>(
     "stats",
   );
+
+  // Sync tab state when URL changes (browser back/forward)
+  useEffect(() => {
+    if (router.isReady) {
+      const t = (router.query.tab as string) === "users" ? "users" : "sponsors";
+      setActiveTab(t);
+    }
+  }, [router.isReady, router.query.tab]);
 
   // Check if already authenticated on mount
   useEffect(() => {
@@ -640,7 +654,10 @@ export default function AdminDashboard() {
           <div className="border-b border-border-grey dark:border-dark-charcoal">
             <div className="flex gap-6">
               <button
-                onClick={() => setActiveTab("sponsors")}
+                onClick={() => {
+                  setActiveTab("sponsors");
+                  router.push("/admin/sponsors", undefined, { shallow: true });
+                }}
                 className={`flex items-center gap-2 px-1 py-3 font-barlow font-medium text-sm transition-colors ${
                   activeTab === "sponsors"
                     ? "text-light-black dark:text-white border-b-2 border-orange -mb-px"
@@ -651,7 +668,10 @@ export default function AdminDashboard() {
                 Sponsor Management
               </button>
               <button
-                onClick={() => setActiveTab("users")}
+                onClick={() => {
+                  setActiveTab("users");
+                  router.push("/admin/users", undefined, { shallow: true });
+                }}
                 className={`flex items-center gap-2 px-1 py-3 font-barlow font-medium text-sm transition-colors ${
                   activeTab === "users"
                     ? "text-light-black dark:text-white border-b-2 border-orange -mb-px"
@@ -1294,7 +1314,7 @@ export default function AdminDashboard() {
                               </p>
                               {user.createdAt && (
                                 <p className="text-xs text-light-charcoal opacity-60">
-                                  First login: {formatDate(user.createdAt)}
+                                  First login: {formatDateMs(user.createdAt)}
                                 </p>
                               )}
                             </div>
