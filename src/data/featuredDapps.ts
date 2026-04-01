@@ -20,7 +20,7 @@ export const FEATURED_DAPPS = [
   "learnify",
   "ledger-wallet",
   "linx-app",
-  // "moonshot-boxes", // coming soon
+  "moonshotboxes",
   "nightshade",
   "onekey-wallet",
   "presenceprotocol",

@@ -1,0 +1,37 @@
+{
+  "name": "Moonshot Boxes",
+  "description": "Moonshot Boxes is an online platform for entry based competitions and participation rounds. It lets users create accounts, join campaigns, and enter prize or access based opportunities tied to partner projects.",
+  "short_description": "Empowering Projects & Enriching Communities",
+  "tags": ["Gaming"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "councils_choice": false,
+  "dotw": false,
+  "links": {
+    "website": "https://www.moonshotboxes.com",
+    "careers": "",
+    "twitter": "https://x.com/MoonshotBoxes",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@moonshotboxes",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2025-01-01T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/moonshotboxes/moonshotboxes-logo.webp",
+    "bannerUrl": "/dapps/moonshotboxes/moonshotboxes-banner.webp",
+    "previewUrl": "/dapps/moonshotboxes/moonshotboxes-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
