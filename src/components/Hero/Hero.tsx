@@ -151,7 +151,7 @@ const Hero = ({
             Explore the <span className="text-orange">Alephium</span> Ecosystem.
           </h1>
           <p className="text-white text-lg md:text-xl mb-8 opacity-80">
-            Discover {dappCount} dApps alongside {toolCount} tools and services.
+            Find dApps, tools, services and resources to get started.
           </p>
           <div className="max-w-md opacity-90">
             <SearchBar
