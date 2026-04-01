@@ -65,7 +65,6 @@ const Home = ({
           <Hero
             searchQuery={searchQuery}
             onSearchChange={handleSearch}
-            dappCount={totalDappCount}
             bannerDapps={bannerDapps}
           />
         </div>

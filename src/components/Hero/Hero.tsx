@@ -21,7 +21,6 @@ interface BannerDapp {
 type HeroProps = {
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  dappCount: number;
   bannerDapps?: BannerDapp[];
 };
 
@@ -128,12 +127,7 @@ const BannerCard = ({
   </div>
 );
 
-const Hero = ({
-  searchQuery,
-  onSearchChange,
-  dappCount,
-  bannerDapps,
-}: HeroProps) => {
+const Hero = ({ searchQuery, onSearchChange, bannerDapps }: HeroProps) => {
   const hasBanner = bannerDapps && bannerDapps.length > 0;
 
   return (
@@ -149,7 +143,7 @@ const Hero = ({
             Explore the <span className="text-orange">Alephium</span> Ecosystem.
           </h1>
           <p className="text-white text-lg md:text-xl mb-8 opacity-80">
-            Discover {dappCount}+ dApps, tools and services across Alephium.
+            Discover the Alephium ecosystem.
           </p>
           <div className="max-w-md opacity-90">
             <SearchBar
