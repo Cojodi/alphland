@@ -1343,10 +1343,15 @@ export async function handleSponsorsAPI(
 
     // Verify requester is the current owner
     const sponsor = (await env.DB.prepare(
-      `SELECT id, user_id, name FROM sponsors WHERE id = ?`,
+      `SELECT id, user_id, name, is_banned FROM sponsors WHERE id = ?`,
     )
       .bind(id)
-      .first()) as { id: string; user_id: string; name: string } | null;
+      .first()) as {
+      id: string;
+      user_id: string;
+      name: string;
+      is_banned: number;
+    } | null;
 
     if (!sponsor) {
       return new Response(JSON.stringify({ error: "Sponsor not found" }), {
@@ -1416,18 +1421,18 @@ export async function handleSponsorsAPI(
         .bind(newOwnerId, now, id)
         .run();
 
-      // Clear old owner's sponsor flags
+      // Clear old owner's sponsor flags; also lift any sponsor-derived ban
       await env.DB.prepare(
-        `UPDATE user SET is_sponsor = 0, sponsor_id = NULL, updatedAt = ? WHERE id = ?`,
+        `UPDATE user SET is_sponsor = 0, sponsor_id = NULL, is_banned = 0, updatedAt = ? WHERE id = ?`,
       )
         .bind(now * 1000, sponsor.user_id)
         .run();
 
-      // Set new owner's sponsor flags
+      // Set new owner's sponsor flags; propagate ban if sponsor is currently banned
       await env.DB.prepare(
-        `UPDATE user SET is_sponsor = 1, sponsor_id = ?, updatedAt = ? WHERE id = ?`,
+        `UPDATE user SET is_sponsor = 1, sponsor_id = ?, is_banned = ?, updatedAt = ? WHERE id = ?`,
       )
-        .bind(id, now * 1000, newOwnerId)
+        .bind(id, sponsor.is_banned ?? 0, now * 1000, newOwnerId)
         .run();
 
       return new Response(JSON.stringify({ success: true }), {
