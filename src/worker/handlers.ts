@@ -1314,6 +1314,134 @@ export async function handleSponsorsAPI(
     }
   }
 
+  // POST /api/sponsors/:id/transfer - Transfer sponsor ownership to another user
+  if (
+    request.method === "POST" &&
+    pathname.match(/^\/api\/sponsors\/[^/]+\/transfer$/)
+  ) {
+    const cookieHeader = request.headers.get("cookie") || "";
+    const tokenMatch = cookieHeader.match(/better-auth\.session_token=([^;]+)/);
+    const token = tokenMatch ? decodeURIComponent(tokenMatch[1]) : null;
+    const sessionRow = token
+      ? ((await env.DB.prepare(
+          "SELECT userId FROM session WHERE token = ? AND expiresAt > ?",
+        )
+          .bind(token, Date.now())
+          .first()) as { userId: string } | null)
+      : null;
+
+    if (!sessionRow?.userId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
+
+    const currentUserId = sessionRow.userId;
+    const id = pathname.split("/")[3];
+    const now = Math.floor(Date.now() / 1000);
+
+    // Verify requester is the current owner
+    const sponsor = (await env.DB.prepare(
+      `SELECT id, user_id, name FROM sponsors WHERE id = ?`,
+    )
+      .bind(id)
+      .first()) as { id: string; user_id: string; name: string } | null;
+
+    if (!sponsor) {
+      return new Response(JSON.stringify({ error: "Sponsor not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    const isGod = await isGodUser(env, currentUserId);
+    if (sponsor.user_id !== currentUserId && !isGod) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: corsHeaders,
+      });
+    }
+
+    const body = (await request.json()) as { new_owner_username: string };
+    if (!body.new_owner_username?.trim()) {
+      return new Response(
+        JSON.stringify({ error: "new_owner_username is required" }),
+        { status: 400, headers: corsHeaders },
+      );
+    }
+
+    // Look up new owner by username in user_profiles
+    const newOwnerProfile = (await env.DB.prepare(
+      `SELECT user_id FROM user_profiles WHERE username = ?`,
+    )
+      .bind(body.new_owner_username.trim())
+      .first()) as { user_id: string } | null;
+
+    if (!newOwnerProfile) {
+      return new Response(JSON.stringify({ error: "User not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    const newOwnerId = newOwnerProfile.user_id;
+
+    if (newOwnerId === sponsor.user_id) {
+      return new Response(
+        JSON.stringify({ error: "New owner is the same as current owner" }),
+        { status: 400, headers: corsHeaders },
+      );
+    }
+
+    // Check new owner doesn't already have a sponsor
+    const existingSponsor = await env.DB.prepare(
+      `SELECT id FROM sponsors WHERE user_id = ?`,
+    )
+      .bind(newOwnerId)
+      .first();
+
+    if (existingSponsor) {
+      return new Response(
+        JSON.stringify({ error: "This user already owns a sponsor account" }),
+        { status: 409, headers: corsHeaders },
+      );
+    }
+
+    try {
+      // Transfer: update sponsor user_id
+      await env.DB.prepare(
+        `UPDATE sponsors SET user_id = ?, updated_at = ? WHERE id = ?`,
+      )
+        .bind(newOwnerId, now, id)
+        .run();
+
+      // Clear old owner's sponsor flags
+      await env.DB.prepare(
+        `UPDATE user SET is_sponsor = 0, sponsor_id = NULL, updatedAt = ? WHERE id = ?`,
+      )
+        .bind(now * 1000, sponsor.user_id)
+        .run();
+
+      // Set new owner's sponsor flags
+      await env.DB.prepare(
+        `UPDATE user SET is_sponsor = 1, sponsor_id = ?, updatedAt = ? WHERE id = ?`,
+      )
+        .bind(id, now * 1000, newOwnerId)
+        .run();
+
+      return new Response(JSON.stringify({ success: true }), {
+        headers: corsHeaders,
+      });
+    } catch (error) {
+      console.error("Failed to transfer sponsor ownership:", error);
+      return new Response(
+        JSON.stringify({ error: "Failed to transfer ownership" }),
+        { status: 500, headers: corsHeaders },
+      );
+    }
+  }
+
   // PUT /api/sponsors/:id/unban - Unban sponsor (god only)
   if (
     request.method === "PUT" &&

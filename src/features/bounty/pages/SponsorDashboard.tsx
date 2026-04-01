@@ -32,6 +32,12 @@ export default function SponsorDashboard() {
     useState<BountySubmission | null>(null);
   const [selectedBounty, setSelectedBounty] = useState<Bounty | null>(null);
 
+  // Transfer ownership state
+  const [transferUsername, setTransferUsername] = useState("");
+  const [transferLoading, setTransferLoading] = useState(false);
+  const [transferError, setTransferError] = useState("");
+  const [showTransferConfirm, setShowTransferConfirm] = useState(false);
+
   // God mode state
   const [isGod, setIsGod] = useState(false);
   const [allSponsors, setAllSponsors] = useState<
@@ -57,6 +63,30 @@ export default function SponsorDashboard() {
   const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab);
   }, []);
+
+  const handleTransferOwnership = async () => {
+    if (!sponsor || !transferUsername.trim()) return;
+    setTransferLoading(true);
+    setTransferError("");
+    try {
+      const res = await fetch(`/api/sponsors/${sponsor.id}/transfer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ new_owner_username: transferUsername.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setTransferError(data.error || "Transfer failed");
+        return;
+      }
+      router.push("/bounty");
+    } catch {
+      setTransferError("Transfer failed. Please try again.");
+    } finally {
+      setTransferLoading(false);
+    }
+  };
 
   const handleViewBounty = useCallback(
     (bountyId: string) => {
@@ -1015,6 +1045,65 @@ export default function SponsorDashboard() {
                     )}
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* Transfer Ownership — only visible to the actual owner, not god */}
+            {activeTab === "overview" && !isGod && (
+              <div className="bg-white dark:bg-hero-dark rounded-xl border border-red-200 dark:border-red-900/40 p-6 space-y-4">
+                <h2 className="text-base font-bold text-red-500 font-barlow">
+                  Transfer Ownership
+                </h2>
+                <p className="text-sm text-light-charcoal dark:text-lightgrey">
+                  Transfer this sponsor account to another user. You will
+                  immediately lose access to the dashboard after transfer.
+                </p>
+
+                {!showTransferConfirm ? (
+                  <button
+                    onClick={() => setShowTransferConfirm(true)}
+                    className="px-4 py-2 text-sm font-medium text-red-500 border border-red-300 dark:border-red-800 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                  >
+                    Transfer Ownership
+                  </button>
+                ) : (
+                  <div className="space-y-3">
+                    <input
+                      type="text"
+                      value={transferUsername}
+                      onChange={(e) => {
+                        setTransferUsername(e.target.value);
+                        setTransferError("");
+                      }}
+                      placeholder="New owner's username"
+                      className="w-full sm:w-80 px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+                    />
+                    {transferError && (
+                      <p className="text-sm text-red-500">{transferError}</p>
+                    )}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleTransferOwnership}
+                        disabled={transferLoading || !transferUsername.trim()}
+                        className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {transferLoading
+                          ? "Transferring..."
+                          : "Confirm Transfer"}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowTransferConfirm(false);
+                          setTransferUsername("");
+                          setTransferError("");
+                        }}
+                        className="px-4 py-2 text-sm font-medium text-light-charcoal dark:text-lightgrey border border-border-grey dark:border-dark-charcoal rounded-lg hover:border-orange transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
