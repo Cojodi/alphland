@@ -17,8 +17,8 @@ const ALPH_EXPLORER = "https://backend.mainnet.alephium.org";
 const ALPH_TESTNET_NODE = "https://node.testnet.alephium.org";
 const ALPH_TESTNET_EXPLORER = "https://backend.testnet.alephium.org";
 const BLOCK_DELAY_THRESHOLD_S = 180;
-const HASHRATE_1H_THRESHOLD_PCT = 10;
-const HASHRATE_24H_THRESHOLD_PCT = 20;
+const HASHRATE_1H_THRESHOLD_PCT = 20;
+const HASHRATE_24H_THRESHOLD_PCT = 30;
 const FAILURE_WINDOW = 5; // track last 5 checks per service
 const FAILURE_RATE_THRESHOLD = 0.6; // alert if ≥60% of checks failed
 const DEBOUNCE_TTL_S = 10 * 60; // 10 min debounce via KV TTL
@@ -381,16 +381,10 @@ export default async function handler(
       message: `Hashrate ${dir} ${Math.abs(trend1h).toFixed(1)}% in the last hour (now ${hashrate.currentFormatted})`,
       severity: "warning",
     });
-    await Promise.all([
-      sendSlackAlert(
-        `:warning: *Network Status Alert*\n*Hashrate 1h ${dir}*: ${Math.abs(trend1h).toFixed(1)}% change in the last hour\nCurrent: ${hashrate.currentFormatted}\n<${STATUS_URL}|View Status Page>`,
-        id,
-      ),
-      sendWhatsAppAlert(
-        `⚠️ Network Alert\nHashrate 1h ${dir}: ${Math.abs(trend1h).toFixed(1)}% in the last hour\nCurrent: ${hashrate.currentFormatted}\n${STATUS_URL}`,
-        id,
-      ),
-    ]);
+    await sendSlackAlert(
+      `:warning: *Network Status Alert*\n*Hashrate 1h ${dir}*: ${Math.abs(trend1h).toFixed(1)}% change in the last hour\nCurrent: ${hashrate.currentFormatted}\n<${STATUS_URL}|View Status Page>`,
+      id,
+    );
   }
 
   if (trend24h !== null && Math.abs(trend24h) >= HASHRATE_24H_THRESHOLD_PCT) {
@@ -402,16 +396,10 @@ export default async function handler(
       message: `Hashrate ${dir} ${Math.abs(trend24h).toFixed(1)}% over 24 hours (now ${hashrate.currentFormatted})`,
       severity: "warning",
     });
-    await Promise.all([
-      sendSlackAlert(
-        `:warning: *Network Status Alert*\n*Hashrate 24h ${dir}*: ${Math.abs(trend24h).toFixed(1)}% change over 24 hours\nCurrent: ${hashrate.currentFormatted}\n<${STATUS_URL}|View Status Page>`,
-        id,
-      ),
-      sendWhatsAppAlert(
-        `⚠️ Network Alert\nHashrate 24h ${dir}: ${Math.abs(trend24h).toFixed(1)}% over 24 hours\nCurrent: ${hashrate.currentFormatted}\n${STATUS_URL}`,
-        id,
-      ),
-    ]);
+    await sendSlackAlert(
+      `:warning: *Network Status Alert*\n*Hashrate 24h ${dir}*: ${Math.abs(trend24h).toFixed(1)}% change over 24 hours\nCurrent: ${hashrate.currentFormatted}\n<${STATUS_URL}|View Status Page>`,
+      id,
+    );
   }
 
   res.setHeader("Cache-Control", "no-store");

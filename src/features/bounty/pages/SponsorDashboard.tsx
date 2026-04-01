@@ -32,6 +32,20 @@ export default function SponsorDashboard() {
     useState<BountySubmission | null>(null);
   const [selectedBounty, setSelectedBounty] = useState<Bounty | null>(null);
 
+  // God mode state
+  const [isGod, setIsGod] = useState(false);
+  const [allSponsors, setAllSponsors] = useState<
+    {
+      id: string;
+      name: string;
+      username: string | null;
+      logo_url: string | null;
+      is_verified: number;
+      is_banned: number;
+    }[]
+  >([]);
+  const [godSponsorSearch, setGodSponsorSearch] = useState("");
+
   // Pagination states
   const [bountiesPage, setBountiesPage] = useState(1);
   const [submissionsPage, setSubmissionsPage] = useState(1);
@@ -252,7 +266,24 @@ export default function SponsorDashboard() {
         }
 
         const sponsorData = await sponsorResponse.json();
-        const sponsorId = sponsorData.sponsor.id;
+
+        // Handle god mode
+        if (sponsorData.is_god) {
+          setIsGod(true);
+          setAllSponsors(sponsorData.all_sponsors || []);
+          if (!sponsorData.sponsor) {
+            // God user with no own sponsor — show picker, don't load dashboard
+            setLoading(false);
+            return;
+          }
+        }
+
+        const sponsorId = sponsorData.sponsor?.id;
+        if (!sponsorId) {
+          setSponsor(null);
+          setLoading(false);
+          return;
+        }
 
         // Get full dashboard data
         const dashboardResponse = await fetch(
@@ -354,6 +385,140 @@ export default function SponsorDashboard() {
     );
   }
 
+  // God user with no sponsor loaded yet — show a sponsor picker
+  if (!sponsor && isGod) {
+    const filteredSponsors = allSponsors.filter(
+      (s) =>
+        !godSponsorSearch ||
+        s.name.toLowerCase().includes(godSponsorSearch.toLowerCase()) ||
+        (s.username || "")
+          .toLowerCase()
+          .includes(godSponsorSearch.toLowerCase()),
+    );
+    const switchToSponsor = async (sponsorId: string) => {
+      setLoading(true);
+      try {
+        await fetch("/api/god/current-sponsor", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sponsor_id: sponsorId }),
+        });
+        const dashboardResponse = await fetch(
+          `/api/sponsors/${sponsorId}/dashboard`,
+        );
+        if (!dashboardResponse.ok) throw new Error("Failed to load dashboard");
+        const dashboardData = await dashboardResponse.json();
+        setSponsor({
+          ...dashboardData.sponsor,
+          is_verified: dashboardData.sponsor.is_verified === 1,
+        });
+        setBounties(
+          (dashboardData.bounties || []).map((b: any) => ({
+            ...b,
+            requirements: b.requirements ? JSON.parse(b.requirements) : [],
+            deliverables: b.deliverables ? JSON.parse(b.deliverables) : [],
+            skills: b.skills ? JSON.parse(b.skills) : [],
+            current_submissions: 0,
+          })),
+        );
+        setAllSubmissions(
+          (dashboardData.submissions || []).map((s: any) => ({
+            id: s.id,
+            title: s.title || "Submission",
+            description: s.description || "",
+            submission_url: s.submission_url,
+            user_username: s.user_username || null,
+            user_name: s.user_username || "Anonymous",
+            user_avatar_url: s.user_avatar_url || "",
+            user_id: s.user_id || s.submitted_by,
+            user_wallet_address: s.user_wallet_address || "",
+            bounty_id: s.bounty_id,
+            bounty_title: s.bounty_title,
+            sponsor_id: sponsorId,
+            status: s.status,
+            reviewer_notes: s.reviewer_notes || null,
+            transaction_hash: s.transaction_hash || null,
+            submitted_at: s.created_at,
+          })),
+        );
+      } catch (err) {
+        console.error("Failed to switch sponsor:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return (
+      <Layout title="Sponsor Dashboard - Alphland">
+        <div className="min-h-screen bg-gradient-to-br from-smoked-white to-white dark:from-gray-900 dark:to-gray-800 flex items-center justify-center px-4">
+          <div className="w-full max-w-lg space-y-4">
+            <div className="text-center">
+              <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-purple-500/15 text-purple-400 border border-purple-400/30 mb-2">
+                GOD MODE
+              </span>
+              <h2 className="text-2xl font-bold text-light-black dark:text-white font-barlow">
+                Select a Sponsor
+              </h2>
+              <p className="text-light-charcoal dark:text-lightgrey text-sm mt-1">
+                You have access to all sponsor dashboards.
+              </p>
+            </div>
+            <input
+              type="text"
+              placeholder="Search sponsors..."
+              value={godSponsorSearch}
+              onChange={(e) => setGodSponsorSearch(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border border-border-grey dark:border-dark-charcoal bg-white dark:bg-light-black text-sm focus:outline-none focus:ring-2 focus:ring-orange/40"
+            />
+            <div className="max-h-96 overflow-y-auto space-y-2">
+              {filteredSponsors.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => switchToSponsor(s.id)}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal hover:border-orange/50 transition-colors text-left"
+                >
+                  {s.logo_url ? (
+                    <img
+                      src={s.logo_url}
+                      alt={s.name}
+                      className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-orange/20 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-bold text-orange">
+                        {s.name.charAt(0)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-light-black dark:text-white truncate">
+                      {s.name}
+                    </p>
+                    {s.username && (
+                      <p className="text-xs text-light-charcoal">
+                        @{s.username}
+                      </p>
+                    )}
+                  </div>
+                  {s.is_verified === 1 && (
+                    <span className="ml-auto text-xs text-accessible-green flex-shrink-0">
+                      Verified
+                    </span>
+                  )}
+                </button>
+              ))}
+              {filteredSponsors.length === 0 && (
+                <p className="text-center text-sm text-light-charcoal py-4">
+                  No sponsors found
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   if (!sponsor) {
     return (
       <Layout title="Sponsor Dashboard - Alphland">
@@ -400,6 +565,11 @@ export default function SponsorDashboard() {
           <div className="max-w-7xl mx-auto relative z-10">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-6">
               <div className="space-y-2">
+                {isGod && (
+                  <span className="inline-block px-2 py-0.5 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-400/30 mb-1">
+                    GOD MODE
+                  </span>
+                )}
                 <h1 className="text-4xl sm:text-5xl font-bold font-barlow">
                   Sponsor Dashboard
                 </h1>
@@ -410,13 +580,23 @@ export default function SponsorDashboard() {
                   Manage bounties, track submissions, and reward contributors
                 </p>
               </div>
-              <button
-                onClick={() => router.push("/bounty/create")}
-                className="bg-white dark:bg-hero-dark text-orange dark:text-white hover:bg-smoked-white dark:hover:bg-light-black font-barlow font-semibold px-6 py-3 text-base shadow-lg rounded-lg flex items-center gap-2 whitespace-nowrap border border-orange dark:border-white/20"
-              >
-                <Plus className="w-5 h-5" />
-                New Listing
-              </button>
+              <div className="flex items-center gap-3">
+                {isGod && (
+                  <button
+                    onClick={() => setSponsor(null)}
+                    className="bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 font-barlow font-semibold px-4 py-3 text-sm shadow-lg rounded-lg flex items-center gap-2 whitespace-nowrap border border-purple-400/30"
+                  >
+                    Switch Sponsor
+                  </button>
+                )}
+                <button
+                  onClick={() => router.push("/bounty/create")}
+                  className="bg-white dark:bg-hero-dark text-orange dark:text-white hover:bg-smoked-white dark:hover:bg-light-black font-barlow font-semibold px-6 py-3 text-base shadow-lg rounded-lg flex items-center gap-2 whitespace-nowrap border border-orange dark:border-white/20"
+                >
+                  <Plus className="w-5 h-5" />
+                  New Listing
+                </button>
+              </div>
             </div>
           </div>
         </section>

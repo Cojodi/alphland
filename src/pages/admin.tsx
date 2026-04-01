@@ -1,4 +1,10 @@
-// Admin dashboard page route
-import AdminDashboard from "@/features/admin/pages/AdminDashboard";
+// Redirect /admin → /admin/sponsors
+import { GetServerSideProps } from "next";
 
-export default AdminDashboard;
+export const getServerSideProps: GetServerSideProps = async () => {
+  return { redirect: { destination: "/admin/sponsors", permanent: false } };
+};
+
+export default function AdminRedirect() {
+  return null;
+}

@@ -9,6 +9,38 @@ const corsHeaders = {
   "Content-Type": "application/json",
 };
 
+/** Returns true if the user with the given ID has the 'god' superadmin role. */
+async function isGodUser(env: Env, userId: string): Promise<boolean> {
+  const result = (await env.DB.prepare("SELECT role FROM user WHERE id = ?")
+    .bind(userId)
+    .first()) as { role: string | null } | null;
+  return result?.role === "god";
+}
+
+/**
+ * Resolves the god role of the requester directly from the session cookie,
+ * without needing the full auth instance. Returns true if the session belongs
+ * to a god user.
+ */
+async function requestIsFromGod(env: Env, request: Request): Promise<boolean> {
+  try {
+    const cookieHeader = request.headers.get("cookie") || "";
+    // better-auth stores the token in "better-auth.session_token"
+    const match = cookieHeader.match(/better-auth\.session_token=([^;]+)/);
+    if (!match) return false;
+    const token = decodeURIComponent(match[1]);
+    const session = (await env.DB.prepare(
+      "SELECT userId FROM session WHERE token = ? AND expiresAt > ?",
+    )
+      .bind(token, Date.now())
+      .first()) as { userId: string } | null;
+    if (!session?.userId) return false;
+    return isGodUser(env, session.userId);
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Transform bounty object to include computed reward field for backwards compatibility
  */
@@ -286,8 +318,12 @@ export async function handleSubmissionsAPI(
     const body = (await request.json()) as any;
     const now = Math.floor(Date.now() / 1000);
 
-    // Verify transaction on Alephium if transaction_hash is provided
-    if (body.transaction_hash && body.status === "approved") {
+    // God users can approve directly without transaction verification
+    const godOverride =
+      body.status === "approved" && (await requestIsFromGod(env, request));
+
+    // Verify transaction on Alephium if transaction_hash is provided (skipped for god users)
+    if (!godOverride && body.transaction_hash && body.status === "approved") {
       // Fetch submission + winner wallet address in one query
       const submissionWithWallet = (await env.DB.prepare(
         `SELECT bs.user_id, bs.bounty_id, up.wallet_address
@@ -349,19 +385,50 @@ export async function handleSubmissionsAPI(
         );
       }
 
-      // Find output matching the winner's wallet address
+      // Find output matching the winner's wallet address (exact match first)
       const outputs: any[] = txData.outputs || [];
-      const matchingOutput = outputs.find(
+      let matchingOutput = outputs.find(
         (o: any) => o.address === submissionWithWallet.wallet_address,
       );
 
+      // Fallback: groupless addresses (type 4) may resolve to a different
+      // group-specific address in the Explorer output. Verify via the
+      // address transaction history instead.
       if (!matchingOutput) {
-        return new Response(
-          JSON.stringify({
-            error: `Transaction does not contain a payment to the winner's address (${submissionWithWallet.wallet_address}).`,
-          }),
-          { status: 400, headers: corsHeaders },
-        );
+        let addressContainsTx = false;
+        try {
+          const addrTxRes = await fetch(
+            `https://backend.mainnet.alephium.org/addresses/${encodeURIComponent(submissionWithWallet.wallet_address)}/transactions?page=1&limit=20`,
+            { headers: { Accept: "application/json" } },
+          );
+          if (addrTxRes.ok) {
+            const addrTxData: any[] = await addrTxRes.json();
+            addressContainsTx =
+              Array.isArray(addrTxData) &&
+              addrTxData.some((tx: any) => tx.hash === body.transaction_hash);
+          }
+        } catch {
+          // ignore — fall through to error below
+        }
+
+        if (!addressContainsTx) {
+          return new Response(
+            JSON.stringify({
+              error: `Transaction does not contain a payment to the winner's address (${submissionWithWallet.wallet_address}).`,
+            }),
+            { status: 400, headers: corsHeaders },
+          );
+        }
+
+        // Find the output with the largest amount as the matching output for
+        // amount verification (groupless address resolved to a different form)
+        matchingOutput = outputs.reduce((best: any, o: any) => {
+          if (!best) return o;
+          return BigInt(o.attoAlphAmount || "0") >
+            BigInt(best.attoAlphAmount || "0")
+            ? o
+            : best;
+        }, null);
       }
 
       // Verify amount if reward_amount is provided (1 ALPH = 10^18 attoALPH)
@@ -818,13 +885,29 @@ export async function handleSponsorsAPI(
     request.method === "GET" &&
     pathname.match(/^\/api\/sponsors\/user\/[^/]+$/)
   ) {
-    const userId = pathname.split("/").pop();
+    const userId = pathname.split("/").pop()!;
 
     const sponsor = await env.DB.prepare(
       `SELECT * FROM sponsors WHERE user_id = ?`,
     )
       .bind(userId)
       .first();
+
+    const god = await isGodUser(env, userId);
+    if (god) {
+      // God users can see and switch to any sponsor
+      const { results: allSponsors } = await env.DB.prepare(
+        `SELECT id, name, username, logo_url, is_verified, is_banned, created_at FROM sponsors ORDER BY name ASC`,
+      ).all();
+      return new Response(
+        JSON.stringify({
+          sponsor: sponsor || null,
+          is_god: true,
+          all_sponsors: allSponsors,
+        }),
+        { headers: corsHeaders },
+      );
+    }
 
     // Return 200 with null sponsor instead of 404 to avoid console errors
     return new Response(JSON.stringify({ sponsor: sponsor || null }), {

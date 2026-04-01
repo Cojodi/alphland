@@ -249,6 +249,7 @@ const worker = {
         let query = `
           SELECT
             u.id, u.email, u.name, u.image, COALESCE(u.is_banned, 0) as is_banned, u.createdAt,
+            COALESCE(u.role, NULL) as role,
             up.username, up.wallet_address,
             (SELECT COUNT(*) FROM bounty_submissions WHERE user_id = u.id) as submission_count,
             (SELECT COUNT(*) FROM bounty_submissions WHERE user_id = u.id AND status = 'approved') as approved_count,
@@ -281,6 +282,7 @@ const worker = {
           let fallbackQuery = `
             SELECT
               u.id, u.email, u.name, u.image, 0 as is_banned, u.createdAt,
+              NULL as role,
               up.username, up.wallet_address,
               (SELECT COUNT(*) FROM bounty_submissions WHERE user_id = u.id) as submission_count,
               (SELECT COUNT(*) FROM bounty_submissions WHERE user_id = u.id AND status = 'approved') as approved_count,
@@ -1057,7 +1059,15 @@ async function handleBountiesAPI(
         );
       }
 
-      if (!sponsor.is_verified) {
+      // God users bypass the is_verified check
+      const creatorRole = (await env.DB.prepare(
+        "SELECT role FROM user WHERE id = ?",
+      )
+        .bind(created_by)
+        .first()) as { role: string | null } | null;
+      const creatorIsGod = creatorRole?.role === "god";
+
+      if (!sponsor.is_verified && !creatorIsGod) {
         return new Response(
           JSON.stringify({
             error:
@@ -1825,6 +1835,49 @@ async function handleUsersAPI(
         },
       );
     }
+  }
+
+  // PUT /api/god/current-sponsor - God users switch their active sponsor context
+  if (request.method === "PUT" && pathname === "/api/god/current-sponsor") {
+    const auth = createAuth(
+      env.DB,
+      {
+        GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID,
+        GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET,
+        BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
+        BETTER_AUTH_URL: env.BETTER_AUTH_URL,
+        APP_URL: env.APP_URL,
+        RESEND_API_KEY: env.RESEND_API_KEY,
+        FROM_EMAIL: env.FROM_EMAIL,
+      },
+      ctx,
+    );
+    const session = await auth.api.getSession({ headers: request.headers });
+    if (!session?.user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
+    const roleRow = (await env.DB.prepare("SELECT role FROM user WHERE id = ?")
+      .bind(session.user.id)
+      .first()) as { role: string | null } | null;
+    if (roleRow?.role !== "god") {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: corsHeaders,
+      });
+    }
+    const body = (await request.json()) as { sponsor_id: string | null };
+    const now = Date.now();
+    await env.DB.prepare(
+      "UPDATE user SET sponsor_id = ?, updatedAt = ? WHERE id = ?",
+    )
+      .bind(body.sponsor_id ?? null, now, session.user.id)
+      .run();
+    return new Response(JSON.stringify({ success: true }), {
+      headers: corsHeaders,
+    });
   }
 
   // PUT /api/users/:id - Update user profile
