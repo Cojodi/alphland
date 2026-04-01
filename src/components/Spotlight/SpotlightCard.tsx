@@ -1,6 +1,6 @@
-import { Globe, Github, ExternalLink } from "lucide-react";
+import { Globe, Github } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/router";
 
 interface SpotlightCardProps {
   title: string;
@@ -25,15 +25,13 @@ const SpotlightCard = ({
   tags,
   links,
 }: SpotlightCardProps) => {
-  return (
-    <div className="relative bg-white dark:bg-hero-dark rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-5 border border-transparent hover:border-orange/30 group h-full flex flex-col">
-      {/* External link icon */}
-      <Link href={url}>
-        <a className="absolute top-4 right-4 text-gray-400 hover:text-orange transition-colors">
-          <ExternalLink className="w-4 h-4" />
-        </a>
-      </Link>
+  const router = useRouter();
 
+  return (
+    <div
+      className="relative bg-white dark:bg-hero-dark rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-5 border border-transparent hover:border-orange/30 group h-full flex flex-col cursor-pointer"
+      onClick={() => router.push(url)}
+    >
       {/* Logo and Title */}
       <div className="flex items-start gap-4 mb-3">
         <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100 dark:bg-white/10">
@@ -47,13 +45,9 @@ const SpotlightCard = ({
           </div>
         </div>
         <div className="min-w-0 flex-1">
-          <Link href={url}>
-            <a className="block">
-              <h3 className="font-bold text-lg text-black dark:text-white truncate group-hover:text-orange transition-colors">
-                {title}
-              </h3>
-            </a>
-          </Link>
+          <h3 className="font-bold text-lg text-black dark:text-white truncate group-hover:text-orange transition-colors">
+            {title}
+          </h3>
           {/* Tags */}
           {tags.length > 0 && (
             <span className="inline-block text-xs font-medium text-orange bg-orange/10 px-2 py-0.5 rounded-full mt-1">

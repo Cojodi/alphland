@@ -38,13 +38,16 @@ const Home = ({
   bannerDapps,
   byAlephiumDapps,
   spotlightDapps,
-  totalDappCount,
+  dappCount,
+  toolCount,
   categoryCounts,
 }: {
   bannerDapps: DappCard[];
   byAlephiumDapps: SpotlightDapp[];
   spotlightDapps: SpotlightDapp[];
   totalDappCount: number;
+  dappCount: number;
+  toolCount: number;
   categoryCounts: CategoryCount;
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -65,6 +68,8 @@ const Home = ({
           <Hero
             searchQuery={searchQuery}
             onSearchChange={handleSearch}
+            dappCount={dappCount}
+            toolCount={toolCount}
             bannerDapps={bannerDapps}
           />
         </div>
@@ -123,12 +128,20 @@ export const getStaticProps = async () => {
     ).length;
   });
 
+  const DAPP_TAGS = ["DeFi", "NFTs", "Games", "Quests", "Social"];
+  const dappCount = dapps.filter((d) =>
+    d.tags.some((t) => DAPP_TAGS.includes(t)),
+  ).length;
+  const toolCount = dapps.length - dappCount;
+
   return {
     props: {
       bannerDapps,
       byAlephiumDapps,
       spotlightDapps,
       totalDappCount: dapps.length,
+      dappCount,
+      toolCount,
       categoryCounts,
     },
   };
