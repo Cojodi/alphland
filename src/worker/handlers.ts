@@ -899,22 +899,31 @@ export async function handleSponsorsAPI(
 
     const god = await isGodUser(env, userId);
     if (god) {
+      let allSponsors: any[] = [];
       try {
-        // God users can see and switch to any sponsor
-        const { results: allSponsors } = await env.DB.prepare(
+        const { results } = await env.DB.prepare(
           `SELECT id, name, username, logo_url, is_verified, is_banned, created_at FROM sponsors ORDER BY name ASC`,
         ).all();
-        return new Response(
-          JSON.stringify({
-            sponsor: sponsor || null,
-            is_god: true,
-            all_sponsors: allSponsors,
-          }),
-          { headers: corsHeaders },
-        );
+        allSponsors = results;
       } catch {
-        // Fall through to normal response if god query fails
+        // Fallback: is_verified/is_banned columns may not exist yet
+        try {
+          const { results } = await env.DB.prepare(
+            `SELECT id, name, username, logo_url, created_at FROM sponsors ORDER BY name ASC`,
+          ).all();
+          allSponsors = results;
+        } catch {
+          // ignore
+        }
       }
+      return new Response(
+        JSON.stringify({
+          sponsor: sponsor || null,
+          is_god: true,
+          all_sponsors: allSponsors,
+        }),
+        { headers: corsHeaders },
+      );
     }
 
     // Return 200 with null sponsor instead of 404 to avoid console errors
