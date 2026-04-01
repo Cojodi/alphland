@@ -412,17 +412,8 @@ export default function SponsorDashboard() {
           ...dashboardData.sponsor,
           is_verified: dashboardData.sponsor.is_verified === 1,
         });
-        setBounties(
-          (dashboardData.bounties || []).map((b: any) => ({
-            ...b,
-            requirements: b.requirements ? JSON.parse(b.requirements) : [],
-            deliverables: b.deliverables ? JSON.parse(b.deliverables) : [],
-            skills: b.skills ? JSON.parse(b.skills) : [],
-            current_submissions: 0,
-          })),
-        );
-        setAllSubmissions(
-          (dashboardData.submissions || []).map((s: any) => ({
+        const godSubmissions = (dashboardData.submissions || []).map(
+          (s: any) => ({
             id: s.id,
             title: s.title || "Submission",
             description: s.description || "",
@@ -439,8 +430,23 @@ export default function SponsorDashboard() {
             reviewer_notes: s.reviewer_notes || null,
             transaction_hash: s.transaction_hash || null,
             submitted_at: s.created_at,
+          }),
+        );
+        const godSubmissionCountByBounty: Record<string, number> = {};
+        godSubmissions.forEach((s: any) => {
+          godSubmissionCountByBounty[s.bounty_id] =
+            (godSubmissionCountByBounty[s.bounty_id] || 0) + 1;
+        });
+        setBounties(
+          (dashboardData.bounties || []).map((b: any) => ({
+            ...b,
+            requirements: b.requirements ? JSON.parse(b.requirements) : [],
+            deliverables: b.deliverables ? JSON.parse(b.deliverables) : [],
+            skills: b.skills ? JSON.parse(b.skills) : [],
+            current_submissions: godSubmissionCountByBounty[b.id] || 0,
           })),
         );
+        setAllSubmissions(godSubmissions);
       } catch (err) {
         console.error("Failed to switch sponsor:", err);
       } finally {
