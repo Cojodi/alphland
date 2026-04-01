@@ -19,7 +19,7 @@
     "medium": "",
     "mirror": ""
   },
-  "twitterName": "@moonshotBoxes",
+  "twitterName": "@moonshotboxes",
   "teamInfo": {
     "contactEmail": "",
     "founded": "2025-01-01T00:00:00.000Z",
@@ -28,9 +28,9 @@
   "tokens": [],
   "nft": {},
   "media": {
-    "logoUrl": "/dapps/moonshotBoxes/moonshotBoxes-logo.webp",
-    "bannerUrl": "/dapps/moonshotBoxes/moonshotBoxes-banner.webp",
-    "previewUrl": "/dapps/moonshotBoxes/moonshotBoxes-preview.webp",
+    "logoUrl": "/dapps/moonshotboxes/moonshotboxes-logo.webp",
+    "bannerUrl": "/dapps/moonshotboxes/moonshotboxes-banner.webp",
+    "previewUrl": "/dapps/moonshotboxes/moonshotboxes-preview.webp",
     "videoUrl": "",
     "gallery": []
   }
