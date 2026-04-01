@@ -1204,11 +1204,17 @@ export async function handleSponsorsAPI(
     }
   }
 
-  // PUT /api/sponsors/:id/verify - Verify sponsor
+  // PUT /api/sponsors/:id/verify - Verify sponsor (god only)
   if (
     request.method === "PUT" &&
     pathname.match(/^\/api\/sponsors\/[^/]+\/verify$/)
   ) {
+    if (!(await requestIsFromGod(env, request))) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: corsHeaders,
+      });
+    }
     const id = pathname.split("/")[3];
     const now = Math.floor(Date.now() / 1000);
 
@@ -1223,11 +1229,17 @@ export async function handleSponsorsAPI(
     });
   }
 
-  // PUT /api/sponsors/:id/unverify - Unverify sponsor
+  // PUT /api/sponsors/:id/unverify - Unverify sponsor (god only)
   if (
     request.method === "PUT" &&
     pathname.match(/^\/api\/sponsors\/[^/]+\/unverify$/)
   ) {
+    if (!(await requestIsFromGod(env, request))) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: corsHeaders,
+      });
+    }
     const id = pathname.split("/")[3];
     const now = Math.floor(Date.now() / 1000);
 
@@ -1242,11 +1254,17 @@ export async function handleSponsorsAPI(
     });
   }
 
-  // PUT /api/sponsors/:id/ban - Ban sponsor
+  // PUT /api/sponsors/:id/ban - Ban sponsor (god only)
   if (
     request.method === "PUT" &&
     pathname.match(/^\/api\/sponsors\/[^/]+\/ban$/)
   ) {
+    if (!(await requestIsFromGod(env, request))) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: corsHeaders,
+      });
+    }
     const id = pathname.split("/")[3];
     const now = Math.floor(Date.now() / 1000);
 
@@ -1296,11 +1314,17 @@ export async function handleSponsorsAPI(
     }
   }
 
-  // PUT /api/sponsors/:id/unban - Unban sponsor
+  // PUT /api/sponsors/:id/unban - Unban sponsor (god only)
   if (
     request.method === "PUT" &&
     pathname.match(/^\/api\/sponsors\/[^/]+\/unban$/)
   ) {
+    if (!(await requestIsFromGod(env, request))) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: corsHeaders,
+      });
+    }
     const id = pathname.split("/")[3];
     const now = Math.floor(Date.now() / 1000);
 
