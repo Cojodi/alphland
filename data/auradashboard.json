@@ -1,0 +1,37 @@
+{
+  "name": "Aura Dashboard",
+  "description": "Track key metrics of the AURA token powering the decentralized Prediction Market, and monitor platform growth, power distribution, and decentralization levels on the AURA Dashboard.",
+  "short_description": "Key AURA metrics — fast, clear, and all in one place.",
+  "tags": ["Analytics"],
+  "contracts": [],
+  "audits": [],
+  "verified": false,
+  "councils_choice": false,
+  "dotw": false,
+  "links": {
+    "website": "https://www.thewalkingcat.ru/aura/",
+    "careers": "",
+    "twitter": "https://x.com/iWalkingCat",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": ""
+  },
+  "twitterName": "@iwalkingcat",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2026-03-01T00:00:00.000Z",
+    "anonymous": false
+  },
+  "tokens": [],
+  "nft": {},
+  "media": {
+    "logoUrl": "/dapps/auradashboard/auradashboard-logo.webp",
+    "bannerUrl": "/dapps/auradashboard/auradashboard-banner.webp",
+    "previewUrl": "/dapps/auradashboard/auradashboard-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
