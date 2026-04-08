@@ -1,6 +1,38 @@
 import Layout from "../components/Layout";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import type { DashboardStats } from "./api/dashboard-stats";
+
+// ─── Count-up hook ────────────────────────────────────────────────────────────
+
+function useCountUp(target: number | null, duration = 900): number | null {
+  const [value, setValue] = useState<number | null>(null);
+  const rafRef = useRef<number>();
+
+  useEffect(() => {
+    if (target === null) {
+      setValue(null);
+      return;
+    }
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    const start = performance.now();
+
+    const animate = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - t, 3);
+      setValue(eased * target);
+      if (t < 1) rafRef.current = requestAnimationFrame(animate);
+      else setValue(target);
+    };
+
+    rafRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [target, duration]);
+
+  return value;
+}
 
 const POLL_INTERVAL_MS = 5 * 60_000;
 
@@ -58,6 +90,17 @@ function formatTime(ts: number): string {
 function pct(part: number, whole: number): string {
   if (!whole) return "0%";
   return `${((part / whole) * 100).toFixed(1)}%`;
+}
+
+// ─── Live indicator ───────────────────────────────────────────────────────────
+
+function LiveDot() {
+  return (
+    <span className="relative flex h-2 w-2 flex-shrink-0">
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accessible-green opacity-60" />
+      <span className="relative inline-flex rounded-full h-2 w-2 bg-accessible-green" />
+    </span>
+  );
 }
 
 // ─── Supply Ring (pure SVG donut) ────────────────────────────────────────────
@@ -201,7 +244,7 @@ function SupplyCard({
   ];
 
   return (
-    <div className="bg-white dark:bg-hero-dark border border-border-grey dark:border-white/10 rounded-xl p-6">
+    <div className="bg-white dark:bg-hero-dark border border-border-grey dark:border-white/10 rounded-xl p-6 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
       <p className="text-xs font-semibold uppercase tracking-wider text-light-charcoal dark:text-white/40 mb-5">
         Supply
       </p>
@@ -282,7 +325,7 @@ function StatCard({
 }: StatCardProps) {
   return (
     <div
-      className={`bg-white dark:bg-hero-dark border border-border-grey dark:border-white/10 rounded-xl p-5 flex flex-col gap-1${
+      className={`bg-white dark:bg-hero-dark border border-border-grey dark:border-white/10 rounded-xl p-5 flex flex-col gap-1 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200${
         accent ? " border-l-[3px] border-l-orange" : ""
       }`}
     >
@@ -330,7 +373,7 @@ function HeroCard({
   loading: boolean;
 }) {
   return (
-    <div className="bg-white dark:bg-hero-dark border border-border-grey dark:border-white/10 rounded-xl px-5 py-4">
+    <div className="bg-white dark:bg-hero-dark border border-border-grey dark:border-white/10 rounded-xl px-5 py-4 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
       <p className="text-xs font-semibold uppercase tracking-wider text-light-charcoal dark:text-white/40 mb-2">
         {label}
       </p>
@@ -409,6 +452,18 @@ export default function DashboardPage() {
 
   const hr = data?.hashrate != null ? formatHashrate(data.hashrate) : null;
 
+  // Count-up animations for key metrics
+  const animPrice = useCountUp(data?.alphPrice ?? null, 800);
+  const animMcap = useCountUp(data?.marketCap ?? null, 1100);
+  const animFdv = useCountUp(data?.fdv ?? null, 1100);
+  const animTvl = useCountUp(data?.tvlUsd ?? null, 900);
+  const animTxs = useCountUp(data?.totalTransactions ?? null, 1400);
+  const animHashrateRaw = useCountUp(data?.hashrate ?? null, 1000);
+  const animHashrate =
+    animHashrateRaw != null ? formatHashrate(animHashrateRaw) : null;
+  const animBurned = useCountUp(data?.burnedAlph24h ?? null, 1000);
+  const animDexVol = useCountUp(data?.dexVolume24h ?? null, 900);
+
   return (
     <Layout
       title="Alephium Dashboard"
@@ -417,7 +472,7 @@ export default function DashboardPage() {
     >
       <div className="container max-w-5xl mx-auto px-4 py-10">
         {/* Header */}
-        <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
+        <div className="flex items-start justify-between mb-8 flex-wrap gap-4 animate-fade-up">
           <div>
             <h1 className="text-2xl font-bold text-black dark:text-white">
               Alephium Dashboard
@@ -426,11 +481,14 @@ export default function DashboardPage() {
               Public ecosystem metrics
             </p>
           </div>
-          {lastUpdated && (
-            <span className="text-xs text-light-charcoal dark:text-white/40 bg-smoked-white dark:bg-white/5 px-3 py-1.5 rounded-full">
-              Last updated: {formatTime(lastUpdated.getTime())}
+          <div className="flex items-center gap-2 bg-smoked-white dark:bg-white/5 px-3 py-1.5 rounded-full">
+            <LiveDot />
+            <span className="text-xs text-light-charcoal dark:text-white/40">
+              {lastUpdated
+                ? `Updated ${formatTime(lastUpdated.getTime())}`
+                : "Loading…"}
             </span>
-          )}
+          </div>
         </div>
 
         {/* Error */}
@@ -448,18 +506,19 @@ export default function DashboardPage() {
         )}
 
         {/* ── Price / Market hero ── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+        <div
+          className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10 animate-fade-up"
+          style={{ animationDelay: "60ms" }}
+        >
           <HeroCard
             label="ALPH Price"
-            primary={
-              data?.alphPrice != null ? formatPrice(data.alphPrice) : null
-            }
+            primary={animPrice != null ? formatPrice(animPrice) : null}
             secondary="Source: DIA Data"
             loading={loading}
           />
           <HeroCard
             label="Market Cap"
-            primary={data?.marketCap != null ? formatUsd(data.marketCap) : null}
+            primary={animMcap != null ? formatUsd(animMcap) : null}
             secondary={
               data?.circulatingAlph != null && data?.totalAlph != null
                 ? `${pct(data.circulatingAlph, data.totalAlph)} circulating`
@@ -469,68 +528,69 @@ export default function DashboardPage() {
           />
           <HeroCard
             label="FDV"
-            primary={data?.fdv != null ? formatUsd(data.fdv) : null}
+            primary={animFdv != null ? formatUsd(animFdv) : null}
             secondary="Price × Total supply"
             loading={loading}
           />
           <HeroCard
             label="Total Value Locked"
-            primary={data?.tvlUsd != null ? formatUsd(data.tvlUsd) : null}
+            primary={animTvl != null ? formatUsd(animTvl) : null}
             secondary="Source: DeFi Llama"
             loading={loading}
           />
         </div>
 
         {/* ── Chain Metrics ── */}
-        <Section title="Chain Metrics" cols={5}>
-          <StatCard
-            label="Total Transactions"
-            value={
-              data?.totalTransactions != null
-                ? formatCount(data.totalTransactions)
-                : null
-            }
-            sub="All-time"
-            loading={loading}
-          />
-          <StatCard
-            label="Avg Block Time"
-            value={
-              data?.avgBlockTimeMs != null
-                ? (data.avgBlockTimeMs / 1000).toFixed(1)
-                : null
-            }
-            unit="seconds · of all shards"
-            loading={loading}
-          />
-          <StatCard
-            label="Hashrate"
-            value={hr?.num ?? null}
-            unit={hr?.unit}
-            loading={loading}
-          />
-          <StatCard
-            label="Blocks / Second"
-            value={
-              data?.blocksPerSecond != null
-                ? data.blocksPerSecond.toFixed(2)
-                : null
-            }
-            unit="blocks/s · 16 shards"
-            loading={loading}
-          />
-          <StatCard
-            label="Avg Tx Fee"
-            value={
-              data?.avgTxFeeAlph != null ? formatFee(data.avgTxFeeAlph) : null
-            }
-            sub="User txs · 15-min sample"
-            loading={loading}
-          />
-        </Section>
+        <div className="animate-fade-up" style={{ animationDelay: "120ms" }}>
+          <Section title="Chain Metrics" cols={5}>
+            <StatCard
+              label="Total Transactions"
+              value={animTxs != null ? formatCount(animTxs) : null}
+              sub="All-time"
+              loading={loading}
+            />
+            <StatCard
+              label="Avg Block Time"
+              value={
+                data?.avgBlockTimeMs != null
+                  ? (data.avgBlockTimeMs / 1000).toFixed(1)
+                  : null
+              }
+              unit="seconds · of all shards"
+              loading={loading}
+            />
+            <StatCard
+              label="Hashrate"
+              value={animHashrate?.num ?? null}
+              unit={animHashrate?.unit ?? hr?.unit}
+              loading={loading}
+            />
+            <StatCard
+              label="Blocks / Second"
+              value={
+                data?.blocksPerSecond != null
+                  ? data.blocksPerSecond.toFixed(2)
+                  : null
+              }
+              unit="blocks/s · 16 shards"
+              loading={loading}
+            />
+            <StatCard
+              label="Avg Tx Fee"
+              value={
+                data?.avgTxFeeAlph != null ? formatFee(data.avgTxFeeAlph) : null
+              }
+              sub="User txs · 15-min sample"
+              loading={loading}
+            />
+          </Section>
+        </div>
 
         {/* ── Tokenomics ── */}
-        <div className="mb-10">
+        <div
+          className="mb-10 animate-fade-up"
+          style={{ animationDelay: "180ms" }}
+        >
           <h2 className="text-xs font-semibold uppercase tracking-wider text-light-charcoal dark:text-white/40 mb-3">
             Tokenomics
           </h2>
@@ -542,11 +602,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 gap-4">
               <StatCard
                 label="Burned ALPH (24h)"
-                value={
-                  data?.burnedAlph24h != null
-                    ? formatAlph(data.burnedAlph24h)
-                    : null
-                }
+                value={animBurned != null ? formatAlph(animBurned) : null}
                 unit="ALPH"
                 sub="Est. from tx fees"
                 loading={loading}
@@ -573,11 +629,7 @@ export default function DashboardPage() {
               />
               <StatCard
                 label="DEX Volume (24h)"
-                value={
-                  data?.dexVolume24h != null
-                    ? formatUsd(data.dexVolume24h)
-                    : null
-                }
+                value={animDexVol != null ? formatUsd(animDexVol) : null}
                 sub="Source: DeFi Llama"
                 loading={loading}
               />
@@ -586,34 +638,36 @@ export default function DashboardPage() {
         </div>
 
         {/* ── Adoption ── */}
-        <Section title="Adoption" cols={3}>
-          <StatCard
-            label="dApps"
-            value={data != null ? String(data.dappCount) : null}
-            sub="DeFi · NFTs · Games · Quests · Social"
-            loading={loading}
-          />
-          <StatCard
-            label="Weekly Active Addresses"
-            value={
-              data?.activeAddresses7d != null
-                ? formatCount(data.activeAddresses7d)
-                : null
-            }
-            sub="Unique senders · last 7 days"
-            loading={loading}
-          />
-          <StatCard
-            label="Monthly Active Addresses"
-            value={
-              data?.activeAddresses30d != null
-                ? formatCount(data.activeAddresses30d)
-                : null
-            }
-            sub="Unique senders · last 30 days"
-            loading={loading}
-          />
-        </Section>
+        <div className="animate-fade-up" style={{ animationDelay: "240ms" }}>
+          <Section title="Adoption" cols={3}>
+            <StatCard
+              label="dApps"
+              value={data != null ? String(data.dappCount) : null}
+              sub="DeFi · NFTs · Games · Quests · Social"
+              loading={loading}
+            />
+            <StatCard
+              label="Weekly Active Addresses"
+              value={
+                data?.activeAddresses7d != null
+                  ? formatCount(data.activeAddresses7d)
+                  : null
+              }
+              sub="Unique senders · last 7 days"
+              loading={loading}
+            />
+            <StatCard
+              label="Monthly Active Addresses"
+              value={
+                data?.activeAddresses30d != null
+                  ? formatCount(data.activeAddresses30d)
+                  : null
+              }
+              sub="Unique senders · last 30 days"
+              loading={loading}
+            />
+          </Section>
+        </div>
 
         {/* Footer */}
         <p className="text-xs text-center text-light-charcoal dark:text-white/30 mt-6">
