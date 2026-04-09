@@ -176,7 +176,7 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo, dappResources }) => {
                       rel="noopener noreferrer"
                       className="px-8"
                     >
-                      Launch Dapp
+                      {isDapp(dappInfo.tags) ? "Launch Dapp" : "Visit Website"}
                     </Button>
                   </Link>
                 </div>
@@ -374,6 +374,10 @@ const DappPage: NextPage<DappPageProps> = ({ dappInfo, dappResources }) => {
     </Layout>
   );
 };
+
+const DAPP_TAGS = ["DeFi", "NFTs", "Games", "Quests", "Social"];
+
+const isDapp = (tags: string[]) => tags.some((t) => DAPP_TAGS.includes(t));
 
 const isTweetUrl = (url: string) =>
   /^https?:\/\/(twitter\.com|x\.com)\/\w+\/status\/\d+/.test(url);

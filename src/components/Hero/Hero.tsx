@@ -22,6 +22,7 @@ type HeroProps = {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   dappCount: number;
+  toolCount: number;
   bannerDapps?: BannerDapp[];
 };
 
@@ -132,6 +133,7 @@ const Hero = ({
   searchQuery,
   onSearchChange,
   dappCount,
+  toolCount,
   bannerDapps,
 }: HeroProps) => {
   const hasBanner = bannerDapps && bannerDapps.length > 0;
@@ -149,7 +151,7 @@ const Hero = ({
             Explore the <span className="text-orange">Alephium</span> Ecosystem.
           </h1>
           <p className="text-white text-lg md:text-xl mb-8 opacity-80">
-            Discover {dappCount}+ dApps, tools and services across Alephium.
+            Find dApps, tools, services and resources to get started.
           </p>
           <div className="max-w-md opacity-90">
             <SearchBar
