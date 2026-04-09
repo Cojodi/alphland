@@ -9,7 +9,7 @@ function getEntryTypeLabel(tags: string[]): string {
   if (tags.includes("Wallets")) return "Wallet";
   if (tags.includes("CEX") || tags.includes("Onramps")) return "Exchange";
   if (tags.includes("Bridges")) return "Bridge";
-  return "Tool";
+  return tags[0] ?? "Tool";
 }
 
 interface CardProps {
