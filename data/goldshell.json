@@ -1,0 +1,37 @@
+{
+  "name": "Goldshell",
+  "description": "Goldshell is a manufacturer of ASIC mining hardware founded in 2017. It is known for compact and home oriented miners, while also offering larger mining equipment and related infrastructure products.",
+  "short_description": "Plug In. Sit Back. Watch It Grow.",
+  "tags": ["Mining", "ASIC"],
+  "contracts": [],
+  "councils_choice": false,
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://www.goldshell.com",
+    "careers": "",
+    "twitter": "https://x.com/goldshellminer",
+    "telegram": "https://t.me/goldshell_miner",
+    "discord": "https://discord.gg/goldshellminer",
+    "github": "",
+    "youtube": "https://www.youtube.com/@goldshellminer_official",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "@goldshellminer",
+  "teamInfo": {
+    "contactEmail": "support@goldshell.com",
+    "founded": "2017-01",
+    "anonymous": false
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/goldshell/goldshell-logo.webp",
+    "bannerUrl": "/dapps/goldshell/goldshell-banner.webp",
+    "previewUrl": "/dapps/goldshell/goldshell-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
