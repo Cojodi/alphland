@@ -1,0 +1,37 @@
+{
+  "name": "DragonBall Miner",
+  "description": "DragonBall Miner is a manufacturer of ASIC mining hardware. It produces mining machines for multiple algorithms and also offers hosting services for users who prefer not to manage their own infrastructure.",
+  "short_description": "The world's leading manufacturer of cryptocurrency mining equipment",
+  "tags": ["Mining", "ASIC"],
+  "contracts": [],
+  "councils_choice": false,
+  "audits": [],
+  "verified": false,
+  "dotw": false,
+  "links": {
+    "website": "https://dragonballminer.com",
+    "careers": "",
+    "twitter": "",
+    "telegram": "",
+    "discord": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "support@dragonballminer.com",
+    "founded": "",
+    "anonymous": true
+  },
+  "tokens": [],
+  "media": {
+    "logoUrl": "/dapps/dragonballminer/dragonballminer-logo.webp",
+    "bannerUrl": "/dapps/dragonballminer/dragonballminer-banner.webp",
+    "previewUrl": "/dapps/dragonballminer/dragonballminer-preview.webp",
+    "videoUrl": "",
+    "gallery": []
+  }
+}
