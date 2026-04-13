@@ -1,0 +1,36 @@
+{
+  "name": "Alephium Detectives",
+  "description": "A detective game in which the player takes on the role of a detective and receives a reward for solving the case.",
+  "short_description": "Investigate the case and earn a reward.",
+  "tags": ["Games"],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://alephium-detectives.ru/",
+    "careers": "",
+    "twitter": "https://x.com/AlphDetectives",
+    "telegram": "",
+    "discord": "",
+    "docs": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "Alephium Detectives",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "2026-04-13T00:00:00.000Z",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/alephium-detectives/logo.webp",
+    "bannerUrl": "/dapps/alephium-detectives/banner.webp",
+    "previewUrl": "/dapps/alephium-detectives/preview.webp"
+  },
+  "contracts": [],
+  "audits": [],
+  "tokens": []
+}
