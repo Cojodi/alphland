@@ -39,6 +39,15 @@ module.exports = {
       gridTemplateColumns: {
         "dapp-header": "3fr 1fr 1fr",
       },
+      keyframes: {
+        "fade-up": {
+          "0%": { opacity: "0", transform: "translateY(14px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+      },
+      animation: {
+        "fade-up": "fade-up 0.5s ease-out backwards",
+      },
     },
   },
   plugins: [],

@@ -46,18 +46,21 @@ const Footer = ({ currentTheme }: FooterProps) => {
             </a>
           </div>
         </div>
-        <p className="text-center font-medium text-base leading-[16px] mb-4 md:mb-0">
+        <div className="flex flex-wrap items-center justify-center gap-x-1 gap-y-2 font-medium text-base mb-4 md:mb-0">
           <Link href="/disclosure-statement">
-            <a className="inline-block mx-2">Disclosure statement</a>
+            <a className="px-2">Disclosure statement</a>
           </Link>
-          <Link href="/terms" className="inline-block my-4 mx-4">
-            <a className="inline-block mx-2">Terms of use</a>
+          <Link href="/terms">
+            <a className="px-2">Terms of use</a>
           </Link>
-          <Link href="/privacy" className="inline-block my-4 mx-4">
-            <a className="inline-block mx-2">Privacy policy</a>
+          <Link href="/privacy">
+            <a className="px-2">Privacy policy</a>
+          </Link>
+          <Link href="/dashboard">
+            <a className="px-2">Dashboard</a>
           </Link>
           <Link href="/status">
-            <a className="inline-flex items-center gap-1.5 mx-2">
+            <a className="flex items-center gap-1.5 px-2">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accessible-green opacity-60" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-accessible-green" />
@@ -65,7 +68,7 @@ const Footer = ({ currentTheme }: FooterProps) => {
               Network Status
             </a>
           </Link>
-        </p>
+        </div>
         {/* <button
           onClick={() => {
             navigator.clipboard.writeText(donationWalletAddr).then(() => {
