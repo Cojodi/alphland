@@ -194,6 +194,17 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
               Ecosystem Map
             </span>
           </Link>
+          <Link href="/eco-token-price-chart">
+            <span
+              className={`px-4 py-2 text-sm font-medium uppercase transition-colors cursor-pointer ${
+                isActivePath("/eco-token-price-chart")
+                  ? "text-orange dark:text-orange font-bold"
+                  : "text-black dark:text-white hover:text-orange dark:hover:text-orange"
+              }`}
+            >
+              Token Explorer
+            </span>
+          </Link>
         </div>
         <div className="flex gap-3.5 z-[2] items-center">
           <button
