@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
+import { useDarkMode } from "../hooks/useDarkMode";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -17,7 +18,7 @@ const TOKENS = [
     name: "Alephium",
     symbol: "ALPH",
     address: "tgx7VNFoP9DJiFMFgXXtafQZkUvyEdDHT9ryamHJYrjq",
-    color: "#00D4AA",
+    color: "#02A697",
   },
   {
     name: "Ayin",
@@ -35,7 +36,7 @@ const TOKENS = [
     name: "AlphBanX",
     symbol: "ABX",
     address: "258k9T6WqezTLdfGvHixXzK1yLATeSPuyhtcxzQ3V2pqV",
-    color: "#FDCB6E",
+    color: "#ff5d51",
   },
   {
     name: "Elexium",
@@ -60,12 +61,6 @@ const TOKENS = [
     symbol: "$ONION",
     address: "25yXCxAdnzMgHFVyF963hEYKGzt8hVQtqUXkoKGQKmcNs",
     color: "#55EFC4",
-  },
-  {
-    name: "Shin Inu",
-    symbol: "SHIN",
-    address: "xvtt7PPGia6PmzZhji73aoiLhottxnmMNESabDqhD74T",
-    color: "#FD79A8",
   },
   {
     name: "Its 404ver",
@@ -132,9 +127,10 @@ interface ChartPoint {
 interface TokenCardProps {
   token: (typeof TOKENS)[number];
   range: RangeLabel;
+  isDark: boolean;
 }
 
-function TokenCard({ token, range }: TokenCardProps) {
+function TokenCard({ token, range, isDark }: TokenCardProps) {
   const [raw, setRaw] = useState<[number, number][]>([]);
   const [status, setStatus] = useState<"loading" | "ok" | "empty" | "error">(
     "loading",
@@ -168,35 +164,38 @@ function TokenCard({ token, range }: TokenCardProps) {
   }, [token.address, range]);
 
   const rangeObj = RANGES.find((r) => r.label === range)!;
-
   const chartData: ChartPoint[] = raw.map(([ts, price]) => ({ ts, price }));
-
   const currentPrice = raw.length ? raw[raw.length - 1][1] : null;
   const change = pctChange(raw);
   const isPositive = change ? change.startsWith("+") : null;
 
+  // Explicit colors for SVG elements — "currentColor" is unreliable in recharts
+  const tickColor = isDark ? "#8F8D8C" : "#5c5b59";
+  const gridColor = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
+  const tooltipBg = isDark ? "#1F1F1F" : "#333333";
+
   return (
-    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-col gap-3">
+    <div className="bg-white dark:bg-hero-dark border border-border-grey dark:border-dark-charcoal rounded-xl p-4 flex flex-col gap-3 shadow-box-image-shadow">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <div className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
+          <div className="font-semibold text-black dark:text-white text-sm">
             {token.name}
           </div>
-          <div className="text-xs text-gray-500 dark:text-gray-400">
+          <div className="text-xs text-light-charcoal dark:text-lightgrey">
             {token.symbol}
           </div>
         </div>
         <div className="text-right">
           {currentPrice !== null ? (
             <>
-              <div className="font-mono text-sm font-semibold text-gray-900 dark:text-gray-100">
+              <div className="font-mono text-sm font-semibold text-black dark:text-white">
                 {formatPrice(currentPrice)}
               </div>
               {change && (
                 <div
                   className={`text-xs font-medium ${
-                    isPositive ? "text-green-500" : "text-red-500"
+                    isPositive ? "text-accessible-green" : "text-orange"
                   }`}
                 >
                   {change}
@@ -204,7 +203,7 @@ function TokenCard({ token, range }: TokenCardProps) {
               )}
             </>
           ) : (
-            <div className="text-xs text-gray-400">—</div>
+            <div className="text-xs text-light-charcoal">—</div>
           )}
         </div>
       </div>
@@ -213,16 +212,16 @@ function TokenCard({ token, range }: TokenCardProps) {
       <div className="h-28">
         {status === "loading" && (
           <div className="h-full flex items-center justify-center">
-            <div className="w-4 h-4 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
+            <div className="w-4 h-4 border-2 border-clay border-t-transparent rounded-full animate-spin" />
           </div>
         )}
         {status === "empty" && (
-          <div className="h-full flex items-center justify-center text-xs text-gray-400">
+          <div className="h-full flex items-center justify-center text-xs text-light-charcoal dark:text-lightgrey">
             No data available
           </div>
         )}
         {status === "error" && (
-          <div className="h-full flex items-center justify-center text-xs text-red-400">
+          <div className="h-full flex items-center justify-center text-xs text-orange">
             Failed to load
           </div>
         )}
@@ -240,17 +239,21 @@ function TokenCard({ token, range }: TokenCardProps) {
                   x2="0"
                   y2="1"
                 >
-                  <stop offset="5%" stopColor={token.color} stopOpacity={0.3} />
+                  <stop
+                    offset="5%"
+                    stopColor={token.color}
+                    stopOpacity={0.35}
+                  />
                   <stop
                     offset="95%"
                     stopColor={token.color}
-                    stopOpacity={0.02}
+                    stopOpacity={0.03}
                   />
                 </linearGradient>
               </defs>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="rgba(128,128,128,0.1)"
+                stroke={gridColor}
                 vertical={false}
               />
               <XAxis
@@ -259,7 +262,7 @@ function TokenCard({ token, range }: TokenCardProps) {
                 domain={["auto", "auto"]}
                 scale="time"
                 tickFormatter={(ts) => formatDate(ts, rangeObj.days)}
-                tick={{ fontSize: 9, fill: "currentColor" }}
+                tick={{ fontSize: 9, fill: tickColor }}
                 tickLine={false}
                 axisLine={false}
                 minTickGap={50}
@@ -267,14 +270,14 @@ function TokenCard({ token, range }: TokenCardProps) {
               <YAxis
                 domain={["auto", "auto"]}
                 tickFormatter={formatPrice}
-                tick={{ fontSize: 9, fill: "currentColor" }}
+                tick={{ fontSize: 9, fill: tickColor }}
                 tickLine={false}
                 axisLine={false}
                 width={55}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "rgba(17,24,39,0.9)",
+                  backgroundColor: tooltipBg,
                   border: "none",
                   borderRadius: "6px",
                   fontSize: "11px",
@@ -293,7 +296,7 @@ function TokenCard({ token, range }: TokenCardProps) {
                 type="monotone"
                 dataKey="price"
                 stroke={token.color}
-                strokeWidth={1.5}
+                strokeWidth={2}
                 fill={`url(#grad-${token.symbol})`}
                 dot={false}
                 isAnimationActive={false}
@@ -311,6 +314,8 @@ function TokenCard({ token, range }: TokenCardProps) {
 export default function EcoTokenPriceChart() {
   const [range, setRange] = useState<RangeLabel>("30D");
   const [query, setQuery] = useState("");
+  const { currentTheme } = useDarkMode();
+  const isDark = currentTheme === "dark";
 
   const filteredTokens = query.trim()
     ? TOKENS.filter(
@@ -322,17 +327,17 @@ export default function EcoTokenPriceChart() {
 
   return (
     <Layout
-      title="Ecosystem Token Price Charts"
+      title="Eco Token Explorer"
       description="Price history charts for Alephium ecosystem tokens powered by Mobula."
     >
-      <div className="max-w-7xl mx-auto px-4 py-10">
+      <div className="container px-4 mx-auto mb-16 lg:mb-32 mt-10">
         {/* Page header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-2xl font-bold text-black dark:text-white">
             Eco Token Explorer
           </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Historical price data for Alephium ecosystem tokens via Mobula API
+          <p className="mt-1 text-sm text-light-charcoal dark:text-lightgrey">
+            Historical price data for Alephium ecosystem tokens
           </p>
         </div>
 
@@ -341,7 +346,7 @@ export default function EcoTokenPriceChart() {
           {/* Search */}
           <div className="relative flex-1 max-w-xs">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-light-charcoal pointer-events-none"
               fill="none"
               stroke="currentColor"
               strokeWidth={2}
@@ -355,12 +360,12 @@ export default function EcoTokenPriceChart() {
               placeholder="Search token..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-500"
+              className="w-full pl-9 pr-8 py-1.5 text-sm rounded-lg border border-border-grey dark:border-dark-charcoal bg-white dark:bg-hero-dark text-black dark:text-white placeholder-light-charcoal focus:outline-none focus:ring-1 focus:ring-clay"
             />
             {query && (
               <button
                 onClick={() => setQuery("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-light-charcoal hover:text-black dark:hover:text-white"
               >
                 ×
               </button>
@@ -375,8 +380,8 @@ export default function EcoTokenPriceChart() {
                 onClick={() => setRange(r.label)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   range === r.label
-                    ? "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900"
-                    : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    ? "bg-black dark:bg-white text-white dark:text-black"
+                    : "bg-smoked-white dark:bg-light-black text-light-charcoal dark:text-lightgrey hover:bg-border-grey dark:hover:bg-dark-charcoal"
                 }`}
               >
                 {r.label}
@@ -389,23 +394,28 @@ export default function EcoTokenPriceChart() {
         {filteredTokens.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filteredTokens.map((token) => (
-              <TokenCard key={token.address} token={token} range={range} />
+              <TokenCard
+                key={token.address}
+                token={token}
+                range={range}
+                isDark={isDark}
+              />
             ))}
           </div>
         ) : (
-          <div className="py-20 text-center text-sm text-gray-400">
+          <div className="py-20 text-center text-sm text-light-charcoal dark:text-lightgrey">
             No tokens found for &ldquo;{query}&rdquo;
           </div>
         )}
 
-        {/* Footer note */}
-        <p className="mt-8 text-center text-xs text-gray-400">
+        {/* Footer */}
+        <p className="mt-8 text-center text-xs text-light-charcoal dark:text-lightgrey">
           Data powered by{" "}
           <a
             href="https://mobula.io"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline hover:text-gray-600 dark:hover:text-gray-200"
+            className="underline hover:text-black dark:hover:text-white"
           >
             Mobula
           </a>
