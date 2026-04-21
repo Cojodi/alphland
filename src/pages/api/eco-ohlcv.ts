@@ -1,7 +1,8 @@
 /**
  * GET /api/eco-ohlcv?address=<addr>&from=<ts_ms>
  *
- * Fetches price history from Mobula and aggregates into hourly OHLCV candles.
+ * Fetches price history from Mobula and aggregates into OHLCV candles.
+ * Aggregation interval is adaptive: 1h for <7d, 4h for <30d, 1d for <1y, 1w otherwise.
  * Cached for 12 hours.
  */
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -17,15 +18,26 @@ export type OHLCVCandle = {
   volume: number;
 };
 
-function aggregateCandles(priceHistory: [number, number][]): OHLCVCandle[] {
-  const hourMap = new Map<number, number[]>();
+function pickInterval(rangeMs: number | null): number {
+  if (!rangeMs || rangeMs > 365 * 24 * 3_600_000) return 7 * 24 * 3_600_000; // 1 week
+  if (rangeMs > 90 * 24 * 3_600_000) return 24 * 3_600_000; // 1 day
+  if (rangeMs > 30 * 24 * 3_600_000) return 6 * 3_600_000; // 6 hours
+  if (rangeMs > 7 * 24 * 3_600_000) return 4 * 3_600_000; // 4 hours
+  return 3_600_000; // 1 hour
+}
+
+function aggregateCandles(
+  priceHistory: [number, number][],
+  intervalMs: number,
+): OHLCVCandle[] {
+  const buckets = new Map<number, number[]>();
   for (const [ts, price] of priceHistory) {
-    const hourTs = Math.floor(ts / 3_600_000) * 3_600_000;
-    const arr = hourMap.get(hourTs) ?? [];
+    const bucket = Math.floor(ts / intervalMs) * intervalMs;
+    const arr = buckets.get(bucket) ?? [];
     arr.push(price);
-    hourMap.set(hourTs, arr);
+    buckets.set(bucket, arr);
   }
-  return Array.from(hourMap.entries())
+  return Array.from(buckets.entries())
     .sort(([a], [b]) => a - b)
     .map(([ts, prices]) => ({
       ts,
@@ -52,13 +64,17 @@ export default async function handler(
     return res.status(400).json({ error: "address is required" });
   }
 
+  const fromMs = from && typeof from === "string" ? Number(from) : null;
+  const rangeMs = fromMs ? Date.now() - fromMs : null;
+  const intervalMs = pickInterval(rangeMs);
+
   const params = new URLSearchParams({
     asset: address,
     blockchain: "alephium",
   });
 
-  if (from && typeof from === "string") {
-    params.set("from", from);
+  if (fromMs) {
+    params.set("from", String(fromMs));
   }
 
   try {
@@ -75,7 +91,7 @@ export default async function handler(
     const json = await r.json();
     const priceHistory: [number, number][] = json?.data?.price_history ?? [];
 
-    const candles = aggregateCandles(priceHistory);
+    const candles = aggregateCandles(priceHistory, intervalMs);
 
     res.setHeader(
       "Cache-Control",

@@ -22,7 +22,7 @@ const TOKENS = [
     symbol: "ALPH",
     address: "tgx7VNFoP9DJiFMFgXXtafQZkUvyEdDHT9ryamHJYrjq",
     color: "#02A697",
-    logo: "/dapps/alephium-explorer/alephium-explorer-logo.webp",
+    logo: "/alephium-logo-round.png",
   },
   {
     name: "Ayin",
@@ -118,7 +118,7 @@ function formatPct(v: number): string {
 
 function formatDate(ts: number, days: number): string {
   const d = new Date(ts);
-  if (days <= 30)
+  if (days > 0 && days <= 30)
     return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
   return d.toLocaleDateString(undefined, { year: "numeric", month: "short" });
 }
