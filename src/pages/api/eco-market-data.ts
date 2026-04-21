@@ -50,11 +50,6 @@ const TRACKED = [
     symbol: "$ONION",
     name: "MyOnion.fun",
   },
-  {
-    address: "utDzMDHq8fygNzqZjCgRjhJbj1Rew14ExohxngeRKA1D",
-    symbol: "TOP",
-    name: "Its 404ver",
-  },
 ];
 
 export type TokenMarketData = {

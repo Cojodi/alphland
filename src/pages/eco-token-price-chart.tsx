@@ -73,13 +73,6 @@ const TOKENS = [
     color: "#55EFC4",
     logo: "/dapps/myonion/myonion-logo.webp",
   },
-  {
-    name: "Its 404ver",
-    symbol: "TOP",
-    address: "utDzMDHq8fygNzqZjCgRjhJbj1Rew14ExohxngeRKA1D",
-    color: "#74B9FF",
-    logo: null,
-  },
 ];
 
 const RANGES = [
@@ -102,7 +95,10 @@ function formatPrice(v: number): string {
   if (v >= 1) return `$${v.toFixed(2)}`;
   if (v >= 0.01) return `$${v.toFixed(4)}`;
   if (v >= 0.0001) return `$${v.toFixed(6)}`;
-  return `$${v.toExponential(3)}`;
+  if (v < 1e-10) return `< $0.0000000001`;
+  // e.g. 4.476e-6 → $0.00000448
+  const decimals = Math.min(10, Math.ceil(-Math.log10(v)) + 2);
+  return `$${v.toFixed(decimals)}`;
 }
 
 function formatUsd(v: number): string {
@@ -258,10 +254,6 @@ function StatsPanel({ token }: { token: TokenMarketData }) {
         <StatItem
           label="Vol 24h"
           value={token.volume != null ? formatUsd(token.volume) : null}
-        />
-        <StatItem
-          label="Vol 7d"
-          value={token.volume_7d != null ? formatUsd(token.volume_7d) : null}
         />
         <StatItem
           label="Change 24h"
