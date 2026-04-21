@@ -299,9 +299,6 @@ function StatsPanel({ token }: { token: TokenMarketData }) {
           label="ATL"
           value={token.atl != null ? formatPrice(token.atl) : null}
         />
-        {token.rank != null && (
-          <StatItem label="Rank" value={`#${token.rank}`} />
-        )}
       </div>
     </div>
   );
@@ -512,7 +509,8 @@ export default function EcoTokenExplorer() {
         : period === "7D"
           ? 7 * 24 * 3600_000
           : 30 * 24 * 3600_000;
-    const fromMs = Date.now() - ms;
+    // Round to nearest hour so Vercel CDN cache is shared across page loads
+    const fromMs = Math.floor((Date.now() - ms) / 3_600_000) * 3_600_000;
 
     Promise.all(
       TOKENS.map(({ address }) =>
@@ -542,7 +540,8 @@ export default function EcoTokenExplorer() {
     const rangeObj = RANGES.find((r) => r.label === chartRange)!;
     const params = new URLSearchParams({ address: expandedAddress });
     if (rangeObj.days > 0) {
-      params.set("from", String(Date.now() - rangeObj.days * 24 * 3600_000));
+      const rawFrom = Date.now() - rangeObj.days * 24 * 3600_000;
+      params.set("from", String(Math.floor(rawFrom / 3_600_000) * 3_600_000));
     }
 
     fetch(`/api/eco-ohlcv?${params}`)
