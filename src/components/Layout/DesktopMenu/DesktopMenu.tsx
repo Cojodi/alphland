@@ -213,7 +213,7 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
                   : "text-black dark:text-white hover:text-orange dark:hover:text-orange"
               }`}
             >
-              Token Explorer
+              Tokens Explorer
             </span>
           </Link>
         </div>
