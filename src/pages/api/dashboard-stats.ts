@@ -51,6 +51,12 @@ export type DashboardStats = {
   checkedAt: number;
 };
 
+// ─── In-memory cache ────────────────────────────────────────────────────────
+
+const CACHE_TTL_MS = 5 * 60_000;
+let cachedResult: DashboardStats | null = null;
+let cacheExpiresAt = 0;
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 async function fetchJSON<T>(url: string, timeoutMs = 8000): Promise<T | null> {
@@ -114,7 +120,7 @@ function countDapps(): number {
  */
 async function fetchHashrate(): Promise<number | null> {
   const now = Date.now();
-  const from = now - 2 * 24 * 60 * 60 * 1000; // last 2 days
+  const from = now - 2 * 60 * 60 * 1000; // last 2 hours
   type HashrateEntry = { timestamp: number; hashrate: string };
   const data = await fetchJSON<HashrateEntry[]>(
     `${ALPH_EXPLORER}/charts/hashrates?fromTs=${from}&toTs=${now}&interval-type=hourly`,
@@ -141,7 +147,7 @@ async function fetchFeeStats(): Promise<{
   const fromTs = now - 15 * 60 * 1000;
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 25_000);
+  const timer = setTimeout(() => controller.abort(), 8_000);
 
   try {
     const res = await fetch(
@@ -208,6 +214,11 @@ export default async function handler(
   }
 
   const now = Date.now();
+
+  if (cachedResult && now < cacheExpiresAt) {
+    res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=60");
+    return res.status(200).json(cachedResult);
+  }
   const secret = process.env.INTERNAL_SECRET;
 
   type DefiLlamaChain = { name: string; tvl: number };
@@ -287,8 +298,7 @@ export default async function handler(
 
   const dappCount = countDapps();
 
-  res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=60");
-  return res.status(200).json({
+  const result: DashboardStats = {
     // Chain Metrics
     totalTransactions:
       typeof totalTransactions === "number" ? totalTransactions : null,
@@ -316,5 +326,11 @@ export default async function handler(
     activeAddresses30d: addrCounts?.count30d ?? null,
 
     checkedAt: now,
-  });
+  };
+
+  cachedResult = result;
+  cacheExpiresAt = now + CACHE_TTL_MS;
+
+  res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=60");
+  return res.status(200).json(result);
 }
