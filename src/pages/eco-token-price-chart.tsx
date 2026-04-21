@@ -733,7 +733,7 @@ export default function EcoTokenExplorer() {
                           >
                             {/* Rank */}
                             <td className="px-4 py-4 text-sm text-light-charcoal dark:text-white/40 w-10">
-                              {token.rank ?? idx + 1}
+                              {idx + 1}
                             </td>
 
                             {/* Token */}
