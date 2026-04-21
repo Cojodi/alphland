@@ -1,8 +1,8 @@
 /**
  * GET /api/eco-ohlcv?address=<addr>&from=<ts_ms>
  *
- * Fetches 1-hour OHLCV candles for a token via Mobula.
- * Cached for 12 hours — 5 credits per call.
+ * Fetches price history from Mobula and aggregates into hourly OHLCV candles.
+ * Cached for 12 hours.
  */
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -16,6 +16,27 @@ export type OHLCVCandle = {
   close: number;
   volume: number;
 };
+
+function aggregateCandles(priceHistory: [number, number][]): OHLCVCandle[] {
+  const hourMap = new Map<number, number[]>();
+  for (const [ts, price] of priceHistory) {
+    const hourTs = Math.floor(ts / 3_600_000) * 3_600_000;
+    const arr = hourMap.get(hourTs) ?? [];
+    arr.push(price);
+    hourMap.set(hourTs, arr);
+  }
+  return Array.from(hourMap.entries())
+    .sort(([a], [b]) => a - b)
+    .map(([ts, prices]) => ({
+      ts,
+      open: prices[0],
+      close: prices[prices.length - 1],
+      high: Math.max(...prices),
+      low: Math.min(...prices),
+      volume: 0,
+    }))
+    .filter((c) => c.high >= c.low);
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -34,7 +55,6 @@ export default async function handler(
   const params = new URLSearchParams({
     asset: address,
     blockchain: "alephium",
-    period: "60",
   });
 
   if (from && typeof from === "string") {
@@ -43,7 +63,7 @@ export default async function handler(
 
   try {
     const r = await fetch(
-      `https://api.mobula.io/api/v2/token/ohlcv-history?${params}`,
+      `https://api.mobula.io/api/1/market/history?${params}`,
       { headers: { Authorization: MOBULA_API_KEY ?? "" } },
     );
 
@@ -53,25 +73,9 @@ export default async function handler(
     }
 
     const json = await r.json();
+    const priceHistory: [number, number][] = json?.data?.price_history ?? [];
 
-    // Normalize: Mobula may return arrays or objects
-    const raw: any[] = json?.data?.ohlcv ?? json?.data ?? [];
-    const candles: OHLCVCandle[] = raw
-      .map((item: any) => {
-        if (Array.isArray(item)) {
-          const [ts, open, high, low, close, volume] = item;
-          return { ts, open, high, low, close, volume };
-        }
-        return {
-          ts: item.timestamp ?? item.ts ?? 0,
-          open: item.open ?? 0,
-          high: item.high ?? 0,
-          low: item.low ?? 0,
-          close: item.close ?? 0,
-          volume: item.volume ?? 0,
-        };
-      })
-      .filter((c) => c.ts > 0 && c.high >= c.low);
+    const candles = aggregateCandles(priceHistory);
 
     res.setHeader(
       "Cache-Control",

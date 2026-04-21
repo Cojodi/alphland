@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import Layout from "../components/Layout";
 import { useDarkMode } from "../hooks/useDarkMode";
 import type { TokenMarketData } from "./api/eco-market-data";
@@ -21,54 +22,63 @@ const TOKENS = [
     symbol: "ALPH",
     address: "tgx7VNFoP9DJiFMFgXXtafQZkUvyEdDHT9ryamHJYrjq",
     color: "#02A697",
+    logo: "/dapps/alephium-explorer/alephium-explorer-logo.webp",
   },
   {
     name: "Ayin",
     symbol: "AYIN",
     address: "vT49PY8ksoUL6NcXiZ1t2wAmC7tTPRfFfER8n3UCLvXy",
     color: "#FF6B35",
+    logo: null,
   },
   {
     name: "AlphPad",
     symbol: "APAD",
     address: "27HxXZJBTPjhHXwoF1Ue8sLMcSxYdxefoN2U6d8TKmZsm",
     color: "#6C5CE7",
+    logo: "/dapps/alphpad/alphpad-logo.webp",
   },
   {
     name: "AlphBanX",
     symbol: "ABX",
     address: "258k9T6WqezTLdfGvHixXzK1yLATeSPuyhtcxzQ3V2pqV",
     color: "#ff5d51",
+    logo: "/dapps/alphbanx/alphbanx-logo.webp",
   },
   {
     name: "Elexium",
     symbol: "EX",
     address: "28LgMeQGdvtXfsvWhpNNVx1DoSiz7TzrATv9qxMQP5is9",
     color: "#00B894",
+    logo: "/dapps/elexium/elexium-logo.webp",
   },
   {
     name: "RalphBuilder",
     symbol: "BUILD",
     address: "27Pb61qBV1L168Nb8oEvVmy7m6K8sSGK9RRSngMxkuKpb",
     color: "#E17055",
+    logo: "/dapps/ralphbuilder/ralphbuilder-logo.webp",
   },
   {
     name: "Aura",
     symbol: "AURA",
     address: "ywWQo64HBSMXcv3XBLrm8WjY2Co43BpYJPB3YoSDd4xX",
     color: "#A29BFE",
+    logo: "/dapps/aura/logo.webp",
   },
   {
     name: "MyOnion.fun",
     symbol: "$ONION",
     address: "25yXCxAdnzMgHFVyF963hEYKGzt8hVQtqUXkoKGQKmcNs",
     color: "#55EFC4",
+    logo: "/dapps/myonion/myonion-logo.webp",
   },
   {
     name: "Its 404ver",
     symbol: "TOP",
     address: "utDzMDHq8fygNzqZjCgRjhJbj1Rew14ExohxngeRKA1D",
     color: "#74B9FF",
+    logo: null,
   },
 ];
 
@@ -729,15 +739,27 @@ export default function EcoTokenExplorer() {
                             {/* Token */}
                             <td className="px-4 py-4">
                               <div className="flex items-center gap-3">
-                                <span
-                                  className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-white"
-                                  style={{ background: meta.color }}
-                                >
-                                  {meta.symbol
-                                    .replace("$", "")
-                                    .slice(0, 2)
-                                    .toUpperCase()}
-                                </span>
+                                {meta.logo ? (
+                                  <div className="w-8 h-8 rounded-full flex-shrink-0 overflow-hidden">
+                                    <Image
+                                      src={meta.logo}
+                                      alt={meta.name}
+                                      width={32}
+                                      height={32}
+                                      className="rounded-full object-cover"
+                                    />
+                                  </div>
+                                ) : (
+                                  <span
+                                    className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-white"
+                                    style={{ background: meta.color }}
+                                  >
+                                    {meta.symbol
+                                      .replace("$", "")
+                                      .slice(0, 2)
+                                      .toUpperCase()}
+                                  </span>
+                                )}
                                 <div>
                                   <div className="text-sm font-semibold text-black dark:text-white leading-tight">
                                     {meta.name}
