@@ -68,12 +68,6 @@ const TOKENS = [
     address: "utDzMDHq8fygNzqZjCgRjhJbj1Rew14ExohxngeRKA1D",
     color: "#74B9FF",
   },
-  {
-    name: "DOGE on Alephium",
-    symbol: "DOGE",
-    address: "vL7HkW7FL2dwBDXZZaE1wVaiQzeAX9XgsaiApGb5afHZ",
-    color: "#C8A951",
-  },
 ];
 
 // ─── Time range options ───────────────────────────────────────────────────────

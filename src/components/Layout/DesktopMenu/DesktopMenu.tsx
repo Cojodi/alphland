@@ -194,6 +194,17 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
               Ecosystem Map
             </span>
           </Link>
+          <Link href="/dashboard">
+            <span
+              className={`px-4 py-2 text-sm font-medium uppercase transition-colors cursor-pointer ${
+                isActivePath("/dashboard")
+                  ? "text-orange dark:text-orange font-bold"
+                  : "text-black dark:text-white hover:text-orange dark:hover:text-orange"
+              }`}
+            >
+              Dashboard
+            </span>
+          </Link>
           <Link href="/eco-token-price-chart">
             <span
               className={`px-4 py-2 text-sm font-medium uppercase transition-colors cursor-pointer ${

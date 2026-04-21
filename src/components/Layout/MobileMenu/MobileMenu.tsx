@@ -98,6 +98,11 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
       icon: currentTheme === "dark" ? homeDark : home,
     },
     {
+      name: "Dashboard",
+      href: "/dashboard",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+    {
       name: "Token Explorer",
       href: "/eco-token-price-chart",
       icon: currentTheme === "dark" ? homeDark : home,
