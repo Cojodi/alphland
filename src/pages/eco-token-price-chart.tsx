@@ -22,7 +22,7 @@ const TOKENS = [
     symbol: "ALPH",
     address: "tgx7VNFoP9DJiFMFgXXtafQZkUvyEdDHT9ryamHJYrjq",
     color: "#02A697",
-    logo: "/alephium-logo-round.png",
+    logo: "/Alephium-Logo-round.svg",
   },
   {
     name: "Ayin",
@@ -127,23 +127,24 @@ function formatDate(ts: number, days: number): string {
 
 function CandleShape(props: any) {
   const { x, y, width, height, payload } = props;
-  if (!payload || width <= 0 || height <= 0) return null;
+  if (!payload || width <= 0) return null;
 
   const { open, high, low, close } = payload as OHLCVCandle;
   const range = high - low;
   const isGreen = close >= open;
   const color = isGreen ? "#00B894" : "#ff5d51";
   const cx = x + width / 2;
+  const tickW = Math.max(2, width * 0.6);
 
-  if (range === 0) {
+  // Flat candle (daily aggregated point with one price): render a dash
+  if (range === 0 || height < 2) {
     return (
-      <line
-        x1={cx}
-        y1={y}
-        x2={cx}
-        y2={y + height}
-        stroke={color}
-        strokeWidth={2}
+      <rect
+        x={cx - tickW / 2}
+        y={y - 0.5}
+        width={tickW}
+        height={1.5}
+        fill={color}
       />
     );
   }
