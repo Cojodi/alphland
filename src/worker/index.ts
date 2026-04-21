@@ -899,6 +899,103 @@ const worker = {
       );
     }
   },
+
+  // ── Scheduled: index active addresses from Alephium Explorer ──────────────
+  // Runs every hour via cron trigger. Reads the cursor from indexer_state,
+  // fetches blocks since last run, extracts sender addresses, and upserts into
+  // active_addresses. After 7 days the dashboard will show real data.
+  async scheduled(_event: any, env: Env, ctx: any): Promise<void> {
+    const EXPLORER = "https://backend.mainnet.alephium.org";
+    const MAX_WINDOW_MS = 2 * 60 * 60_000; // process at most 2 hours per run
+    const now = Date.now();
+
+    try {
+      // Read cursor — if missing, start 1 hour ago (collect forward from now)
+      const cursorRow = (await env.DB.prepare(
+        `SELECT value FROM indexer_state WHERE key = 'active_addr_cursor'`,
+      ).first()) as { value: string } | null;
+
+      const fromTs = cursorRow?.value
+        ? Math.min(Number(cursorRow.value), now - 60_000)
+        : now - 60 * 60_000;
+
+      const toTs = Math.min(now, fromTs + MAX_WINDOW_MS);
+
+      // Fetch blocks in the time window
+      const res = await fetch(
+        `${EXPLORER}/blockflow/blocks?fromTs=${fromTs}&toTs=${toTs}`,
+        { headers: { Accept: "application/json" } },
+      );
+
+      if (!res.ok) {
+        console.error(`[active-addr] blocks fetch failed: ${res.status}`);
+        return;
+      }
+
+      type AlphInput = { address?: string };
+      type AlphTx = { unsigned?: { inputs?: AlphInput[] } };
+      type AlphBlock = { timestamp?: number; transactions?: AlphTx[] };
+      const data = (await res.json()) as { blocks?: AlphBlock[][] };
+
+      if (!Array.isArray(data?.blocks)) {
+        console.warn("[active-addr] unexpected blocks response shape");
+        return;
+      }
+
+      // Collect address → max timestamp seen
+      const addrMap = new Map<string, number>();
+      for (const shardBlocks of data.blocks) {
+        for (const block of shardBlocks) {
+          const ts = block.timestamp ?? toTs;
+          for (const tx of block.transactions ?? []) {
+            for (const input of tx.unsigned?.inputs ?? []) {
+              if (input.address) {
+                const prev = addrMap.get(input.address) ?? 0;
+                addrMap.set(input.address, Math.max(prev, ts));
+              }
+            }
+          }
+        }
+      }
+
+      console.log(
+        `[active-addr] window ${new Date(fromTs).toISOString()} → ${new Date(toTs).toISOString()}: ${addrMap.size} unique senders`,
+      );
+
+      // Batch upsert in chunks of 100 to stay within D1 batch limits
+      if (addrMap.size > 0) {
+        const stmt = env.DB.prepare(
+          `INSERT INTO active_addresses (address, last_seen_at) VALUES (?, ?)
+           ON CONFLICT(address) DO UPDATE
+             SET last_seen_at = MAX(last_seen_at, excluded.last_seen_at)`,
+        );
+        const entries = Array.from(addrMap.entries());
+        for (let i = 0; i < entries.length; i += 100) {
+          const chunk = entries.slice(i, i + 100);
+          await env.DB.batch(
+            chunk.map(([addr, ts]: [string, number]) => stmt.bind(addr, ts)),
+          );
+        }
+      }
+
+      // Advance cursor
+      await env.DB.prepare(
+        `INSERT INTO indexer_state (key, value) VALUES ('active_addr_cursor', ?)
+         ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+      )
+        .bind(String(toTs))
+        .run();
+
+      // Cleanup in background — don't block the scheduled handler
+      ctx.waitUntil(
+        env.DB.prepare(`DELETE FROM active_addresses WHERE last_seen_at < ?`)
+          .bind(now - 31 * 24 * 3600_000)
+          .run(),
+      );
+    } catch (err: any) {
+      console.error("[active-addr] scheduled error:", err?.message ?? err);
+    }
+  },
 };
 
 export default worker;
