@@ -905,7 +905,7 @@ const worker = {
   // fetches blocks since last run, extracts sender addresses, and upserts into
   // active_addresses. After 7 days the dashboard will show real data.
   async scheduled(_event: any, env: Env, ctx: any): Promise<void> {
-    const EXPLORER = "https://backend.mainnet.alephium.org";
+    const EXPLORER = "https://lb-fullnode-alephium.notrustverify.ch";
     const MAX_WINDOW_MS = 2 * 60 * 60_000; // process at most 2 hours per run
     const now = Date.now();
 
