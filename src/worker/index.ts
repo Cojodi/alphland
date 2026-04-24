@@ -713,6 +713,11 @@ const worker = {
         return handleUsersAPI(request, env, url, _ctx);
       }
 
+      // Internal endpoints (active-addresses counts, etc.)
+      if (url.pathname.startsWith("/api/internal")) {
+        return handleUsersAPI(request, env, url, _ctx);
+      }
+
       // Submission endpoints
       if (url.pathname.startsWith("/api/submissions")) {
         return handleSubmissionsAPI(request, env, url);
