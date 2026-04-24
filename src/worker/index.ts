@@ -932,8 +932,10 @@ const worker = {
         return;
       }
 
-      type AlphInput = { address?: string };
-      type AlphTx = { unsigned?: { inputs?: AlphInput[] } };
+      type AlphOutput = { address?: string };
+      type AlphTx = {
+        unsigned?: { inputs?: unknown[]; fixedOutputs?: AlphOutput[] };
+      };
       type AlphBlock = { timestamp?: number; transactions?: AlphTx[] };
       const data = (await res.json()) as { blocks?: AlphBlock[][] };
 
@@ -942,16 +944,22 @@ const worker = {
         return;
       }
 
-      // Collect address → max timestamp seen
+      // Collect address → max timestamp seen (from fixedOutputs; skip coinbase txs)
       const addrMap = new Map<string, number>();
       for (const shardBlocks of data.blocks) {
         for (const block of shardBlocks) {
           const ts = block.timestamp ?? toTs;
           for (const tx of block.transactions ?? []) {
-            for (const input of tx.unsigned?.inputs ?? []) {
-              if (input.address) {
-                const prev = addrMap.get(input.address) ?? 0;
-                addrMap.set(input.address, Math.max(prev, ts));
+            // Skip coinbase transactions (no inputs)
+            if (
+              !Array.isArray(tx.unsigned?.inputs) ||
+              tx.unsigned.inputs.length === 0
+            )
+              continue;
+            for (const output of tx.unsigned?.fixedOutputs ?? []) {
+              if (output.address) {
+                const prev = addrMap.get(output.address) ?? 0;
+                addrMap.set(output.address, Math.max(prev, ts));
               }
             }
           }
