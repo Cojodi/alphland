@@ -90,7 +90,7 @@ const EcosystemMapPage = ({
                     {totalDapps}
                   </span>
                   <span className="text-xs text-[#5a5a5a] dark:text-gray-400">
-                    dApps
+                    Projects
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
