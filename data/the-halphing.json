@@ -1,0 +1,39 @@
+{
+  "name": "The hALPHING",
+  "description": "The hALPHing is a high-stakes survival game on Alephium where every entry halves the countdown timer. Starting from 2026 years, players compete to be the final leader when the timer hits zero. Outlast the competition to claim 80% of the pot, or enter the prediction game for high-stakes odds on which wallet will win!",
+  "short_description": "The ultimate timer-halving survival game on Alephium.",
+  "tags": [
+    "Games",
+    "Education"
+  ],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://halph.ing",
+    "careers": "",
+    "twitter": "https://x.com/thehalphing",
+    "telegram": "",
+    "discord": "",
+    "docs": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "thehalphing",
+  "teamInfo": {
+    "contactEmail": "joseph.kennedy@alephium.org",
+    "founded": "2026-04-06T00:00:00.000Z",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/the-halphing/the-halphing-logo.webp",
+    "bannerUrl": "/dapps/the-halphing/the-halphing-banner.webp",
+    "previewUrl": "/dapps/the-halphing/the-halphing-preview.webp"
+  },
+  "contracts": [],
+  "audits": [],
+  "tokens": []
+}
