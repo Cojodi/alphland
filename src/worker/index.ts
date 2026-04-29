@@ -168,62 +168,67 @@ const worker = {
       // GET /api/admin/user-stats - User statistics overview
       if (url.pathname === "/api/admin/user-stats") {
         const nowMs = Date.now();
-        const todayStartMs = nowMs - (nowMs % (86400 * 1000)); // Start of today (UTC) in ms
-        const weekAgoMs = nowMs - 7 * 86400 * 1000;
-        const monthAgoMs = nowMs - 30 * 86400 * 1000;
+        // better-auth stores createdAt as ISO strings — compare using ISO format
+        const todayStartIso = new Date(
+          nowMs - (nowMs % (86400 * 1000)),
+        ).toISOString();
+        const weekAgoIso = new Date(nowMs - 7 * 86400 * 1000).toISOString();
+        const monthAgoIso = new Date(nowMs - 30 * 86400 * 1000).toISOString();
+        const twoWeeksAgoIso = new Date(
+          nowMs - 14 * 86400 * 1000,
+        ).toISOString();
 
         // Total users
         const totalUsers = await env.DB.prepare(
           `SELECT COUNT(*) as count FROM user`,
         ).first();
 
-        // New users today (createdAt is in milliseconds)
+        // New users today
         const newToday = await env.DB.prepare(
           `SELECT COUNT(*) as count FROM user WHERE createdAt >= ?`,
         )
-          .bind(todayStartMs)
+          .bind(todayStartIso)
           .first();
 
         // New users this week
         const newThisWeek = await env.DB.prepare(
           `SELECT COUNT(*) as count FROM user WHERE createdAt >= ?`,
         )
-          .bind(weekAgoMs)
+          .bind(weekAgoIso)
           .first();
 
         // New users this month
         const newThisMonth = await env.DB.prepare(
           `SELECT COUNT(*) as count FROM user WHERE createdAt >= ?`,
         )
-          .bind(monthAgoMs)
+          .bind(monthAgoIso)
           .first();
 
         // WAU - users with sessions in last 7 days
         const wau = await env.DB.prepare(
           `SELECT COUNT(DISTINCT userId) as count FROM session WHERE createdAt >= ?`,
         )
-          .bind(weekAgoMs)
+          .bind(weekAgoIso)
           .first();
 
         // MAU - users with sessions in last 30 days
         const mau = await env.DB.prepare(
           `SELECT COUNT(DISTINCT userId) as count FROM session WHERE createdAt >= ?`,
         )
-          .bind(monthAgoMs)
+          .bind(monthAgoIso)
           .first();
 
         // Daily new users for last 14 days (for trend chart)
-        // createdAt is in milliseconds, so divide by 1000 for unixepoch
         const { results: dailyTrend } = await env.DB.prepare(
           `SELECT
-            DATE(createdAt / 1000, 'unixepoch') as date,
+            DATE(createdAt) as date,
             COUNT(*) as count
           FROM user
           WHERE createdAt >= ?
-          GROUP BY DATE(createdAt / 1000, 'unixepoch')
+          GROUP BY DATE(createdAt)
           ORDER BY date ASC`,
         )
-          .bind(nowMs - 14 * 86400 * 1000)
+          .bind(twoWeeksAgoIso)
           .all();
 
         return new Response(
