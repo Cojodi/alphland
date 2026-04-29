@@ -1321,6 +1321,146 @@ async function handleBountiesAPI(
     }
   }
 
+  // POST /api/bounties/:id/republish - Create a new copy of an existing bounty with updated dates
+  if (
+    request.method === "POST" &&
+    pathname.match(/^\/api\/bounties\/[^/]+\/republish$/)
+  ) {
+    try {
+      const id = pathname.split("/")[3];
+      const body = (await request.json()) as {
+        user_id: string;
+        end_date: string;
+        start_date?: string;
+      };
+
+      if (!body.user_id || !body.end_date) {
+        return new Response(
+          JSON.stringify({ error: "user_id and end_date are required" }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+
+      const original = (await env.DB.prepare(
+        "SELECT * FROM bounties WHERE id = ? AND status != 'deleted'",
+      )
+        .bind(id)
+        .first()) as any | null;
+
+      if (!original) {
+        return new Response(JSON.stringify({ error: "Bounty not found" }), {
+          status: 404,
+          headers: corsHeaders,
+        });
+      }
+
+      // Verify the requesting user owns the sponsor, or is a god user
+      const sponsor = (await env.DB.prepare(
+        "SELECT user_id FROM sponsors WHERE id = ?",
+      )
+        .bind(original.sponsor_id)
+        .first()) as { user_id: string } | null;
+
+      const creatorRole = (await env.DB.prepare(
+        "SELECT role FROM user WHERE id = ?",
+      )
+        .bind(body.user_id)
+        .first()) as { role: string | null } | null;
+      const isGod = creatorRole?.role === "god";
+
+      if (!isGod && sponsor?.user_id !== body.user_id) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 403,
+          headers: corsHeaders,
+        });
+      }
+
+      const newId = crypto.randomUUID();
+      const now = Math.floor(Date.now() / 1000);
+      const startDate =
+        body.start_date || new Date().toISOString().split("T")[0];
+
+      await env.DB.prepare(
+        `INSERT INTO bounties (
+          id, sponsor_id, title, description,
+          requirements, deliverables, skills,
+          reward_amount, reward_currency, reward_type, reward_usd_value, tier_count,
+          category, difficulty, dapp_name,
+          start_date, end_date,
+          status, created_by, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+        .bind(
+          newId,
+          original.sponsor_id,
+          original.title,
+          original.description,
+          original.requirements,
+          original.deliverables,
+          original.skills,
+          original.reward_amount,
+          original.reward_currency,
+          original.reward_type,
+          original.reward_usd_value,
+          original.tier_count,
+          original.category,
+          original.difficulty,
+          original.dapp_name,
+          startDate,
+          body.end_date,
+          "open",
+          body.user_id,
+          now,
+          now,
+        )
+        .run();
+
+      // Update bounty_overview
+      try {
+        const rewardCurrency = original.reward_currency || "ALPH";
+        const rewardUsd =
+          rewardCurrency === "USD"
+            ? original.reward_amount
+            : original.reward_usd_value || 0;
+        const rewardAlph =
+          rewardCurrency === "ALPH" ? original.reward_amount : 0;
+
+        await env.DB.prepare(
+          `UPDATE bounty_overview
+           SET total_value_usd = total_value_usd + ?,
+               total_value_alph = total_value_alph + ?,
+               list_number = list_number + 1,
+               updated_at = ?
+           WHERE id = 1`,
+        )
+          .bind(rewardUsd, rewardAlph, now)
+          .run();
+      } catch {
+        // don't fail if overview update fails
+      }
+
+      const newBounty = await env.DB.prepare(
+        "SELECT * FROM bounties WHERE id = ?",
+      )
+        .bind(newId)
+        .first();
+
+      return new Response(
+        JSON.stringify({ bounty: transformBounty(newBounty) }),
+        { status: 201, headers: corsHeaders },
+      );
+    } catch (error: any) {
+      console.error("Error republishing bounty:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to republish bounty",
+          details: error.message,
+        }),
+        { status: 500, headers: corsHeaders },
+      );
+    }
+  }
+
   // DELETE /api/bounties/:id - Delete (soft delete) a bounty
   if (
     request.method === "DELETE" &&
