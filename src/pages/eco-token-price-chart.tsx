@@ -501,15 +501,13 @@ export default function EcoTokenExplorer() {
       .catch(() => setLoadingMarket(false));
   }, []);
 
-  // Fetch sparkline data for all tokens when period changes
-  useEffect(() => {
+  function fetchSparklines(p: Period) {
     const ms =
-      period === "24H"
+      p === "24H"
         ? 24 * 3600_000
-        : period === "7D"
+        : p === "7D"
           ? 7 * 24 * 3600_000
           : 30 * 24 * 3600_000;
-    // Round to nearest hour so Vercel CDN cache is shared across page loads
     const fromMs = Math.floor((Date.now() - ms) / 3_600_000) * 3_600_000;
 
     Promise.all(
@@ -529,7 +527,7 @@ export default function EcoTokenExplorer() {
       });
       setSparklines(map);
     });
-  }, [period]);
+  }
 
   // Fetch OHLCV whenever expanded token or chart range changes
   useEffect(() => {
@@ -644,7 +642,10 @@ export default function EcoTokenExplorer() {
             {(["24H", "7D", "30D"] as Period[]).map((p) => (
               <button
                 key={p}
-                onClick={() => setPeriod(p)}
+                onClick={() => {
+                  setPeriod(p);
+                  fetchSparklines(p);
+                }}
                 className={`px-4 py-1.5 text-xs font-semibold transition-colors ${
                   period === p
                     ? "bg-black dark:bg-white text-white dark:text-black"
