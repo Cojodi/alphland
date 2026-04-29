@@ -113,10 +113,6 @@ export default function BountyList() {
   useEffect(() => {
     if (!session?.user?.id) return;
 
-    const dismissed =
-      localStorage.getItem("bounty_onboarding_dismissed") === "true";
-    if (dismissed) return;
-
     async function checkOnboardingStatus() {
       try {
         const [profileRes, submissionsRes] = await Promise.all([
@@ -149,8 +145,8 @@ export default function BountyList() {
     checkOnboardingStatus();
   }, [session?.user?.id]);
 
+  // × only hides for the current visit — reappears next time until all steps done
   const dismissOnboarding = () => {
-    localStorage.setItem("bounty_onboarding_dismissed", "true");
     setOnboardingDismissed(true);
   };
 
