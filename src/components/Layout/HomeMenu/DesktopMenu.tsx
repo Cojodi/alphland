@@ -81,6 +81,11 @@ const HomeDesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
               Ecosystem Map
             </a>
           </Link>
+          <Link href="/dashboard">
+            <a className="p-6 flex justify-center items-center uppercase font-medium font-base border-r border-border-grey dark:border-white/10 hover:bg-smoked-white dark:hover:bg-white/5 transition-colors">
+              Dashboard
+            </a>
+          </Link>
         </div>
         <div className="flex gap-2.5 z-[2]">
           {/* <ConnectWallet /> */}
