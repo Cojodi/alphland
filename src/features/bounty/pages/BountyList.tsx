@@ -11,6 +11,9 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
+  UserCircle,
+  Send,
+  BarChart2,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -48,6 +51,13 @@ export default function BountyList() {
       submission_count: number;
     }>
   >([]);
+
+  // Onboarding guide state
+  const [onboardingDismissed, setOnboardingDismissed] = useState(true); // start hidden to avoid flash
+  const [onboardingSteps, setOnboardingSteps] = useState({
+    hasProfile: false,
+    hasSubmission: false,
+  });
 
   // Fetch bounties, overview, and recent earners from API
   useEffect(() => {
@@ -98,6 +108,51 @@ export default function BountyList() {
 
     checkSponsorStatus();
   }, [session?.user?.id]);
+
+  // Load onboarding guide state for logged-in users
+  useEffect(() => {
+    if (!session?.user?.id) return;
+
+    const dismissed =
+      localStorage.getItem("bounty_onboarding_dismissed") === "true";
+    if (dismissed) return;
+
+    async function checkOnboardingStatus() {
+      try {
+        const [profileRes, submissionsRes] = await Promise.all([
+          fetch("/api/users/me", { credentials: "include" }),
+          fetch(`/api/submissions/user/${session!.user.id}`, {
+            credentials: "include",
+          }),
+        ]);
+
+        const profileData = profileRes.ok ? await profileRes.json() : null;
+        const submissionsData = submissionsRes.ok
+          ? await submissionsRes.json()
+          : null;
+
+        const hasProfile = !!profileData?.profile?.username;
+        const hasSubmission = Array.isArray(submissionsData?.submissions)
+          ? submissionsData.submissions.length > 0
+          : false;
+
+        setOnboardingSteps({ hasProfile, hasSubmission });
+        // Only show if not all steps done
+        if (!(hasProfile && hasSubmission)) {
+          setOnboardingDismissed(false);
+        }
+      } catch {
+        // silently ignore — don't break the page
+      }
+    }
+
+    checkOnboardingStatus();
+  }, [session?.user?.id]);
+
+  const dismissOnboarding = () => {
+    localStorage.setItem("bounty_onboarding_dismissed", "true");
+    setOnboardingDismissed(true);
+  };
 
   // Check if user just verified their email
   useEffect(() => {
@@ -214,6 +269,144 @@ export default function BountyList() {
                   aria-label="Dismiss"
                 >
                   <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Onboarding Guide */}
+        {session?.user && !onboardingDismissed && (
+          <div className="border-b border-orange/20 bg-orange/5 dark:bg-orange/10">
+            <div className="container mx-auto px-4 py-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-orange mb-3 flex items-center gap-1.5">
+                    <Rocket className="w-4 h-4" />
+                    Get started with Bounties
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-0 sm:items-center">
+                    {/* Step 1 */}
+                    <div className="flex items-center gap-2 sm:flex-1">
+                      <div
+                        className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          onboardingSteps.hasProfile
+                            ? "bg-accessible-green text-white"
+                            : "bg-orange text-white"
+                        }`}
+                      >
+                        {onboardingSteps.hasProfile ? (
+                          <CheckCircle className="w-4 h-4" />
+                        ) : (
+                          <UserCircle className="w-4 h-4" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p
+                          className={`text-xs font-semibold ${
+                            onboardingSteps.hasProfile
+                              ? "text-accessible-green"
+                              : "text-orange"
+                          }`}
+                        >
+                          {onboardingSteps.hasProfile
+                            ? "Profile complete"
+                            : "Complete your profile"}
+                        </p>
+                        {!onboardingSteps.hasProfile && (
+                          <Link href="/bounty/profile/edit">
+                            <a className="text-xs text-orange underline hover:no-underline">
+                              Set up now →
+                            </a>
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Connector */}
+                    <div className="hidden sm:block w-8 h-px bg-border-grey dark:bg-dark-charcoal mx-2 flex-shrink-0" />
+
+                    {/* Step 2 */}
+                    <div className="flex items-center gap-2 sm:flex-1">
+                      <div
+                        className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          onboardingSteps.hasSubmission
+                            ? "bg-accessible-green text-white"
+                            : onboardingSteps.hasProfile
+                              ? "bg-orange text-white"
+                              : "bg-border-grey dark:bg-dark-charcoal text-light-charcoal"
+                        }`}
+                      >
+                        {onboardingSteps.hasSubmission ? (
+                          <CheckCircle className="w-4 h-4" />
+                        ) : (
+                          <Send className="w-4 h-4" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p
+                          className={`text-xs font-semibold ${
+                            onboardingSteps.hasSubmission
+                              ? "text-accessible-green"
+                              : onboardingSteps.hasProfile
+                                ? "text-orange"
+                                : "text-light-charcoal dark:text-lightgrey"
+                          }`}
+                        >
+                          {onboardingSteps.hasSubmission
+                            ? "Bounty submitted"
+                            : "Submit to a bounty"}
+                        </p>
+                        {!onboardingSteps.hasSubmission &&
+                          onboardingSteps.hasProfile && (
+                            <p className="text-xs text-light-charcoal dark:text-lightgrey">
+                              Browse the list below ↓
+                            </p>
+                          )}
+                      </div>
+                    </div>
+
+                    {/* Connector */}
+                    <div className="hidden sm:block w-8 h-px bg-border-grey dark:bg-dark-charcoal mx-2 flex-shrink-0" />
+
+                    {/* Step 3 */}
+                    <div className="flex items-center gap-2 sm:flex-1">
+                      <div
+                        className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          onboardingSteps.hasSubmission
+                            ? "bg-orange text-white"
+                            : "bg-border-grey dark:bg-dark-charcoal text-light-charcoal"
+                        }`}
+                      >
+                        <BarChart2 className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p
+                          className={`text-xs font-semibold ${
+                            onboardingSteps.hasSubmission
+                              ? "text-orange"
+                              : "text-light-charcoal dark:text-lightgrey"
+                          }`}
+                        >
+                          Track submission status
+                        </p>
+                        {onboardingSteps.hasSubmission && (
+                          <Link href="/bounty/profile">
+                            <a className="text-xs text-orange underline hover:no-underline">
+                              View submissions →
+                            </a>
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={dismissOnboarding}
+                  className="text-light-charcoal hover:text-orange transition-colors flex-shrink-0 mt-0.5"
+                  aria-label="Dismiss guide"
+                >
+                  <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
