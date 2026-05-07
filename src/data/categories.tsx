@@ -78,6 +78,12 @@ export const categories = [
   { key: "games", name: "Games", icon: gaming, iconDark: gamingLight },
   { key: "soon", name: "ComingSoon", icon: time, iconDark: timeLight },
   { key: "cex", name: "CEX", icon: stats, iconDark: statsLight },
+  {
+    key: "grant_recipient",
+    name: "Grant Recipient",
+    icon: star,
+    iconDark: star,
+  },
 ];
 
 export const reputation = [
