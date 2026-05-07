@@ -25,6 +25,7 @@ import profileLight from "../assets/icons/profileLight.svg";
 import quests from "../assets/icons/quests.svg";
 import questsLight from "../assets/icons/questsLight.svg";
 import star from "../assets/icons/starFilled.svg";
+import starEmpty from "../assets/icons/starEmpty.svg";
 import swap from "../assets/icons/swap.svg";
 import swapLight from "../assets/icons/swapLight.svg";
 import time from "../assets/icons/time.svg";
@@ -81,8 +82,8 @@ export const categories = [
   {
     key: "grant_recipient",
     name: "Grant Recipient",
-    icon: star,
-    iconDark: star,
+    icon: starEmpty,
+    iconDark: starEmpty,
   },
 ];
 
