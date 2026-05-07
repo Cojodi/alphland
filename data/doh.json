@@ -2,7 +2,7 @@
   "name": "DOH",
   "description": "DOH is a website that provides price data, charts, and coin information for the Alephium ecosystem, with access granted to users who hold the DOH token.",
   "short_description": "DeFi. Nodes.",
-  "tags": ["Analytics"],
+  "tags": ["Analytics", "Grant Recipient"],
   "tokens": [
     {
       "address": "24e7wScJTd8vLzMdtvUCWtat4M4WUQtWGUTLsxWuiFjvP",

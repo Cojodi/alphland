@@ -2,7 +2,7 @@
   "name": "Linx App",
   "description": "Linx App is a financial application that consolidates digital asset management, lending, and borrowing tools. It allows users to access multiple financial services from one interface.",
   "short_description": "Wallet, DEX aggregator, and lending protocol.",
-  "tags": ["DeFi", "Bridges"],
+  "tags": ["DeFi", "Bridges", "Grant Recipient"],
   "verified": false,
   "dotw": false,
   "councils_choice": false,

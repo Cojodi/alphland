@@ -2,7 +2,7 @@
   "name": "Nightshade",
   "description": "Nightshade is an orderbook based decentralized exchange supporting trades through limit and market orders. It enables token trading without centralized custody or order matching.",
   "short_description": "Orderbook DEX.",
-  "tags": ["DeFi"],
+  "tags": ["DeFi", "Grant Recipient"],
   "tokens": [],
   "contracts": [""],
   "audits": [],
