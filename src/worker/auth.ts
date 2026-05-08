@@ -60,6 +60,33 @@ export function createAuth(
   const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
   const fromEmail = `Alphland <${env.FROM_EMAIL || "onboarding@resend.dev"}>`;
 
+  const logEmail = async (
+    to: string,
+    subject: string,
+    type: string,
+    resendId: string | null,
+    error: string | null,
+  ) => {
+    try {
+      await db
+        .prepare(
+          "INSERT INTO email_logs (id, to_email, subject, type, status, resend_id, error, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, unixepoch())",
+        )
+        .bind(
+          crypto.randomUUID(),
+          to,
+          subject,
+          type,
+          error ? "failed" : "sent",
+          resendId,
+          error,
+        )
+        .run();
+    } catch (e) {
+      console.error("Failed to log email:", e);
+    }
+  };
+
   return betterAuth({
     // D1 uses SQLite syntax - must specify type
     database: {
@@ -100,11 +127,28 @@ export function createAuth(
                 </div>
               `,
             })
-            .then(({ error }) => {
-              if (error) {
-                console.error("Failed to send password reset email:", error);
+            .then(({ data, error: sendError }) => {
+              if (sendError) {
+                console.error(
+                  "Failed to send password reset email:",
+                  sendError,
+                );
+                return logEmail(
+                  user.email,
+                  "Reset your password - Alphland",
+                  "password_reset",
+                  null,
+                  String((sendError as any).message || sendError),
+                );
               } else {
                 console.log(`Password reset email sent to ${user.email}`);
+                return logEmail(
+                  user.email,
+                  "Reset your password - Alphland",
+                  "password_reset",
+                  (data as any)?.id || null,
+                  null,
+                );
               }
             })
             .catch((err) => {
@@ -151,11 +195,25 @@ export function createAuth(
                 </div>
               `,
             })
-            .then(({ error }) => {
-              if (error) {
-                console.error("Failed to send verification email:", error);
+            .then(({ data, error: sendError }) => {
+              if (sendError) {
+                console.error("Failed to send verification email:", sendError);
+                return logEmail(
+                  user.email,
+                  "Verify your email - Alphland",
+                  "email_verification",
+                  null,
+                  String((sendError as any).message || sendError),
+                );
               } else {
                 console.log(`Verification email sent to ${user.email}`);
+                return logEmail(
+                  user.email,
+                  "Verify your email - Alphland",
+                  "email_verification",
+                  (data as any)?.id || null,
+                  null,
+                );
               }
             })
             .catch((err) => {
@@ -212,11 +270,25 @@ export function createAuth(
                   </div>
                 `,
               })
-              .then(({ error }) => {
-                if (error) {
-                  console.error("Failed to send OTP email:", error);
+              .then(({ data, error: sendError }) => {
+                if (sendError) {
+                  console.error("Failed to send OTP email:", sendError);
+                  return logEmail(
+                    email,
+                    "Your login code - Alphland",
+                    "otp",
+                    null,
+                    String((sendError as any).message || sendError),
+                  );
                 } else {
                   console.log(`OTP email sent to ${email}`);
+                  return logEmail(
+                    email,
+                    "Your login code - Alphland",
+                    "otp",
+                    (data as any)?.id || null,
+                    null,
+                  );
                 }
               })
               .catch((err) => {

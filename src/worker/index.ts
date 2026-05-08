@@ -607,6 +607,56 @@ const worker = {
         );
       }
 
+      // GET /api/admin/email-logs - Resend email send history
+      if (url.pathname === "/api/admin/email-logs") {
+        const page = parseInt(url.searchParams.get("page") || "1", 10);
+        const limit = 50;
+        const offset = (page - 1) * limit;
+        const type = url.searchParams.get("type") || "";
+
+        const whereClause = type ? "WHERE type = ?" : "";
+        const bindings = type ? [limit, offset, type] : [limit, offset];
+
+        const query = type
+          ? `SELECT * FROM email_logs WHERE type = ? ORDER BY created_at DESC LIMIT ? OFFSET ?`
+          : `SELECT * FROM email_logs ORDER BY created_at DESC LIMIT ? OFFSET ?`;
+
+        const countQuery = type
+          ? `SELECT COUNT(*) as count FROM email_logs WHERE type = ?`
+          : `SELECT COUNT(*) as count FROM email_logs`;
+
+        try {
+          const [logs, total] = await Promise.all([
+            type
+              ? env.DB.prepare(query).bind(type, limit, offset).all()
+              : env.DB.prepare(query).bind(limit, offset).all(),
+            type
+              ? env.DB.prepare(countQuery).bind(type).first()
+              : env.DB.prepare(countQuery).first(),
+          ]);
+
+          const stats = await env.DB.prepare(
+            `SELECT type, COUNT(*) as count, SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed FROM email_logs GROUP BY type`,
+          ).all();
+
+          return new Response(
+            JSON.stringify({
+              logs: logs?.results || [],
+              total: total?.count || 0,
+              page,
+              stats: stats?.results || [],
+            }),
+            { headers: { "Content-Type": "application/json", ...corsHeaders } },
+          );
+        } catch (e) {
+          console.error("email-logs error:", e);
+          return new Response(
+            JSON.stringify({ logs: [], total: 0, page: 1, stats: [] }),
+            { headers: { "Content-Type": "application/json", ...corsHeaders } },
+          );
+        }
+      }
+
       // ==========================================
       // End Admin Analytics APIs
       // ==========================================
