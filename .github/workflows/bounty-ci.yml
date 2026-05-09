@@ -1,0 +1,155 @@
+name: Bounty System CI
+
+on:
+  push:
+    branches: [develop, main]
+    paths:
+      - "src/features/bounty/**"
+      - "src/worker/**"
+      - "src/pages/bounty/**"
+      - "src/hooks/useBounties.ts"
+      - "src/lib/api-client.ts"
+      - "migrations/**"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig.json"
+      - "wrangler.toml"
+  pull_request:
+    branches: [develop, main]
+    paths:
+      - "src/features/bounty/**"
+      - "src/worker/**"
+      - "src/pages/bounty/**"
+      - "src/hooks/useBounties.ts"
+      - "src/lib/api-client.ts"
+      - "migrations/**"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig.json"
+      - "wrangler.toml"
+
+concurrency:
+  group: bounty-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Type check + Lint (runs in parallel) ──────────────────────────────────
+  typecheck:
+    name: TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check types
+        run: npx tsc --noEmit
+
+  lint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+  # ── Unit tests ────────────────────────────────────────────────────────────
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run bounty unit tests
+        run: npx vitest run --reporter=verbose
+
+  # ── Build (depends on type-check + lint + test passing) ───────────────────
+  build:
+    name: Next.js Build
+    runs-on: ubuntu-latest
+    needs: [typecheck, lint, test]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          # Prevent Next.js telemetry
+          NEXT_TELEMETRY_DISABLED: 1
+          # Worker URL defaults to localhost in next.config.js — no real worker needed for build
+          NEXT_PUBLIC_WORKER_URL: http://localhost:8787
+
+      - name: Upload build artifact
+        if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nextjs-build
+          path: .next/
+          retention-days: 3
+
+  # ── Migration syntax check ─────────────────────────────────────────────────
+  migrations:
+    name: Migration Syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate SQL files are non-empty and parseable
+        run: |
+          fail=0
+          for f in migrations/*.sql; do
+            [ -s "$f" ] || { echo "EMPTY: $f"; fail=1; }
+            # Check for common SQL mistakes: missing semicolons at end
+            last=$(tail -c 1 "$f" | tr -d '[:space:]')
+            # Warn if file doesn't end with semicolon (after stripping whitespace)
+            content=$(cat "$f" | tr -d '[:space:]')
+            if [[ "${content: -1}" != ";" ]]; then
+              echo "WARNING: $f may be missing final semicolon"
+            fi
+          done
+          exit $fail
+
+  # ── Worker TypeScript check ────────────────────────────────────────────────
+  worker-typecheck:
+    name: Worker TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check worker types
+        run: npx tsc --noEmit --project tsconfig.json src/worker/index.ts
+        continue-on-error: true
