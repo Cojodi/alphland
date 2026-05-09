@@ -172,6 +172,13 @@ export default function AdminDashboard() {
   const [sponsorFilter, setSponsorFilter] = useState<SponsorFilter>("active");
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [showBanModal, setShowBanModal] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const copyUserId = (userId: string) => {
+    navigator.clipboard.writeText(userId);
+    setCopiedId(userId);
+    setTimeout(() => setCopiedId(null), 1500);
+  };
   const [bountyOverview, setBountyOverview] = useState<BountyOverview | null>(
     null,
   );
@@ -850,6 +857,23 @@ export default function AdminDashboard() {
                                 </span>
                               )}
                             </div>
+                            <button
+                              onClick={() => copyUserId(sponsor.user_id)}
+                              className="mt-1.5 flex items-center gap-1.5 text-xs text-light-charcoal font-barlow font-mono hover:text-light-black dark:hover:text-white transition-colors group"
+                              title="Click to copy user ID"
+                            >
+                              <span className="opacity-60 font-sans">
+                                User ID:
+                              </span>
+                              <span className="bg-smoked-white dark:bg-light-black px-1.5 py-0.5 rounded border border-border-grey dark:border-dark-charcoal group-hover:border-orange/40 transition-colors">
+                                {sponsor.user_id}
+                              </span>
+                              <span className="opacity-0 group-hover:opacity-60 transition-opacity font-sans font-normal">
+                                {copiedId === sponsor.user_id
+                                  ? "✓ copied"
+                                  : "copy"}
+                              </span>
+                            </button>
                             {(sponsor as any).user_email && (
                               <p className="text-xs text-light-charcoal font-barlow mt-1 flex items-center gap-1">
                                 <span className="opacity-60">Account:</span>
