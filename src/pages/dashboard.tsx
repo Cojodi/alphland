@@ -132,7 +132,37 @@ function SupplyRing({
 
   if (!total) return null;
 
-  let cumulative = 0;
+  // Only include segments with a non-zero value
+  const active = segments.filter((s) => s.value > 0);
+  // Available pixels after reserving a GAP between each segment
+  const available = C - active.length * GAP;
+  // Natural proportional arc lengths
+  const natural = active.map((s) => (s.value / total) * available);
+  // Boost any segment below MIN_ARC; subtract the excess from larger segments
+  const MIN_ARC = 1;
+  const smallBudget = natural.reduce(
+    (sum, n) => (n < MIN_ARC ? sum + MIN_ARC : sum),
+    0,
+  );
+  const largePropSum = natural.reduce(
+    (sum, n) => (n >= MIN_ARC ? sum + n : sum),
+    0,
+  );
+  const largeBudget = available - smallBudget;
+  const draws = natural.map((n) =>
+    n < MIN_ARC
+      ? MIN_ARC
+      : largePropSum > 0
+        ? (n / largePropSum) * largeBudget
+        : MIN_ARC,
+  );
+  // Compute rotations from visual positions (not value-proportional, avoids mutation-in-map issues)
+  let pos = 0;
+  const arcs = active.map((seg, i) => {
+    const rotation = (pos / C) * 360 - 90;
+    pos += draws[i] + GAP;
+    return { color: seg.color, draw: draws[i], space: C - draws[i], rotation };
+  });
 
   return (
     <svg
@@ -151,27 +181,19 @@ function SupplyRing({
         strokeWidth={SW}
         className="text-border-grey dark:text-white/5"
       />
-      {segments.map((seg, i) => {
-        const fraction = seg.value / total;
-        const draw = Math.max(0, fraction * C - GAP);
-        const space = C - draw;
-        const rotation = (cumulative / total) * 360 - 90;
-        cumulative += seg.value;
-        if (draw <= 0) return null;
-        return (
-          <circle
-            key={i}
-            cx={CX}
-            cy={CY}
-            r={R}
-            fill="none"
-            stroke={seg.color}
-            strokeWidth={SW}
-            strokeDasharray={`${draw} ${space}`}
-            transform={`rotate(${rotation} ${CX} ${CY})`}
-          />
-        );
-      })}
+      {arcs.map((arc, i) => (
+        <circle
+          key={i}
+          cx={CX}
+          cy={CY}
+          r={R}
+          fill="none"
+          stroke={arc.color}
+          strokeWidth={SW}
+          strokeDasharray={`${arc.draw} ${arc.space}`}
+          transform={`rotate(${arc.rotation} ${CX} ${CY})`}
+        />
+      ))}
     </svg>
   );
 }
@@ -219,7 +241,13 @@ function SupplyRow({
       <div className="h-1 rounded-full bg-smoked-white dark:bg-white/5 overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-700"
-          style={{ width: `${fraction * 100}%`, background: color }}
+          style={{
+            width:
+              value != null && value > 0
+                ? `max(3px, ${fraction * 100}%)`
+                : "0%",
+            background: color,
+          }}
         />
       </div>
     </div>

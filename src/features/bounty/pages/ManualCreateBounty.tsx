@@ -161,15 +161,18 @@ export default function ManualCreateBounty() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create bounty");
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(
+          errData?.details || errData?.error || "Failed to create bounty",
+        );
       }
 
       const data = await response.json();
       // Redirect to sponsor dashboard after successful creation
       router.push("/bounty/sponsor/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating bounty:", error);
-      alert("Failed to create bounty. Please try again.");
+      alert(error?.message || "Failed to create bounty. Please try again.");
     } finally {
       setLoading(false);
     }
