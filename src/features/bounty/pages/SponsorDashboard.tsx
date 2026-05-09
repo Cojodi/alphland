@@ -42,12 +42,6 @@ export default function SponsorDashboard() {
   const [transferError, setTransferError] = useState("");
   const [showTransferConfirm, setShowTransferConfirm] = useState(false);
 
-  // Republish modal state
-  const [republishTarget, setRepublishTarget] = useState<Bounty | null>(null);
-  const [republishEndDate, setRepublishEndDate] = useState("");
-  const [republishLoading, setRepublishLoading] = useState(false);
-  const [republishError, setRepublishError] = useState("");
-
   // God mode state
   const [isGod, setIsGod] = useState(false);
   const [allSponsors, setAllSponsors] = useState<
@@ -113,43 +107,13 @@ export default function SponsorDashboard() {
     [router],
   );
 
-  const openRepublishModal = useCallback(
+  const handleRepublish = useCallback(
     (bounty: Bounty, e: React.MouseEvent) => {
       e.stopPropagation();
-      setRepublishTarget(bounty);
-      setRepublishEndDate("");
-      setRepublishError("");
+      router.push(`/bounty/create/manual?copy_from=${bounty.id}`);
     },
-    [],
+    [router],
   );
-
-  const handleRepublishConfirm = useCallback(async () => {
-    if (!republishTarget || !republishEndDate || !session?.user?.id) return;
-    setRepublishLoading(true);
-    setRepublishError("");
-    try {
-      const res = await fetch(`/api/bounties/${republishTarget.id}/republish`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          user_id: session.user.id,
-          end_date: republishEndDate,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setRepublishError(data.error || "Republish failed");
-        return;
-      }
-      setRepublishTarget(null);
-      router.push(`/bounty/${data.bounty.id}`);
-    } catch {
-      setRepublishError("Republish failed. Please try again.");
-    } finally {
-      setRepublishLoading(false);
-    }
-  }, [republishTarget, republishEndDate, session?.user?.id, router]);
 
   const viewSubmission = useCallback(
     (submission: any, bountyId: string, skipUrlUpdate = false) => {
@@ -982,7 +946,7 @@ export default function SponsorDashboard() {
                                           className="text-orange hover:bg-orange/10 p-2 rounded"
                                           title="Republish"
                                           onClick={(e) =>
-                                            openRepublishModal(bounty, e)
+                                            handleRepublish(bounty, e)
                                           }
                                         >
                                           <RefreshCw className="w-4 h-4" />
@@ -1300,7 +1264,7 @@ export default function SponsorDashboard() {
                                     <button
                                       className="border border-orange text-orange hover:bg-orange/10 font-barlow px-3 py-1 rounded text-sm flex items-center gap-1"
                                       onClick={(e) =>
-                                        openRepublishModal(bounty, e)
+                                        handleRepublish(bounty, e)
                                       }
                                     >
                                       <RefreshCw className="w-4 h-4" />
@@ -1468,76 +1432,6 @@ export default function SponsorDashboard() {
             )}
           </div>
         </div>
-
-        {/* Republish Modal */}
-        {republishTarget && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-            <div className="bg-white dark:bg-hero-dark rounded-xl border border-light-gray dark:border-dark-charcoal p-6 w-full max-w-md space-y-5 shadow-xl">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-lg font-bold text-orange font-barlow">
-                    Republish Bounty
-                  </h3>
-                  <p className="text-sm text-light-charcoal dark:text-lightgrey mt-1 font-barlow">
-                    {republishTarget.title}
-                  </p>
-                </div>
-                <button
-                  onClick={() => setRepublishTarget(null)}
-                  className="p-1 rounded hover:bg-orange/10 text-light-charcoal"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow">
-                  New Deadline <span className="text-danger-red">*</span>
-                </label>
-                <input
-                  type="date"
-                  value={republishEndDate}
-                  min={new Date().toISOString().split("T")[0]}
-                  onChange={(e) => {
-                    setRepublishEndDate(e.target.value);
-                    setRepublishError("");
-                  }}
-                  className="w-full px-4 py-2 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange/40"
-                />
-              </div>
-
-              {republishError && (
-                <p className="text-sm text-danger-red">{republishError}</p>
-              )}
-
-              <div className="flex gap-3">
-                <button
-                  onClick={handleRepublishConfirm}
-                  disabled={republishLoading || !republishEndDate}
-                  className="flex-1 bg-orange hover:bg-orange/90 text-white font-barlow font-semibold py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {republishLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-                      Publishing...
-                    </>
-                  ) : (
-                    <>
-                      <RefreshCw className="w-4 h-4" />
-                      Republish
-                    </>
-                  )}
-                </button>
-                <button
-                  onClick={() => setRepublishTarget(null)}
-                  className="px-4 py-2 text-sm font-medium text-light-charcoal dark:text-lightgrey border border-border-grey dark:border-dark-charcoal rounded-lg hover:border-orange transition-colors font-barlow"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Submission Review Modal */}
         <SubmissionReviewModal
