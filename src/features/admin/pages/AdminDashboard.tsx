@@ -392,7 +392,7 @@ export default function AdminDashboard() {
   const handleBanSponsor = async (sponsorId: string) => {
     setActionLoading(sponsorId);
     try {
-      const response = await fetch(`/api/sponsors/${sponsorId}/ban`, {
+      const response = await fetch(`/api/admin/sponsors/${sponsorId}/ban`, {
         method: "PUT",
       });
       if (response.ok) {
@@ -410,7 +410,7 @@ export default function AdminDashboard() {
   const handleUnbanSponsor = async (sponsorId: string) => {
     setActionLoading(sponsorId);
     try {
-      const response = await fetch(`/api/sponsors/${sponsorId}/unban`, {
+      const response = await fetch(`/api/admin/sponsors/${sponsorId}/unban`, {
         method: "PUT",
       });
       if (response.ok) {
@@ -427,7 +427,7 @@ export default function AdminDashboard() {
   const handleVerifySponsor = async (sponsorId: string) => {
     setActionLoading(sponsorId);
     try {
-      const response = await fetch(`/api/sponsors/${sponsorId}/verify`, {
+      const response = await fetch(`/api/admin/sponsors/${sponsorId}/verify`, {
         method: "PUT",
       });
       if (response.ok) {
@@ -444,9 +444,10 @@ export default function AdminDashboard() {
   const handleUnverifySponsor = async (sponsorId: string) => {
     setActionLoading(sponsorId);
     try {
-      const response = await fetch(`/api/sponsors/${sponsorId}/unverify`, {
-        method: "PUT",
-      });
+      const response = await fetch(
+        `/api/admin/sponsors/${sponsorId}/unverify`,
+        { method: "PUT" },
+      );
       if (response.ok) {
         await fetchSponsors();
       }

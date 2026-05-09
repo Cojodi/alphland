@@ -478,6 +478,142 @@ const worker = {
         }
       }
 
+      // PUT /api/admin/sponsors/:id/ban
+      if (
+        request.method === "PUT" &&
+        url.pathname.match(/^\/api\/admin\/sponsors\/[^/]+\/ban$/)
+      ) {
+        const id = url.pathname.split("/")[4];
+        const now = Math.floor(Date.now() / 1000);
+        try {
+          const sponsor = (await env.DB.prepare(
+            `SELECT user_id FROM sponsors WHERE id = ?`,
+          )
+            .bind(id)
+            .first()) as { user_id: string } | null;
+          if (sponsor) {
+            await env.DB.prepare(
+              `UPDATE sponsors SET is_banned = 1, banned_at = ?, updated_at = ? WHERE id = ?`,
+            )
+              .bind(now, now, id)
+              .run();
+            await env.DB.prepare(
+              `UPDATE user SET is_banned = 1, updatedAt = ? WHERE id = ?`,
+            )
+              .bind(now * 1000, sponsor.user_id)
+              .run();
+          }
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        } catch (error) {
+          console.error("Failed to ban sponsor:", error);
+          return new Response(
+            JSON.stringify({ error: "Failed to ban sponsor" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
+        }
+      }
+
+      // PUT /api/admin/sponsors/:id/unban
+      if (
+        request.method === "PUT" &&
+        url.pathname.match(/^\/api\/admin\/sponsors\/[^/]+\/unban$/)
+      ) {
+        const id = url.pathname.split("/")[4];
+        const now = Math.floor(Date.now() / 1000);
+        try {
+          const sponsor = (await env.DB.prepare(
+            `SELECT user_id FROM sponsors WHERE id = ?`,
+          )
+            .bind(id)
+            .first()) as { user_id: string } | null;
+          if (sponsor) {
+            await env.DB.prepare(
+              `UPDATE sponsors SET is_banned = 0, banned_at = NULL, updated_at = ? WHERE id = ?`,
+            )
+              .bind(now, id)
+              .run();
+            await env.DB.prepare(
+              `UPDATE user SET is_banned = 0, updatedAt = ? WHERE id = ?`,
+            )
+              .bind(now * 1000, sponsor.user_id)
+              .run();
+          }
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        } catch (error) {
+          console.error("Failed to unban sponsor:", error);
+          return new Response(
+            JSON.stringify({ error: "Failed to unban sponsor" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
+        }
+      }
+
+      // PUT /api/admin/sponsors/:id/verify
+      if (
+        request.method === "PUT" &&
+        url.pathname.match(/^\/api\/admin\/sponsors\/[^/]+\/verify$/)
+      ) {
+        const id = url.pathname.split("/")[4];
+        const now = Math.floor(Date.now() / 1000);
+        try {
+          await env.DB.prepare(
+            `UPDATE sponsors SET is_verified = 1, status = 'approved', approved_at = ?, updated_at = ? WHERE id = ?`,
+          )
+            .bind(now, now, id)
+            .run();
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        } catch (error) {
+          console.error("Failed to verify sponsor:", error);
+          return new Response(
+            JSON.stringify({ error: "Failed to verify sponsor" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
+        }
+      }
+
+      // PUT /api/admin/sponsors/:id/unverify
+      if (
+        request.method === "PUT" &&
+        url.pathname.match(/^\/api\/admin\/sponsors\/[^/]+\/unverify$/)
+      ) {
+        const id = url.pathname.split("/")[4];
+        const now = Math.floor(Date.now() / 1000);
+        try {
+          await env.DB.prepare(
+            `UPDATE sponsors SET is_verified = 0, status = 'pending', approved_at = NULL, updated_at = ? WHERE id = ?`,
+          )
+            .bind(now, id)
+            .run();
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        } catch (error) {
+          console.error("Failed to unverify sponsor:", error);
+          return new Response(
+            JSON.stringify({ error: "Failed to unverify sponsor" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
+        }
+      }
+
       // GET /api/admin/submission-stats - Submission analysis
       if (url.pathname === "/api/admin/submission-stats") {
         // Total submissions and approved
