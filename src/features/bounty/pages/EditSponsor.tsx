@@ -437,16 +437,16 @@ export default function EditSponsorProfile() {
           <div className="bg-white dark:bg-hero-dark rounded-lg border border-border-grey dark:border-dark-charcoal">
             <div className="p-6 sm:p-8">
               <form onSubmit={handleSubmit} className="space-y-10">
-                {/* Company Information */}
+                {/* Organization Information */}
                 <div className="space-y-6">
                   <h2 className="text-xl font-bold text-black dark:text-white">
-                    Company Information
+                    Organization Information
                   </h2>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="block text-sm font-medium text-black dark:text-white">
-                        Company Name <span className="text-orange">*</span>
+                        Organization Name <span className="text-orange">*</span>
                       </label>
                       <input
                         type="text"
@@ -458,7 +458,7 @@ export default function EditSponsorProfile() {
                           }))
                         }
                         className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
-                        placeholder="Company Name"
+                        placeholder="Your company, project, or personal name"
                         required
                       />
                     </div>
@@ -528,17 +528,17 @@ export default function EditSponsorProfile() {
                     </div>
                   </div>
 
-                  {/* Company Logo */}
+                  {/* Logo */}
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-black dark:text-white">
-                      Company Logo
+                      Logo
                     </label>
 
                     {logoFile ? (
                       <div className="flex items-center gap-4 p-4 border border-border-grey dark:border-dark-charcoal rounded-lg bg-smoked-white dark:bg-light-black">
                         <Image
                           src={logoFile.preview}
-                          alt="Company logo"
+                          alt="Logo"
                           width={64}
                           height={64}
                           className="w-16 h-16 rounded-lg object-cover"
@@ -616,7 +616,7 @@ export default function EditSponsorProfile() {
                       <div className="relative border border-border-grey dark:border-dark-charcoal rounded-lg overflow-hidden bg-smoked-white dark:bg-light-black">
                         <Image
                           src={bannerFile.preview}
-                          alt="Company banner"
+                          alt="Banner"
                           width={600}
                           height={150}
                           className="w-full h-32 object-cover"
@@ -681,10 +681,10 @@ export default function EditSponsorProfile() {
                     )}
                   </div>
 
-                  {/* Company Short Bio */}
+                  {/* Short Bio */}
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-black dark:text-white">
-                      Company Short Bio
+                      Short Bio
                     </label>
                     <textarea
                       value={formData.description}
@@ -697,7 +697,7 @@ export default function EditSponsorProfile() {
                         }
                       }}
                       className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey resize-none focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
-                      placeholder="What does your company do?"
+                      placeholder="What are you building or working on?"
                       rows={3}
                     />
                     <p className="text-xs text-light-charcoal dark:text-lightgrey text-right">

@@ -6,10 +6,10 @@ export interface Sponsor {
   id: string;
   user_id: string; // Links to User table (one-to-zero-or-one relationship)
 
-  // Company Information
-  name: string; // Company name
-  username: string; // Company username (slug for URL)
-  description: string; // Company short bio
+  // Organization Information
+  name: string; // Organization name
+  username: string; // Organization username (slug for URL)
+  description: string; // Organization short bio
   entity_name: string; // Full legal entity name
   industry: string;
   logo_url?: string;
@@ -48,14 +48,14 @@ export interface SponsorApplication {
   username: string;
   telegram: string;
 
-  // About Your Company
-  company_name: string;
-  company_username: string;
-  company_url: string;
-  company_twitter: string;
+  // About Your Organization
+  org_name: string;
+  org_username: string;
+  org_url: string;
+  org_twitter: string;
   entity_name: string;
   industry: string;
-  company_bio: string;
+  org_bio: string;
 
   // Logo file (for form submission)
   logo?: File;
