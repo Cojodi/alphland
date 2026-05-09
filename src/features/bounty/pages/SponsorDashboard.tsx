@@ -4,14 +4,16 @@ import type { Submission } from "../types/submission.types";
 import { SubmissionReviewModal } from "../components/SubmissionReviewModal";
 import { BountySubmission } from "@/lib/api-client";
 import {
-  CircleDollarSign,
-  Plus,
+  AlertTriangle,
   BarChart3,
-  Edit,
-  TrendingUp,
   ChevronLeft,
   ChevronRight,
+  CircleDollarSign,
+  Edit,
+  Mail,
+  Plus,
   RefreshCw,
+  TrendingUp,
   X,
 } from "lucide-react";
 import Image from "next/image";
@@ -684,6 +686,29 @@ export default function SponsorDashboard() {
         </section>
 
         <div className="max-w-7xl mx-auto px-6 sm:px-8 py-8 space-y-8">
+          {/* Pending verification banner */}
+          {sponsor.status === "pending" && (
+            <div className="bg-orange/5 dark:bg-orange/10 border border-orange/25 dark:border-orange/30 rounded-xl p-4 flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-orange flex-shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-black dark:text-white font-barlow text-sm">
+                  Verification required before publishing bounties
+                </p>
+                <p className="text-light-charcoal dark:text-lightgrey text-sm font-barlow mt-1">
+                  Your sponsor profile is awaiting admin approval. Contact us to
+                  complete verification and unlock bounty publishing.
+                </p>
+                <a
+                  href="mailto:alph.land@alephium.org"
+                  className="inline-flex items-center gap-1.5 mt-2 text-orange text-sm font-barlow font-medium hover:underline"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  alph.land@alephium.org
+                </a>
+              </div>
+            </div>
+          )}
+
           {/* Stats Overview - 3 Column Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Total Bounties Card */}
