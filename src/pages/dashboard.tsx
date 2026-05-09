@@ -134,10 +134,13 @@ function SupplyRing({
 
   // Only include segments with a non-zero value
   const active = segments.filter((s) => s.value > 0);
+  const segTotal = active.reduce((sum, s) => sum + s.value, 0);
+  if (!segTotal) return null;
   // Available pixels after reserving a GAP between each segment
   const available = C - active.length * GAP;
-  // Natural proportional arc lengths
-  const natural = active.map((s) => (s.value / total) * available);
+  // Natural proportional arc lengths — use segment sum, not the external total prop,
+  // so proportions are always correct regardless of what totalAlph the API returns.
+  const natural = active.map((s) => (s.value / segTotal) * available);
   // Boost any segment below MIN_ARC; subtract the excess from larger segments
   const MIN_ARC = 1;
   const smallBudget = natural.reduce(
