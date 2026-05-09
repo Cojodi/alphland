@@ -35,6 +35,7 @@ export function SubmissionReviewModal({
   const [form, setForm] = useState(initialFormState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [txError, setTxError] = useState<string | null>(null);
   const [successState, setSuccessState] = useState<{
     show: boolean;
     action: "approved" | "rejected" | null;
@@ -99,6 +100,7 @@ export function SubmissionReviewModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setTxError(null);
 
     if (!submission || !form.reviewAction || !bounty) {
       setError("Please select a review action");
@@ -198,11 +200,20 @@ export function SubmissionReviewModal({
       setForm(initialFormState);
     } catch (err) {
       console.error("Failed to update submission:", err);
-      setError(
+      const msg =
         err instanceof Error
           ? err.message
-          : "Failed to update submission. Please try again.",
-      );
+          : "Failed to update submission. Please try again.";
+      const isTxError =
+        msg.includes("Transaction not found") ||
+        msg.includes("not confirmed yet") ||
+        msg.includes("does not contain a payment") ||
+        msg.includes("tx hash");
+      if (isTxError) {
+        setTxError(msg);
+      } else {
+        setError(msg);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -212,6 +223,7 @@ export function SubmissionReviewModal({
     setForm(initialFormState);
     setSuccessState({ show: false, action: null });
     setError(null);
+    setTxError(null);
     onSuccess?.();
     onClose();
   };
@@ -798,19 +810,44 @@ export function SubmissionReviewModal({
                   type="text"
                   id="transaction_hash"
                   value={form.transactionHash}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    setTxError(null);
                     setForm((prev) => ({
                       ...prev,
                       transactionHash: e.target.value,
-                    }))
-                  }
+                    }));
+                  }}
                   placeholder="0x..."
-                  className="w-full px-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder-light-charcoal dark:placeholder-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 font-mono"
+                  className={`w-full px-4 py-3 bg-smoked-white dark:bg-light-black border rounded-lg text-black dark:text-white placeholder-light-charcoal dark:placeholder-lightgrey focus:outline-none focus:ring-2 font-mono ${
+                    txError
+                      ? "border-red-500 focus:ring-red-500/50"
+                      : "border-border-grey dark:border-dark-charcoal focus:ring-orange/50"
+                  }`}
                   required
                 />
-                <p className="text-xs text-light-charcoal dark:text-lightgrey mt-1">
-                  Provide the Alephium transaction hash for the reward payment
-                </p>
+                {txError ? (
+                  <div className="mt-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <p className="text-sm text-red-600 dark:text-red-400 font-medium">
+                      {txError}
+                    </p>
+                    <p className="text-xs text-red-500 dark:text-red-500 mt-1">
+                      You can verify the transaction on{" "}
+                      <a
+                        href={`https://explorer.alephium.org/transactions/${form.transactionHash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:opacity-80"
+                      >
+                        Alephium Explorer
+                      </a>
+                      .
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-xs text-light-charcoal dark:text-lightgrey mt-1">
+                    Provide the Alephium transaction hash for the reward payment
+                  </p>
+                )}
               </div>
             )}
 
