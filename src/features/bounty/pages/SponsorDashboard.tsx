@@ -675,7 +675,11 @@ export default function SponsorDashboard() {
                 )}
                 <button
                   onClick={() => router.push("/bounty/create")}
-                  className="bg-white dark:bg-hero-dark text-orange dark:text-white hover:bg-smoked-white dark:hover:bg-light-black font-barlow font-semibold px-6 py-3 text-base shadow-lg rounded-lg flex items-center gap-2 whitespace-nowrap border border-orange dark:border-white/20"
+                  disabled={
+                    sponsor.status === "pending" ||
+                    sponsor.status === "rejected"
+                  }
+                  className="bg-white dark:bg-hero-dark text-orange dark:text-white font-barlow font-semibold px-6 py-3 text-base shadow-lg rounded-lg flex items-center gap-2 whitespace-nowrap border border-orange dark:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-smoked-white dark:hover:bg-light-black disabled:hover:bg-white dark:disabled:hover:bg-hero-dark"
                 >
                   <Plus className="w-5 h-5" />
                   New Listing
@@ -686,6 +690,28 @@ export default function SponsorDashboard() {
         </section>
 
         <div className="max-w-7xl mx-auto px-6 sm:px-8 py-8 space-y-8">
+          {/* Banned banner */}
+          {sponsor.status === "rejected" && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/50 rounded-xl p-4 flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-red-800 dark:text-red-300 font-barlow text-sm">
+                  Your account has been banned and cannot publish bounties
+                </p>
+                <p className="text-red-700 dark:text-red-400 text-sm font-barlow mt-1">
+                  If you have any questions, please contact the admin.
+                </p>
+                <a
+                  href="mailto:alph.land@alephium.org"
+                  className="inline-flex items-center gap-1.5 mt-2 text-red-600 dark:text-red-400 text-sm font-barlow font-medium hover:underline"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  alph.land@alephium.org
+                </a>
+              </div>
+            </div>
+          )}
+
           {/* Pending verification banner */}
           {sponsor.status === "pending" && (
             <div className="bg-orange/5 dark:bg-orange/10 border border-orange/25 dark:border-orange/30 rounded-xl p-4 flex items-start gap-3">
@@ -1205,7 +1231,11 @@ export default function SponsorDashboard() {
                     </p>
                     <button
                       onClick={() => router.push("/bounty/create")}
-                      className="bg-orange hover:bg-orange/90 text-white font-barlow font-medium px-6 py-2 rounded-lg mx-auto"
+                      disabled={
+                        sponsor.status === "pending" ||
+                        sponsor.status === "rejected"
+                      }
+                      className="bg-orange hover:bg-orange/90 text-white font-barlow font-medium px-6 py-2 rounded-lg mx-auto disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       <Plus className="w-4 h-4 mr-2" />
                       Create Your First Bounty
