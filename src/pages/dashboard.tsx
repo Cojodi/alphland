@@ -159,11 +159,10 @@ function SupplyRing({
         ? (n / largePropSum) * largeBudget
         : MIN_ARC,
   );
-  // Compute rotations from visual positions (not value-proportional, avoids mutation-in-map issues)
-  let pos = 0;
   const arcs = active.map((seg, i) => {
-    const rotation = (pos / C) * 360 - 90;
-    pos += draws[i] + GAP;
+    const previousDrawsSum = draws.slice(0, i).reduce((sum, d) => sum + d, 0);
+    const currentPos = previousDrawsSum + i * GAP;
+    const rotation = (currentPos / C) * 360 - 90;
     return { color: seg.color, draw: draws[i], space: C - draws[i], rotation };
   });
 
