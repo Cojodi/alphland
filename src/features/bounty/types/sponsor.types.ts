@@ -1,6 +1,6 @@
 // Sponsor related types
 
-export type SponsorStatus = "pending" | "approved" | "rejected";
+export type SponsorStatus = "pending" | "approved";
 
 export interface Sponsor {
   id: string;
@@ -34,9 +34,9 @@ export interface Sponsor {
   // Approval workflow
   status: SponsorStatus;
   is_verified?: boolean;
+  is_banned: number;
   approved_at?: string;
-  rejected_at?: string;
-  rejection_reason?: string;
+  banned_at?: number;
 
   // Timestamps
   created_at: string;

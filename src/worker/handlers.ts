@@ -1165,8 +1165,8 @@ export async function handleSponsorsAPI(
                        LEFT JOIN user u ON s.user_id = u.id`;
 
     let where = "";
-    if (isBanned === "true" || statusParam === "rejected") {
-      where = ` WHERE s.status = 'rejected'`;
+    if (isBanned === "true") {
+      where = ` WHERE s.is_banned = 1`;
     } else if (statusParam === "pending") {
       where = ` WHERE s.status = 'pending'`;
     } else if (statusParam === "approved") {
@@ -1262,20 +1262,16 @@ export async function handleSponsorsAPI(
 
       if (sponsor) {
         await env.DB.prepare(
-          `UPDATE sponsors SET status = 'rejected', rejected_at = ?, updated_at = ? WHERE id = ?`,
+          `UPDATE sponsors SET is_banned = 1, banned_at = ?, updated_at = ? WHERE id = ?`,
         )
           .bind(now, now, id)
           .run();
 
-        try {
-          await env.DB.prepare(
-            `UPDATE user SET is_banned = 1, updatedAt = ? WHERE id = ?`,
-          )
-            .bind(now * 1000, sponsor.user_id)
-            .run();
-        } catch (e) {
-          console.error("Failed to update user is_banned:", e);
-        }
+        await env.DB.prepare(
+          `UPDATE user SET is_banned = 1, updatedAt = ? WHERE id = ?`,
+        )
+          .bind(now * 1000, sponsor.user_id)
+          .run();
       }
 
       return new Response(JSON.stringify({ success: true }), {
@@ -1319,14 +1315,13 @@ export async function handleSponsorsAPI(
 
     // Verify requester is the current owner
     const sponsor = (await env.DB.prepare(
-      `SELECT id, user_id, name, is_banned FROM sponsors WHERE id = ?`,
+      `SELECT id, user_id, name FROM sponsors WHERE id = ?`,
     )
       .bind(id)
       .first()) as {
       id: string;
       user_id: string;
       name: string;
-      is_banned: number;
     } | null;
 
     if (!sponsor) {
@@ -1397,18 +1392,18 @@ export async function handleSponsorsAPI(
         .bind(newOwnerId, now, id)
         .run();
 
-      // Clear old owner's sponsor flags; also lift any sponsor-derived ban
+      // Clear old owner's sponsor flags
       await env.DB.prepare(
-        `UPDATE user SET is_sponsor = 0, sponsor_id = NULL, is_banned = 0, updatedAt = ? WHERE id = ?`,
+        `UPDATE user SET is_sponsor = 0, sponsor_id = NULL, updatedAt = ? WHERE id = ?`,
       )
         .bind(now * 1000, sponsor.user_id)
         .run();
 
-      // Set new owner's sponsor flags; propagate ban if sponsor is currently banned
+      // Set new owner's sponsor flags
       await env.DB.prepare(
-        `UPDATE user SET is_sponsor = 1, sponsor_id = ?, is_banned = ?, updatedAt = ? WHERE id = ?`,
+        `UPDATE user SET is_sponsor = 1, sponsor_id = ?, updatedAt = ? WHERE id = ?`,
       )
-        .bind(id, sponsor.is_banned ?? 0, now * 1000, newOwnerId)
+        .bind(id, now * 1000, newOwnerId)
         .run();
 
       return new Response(JSON.stringify({ success: true }), {
@@ -1447,20 +1442,16 @@ export async function handleSponsorsAPI(
 
       if (sponsor) {
         await env.DB.prepare(
-          `UPDATE sponsors SET status = 'approved', rejected_at = NULL, updated_at = ? WHERE id = ?`,
+          `UPDATE sponsors SET is_banned = 0, banned_at = NULL, updated_at = ? WHERE id = ?`,
         )
           .bind(now, id)
           .run();
 
-        try {
-          await env.DB.prepare(
-            `UPDATE user SET is_banned = 0, updatedAt = ? WHERE id = ?`,
-          )
-            .bind(now * 1000, sponsor.user_id)
-            .run();
-        } catch (e) {
-          console.error("Failed to update user is_banned:", e);
-        }
+        await env.DB.prepare(
+          `UPDATE user SET is_banned = 0, updatedAt = ? WHERE id = ?`,
+        )
+          .bind(now * 1000, sponsor.user_id)
+          .run();
       }
 
       return new Response(JSON.stringify({ success: true }), {

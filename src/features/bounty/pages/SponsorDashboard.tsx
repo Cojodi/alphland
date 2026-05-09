@@ -676,8 +676,7 @@ export default function SponsorDashboard() {
                 <button
                   onClick={() => router.push("/bounty/create")}
                   disabled={
-                    sponsor.status === "pending" ||
-                    sponsor.status === "rejected"
+                    sponsor.status === "pending" || sponsor.is_banned === 1
                   }
                   className="bg-white dark:bg-hero-dark text-orange dark:text-white font-barlow font-semibold px-6 py-3 text-base shadow-lg rounded-lg flex items-center gap-2 whitespace-nowrap border border-orange dark:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-smoked-white dark:hover:bg-light-black disabled:hover:bg-white dark:disabled:hover:bg-hero-dark"
                 >
@@ -691,7 +690,7 @@ export default function SponsorDashboard() {
 
         <div className="max-w-7xl mx-auto px-6 sm:px-8 py-8 space-y-8">
           {/* Banned banner */}
-          {sponsor.status === "rejected" && (
+          {sponsor.is_banned === 1 && (
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/50 rounded-xl p-4 flex items-start gap-3">
               <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
               <div className="flex-1 min-w-0">
@@ -1232,8 +1231,7 @@ export default function SponsorDashboard() {
                     <button
                       onClick={() => router.push("/bounty/create")}
                       disabled={
-                        sponsor.status === "pending" ||
-                        sponsor.status === "rejected"
+                        sponsor.status === "pending" || sponsor.is_banned === 1
                       }
                       className="bg-orange hover:bg-orange/90 text-white font-barlow font-medium px-6 py-2 rounded-lg mx-auto disabled:opacity-40 disabled:cursor-not-allowed"
                     >

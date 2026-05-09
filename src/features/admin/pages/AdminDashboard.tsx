@@ -264,7 +264,7 @@ export default function AdminDashboard() {
     try {
       let url: string;
       if (sponsorFilter === "banned") {
-        url = `/api/sponsors?status=rejected`;
+        url = `/api/sponsors?is_banned=true`;
       } else if (sponsorFilter === "pending") {
         url = `/api/sponsors?status=pending`;
       } else {
@@ -510,7 +510,7 @@ export default function AdminDashboard() {
   };
 
   const getStatusBadge = (sponsor: Sponsor) => {
-    if ((sponsor as any).status === "rejected") {
+    if ((sponsor as any).is_banned === 1) {
       return (
         <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-orange/10 text-orange">
           <Ban className="w-3 h-3" />
@@ -935,7 +935,7 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="flex flex-wrap gap-3 pt-4 border-t border-border-grey dark:border-dark-charcoal">
-                          {(sponsor as any).status === "rejected" ? (
+                          {(sponsor as any).is_banned === 1 ? (
                             <button
                               onClick={() => handleUnbanSponsor(sponsor.id)}
                               disabled={actionLoading === sponsor.id}

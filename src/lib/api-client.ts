@@ -213,11 +213,11 @@ export interface Sponsor {
   total_bounties_count: number;
   total_projects_count: number;
   total_reward_amount: number;
-  status: "pending" | "approved" | "rejected";
+  status: "pending" | "approved";
   is_verified: boolean;
+  is_banned: number;
+  banned_at?: number;
   approved_at?: string;
-  rejected_at?: string;
-  rejection_reason?: string;
   created_at: string;
   updated_at: string;
 }
