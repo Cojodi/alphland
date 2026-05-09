@@ -263,11 +263,12 @@ export default function AdminDashboard() {
   const fetchSponsors = useCallback(async () => {
     try {
       let url: string;
-      if (sponsorFilter === "pending") {
-        url = `/api/sponsors?pending=true`;
+      if (sponsorFilter === "banned") {
+        url = `/api/sponsors?status=rejected`;
+      } else if (sponsorFilter === "pending") {
+        url = `/api/sponsors?status=pending`;
       } else {
-        const isBanned = sponsorFilter === "banned" ? "true" : "false";
-        url = `/api/sponsors?is_banned=${isBanned}`;
+        url = `/api/sponsors?status=approved`;
       }
       const response = await fetch(url);
       const data = await response.json();
@@ -509,11 +510,18 @@ export default function AdminDashboard() {
   };
 
   const getStatusBadge = (sponsor: Sponsor) => {
-    if (sponsor.is_banned) {
+    if ((sponsor as any).status === "rejected") {
       return (
         <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-orange/10 text-orange">
           <Ban className="w-3 h-3" />
           Banned
+        </span>
+      );
+    }
+    if ((sponsor as any).status === "pending") {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-600 dark:text-yellow-400">
+          Pending
         </span>
       );
     }

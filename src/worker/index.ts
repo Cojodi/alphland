@@ -493,15 +493,19 @@ const worker = {
             .first()) as { user_id: string } | null;
           if (sponsor) {
             await env.DB.prepare(
-              `UPDATE sponsors SET is_banned = 1, banned_at = ?, updated_at = ? WHERE id = ?`,
+              `UPDATE sponsors SET status = 'rejected', rejected_at = ?, updated_at = ? WHERE id = ?`,
             )
               .bind(now, now, id)
               .run();
-            await env.DB.prepare(
-              `UPDATE user SET is_banned = 1, updatedAt = ? WHERE id = ?`,
-            )
-              .bind(now * 1000, sponsor.user_id)
-              .run();
+            try {
+              await env.DB.prepare(
+                `UPDATE user SET is_banned = 1, updatedAt = ? WHERE id = ?`,
+              )
+                .bind(now * 1000, sponsor.user_id)
+                .run();
+            } catch {
+              /* user.is_banned may not exist */
+            }
           }
           return new Response(JSON.stringify({ success: true }), {
             headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -533,15 +537,19 @@ const worker = {
             .first()) as { user_id: string } | null;
           if (sponsor) {
             await env.DB.prepare(
-              `UPDATE sponsors SET is_banned = 0, banned_at = NULL, updated_at = ? WHERE id = ?`,
+              `UPDATE sponsors SET status = 'approved', rejected_at = NULL, updated_at = ? WHERE id = ?`,
             )
               .bind(now, id)
               .run();
-            await env.DB.prepare(
-              `UPDATE user SET is_banned = 0, updatedAt = ? WHERE id = ?`,
-            )
-              .bind(now * 1000, sponsor.user_id)
-              .run();
+            try {
+              await env.DB.prepare(
+                `UPDATE user SET is_banned = 0, updatedAt = ? WHERE id = ?`,
+              )
+                .bind(now * 1000, sponsor.user_id)
+                .run();
+            } catch {
+              /* user.is_banned may not exist */
+            }
           }
           return new Response(JSON.stringify({ success: true }), {
             headers: { "Content-Type": "application/json", ...corsHeaders },

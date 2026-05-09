@@ -1152,29 +1152,28 @@ export async function handleSponsorsAPI(
   // GET /api/sponsors - List all sponsors (for admin)
   if (request.method === "GET" && pathname === "/api/sponsors") {
     const isBanned = url.searchParams.get("is_banned");
-    const isPending = url.searchParams.get("pending");
+    const statusParam = url.searchParams.get("status");
 
-    let query = `SELECT s.*, b.bounty_count,
-                        u.email as user_email, u.name as user_name, u.image as user_image
-                 FROM sponsors s
-                 LEFT JOIN (
-                   SELECT sponsor_id, COUNT(*) as bounty_count
-                   FROM bounties
-                   GROUP BY sponsor_id
-                 ) b ON s.id = b.sponsor_id
-                 LEFT JOIN user u ON s.user_id = u.id`;
+    const baseQuery = `SELECT s.*, b.bounty_count,
+                              u.email as user_email, u.name as user_name, u.image as user_image
+                       FROM sponsors s
+                       LEFT JOIN (
+                         SELECT sponsor_id, COUNT(*) as bounty_count
+                         FROM bounties
+                         GROUP BY sponsor_id
+                       ) b ON s.id = b.sponsor_id
+                       LEFT JOIN user u ON s.user_id = u.id`;
 
-    // Try to filter by is_banned if param provided
-    // Use COALESCE to handle case where column might not exist or is NULL
-    if (isPending === "true") {
-      query += ` WHERE COALESCE(s.is_verified, 0) = 0 AND COALESCE(s.is_banned, 0) = 0`;
-    } else if (isBanned === "true") {
-      query += ` WHERE COALESCE(s.is_banned, 0) = 1`;
-    } else if (isBanned === "false") {
-      query += ` WHERE COALESCE(s.is_banned, 0) = 0`;
+    let where = "";
+    if (isBanned === "true" || statusParam === "rejected") {
+      where = ` WHERE s.status = 'rejected'`;
+    } else if (statusParam === "pending") {
+      where = ` WHERE s.status = 'pending'`;
+    } else if (statusParam === "approved") {
+      where = ` WHERE s.status = 'approved'`;
     }
 
-    query += ` ORDER BY s.created_at DESC`;
+    const query = baseQuery + where + ` ORDER BY s.created_at DESC`;
 
     try {
       const { results } = await env.DB.prepare(query).all();
@@ -1182,23 +1181,8 @@ export async function handleSponsorsAPI(
         headers: corsHeaders,
       });
     } catch (error) {
-      // Fallback: if is_banned column doesn't exist, query without filter
-      console.error(
-        "Sponsors query failed, trying without is_banned filter:",
-        error,
-      );
-      const fallbackQuery = `SELECT s.*, b.bounty_count,
-                                    u.email as user_email, u.name as user_name, u.image as user_image
-                             FROM sponsors s
-                             LEFT JOIN (
-                               SELECT sponsor_id, COUNT(*) as bounty_count
-                               FROM bounties
-                               GROUP BY sponsor_id
-                             ) b ON s.id = b.sponsor_id
-                             LEFT JOIN user u ON s.user_id = u.id
-                             ORDER BY s.created_at DESC`;
-      const { results } = await env.DB.prepare(fallbackQuery).all();
-      return new Response(JSON.stringify({ sponsors: results }), {
+      console.error("Sponsors query failed:", error);
+      return new Response(JSON.stringify({ sponsors: [] }), {
         headers: corsHeaders,
       });
     }
@@ -1277,18 +1261,12 @@ export async function handleSponsorsAPI(
         .first();
 
       if (sponsor) {
-        // Ban the sponsor (may fail if columns don't exist)
-        try {
-          await env.DB.prepare(
-            `UPDATE sponsors SET is_banned = 1, banned_at = ?, updated_at = ? WHERE id = ?`,
-          )
-            .bind(now, now, id)
-            .run();
-        } catch (e) {
-          console.error("Failed to update sponsor is_banned:", e);
-        }
+        await env.DB.prepare(
+          `UPDATE sponsors SET status = 'rejected', rejected_at = ?, updated_at = ? WHERE id = ?`,
+        )
+          .bind(now, now, id)
+          .run();
 
-        // Also ban the associated user (may fail if column doesn't exist)
         try {
           await env.DB.prepare(
             `UPDATE user SET is_banned = 1, updatedAt = ? WHERE id = ?`,
@@ -1305,12 +1283,10 @@ export async function handleSponsorsAPI(
       });
     } catch (error) {
       console.error("Failed to ban sponsor:", error);
-      return new Response(
-        JSON.stringify({
-          error: "Failed to ban sponsor. Run migrations 020 and 021 first.",
-        }),
-        { status: 500, headers: corsHeaders },
-      );
+      return new Response(JSON.stringify({ error: "Failed to ban sponsor." }), {
+        status: 500,
+        headers: corsHeaders,
+      });
     }
   }
 
@@ -1470,18 +1446,12 @@ export async function handleSponsorsAPI(
         .first();
 
       if (sponsor) {
-        // Unban the sponsor (may fail if columns don't exist)
-        try {
-          await env.DB.prepare(
-            `UPDATE sponsors SET is_banned = 0, banned_at = NULL, updated_at = ? WHERE id = ?`,
-          )
-            .bind(now, id)
-            .run();
-        } catch (e) {
-          console.error("Failed to update sponsor is_banned:", e);
-        }
+        await env.DB.prepare(
+          `UPDATE sponsors SET status = 'approved', rejected_at = NULL, updated_at = ? WHERE id = ?`,
+        )
+          .bind(now, id)
+          .run();
 
-        // Also unban the associated user (may fail if column doesn't exist)
         try {
           await env.DB.prepare(
             `UPDATE user SET is_banned = 0, updatedAt = ? WHERE id = ?`,
@@ -1499,9 +1469,7 @@ export async function handleSponsorsAPI(
     } catch (error) {
       console.error("Failed to unban sponsor:", error);
       return new Response(
-        JSON.stringify({
-          error: "Failed to unban sponsor. Run migrations 020 and 021 first.",
-        }),
+        JSON.stringify({ error: "Failed to unban sponsor." }),
         { status: 500, headers: corsHeaders },
       );
     }
