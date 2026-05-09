@@ -935,7 +935,7 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="flex flex-wrap gap-3 pt-4 border-t border-border-grey dark:border-dark-charcoal">
-                          {sponsor.is_banned ? (
+                          {(sponsor as any).status === "rejected" ? (
                             <button
                               onClick={() => handleUnbanSponsor(sponsor.id)}
                               disabled={actionLoading === sponsor.id}
