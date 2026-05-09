@@ -826,21 +826,27 @@ export function SubmissionReviewModal({
                   required
                 />
                 {txError ? (
-                  <div className="mt-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                    <p className="text-sm text-red-600 dark:text-red-400 font-medium">
+                  <div className="mt-2 p-4 bg-red-50 dark:bg-red-900/30 border-2 border-red-500 dark:border-red-500 rounded-lg">
+                    <div className="flex items-center gap-2 mb-1">
+                      <XCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                      <p className="text-sm font-bold text-red-600 dark:text-red-400">
+                        Approval failed — submission was NOT approved
+                      </p>
+                    </div>
+                    <p className="text-sm text-red-600 dark:text-red-400 ml-6">
                       {txError}
                     </p>
-                    <p className="text-xs text-red-500 dark:text-red-500 mt-1">
-                      You can verify the transaction on{" "}
+                    <p className="text-xs text-red-500 mt-2 ml-6">
+                      Check the hash on{" "}
                       <a
                         href={`https://explorer.alephium.org/transactions/${form.transactionHash}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="underline hover:opacity-80"
+                        className="underline font-medium hover:opacity-80"
                       >
                         Alephium Explorer
-                      </a>
-                      .
+                      </a>{" "}
+                      and re-submit with the correct hash.
                     </p>
                   </div>
                 ) : (
