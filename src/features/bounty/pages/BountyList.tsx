@@ -198,8 +198,8 @@ export default function BountyList() {
     if (activeStatus !== "all") {
       const isExpired = isBountyEnded(bounty);
       if (activeStatus === "open") {
-        // Open: end_date not expired
-        if (isExpired) return false;
+        // Open: end_date not expired AND not marked completed
+        if (isExpired || bounty.status === "completed") return false;
       } else if (activeStatus === "closed") {
         // Closed: expired AND not marked completed
         if (!isExpired || bounty.status === "completed") return false;
@@ -543,10 +543,10 @@ export default function BountyList() {
 
                         // Determine status tag based on end_date and DB status
                         const getStatusTag = () => {
+                          if (bounty.status === "completed") return "Completed";
                           const isExpired =
                             daysRemaining !== null && daysRemaining < 0;
                           if (!isExpired) return "Open";
-                          if (bounty.status === "completed") return "Completed";
                           return "Closed";
                         };
 
