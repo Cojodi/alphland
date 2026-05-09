@@ -122,7 +122,7 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
 
   const extractNotes = (description: string | null): string | null => {
     if (!description) return null;
-    const notesMatch = description.match(/\*\*Notes:\*\*\n([\s\S]+)$/);
+    const notesMatch = description.match(/Notes:\n([\s\S]+)$/);
     return notesMatch ? notesMatch[1].trim() : null;
   };
 
