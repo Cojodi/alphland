@@ -3,6 +3,11 @@
  * Separate file for better organization
  */
 import { Env } from "./index";
+import {
+  notifyUserSubmissionApproved,
+  notifyUserSubmissionRejected,
+  notifySponsorNewSubmission,
+} from "./email";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -142,6 +147,10 @@ export async function handleSubmissionsAPI(
       )
         .bind(id)
         .first();
+
+      notifySponsorNewSubmission(env, id).catch((e) =>
+        console.error("[email] notifySponsorNewSubmission failed:", e),
+      );
 
       return new Response(JSON.stringify({ submission }), {
         status: 201,
@@ -477,6 +486,16 @@ export async function handleSubmissionsAPI(
     )
       .bind(id)
       .first();
+
+    if (body.status === "approved") {
+      notifyUserSubmissionApproved(env, id as string).catch((e) =>
+        console.error("[email] notifyUserSubmissionApproved failed:", e),
+      );
+    } else if (body.status === "rejected") {
+      notifyUserSubmissionRejected(env, id as string).catch((e) =>
+        console.error("[email] notifyUserSubmissionRejected failed:", e),
+      );
+    }
 
     return new Response(JSON.stringify({ submission }), {
       headers: corsHeaders,

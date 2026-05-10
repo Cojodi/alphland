@@ -3,6 +3,7 @@
  * This worker handles API requests and connects to D1 database
  */
 import { createAuth } from "./auth";
+import { notifySponsorVerified } from "./email";
 import { verifySignedMessage } from "@alephium/web3";
 import { DAPP_LIST } from "./dappList";
 import {
@@ -571,6 +572,11 @@ const worker = {
           )
             .bind(now, now, id)
             .run();
+
+          notifySponsorVerified(env, id).catch((e) =>
+            console.error("[email] notifySponsorVerified failed:", e),
+          );
+
           return new Response(JSON.stringify({ success: true }), {
             headers: { "Content-Type": "application/json", ...corsHeaders },
           });
