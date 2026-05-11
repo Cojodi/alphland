@@ -1126,7 +1126,7 @@ export default function SponsorDashboard() {
             )}
 
             {/* Transfer Ownership — only visible to the actual owner, not god */}
-            {activeTab === "overview" && !isGod && (
+            {/* {activeTab === "overview" && !isGod && (
               <div className="bg-white dark:bg-hero-dark rounded-xl border border-red-200 dark:border-red-900/40 p-6 space-y-4">
                 <h2 className="text-base font-bold text-red-500 font-barlow">
                   Transfer Ownership
@@ -1182,7 +1182,7 @@ export default function SponsorDashboard() {
                   </div>
                 )}
               </div>
-            )}
+            )} */}
 
             {/* Bounties Tab */}
             {activeTab === "bounties" && (
