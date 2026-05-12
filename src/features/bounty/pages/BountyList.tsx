@@ -127,7 +127,7 @@ export default function BountyList() {
           ? await submissionsRes.json()
           : null;
 
-        const hasProfile = !!profileData?.user?.username;
+        const hasProfile = !!profileData?.user?.wallet_address;
         const hasSubmission = Array.isArray(submissionsData?.submissions)
           ? submissionsData.submissions.length > 0
           : false;

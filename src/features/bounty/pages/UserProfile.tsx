@@ -7,7 +7,7 @@ import { StatsSection } from "../components/StatsSection";
 import { SubmissionsSection } from "../components/SubmissionsSection";
 import Layout from "@/components/Layout";
 import { useSession } from "@/lib/auth-client";
-import { getDisplayUsername, shouldPromptForUsername } from "@/lib/user-utils";
+import { getDisplayUsername } from "@/lib/user-utils";
 import { useEffect, useState } from "react";
 
 interface UserProfileData {
@@ -153,13 +153,6 @@ export default function UserProfile({
     internship: "Internship Opportunities",
   };
 
-  // Determine if user should be prompted to set a custom username
-  const shouldShowUsernamePrompt = shouldPromptForUsername({
-    username: userData.username,
-    name: userData.name,
-    user_id: userData.user_id,
-    is_default_username: userData.is_default_username,
-  });
   const displayUsername = getDisplayUsername({
     username: userData.username,
     name: userData.name,
@@ -176,7 +169,6 @@ export default function UserProfile({
           username={displayUsername}
           avatarUrl={userData.image || undefined}
           isOwnProfile={isOwnProfile || false}
-          isUsingGoogleNameFallback={shouldShowUsernamePrompt}
           socials={socials}
         />
 
