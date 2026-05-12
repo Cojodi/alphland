@@ -197,7 +197,8 @@ export type SubmissionStatus =
   | "submitted"
   | "in_review"
   | "accepted"
-  | "rejected";
+  | "rejected"
+  | "revision_requested";
 
 export interface BountySubmission {
   id: string;

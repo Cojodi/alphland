@@ -584,6 +584,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
             onClose={() => setShowSubmissionModal(false)}
             bountyId={bounty.id}
             bountyTitle={bounty.title}
+            bountyStatus={bounty.status ?? undefined}
             userId={session.user.id}
             username={userProfile?.username || undefined}
             sponsorUserId={sponsorUserId || undefined}

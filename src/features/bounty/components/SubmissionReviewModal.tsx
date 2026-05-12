@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, ExternalLink, CheckCircle, XCircle, Copy } from "lucide-react";
+import {
+  X,
+  ExternalLink,
+  CheckCircle,
+  XCircle,
+  Copy,
+  RotateCcw,
+} from "lucide-react";
 import Link from "next/link";
 import { apiClient, BountySubmission } from "@/lib/api-client";
 import { notificationService } from "../services/notificationService";
@@ -17,7 +24,7 @@ interface SubmissionReviewModalProps {
 }
 
 const initialFormState = {
-  reviewAction: null as "approved" | "rejected" | null,
+  reviewAction: null as "approved" | "rejected" | "revision_requested" | null,
   reviewerNotes: "",
   transactionHash: "",
   rewardAmount: "",
@@ -38,7 +45,7 @@ export function SubmissionReviewModal({
   const [txError, setTxError] = useState<string | null>(null);
   const [successState, setSuccessState] = useState<{
     show: boolean;
-    action: "approved" | "rejected" | null;
+    action: "approved" | "rejected" | "revision_requested" | null;
   }>({ show: false, action: null });
   const [userWalletAddress, setUserWalletAddress] = useState<string | null>(
     null,
@@ -251,8 +258,11 @@ export function SubmissionReviewModal({
         reviewerNotes: reviewer_notes || "",
       });
     } else if (status === "revision_requested") {
-      // Legacy status: no longer selectable, but show saved notes
-      setForm({ ...initialFormState, reviewerNotes: reviewer_notes || "" });
+      setForm({
+        ...initialFormState,
+        reviewAction: "revision_requested",
+        reviewerNotes: reviewer_notes || "",
+      });
     } else {
       setForm(initialFormState);
     }
@@ -569,7 +579,7 @@ export function SubmissionReviewModal({
               <label className="block text-sm font-semibold text-black dark:text-white mb-3">
                 Review Decision <span className="text-red-500">*</span>
               </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   type="button"
                   onClick={() =>
@@ -596,6 +606,38 @@ export function SubmissionReviewModal({
                     }`}
                   >
                     Approve
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      reviewAction: "revision_requested",
+                    }))
+                  }
+                  className={`p-4 border-2 rounded-lg transition-all ${
+                    form.reviewAction === "revision_requested"
+                      ? "border-orange bg-orange/10"
+                      : "border-border-grey dark:border-dark-charcoal hover:border-orange"
+                  }`}
+                >
+                  <RotateCcw
+                    className={`w-6 h-6 mx-auto mb-2 ${
+                      form.reviewAction === "revision_requested"
+                        ? "text-orange"
+                        : "text-light-charcoal dark:text-lightgrey"
+                    }`}
+                  />
+                  <span
+                    className={`text-sm font-medium ${
+                      form.reviewAction === "revision_requested"
+                        ? "text-orange"
+                        : "text-black dark:text-white"
+                    }`}
+                  >
+                    Revision
                   </span>
                 </button>
 

@@ -7,6 +7,8 @@ import {
   notifyUserSubmissionApproved,
   notifyUserSubmissionRejected,
   notifySponsorNewSubmission,
+  notifyUserRevisionRequested,
+  notifySponsorSubmissionResubmitted,
 } from "./email";
 
 const corsHeaders = {
@@ -117,7 +119,10 @@ export async function handleSubmissionsAPI(
 
       if (existing) {
         return new Response(
-          JSON.stringify({ error: "Already submitted to this bounty" }),
+          JSON.stringify({
+            error: "Already submitted to this bounty",
+            submission_id: (existing as any).id,
+          }),
           { status: 409, headers: corsHeaders },
         );
       }
@@ -495,7 +500,95 @@ export async function handleSubmissionsAPI(
       notifyUserSubmissionRejected(env, id as string).catch((e) =>
         console.error("[email] notifyUserSubmissionRejected failed:", e),
       );
+    } else if (body.status === "revision_requested") {
+      notifyUserRevisionRequested(env, id as string).catch((e) =>
+        console.error("[email] notifyUserRevisionRequested failed:", e),
+      );
     }
+
+    return new Response(JSON.stringify({ submission }), {
+      headers: corsHeaders,
+    });
+  }
+
+  // PATCH /api/submissions/:id — user edits their own submission and resubmits
+  if (
+    request.method === "PATCH" &&
+    pathname.match(/^\/api\/submissions\/[^/]+$/)
+  ) {
+    const id = pathname.split("/").pop();
+    const body = (await request.json()) as any;
+    const now = Math.floor(Date.now() / 1000);
+
+    if (!body.user_id || !body.submission_url) {
+      return new Response(
+        JSON.stringify({ error: "Missing required fields" }),
+        { status: 400, headers: corsHeaders },
+      );
+    }
+
+    // Verify the submission belongs to this user and check bounty is still open
+    const existing = (await env.DB.prepare(
+      `SELECT bs.id, bs.user_id, bs.status, b.status as bounty_status, b.end_date
+       FROM bounty_submissions bs
+       JOIN bounties b ON bs.bounty_id = b.id
+       WHERE bs.id = ?`,
+    )
+      .bind(id)
+      .first()) as {
+      id: string;
+      user_id: string;
+      status: string;
+      bounty_status: string;
+      end_date: number;
+    } | null;
+
+    if (!existing) {
+      return new Response(JSON.stringify({ error: "Submission not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    if (existing.user_id !== body.user_id) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 403,
+        headers: corsHeaders,
+      });
+    }
+
+    if (existing.status === "approved" || existing.status === "rejected") {
+      return new Response(
+        JSON.stringify({ error: "Cannot edit a finalized submission" }),
+        { status: 400, headers: corsHeaders },
+      );
+    }
+
+    const isExpired = existing.end_date && existing.end_date < now;
+    if (existing.bounty_status === "completed" || isExpired) {
+      return new Response(
+        JSON.stringify({ error: "Cannot edit submission for a closed bounty" }),
+        { status: 400, headers: corsHeaders },
+      );
+    }
+
+    await env.DB.prepare(
+      `UPDATE bounty_submissions
+       SET submission_url = ?, description = ?, status = 'submitted', updated_at = ?
+       WHERE id = ?`,
+    )
+      .bind(body.submission_url, body.description || null, now, id)
+      .run();
+
+    const submission = await env.DB.prepare(
+      `SELECT * FROM bounty_submissions WHERE id = ?`,
+    )
+      .bind(id)
+      .first();
+
+    notifySponsorSubmissionResubmitted(env, id as string).catch((e) =>
+      console.error("[email] notifySponsorSubmissionResubmitted failed:", e),
+    );
 
     return new Response(JSON.stringify({ submission }), {
       headers: corsHeaders,

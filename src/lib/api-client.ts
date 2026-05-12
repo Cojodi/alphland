@@ -278,12 +278,15 @@ class ApiClient {
       });
 
       if (!response.ok) {
-        const error = await response
+        const errorData = await response
           .json()
           .catch(() => ({ error: "Unknown error" }));
-        throw new Error(
-          error.error || `HTTP error! status: ${response.status}`,
-        );
+        const err = new Error(
+          errorData.error || `HTTP error! status: ${response.status}`,
+        ) as any;
+        err.status = response.status;
+        err.data = errorData;
+        throw err;
       }
 
       return await response.json();
@@ -356,6 +359,16 @@ class ApiClient {
 
   async getSubmission(id: string): Promise<{ submission: BountySubmission }> {
     return this.request(`/api/submissions/${id}`);
+  }
+
+  async resubmitSubmission(
+    id: string,
+    data: { user_id: string; submission_url: string; description?: string },
+  ): Promise<{ submission: BountySubmission }> {
+    return this.request(`/api/submissions/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
   }
 
   async getSubmissionsByBounty(
