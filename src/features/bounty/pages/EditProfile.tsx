@@ -461,10 +461,6 @@ export default function EditProfile() {
     if (username.length > 30) {
       return "Username must be 30 characters or fewer";
     }
-    // Warn if it looks like a system-generated default (e.g. "johndoe_x8k2")
-    if (/^[a-z0-9]+_[a-z0-9]{4,6}$/.test(username)) {
-      return 'This looks auto-generated (e.g. "john_x8k2"). Please set a custom username.';
-    }
     return null;
   };
 
