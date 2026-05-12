@@ -463,7 +463,7 @@ export default function EditProfile() {
     }
     // Warn if it looks like a system-generated default (e.g. "johndoe_x8k2")
     if (/^[a-z0-9]+_[a-z0-9]{4,6}$/.test(username)) {
-      return "This looks like a system-generated username. Please choose a personalized one.";
+      return 'This looks auto-generated (e.g. "john_x8k2"). Please set a custom username.';
     }
     return null;
   };
@@ -734,7 +734,9 @@ export default function EditProfile() {
     const usernameValidation = validateUsername(formData.username);
     if (usernameValidation) {
       setUsernameError(usernameValidation);
-      alert(usernameValidation);
+      document
+        .getElementsByName("username")[0]
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
 
