@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const FEATURES = [
   {
@@ -71,7 +72,9 @@ export default function SponsorLanding() {
       router.push("/auth/login?redirect=/bounty/new/sponsor");
     } else if (existingSponsor?.is_banned) {
       // Banned sponsor
-      alert("Your sponsor account has been banned. Please contact support.");
+      toast.error(
+        "Your sponsor account has been banned. Please contact support.",
+      );
     } else if (existingSponsor) {
       // Already a sponsor, go to dashboard
       router.push("/bounty/sponsor/dashboard");

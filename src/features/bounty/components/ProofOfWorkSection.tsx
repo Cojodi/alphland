@@ -3,6 +3,7 @@
 import Modal from "@/components/Modal/Modal";
 import { X, Plus, Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { normalizeUrl } from "../utils/validators";
 
 interface Work {
@@ -109,12 +110,12 @@ export function ProofOfWorkSection({
       !newWork.link ||
       newWork.skills.length === 0
     ) {
-      alert("Please fill in all required fields");
+      toast.error("Please fill in all required fields");
       return;
     }
 
     if (!userId || !username) {
-      alert("User information is missing");
+      toast.error("User information is missing");
       return;
     }
 
@@ -152,7 +153,7 @@ export function ProofOfWorkSection({
       if (onUpdate) onUpdate();
     } catch (error) {
       console.error("Error saving proof of work:", error);
-      alert(
+      toast.error(
         error instanceof Error ? error.message : "Failed to save proof of work",
       );
     } finally {
@@ -177,7 +178,7 @@ export function ProofOfWorkSection({
       if (onUpdate) onUpdate();
     } catch (error) {
       console.error("Error deleting proof of work:", error);
-      alert("Failed to delete proof of work");
+      toast.error("Failed to delete proof of work");
     }
   };
 

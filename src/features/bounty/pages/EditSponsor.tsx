@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useCallback, useEffect } from "react";
 import { normalizeUrl } from "../utils/validators";
+import { toast } from "react-toastify";
 
 interface FormData {
   name: string;
@@ -259,7 +260,7 @@ export default function EditSponsorProfile() {
           if (!uploadResponse.ok) {
             const errorText = await uploadResponse.text();
             console.error("Upload failed:", errorText);
-            alert("Failed to upload logo. Please try again.");
+            toast.error("Failed to upload logo. Please try again.");
             throw new Error("Failed to upload logo");
           }
 
@@ -333,7 +334,7 @@ export default function EditSponsorProfile() {
         router.push("/bounty/sponsor/dashboard");
       } catch (error) {
         console.error("Error updating sponsor profile:", error);
-        alert("Failed to update sponsor profile. Please try again.");
+        toast.error("Failed to update sponsor profile. Please try again.");
       } finally {
         setLoading(false);
       }

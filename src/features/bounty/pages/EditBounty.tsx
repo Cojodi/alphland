@@ -11,6 +11,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import Modal from "@/components/Modal/Modal";
+import { toast } from "react-toastify";
 
 interface BountyFormData {
   title: string;
@@ -182,7 +183,7 @@ export default function EditBounty() {
       router.push("/bounty/sponsor/dashboard");
     } catch (error) {
       console.error("Error updating bounty:", error);
-      alert("Failed to update bounty. Please try again.");
+      toast.error("Failed to update bounty. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -203,7 +204,7 @@ export default function EditBounty() {
       router.push("/bounty/sponsor/dashboard");
     } catch (error) {
       console.error("Error deleting bounty:", error);
-      alert("Failed to delete bounty. Please try again.");
+      toast.error("Failed to delete bounty. Please try again.");
     } finally {
       setDeleting(false);
       setShowDeleteModal(false);
@@ -229,10 +230,10 @@ export default function EditBounty() {
       }
 
       setFormData((prev) => ({ ...prev, status: "closed" }));
-      alert("Bounty closed successfully");
+      toast.success("Bounty closed successfully");
     } catch (error) {
       console.error("Error closing bounty:", error);
-      alert("Failed to close bounty. Please try again.");
+      toast.error("Failed to close bounty. Please try again.");
     } finally {
       setLoading(false);
     }

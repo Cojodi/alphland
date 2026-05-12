@@ -4,6 +4,7 @@ import { notificationService } from "../services/notificationService";
 import { apiClient, BountyComment } from "@/lib/api-client";
 import { containsProfanity } from "@/lib/profanity-filter";
 import Link from "next/link";
+import { toast } from "react-toastify";
 import { useState, useEffect, useCallback } from "react";
 
 interface CommentSectionProps {
@@ -132,7 +133,9 @@ function SingleComment({
   const handleEdit = async () => {
     if (!editContent.trim()) return;
     if (containsProfanity(editContent)) {
-      alert("Your comment contains inappropriate language. Please revise it.");
+      toast.error(
+        "Your comment contains inappropriate language. Please revise it.",
+      );
       return;
     }
     try {
@@ -374,7 +377,9 @@ export function CommentSection({
     if (!newComment.trim() || !currentUserId || isSubmitting) return;
 
     if (containsProfanity(newComment)) {
-      alert("Your comment contains inappropriate language. Please revise it.");
+      toast.error(
+        "Your comment contains inappropriate language. Please revise it.",
+      );
       return;
     }
 

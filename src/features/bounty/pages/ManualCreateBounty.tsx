@@ -4,6 +4,7 @@ import { useSession } from "@/lib/auth-client";
 import Layout from "@/components/Layout";
 import { Plus, X, Calendar, DollarSign, Copy } from "lucide-react";
 import { containsProfanity } from "@/lib/profanity-filter";
+import { toast } from "react-toastify";
 
 interface BountyFormData {
   title: string;
@@ -175,7 +176,7 @@ export default function ManualCreateBounty() {
       containsProfanity(formData.title) ||
       containsProfanity(formData.description)
     ) {
-      alert(
+      toast.error(
         "Your bounty contains inappropriate language. Please revise the title or description.",
       );
       return;
@@ -214,7 +215,9 @@ export default function ManualCreateBounty() {
       router.push("/bounty/sponsor/dashboard");
     } catch (error: any) {
       console.error("Error creating bounty:", error);
-      alert(error?.message || "Failed to create bounty. Please try again.");
+      toast.error(
+        error?.message || "Failed to create bounty. Please try again.",
+      );
     } finally {
       setLoading(false);
     }

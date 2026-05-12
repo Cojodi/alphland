@@ -138,7 +138,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
   // Handle bookmark toggle
   const handleBookmarkToggle = async () => {
     if (!session?.user?.id) {
-      alert("Please sign in to bookmark this bounty");
+      toast.info("Please sign in to bookmark this bounty");
       return;
     }
 
@@ -155,7 +155,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
       }
     } catch (error) {
       console.error("Error toggling bookmark:", error);
-      alert("Failed to update bookmark");
+      toast.error("Failed to update bookmark");
     }
   };
 
@@ -386,7 +386,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                         ? undefined
                         : () => {
                             if (!session?.user?.id) {
-                              alert("Please sign in to submit your work");
+                              toast.info("Please sign in to submit your work");
                               return;
                             }
                             if (!userProfile?.wallet_address) {

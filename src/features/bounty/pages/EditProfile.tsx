@@ -6,6 +6,7 @@ import { useWallet, useConnect } from "@alephium/web3-react";
 import { X, Upload } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 // Country list for location dropdown
 const COUNTRIES = [
@@ -363,7 +364,9 @@ export default function EditProfile() {
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
           console.error("API returned non-JSON response");
-          alert("Service temporarily unavailable, please try again later");
+          toast.error(
+            "Service temporarily unavailable, please try again later",
+          );
           setIsLoading(false);
           return;
         }
@@ -504,12 +507,12 @@ export default function EditProfile() {
       console.log("File selected:", file.name, "Size:", file.size, "bytes");
 
       if (file.size > 5 * 1024 * 1024) {
-        alert("File size must be less than 5MB");
+        toast.error("File size must be less than 5MB");
         return;
       }
 
       if (!file.type.startsWith("image/")) {
-        alert("Please select an image file");
+        toast.error("Please select an image file");
         return;
       }
 
@@ -530,7 +533,7 @@ export default function EditProfile() {
       };
       reader.onerror = (error) => {
         console.error("Error reading file:", error);
-        alert("Failed to read the image file. Please try again.");
+        toast.error("Failed to read the image file. Please try again.");
       };
       reader.readAsDataURL(file);
     } else {
@@ -543,7 +546,7 @@ export default function EditProfile() {
     const file = e.dataTransfer.files?.[0];
     if (file && file.type.startsWith("image/")) {
       if (file.size > 5 * 1024 * 1024) {
-        alert("File size must be less than 5MB");
+        toast.error("File size must be less than 5MB");
         return;
       }
       const reader = new FileReader();
@@ -715,14 +718,14 @@ export default function EditProfile() {
     e.preventDefault();
 
     if (!session?.user) {
-      alert("Please log in to update your profile");
+      toast.error("Please log in to update your profile");
       router.push("/auth/login");
       return;
     }
 
     // Validate required fields
     if (!formData.username || !formData.alphWalletAddress) {
-      alert("Please fill in all required fields");
+      toast.error("Please fill in all required fields");
       return;
     }
 
@@ -737,7 +740,7 @@ export default function EditProfile() {
     }
 
     if (formData.skills.length === 0) {
-      alert("Please add at least one skill");
+      toast.error("Please add at least one skill");
       return;
     }
 
@@ -834,7 +837,7 @@ export default function EditProfile() {
       router.push(`/bounty/profile/${formData.username}`);
     } catch (error) {
       console.error("Failed to update profile:", error);
-      alert(
+      toast.error(
         error instanceof Error
           ? error.message
           : "Failed to update profile. Please try again.",
@@ -850,7 +853,7 @@ export default function EditProfile() {
 
   const handleDeleteAccount = async () => {
     if (!session?.user) {
-      alert("You must be logged in to delete your account");
+      toast.error("You must be logged in to delete your account");
       return;
     }
 
@@ -867,15 +870,11 @@ export default function EditProfile() {
         throw new Error(data.error || "Failed to delete account");
       }
 
-      alert(
-        "Your account has been successfully deleted. You will be redirected to the homepage.",
-      );
-
       // Log out the user and redirect to homepage
       window.location.href = "/";
     } catch (error) {
       console.error("Failed to delete account:", error);
-      alert(
+      toast.error(
         error instanceof Error
           ? error.message
           : "Failed to delete account. Please try again or contact support.",
@@ -1608,7 +1607,7 @@ export default function EditProfile() {
                   if (secondConfirm === "DELETE") {
                     handleDeleteAccount();
                   } else {
-                    alert("Account deletion cancelled.");
+                    // User did not confirm — do nothing
                   }
                 }
               }}

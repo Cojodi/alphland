@@ -8,6 +8,7 @@ import TwitterIcon from "@/assets/icons/socials/icon-twitter.icon.svg";
 import { Edit, Share2, Globe } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 interface ProfileHeaderProps {
   username: string;
@@ -73,7 +74,7 @@ export function ProfileHeader({
             <button
               onClick={() => {
                 navigator.clipboard.writeText(window.location.href);
-                alert("Profile link copied!");
+                toast.success("Profile link copied!");
               }}
               className="flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-orange text-orange rounded-lg font-medium hover:bg-orange/5 transition-colors w-full sm:w-auto"
             >
