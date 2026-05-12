@@ -306,8 +306,8 @@ export default function BountyList() {
                           }`}
                         >
                           {onboardingSteps.hasProfile
-                            ? "Profile complete"
-                            : "Complete your profile"}
+                            ? "Wallet connected"
+                            : "Connect your wallet"}
                         </p>
                         {!onboardingSteps.hasProfile && (
                           <Link href="/bounty/profile/edit">
