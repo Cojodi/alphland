@@ -10,6 +10,7 @@ import { calculateTimeRemaining } from "../utils/timeFormatter";
 import Layout from "@/components/Layout";
 import { apiClient } from "@/lib/api-client";
 import { useSession } from "@/lib/auth-client";
+import { toast } from "react-toastify";
 import { Bookmark, Users, ArrowLeft, Bell } from "lucide-react";
 import Link from "next/link";
 import { sponsorSlug } from "../utils";
@@ -600,7 +601,9 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
               } catch (error) {
                 console.error("Error refreshing submission:", error);
               }
-              alert("Submission successful! The sponsor has been notified.");
+              toast.success(
+                "Submission successful! The sponsor has been notified.",
+              );
             }}
           />
         )}
