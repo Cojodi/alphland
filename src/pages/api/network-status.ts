@@ -185,21 +185,25 @@ export default async function handler(
   const services = [
     {
       name: "Public Mainnet Node",
+      network: "MAINNET" as const,
       up: nodeResult.ok,
       latency: nodeResult.latency,
     },
     {
       name: "Public Explorer Backend",
+      network: "MAINNET" as const,
       up: explorerResult.ok,
       latency: explorerResult.latency,
     },
     {
       name: "Public Testnet Node",
+      network: "TESTNET" as const,
       up: testnetNodeResult.ok,
       latency: testnetNodeResult.latency,
     },
     {
       name: "Testnet Explorer Backend",
+      network: "TESTNET" as const,
       up: testnetExplorerResult.ok,
       latency: testnetExplorerResult.latency,
     },
@@ -318,11 +322,11 @@ export default async function handler(
       });
       await Promise.all([
         sendSlackAlert(
-          `:rotating_light: *Network Alert*\n*Service Degraded*: ${svc.name} — ≥3 of last 5 checks failed\n<${STATUS_URL}|View Status Page>`,
+          `:rotating_light: *[${svc.network}] Network Alert*\n*Service Degraded*: ${svc.name} — ≥3 of last 5 checks failed\n<${STATUS_URL}|View Status Page>`,
           id,
         ),
         sendWhatsAppAlert(
-          `🚨 Network Alert\nService Degraded: ${svc.name}\n≥3 of last 5 checks failed\n${STATUS_URL}`,
+          `🚨 [${svc.network}] Network Alert\nService Degraded: ${svc.name}\n≥3 of last 5 checks failed\n${STATUS_URL}`,
           id,
         ),
       ]);
@@ -335,11 +339,11 @@ export default async function handler(
       });
       await Promise.all([
         sendSlackAlert(
-          `:white_check_mark: *Network Alert*\n*Service Recovered*: ${svc.name} is back online\n<${STATUS_URL}|View Status Page>`,
+          `:white_check_mark: *[${svc.network}] Network Alert*\n*Service Recovered*: ${svc.name} is back online\n<${STATUS_URL}|View Status Page>`,
           `${id}_recovery`,
         ),
         sendWhatsAppAlert(
-          `✅ Network Alert\nService Recovered: ${svc.name} is back online\n${STATUS_URL}`,
+          `✅ [${svc.network}] Network Alert\nService Recovered: ${svc.name} is back online\n${STATUS_URL}`,
           `${id}_recovery`,
         ),
       ]);
