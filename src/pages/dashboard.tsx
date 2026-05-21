@@ -1,6 +1,10 @@
 import Layout from "../components/Layout";
 import { useEffect, useRef, useState, useCallback } from "react";
-import type { DashboardStats } from "./api/dashboard-stats";
+import type { GetStaticProps } from "next";
+import {
+  fetchDashboardStats,
+  type DashboardStats,
+} from "../lib/dashboard-stats-fetcher";
 
 // ─── Count-up hook ────────────────────────────────────────────────────────────
 
@@ -453,11 +457,26 @@ function Section({
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
-export default function DashboardPage() {
-  const [data, setData] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
+interface Props {
+  initialData: DashboardStats | null;
+}
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  try {
+    const initialData = await fetchDashboardStats(process.env.INTERNAL_SECRET);
+    return { props: { initialData }, revalidate: 300 };
+  } catch {
+    return { props: { initialData: null }, revalidate: 60 };
+  }
+};
+
+export default function DashboardPage({ initialData }: Props) {
+  const [data, setData] = useState<DashboardStats | null>(initialData);
+  const [loading, setLoading] = useState(initialData === null);
   const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(
+    initialData ? new Date(initialData.checkedAt) : null,
+  );
 
   const fetchStats = useCallback(async () => {
     try {

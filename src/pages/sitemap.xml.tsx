@@ -8,6 +8,7 @@ const STATIC_PAGES = [
   { loc: "/", priority: "1.0", changefreq: "daily" },
   { loc: "/bounty", priority: "0.9", changefreq: "daily" },
   { loc: "/explore", priority: "0.8", changefreq: "daily" },
+  { loc: "/dashboard", priority: "0.8", changefreq: "daily" },
   { loc: "/ecosystem-map", priority: "0.7", changefreq: "weekly" },
   { loc: "/resources", priority: "0.7", changefreq: "weekly" },
   { loc: "/terms", priority: "0.3", changefreq: "monthly" },
