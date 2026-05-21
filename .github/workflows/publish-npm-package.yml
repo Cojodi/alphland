@@ -57,8 +57,6 @@ jobs:
         run: |
           cd packages/alphland-dapps
           npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create Git Tag
         if: steps.version-check.outputs.should_publish == 'true'
