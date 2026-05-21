@@ -127,6 +127,32 @@ async function sendWhatsAppAlert(text: string, key: string): Promise<void> {
   } catch {}
 }
 
+// ── Node block timestamp verification ────────────────────────────────────────
+async function getNodeBlockTimestamp(
+  nodeUrl: string,
+  fromGroup: number,
+  toGroup: number,
+): Promise<number | null> {
+  const chainInfo = await fetchJSON<{ currentHeight: number }>(
+    `${nodeUrl}/blockflow/chain-info?fromGroup=${fromGroup}&toGroup=${toGroup}`,
+    5000,
+  );
+  if (!chainInfo.ok || chainInfo.data === null) return null;
+
+  const hashesResult = await fetchJSON<{ headers: string[] }>(
+    `${nodeUrl}/blockflow/hashes?fromGroup=${fromGroup}&toGroup=${toGroup}&height=${chainInfo.data.currentHeight}`,
+    5000,
+  );
+  const hash = hashesResult.data?.headers?.[0];
+  if (!hash) return null;
+
+  const blockResult = await fetchJSON<{ timestamp: number }>(
+    `${nodeUrl}/blocks/${hash}`,
+    5000,
+  );
+  return blockResult.data?.timestamp ?? null;
+}
+
 // ── Utilities ────────────────────────────────────────────────────────────────
 function formatHashrate(hps: number): string {
   if (hps >= 1e15) return `${(hps / 1e15).toFixed(2)} PH/s`;
@@ -302,7 +328,11 @@ export default async function handler(
   // 5. Alerts + Slack notifications
   const alerts: Array<{
     id: string;
-    type: "block_delay" | "hashrate_anomaly" | "service_down";
+    type:
+      | "block_delay"
+      | "explorer_sync_lag"
+      | "hashrate_anomaly"
+      | "service_down";
     message: string;
     severity: "warning" | "critical";
   }> = [];
@@ -350,29 +380,71 @@ export default async function handler(
     }
   }
 
-  // Block delay alerts
-  for (const chain of chains) {
-    if (chain.delayed) {
-      const id = `block_delay_${chain.fromGroup}_${chain.toGroup}`;
-      const mins = Math.floor((chain.secondsSinceBlock ?? 0) / 60);
-      const secs = (chain.secondsSinceBlock ?? 0) % 60;
+  // Block delay alerts — cross-verify delayed chains with the full node
+  const delayedChains = chains.filter((c) => c.delayed);
+  const nodeTimestamps = await Promise.all(
+    delayedChains.map((c) =>
+      getNodeBlockTimestamp(ALPH_NODE, c.fromGroup, c.toGroup),
+    ),
+  );
+
+  for (let i = 0; i < delayedChains.length; i++) {
+    const chain = delayedChains[i];
+    const nodeTs = nodeTimestamps[i];
+    const mins = Math.floor((chain.secondsSinceBlock ?? 0) / 60);
+    const secs = (chain.secondsSinceBlock ?? 0) % 60;
+
+    if (
+      nodeTs !== null &&
+      Math.floor((now - nodeTs) / 1000) <= BLOCK_DELAY_THRESHOLD_S
+    ) {
+      // Node has a recent block → explorer is lagging, not a real network issue
+      const lagId = `explorer_sync_lag_${chain.fromGroup}_${chain.toGroup}`;
+      const explorerLagS = chain.lastBlockTimestamp
+        ? Math.floor((nodeTs - chain.lastBlockTimestamp) / 1000)
+        : null;
+      const lagDesc =
+        explorerLagS !== null
+          ? `explorer is ${explorerLagS}s behind node`
+          : `explorer has no block data but node does`;
+
       alerts.push({
-        id,
-        type: "block_delay",
-        message: `Chain ${chain.fromGroup}→${chain.toGroup}: no block for ${mins}m ${secs}s`,
+        id: lagId,
+        type: "explorer_sync_lag",
+        message: `Chain ${chain.fromGroup}→${chain.toGroup}: Explorer sync lag — ${lagDesc}`,
         severity: "warning",
       });
       await Promise.all([
         sendSlackAlert(
-          `:warning: *Network Status Alert*\n*Block Delay*: Chain ${chain.fromGroup}→${chain.toGroup} has not produced a block in ${mins}m ${secs}s\n<${STATUS_URL}|View Status Page>`,
-          id,
+          `:warning: *Explorer Sync Lag*\nChain ${chain.fromGroup}→${chain.toGroup} — node has recent block but ${lagDesc}\n<${STATUS_URL}|View Status Page>`,
+          lagId,
         ),
         sendWhatsAppAlert(
-          `⚠️ Network Alert\nBlock Delay: Chain ${chain.fromGroup}→${chain.toGroup} no block for ${mins}m ${secs}s\n${STATUS_URL}`,
-          id,
+          `⚠️ Explorer Sync Lag\nChain ${chain.fromGroup}→${chain.toGroup} — node has recent block but ${lagDesc}\n${STATUS_URL}`,
+          lagId,
         ),
       ]);
+      continue;
     }
+
+    // Node also confirms delay (or node query failed) → real block delay
+    const id = `block_delay_${chain.fromGroup}_${chain.toGroup}`;
+    alerts.push({
+      id,
+      type: "block_delay",
+      message: `Chain ${chain.fromGroup}→${chain.toGroup}: no block for ${mins}m ${secs}s`,
+      severity: "warning",
+    });
+    await Promise.all([
+      sendSlackAlert(
+        `:warning: *Network Status Alert*\n*Block Delay*: Chain ${chain.fromGroup}→${chain.toGroup} has not produced a block in ${mins}m ${secs}s\n<${STATUS_URL}|View Status Page>`,
+        id,
+      ),
+      sendWhatsAppAlert(
+        `⚠️ Network Alert\nBlock Delay: Chain ${chain.fromGroup}→${chain.toGroup} no block for ${mins}m ${secs}s\n${STATUS_URL}`,
+        id,
+      ),
+    ]);
   }
 
   // Hashrate alerts
