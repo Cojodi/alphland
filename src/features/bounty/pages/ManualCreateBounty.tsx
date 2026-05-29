@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSession } from "@/lib/auth-client";
 import Layout from "@/components/Layout";
-import { Plus, X, Calendar, DollarSign } from "lucide-react";
+import { Plus, X, Calendar, DollarSign, Copy } from "lucide-react";
 import { containsProfanity } from "@/lib/profanity-filter";
+import { toast } from "react-toastify";
 
 interface BountyFormData {
   title: string;
@@ -30,6 +31,7 @@ export default function ManualCreateBounty() {
   const [sponsor, setSponsor] = useState<any>(null);
   const [loadingSponsor, setLoadingSponsor] = useState(true);
   const [dapps, setDapps] = useState<{ slug: string; name: string }[]>([]);
+  const [copySourceTitle, setCopySourceTitle] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<BountyFormData>({
     title: "",
@@ -92,6 +94,47 @@ export default function ManualCreateBounty() {
       .catch(() => {});
   }, []);
 
+  // Pre-fill form when copy_from query param is present
+  useEffect(() => {
+    const copyFrom = router.query.copy_from as string | undefined;
+    if (!copyFrom || !router.isReady) return;
+
+    fetch(`/api/bounties/${copyFrom}`)
+      .then((r) => r.json())
+      .then(({ bounty }) => {
+        if (!bounty) return;
+        const parseJsonField = (val: string | null): string[] => {
+          if (!val) return [""];
+          try {
+            const arr = JSON.parse(val);
+            return Array.isArray(arr) && arr.length > 0 ? arr : [""];
+          } catch {
+            return [""];
+          }
+        };
+        setCopySourceTitle(bounty.title);
+        setFormData((prev) => ({
+          ...prev,
+          title: bounty.title || "",
+          description: bounty.description || "",
+          category: bounty.category || "Content",
+          difficulty_level: bounty.difficulty || "intermediate",
+          requirements: parseJsonField(bounty.requirements),
+          deliverables: parseJsonField(bounty.deliverables),
+          skills: parseJsonField(bounty.skills),
+          reward_amount: bounty.reward_amount?.toString() || "",
+          reward_currency: bounty.reward_currency || "USD",
+          reward_usd_value: bounty.reward_usd_value?.toString() || "",
+          reward_type: bounty.reward_type || "fixed",
+          tier_count: bounty.tier_count || 5,
+          dapp_name: bounty.dapp_name || "",
+          start_date: new Date().toISOString().split("T")[0],
+          end_date: "",
+        }));
+      })
+      .catch(() => {});
+  }, [router.isReady, router.query.copy_from]);
+
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -133,7 +176,7 @@ export default function ManualCreateBounty() {
       containsProfanity(formData.title) ||
       containsProfanity(formData.description)
     ) {
-      alert(
+      toast.error(
         "Your bounty contains inappropriate language. Please revise the title or description.",
       );
       return;
@@ -161,15 +204,20 @@ export default function ManualCreateBounty() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create bounty");
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(
+          errData?.details || errData?.error || "Failed to create bounty",
+        );
       }
 
       const data = await response.json();
       // Redirect to sponsor dashboard after successful creation
       router.push("/bounty/sponsor/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating bounty:", error);
-      alert("Failed to create bounty. Please try again.");
+      toast.error(
+        error?.message || "Failed to create bounty. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -224,12 +272,24 @@ export default function ManualCreateBounty() {
               ← Back
             </button>
             <h1 className="text-4xl font-bold text-black dark:text-white font-barlow mb-2">
-              Create New Bounty
+              {copySourceTitle ? "Republish Bounty" : "Create New Bounty"}
             </h1>
             <p className="text-lg text-light-charcoal dark:text-lightgrey font-barlow">
               Fill in the details to create your bounty listing
             </p>
           </div>
+
+          {copySourceTitle && (
+            <div className="flex items-center gap-3 bg-orange/10 border border-orange/30 rounded-xl px-5 py-3 mb-6">
+              <Copy className="w-4 h-4 text-orange flex-shrink-0" />
+              <p className="text-sm font-barlow text-orange">
+                Copied from:{" "}
+                <span className="font-semibold">{copySourceTitle}</span> — all
+                fields are pre-filled. Update the deadline and publish as a new
+                bounty.
+              </p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Basic Information */}

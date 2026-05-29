@@ -2,7 +2,7 @@
   "name": "AlphBanX",
   "description": "AlphBanX is a lending and borrowing platform that lets users deposit ALPH as collateral to borrow ABD, an overcollateralized stablecoin pegged to the US dollar. It includes customizable interest rates, liquidation auctions for under-collateralized positions, and yield opportunities.",
   "short_description": "Borrow the native ABD stablecoin using your ALPH.",
-  "tags": ["DeFi"],
+  "tags": ["DeFi", "Grant Recipient"],
   "contracts": [],
   "councils_choice": true,
   "audits": [],

@@ -1,6 +1,6 @@
 // Validation utilities for bounty forms
 
-/** Generate a URL-friendly slug from a sponsor's company name.
+/** Generate a URL-friendly slug from a sponsor's organization name.
  *  "Linx Labs" → "linxlabs", "BabyPoolTool" → "babypooltool"
  *  The worker resolves these by normalizing the sponsors.name column the same way.
  */

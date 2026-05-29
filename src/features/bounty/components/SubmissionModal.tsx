@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import Link from "next/link";
 import { apiClient } from "@/lib/api-client";
 import { notificationService } from "../services/notificationService";
 import { normalizeUrl } from "../utils/validators";
@@ -11,6 +12,7 @@ interface SubmissionModalProps {
   onClose: () => void;
   bountyId: string;
   bountyTitle: string;
+  bountyStatus?: string;
   userId: string;
   username?: string;
   sponsorUserId?: string;
@@ -22,6 +24,7 @@ export function SubmissionModal({
   onClose,
   bountyId,
   bountyTitle,
+  bountyStatus,
   userId,
   username,
   sponsorUserId,
@@ -35,6 +38,9 @@ export function SubmissionModal({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [existingSubmissionId, setExistingSubmissionId] = useState<
+    string | null
+  >(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -105,13 +111,14 @@ export function SubmissionModal({
 
       // Close modal
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to create submission:", err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to submit. Please try again.",
-      );
+      if (err.status === 409 && err.data?.submission_id) {
+        setExistingSubmissionId(err.data.submission_id);
+        setError("already_submitted");
+      } else {
+        setError(err.message || "Failed to submit. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -142,11 +149,31 @@ export function SubmissionModal({
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {error && (
+          {error === "already_submitted" ? (
+            <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p className="text-sm text-red-600 dark:text-red-400">
+                You&apos;ve already submitted to this bounty.
+                {bountyStatus === "open" && (
+                  <>
+                    {" "}
+                    Since the bounty is still open, you can{" "}
+                    <Link href="/bounty/profile">
+                      <a
+                        className="underline font-medium hover:no-underline"
+                        onClick={onClose}
+                      >
+                        edit your existing submission →
+                      </a>
+                    </Link>
+                  </>
+                )}
+              </p>
+            </div>
+          ) : error ? (
             <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
               <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
             </div>
-          )}
+          ) : null}
 
           {/* Title */}
           <div>

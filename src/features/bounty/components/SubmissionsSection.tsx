@@ -10,6 +10,7 @@ import {
   AlertCircle,
   ChevronLeft,
   ChevronRight,
+  Edit2,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -24,6 +25,13 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({
+    submission_url: "",
+    description: "",
+  });
+  const [editSubmitting, setEditSubmitting] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSubmissions = async () => {
@@ -47,6 +55,53 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
 
     fetchSubmissions();
   }, [userId]);
+
+  const startEdit = (submission: BountySubmission) => {
+    setEditingId(submission.id);
+    setEditForm({
+      submission_url: submission.submission_url || "",
+      description: submission.description || "",
+    });
+    setEditError(null);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditError(null);
+  };
+
+  const handleResubmit = async (submissionId: string) => {
+    if (!editForm.submission_url.trim()) {
+      setEditError("Please provide a submission URL");
+      return;
+    }
+    try {
+      new URL(editForm.submission_url);
+    } catch {
+      setEditError("Please provide a valid URL");
+      return;
+    }
+    setEditSubmitting(true);
+    setEditError(null);
+    try {
+      const { submission: updated } = await apiClient.resubmitSubmission(
+        submissionId,
+        {
+          user_id: userId,
+          submission_url: editForm.submission_url,
+          description: editForm.description,
+        },
+      );
+      setSubmissions((prev) =>
+        prev.map((s) => (s.id === submissionId ? { ...s, ...updated } : s)),
+      );
+      setEditingId(null);
+    } catch (err: any) {
+      setEditError(err.message || "Failed to update submission");
+    } finally {
+      setEditSubmitting(false);
+    }
+  };
 
   // Pagination logic
   const totalPages = Math.ceil(submissions.length / SUBMISSIONS_PER_PAGE);
@@ -122,7 +177,7 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
 
   const extractNotes = (description: string | null): string | null => {
     if (!description) return null;
-    const notesMatch = description.match(/\*\*Notes:\*\*\n([\s\S]+)$/);
+    const notesMatch = description.match(/Notes:\n([\s\S]+)$/);
     return notesMatch ? notesMatch[1].trim() : null;
   };
 
@@ -235,13 +290,91 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
                     )}
 
                     {submission.reviewer_notes && (
-                      <div className="mt-3 p-3 bg-smoked-white dark:bg-light-black rounded-lg">
-                        <p className="text-xs font-semibold text-black dark:text-white mb-1">
-                          Sponsor Feedback:
+                      <div
+                        className={`mt-3 p-3 rounded-lg ${submission.status === "revision_requested" ? "bg-orange/5 border border-orange/20" : "bg-smoked-white dark:bg-light-black"}`}
+                      >
+                        <p
+                          className={`text-xs font-semibold mb-1 ${submission.status === "revision_requested" ? "text-orange" : "text-black dark:text-white"}`}
+                        >
+                          {submission.status === "revision_requested"
+                            ? "Revision requested — Sponsor feedback:"
+                            : "Sponsor Feedback:"}
                         </p>
                         <p className="text-sm text-light-charcoal dark:text-lightgrey">
                           {submission.reviewer_notes}
                         </p>
+                        {submission.status === "revision_requested" &&
+                          editingId !== submission.id && (
+                            <button
+                              onClick={() => startEdit(submission)}
+                              className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-orange hover:underline"
+                            >
+                              <Edit2 className="w-3 h-3" />
+                              Edit &amp; Resubmit
+                            </button>
+                          )}
+                      </div>
+                    )}
+
+                    {/* Inline edit form */}
+                    {editingId === submission.id && (
+                      <div className="mt-3 p-4 border border-orange/30 rounded-lg space-y-3 bg-orange/5">
+                        <p className="text-xs font-semibold text-orange">
+                          Update your submission
+                        </p>
+                        <div>
+                          <label className="block text-xs text-light-charcoal dark:text-lightgrey mb-1">
+                            Submission URL{" "}
+                            <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="url"
+                            value={editForm.submission_url}
+                            onChange={(e) =>
+                              setEditForm((f) => ({
+                                ...f,
+                                submission_url: e.target.value,
+                              }))
+                            }
+                            className="w-full px-3 py-2 text-sm bg-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange"
+                            placeholder="https://..."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-light-charcoal dark:text-lightgrey mb-1">
+                            Description
+                          </label>
+                          <textarea
+                            value={editForm.description}
+                            onChange={(e) =>
+                              setEditForm((f) => ({
+                                ...f,
+                                description: e.target.value,
+                              }))
+                            }
+                            rows={3}
+                            className="w-full px-3 py-2 text-sm bg-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-orange resize-none"
+                          />
+                        </div>
+                        {editError && (
+                          <p className="text-xs text-red-500">{editError}</p>
+                        )}
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleResubmit(submission.id)}
+                            disabled={editSubmitting}
+                            className="px-4 py-1.5 text-sm font-medium bg-orange text-white rounded-lg hover:bg-orange/90 disabled:opacity-50 transition-colors"
+                          >
+                            {editSubmitting ? "Submitting..." : "Resubmit"}
+                          </button>
+                          <button
+                            onClick={cancelEdit}
+                            disabled={editSubmitting}
+                            className="px-4 py-1.5 text-sm font-medium border border-border-grey dark:border-dark-charcoal text-black dark:text-white rounded-lg hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        </div>
                       </div>
                     )}
 

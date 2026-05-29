@@ -28,7 +28,11 @@ type HashrateInfo = {
 
 type AlertItem = {
   id: string;
-  type: "block_delay" | "hashrate_anomaly" | "service_down";
+  type:
+    | "block_delay"
+    | "explorer_sync_lag"
+    | "hashrate_anomaly"
+    | "service_down";
   message: string;
   severity: "warning" | "critical";
 };
@@ -163,7 +167,13 @@ function HashrateCard({ hr }: { hr: HashrateInfo }) {
   );
 }
 
-function ChainGrid({ chains }: { chains: ChainStatus[] }) {
+function ChainGrid({
+  chains,
+  alerts,
+}: {
+  chains: ChainStatus[];
+  alerts: AlertItem[];
+}) {
   return (
     <div className="bg-white dark:bg-hero-dark border border-border-grey dark:border-white/10 rounded-xl p-5">
       <p className="text-xs text-light-charcoal dark:text-white/50 uppercase tracking-wider mb-4">
@@ -196,36 +206,48 @@ function ChainGrid({ chains }: { chains: ChainStatus[] }) {
             if (!chain) return <div key={to} />;
             const isDelayed = chain.delayed;
             const isUnknown = chain.secondsSinceBlock === null;
-            const bgColor = isDelayed
-              ? "bg-danger-red/10 border-danger-red/40 text-danger-red"
-              : isUnknown
-                ? "bg-yellow-400/10 border-yellow-400/40 text-yellow-500 dark:text-yellow-400"
-                : "bg-accessible-green/10 border-accessible-green/40 text-accessible-green";
+            const isExplorerLag = alerts.some(
+              (a) =>
+                a.type === "explorer_sync_lag" &&
+                a.id === `explorer_sync_lag_${from}_${to}`,
+            );
+            const bgColor =
+              isDelayed && !isExplorerLag
+                ? "bg-danger-red/10 border-danger-red/40 text-danger-red"
+                : isDelayed || isUnknown
+                  ? "bg-yellow-400/10 border-yellow-400/40 text-yellow-500 dark:text-yellow-400"
+                  : "bg-accessible-green/10 border-accessible-green/40 text-accessible-green";
             const label =
               chain.secondsSinceBlock !== null
                 ? formatDuration(chain.secondsSinceBlock)
                 : "?";
+            const tooltip = isExplorerLag
+              ? `Explorer sync lag — node has a recent block`
+              : chain.lastBlockTimestamp
+                ? `Last block: ${formatTime(chain.lastBlockTimestamp)}`
+                : "No recent block found";
             return (
               <div
                 key={to}
                 className={`rounded-md border text-center py-1.5 px-1 ${bgColor}`}
-                title={
-                  chain.lastBlockTimestamp
-                    ? `Last block: ${formatTime(chain.lastBlockTimestamp)}`
-                    : "No recent block found"
-                }
+                title={tooltip}
               >
                 <span className="text-[11px] font-mono font-medium leading-none block">
                   {label}
                 </span>
+                {isExplorerLag && (
+                  <span className="text-[9px] leading-none block opacity-70">
+                    sync lag
+                  </span>
+                )}
               </div>
             );
           })}
         </div>
       ))}
       <p className="text-[10px] text-light-charcoal dark:text-white/30 mt-3">
-        Rows = chainFrom, Columns = chainTo. Red = delayed (&gt;60s), Yellow =
-        unknown
+        Rows = chainFrom, Columns = chainTo. Red = block delay, Yellow =
+        explorer sync lag or unknown
       </p>
     </div>
   );
@@ -394,7 +416,7 @@ export default function StatusPage() {
 
             {/* Chain Grid */}
             <section>
-              <ChainGrid chains={data.chains} />
+              <ChainGrid chains={data.chains} alerts={data.alerts} />
             </section>
 
             {/* Testnet Services */}

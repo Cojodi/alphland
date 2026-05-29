@@ -2,9 +2,7 @@
   "name": "ALPH 2048 Arena",
   "description": "ALPH 2048 Arena is a competitive on chain 2048 game on Alephium where players pay an entry fee, submit scores on chain, and compete for leaderboard rewards.",
   "short_description": "A competitive on chain 2048 game on Alephium.",
-  "tags": [
-    "Games"
-  ],
+  "tags": ["Games"],
   "verified": false,
   "dotw": false,
   "councils_choice": false,

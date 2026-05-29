@@ -8,6 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --loglevel warn --write \"**/*.{ts,tsx,css,md,json,yml,js,svg}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ci": "vitest run --reporter=verbose",
+    "typecheck": "tsc --noEmit",
     "posttest": "npm run format",
     "prepare": "husky install",
     "precommit-hook": "lint-staged",
@@ -76,6 +80,7 @@
     "react-is": "^18.2.0",
     "tailwindcss": "^3.1.7",
     "typescript": "^5.9.3",
+    "vitest": "^2.1.9",
     "wrangler": "^4.47.0"
   },
   "browser": {

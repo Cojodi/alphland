@@ -2,7 +2,7 @@
   "name": "Sezame Wallet",
   "description": "Sezame Wallet is a non custodial mobile wallet for managing multiple crypto assets. It provides simple interfaces for transfers, balance tracking, and everyday usage.",
   "short_description": "A non custodial wallet for digital assets",
-  "tags": ["Wallets"],
+  "tags": ["Wallets", "Grant Recipient"],
   "contracts": [],
   "audits": [],
   "verified": false,

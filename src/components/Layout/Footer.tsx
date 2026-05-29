@@ -56,9 +56,6 @@ const Footer = ({ currentTheme }: FooterProps) => {
           <Link href="/privacy">
             <a className="px-2">Privacy policy</a>
           </Link>
-          <Link href="/dashboard">
-            <a className="px-2">Dashboard</a>
-          </Link>
           <Link href="/status">
             <a className="flex items-center gap-1.5 px-2">
               <span className="relative flex h-2 w-2">

@@ -82,6 +82,11 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
       href: "/ecosystem-map",
       icon: currentTheme === "dark" ? homeDark : home,
     },
+    {
+      name: "Dashboard",
+      href: "/dashboard",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
   ];
 
   const setFilters = useCategoryStore((state) => state.setFilters);

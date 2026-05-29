@@ -3,6 +3,7 @@
  * This worker handles API requests and connects to D1 database
  */
 import { createAuth } from "./auth";
+import { notifySponsorVerified } from "./email";
 import { verifySignedMessage } from "@alephium/web3";
 import { DAPP_LIST } from "./dappList";
 import {
@@ -168,62 +169,67 @@ const worker = {
       // GET /api/admin/user-stats - User statistics overview
       if (url.pathname === "/api/admin/user-stats") {
         const nowMs = Date.now();
-        const todayStartMs = nowMs - (nowMs % (86400 * 1000)); // Start of today (UTC) in ms
-        const weekAgoMs = nowMs - 7 * 86400 * 1000;
-        const monthAgoMs = nowMs - 30 * 86400 * 1000;
+        // better-auth stores createdAt as ISO strings — compare using ISO format
+        const todayStartIso = new Date(
+          nowMs - (nowMs % (86400 * 1000)),
+        ).toISOString();
+        const weekAgoIso = new Date(nowMs - 7 * 86400 * 1000).toISOString();
+        const monthAgoIso = new Date(nowMs - 30 * 86400 * 1000).toISOString();
+        const twoWeeksAgoIso = new Date(
+          nowMs - 14 * 86400 * 1000,
+        ).toISOString();
 
         // Total users
         const totalUsers = await env.DB.prepare(
           `SELECT COUNT(*) as count FROM user`,
         ).first();
 
-        // New users today (createdAt is in milliseconds)
+        // New users today
         const newToday = await env.DB.prepare(
           `SELECT COUNT(*) as count FROM user WHERE createdAt >= ?`,
         )
-          .bind(todayStartMs)
+          .bind(todayStartIso)
           .first();
 
         // New users this week
         const newThisWeek = await env.DB.prepare(
           `SELECT COUNT(*) as count FROM user WHERE createdAt >= ?`,
         )
-          .bind(weekAgoMs)
+          .bind(weekAgoIso)
           .first();
 
         // New users this month
         const newThisMonth = await env.DB.prepare(
           `SELECT COUNT(*) as count FROM user WHERE createdAt >= ?`,
         )
-          .bind(monthAgoMs)
+          .bind(monthAgoIso)
           .first();
 
         // WAU - users with sessions in last 7 days
         const wau = await env.DB.prepare(
           `SELECT COUNT(DISTINCT userId) as count FROM session WHERE createdAt >= ?`,
         )
-          .bind(weekAgoMs)
+          .bind(weekAgoIso)
           .first();
 
         // MAU - users with sessions in last 30 days
         const mau = await env.DB.prepare(
           `SELECT COUNT(DISTINCT userId) as count FROM session WHERE createdAt >= ?`,
         )
-          .bind(monthAgoMs)
+          .bind(monthAgoIso)
           .first();
 
         // Daily new users for last 14 days (for trend chart)
-        // createdAt is in milliseconds, so divide by 1000 for unixepoch
         const { results: dailyTrend } = await env.DB.prepare(
           `SELECT
-            DATE(createdAt / 1000, 'unixepoch') as date,
+            DATE(createdAt) as date,
             COUNT(*) as count
           FROM user
           WHERE createdAt >= ?
-          GROUP BY DATE(createdAt / 1000, 'unixepoch')
+          GROUP BY DATE(createdAt)
           ORDER BY date ASC`,
         )
-          .bind(nowMs - 14 * 86400 * 1000)
+          .bind(twoWeeksAgoIso)
           .all();
 
         return new Response(
@@ -473,6 +479,147 @@ const worker = {
         }
       }
 
+      // PUT /api/admin/sponsors/:id/ban
+      if (
+        request.method === "PUT" &&
+        url.pathname.match(/^\/api\/admin\/sponsors\/[^/]+\/ban$/)
+      ) {
+        const id = url.pathname.split("/")[4];
+        const now = Math.floor(Date.now() / 1000);
+        try {
+          const sponsor = (await env.DB.prepare(
+            `SELECT user_id FROM sponsors WHERE id = ?`,
+          )
+            .bind(id)
+            .first()) as { user_id: string } | null;
+          if (sponsor) {
+            await env.DB.prepare(
+              `UPDATE sponsors SET is_banned = 1, banned_at = ?, updated_at = ? WHERE id = ?`,
+            )
+              .bind(now, now, id)
+              .run();
+            await env.DB.prepare(
+              `UPDATE user SET is_banned = 1, updatedAt = ? WHERE id = ?`,
+            )
+              .bind(now * 1000, sponsor.user_id)
+              .run();
+          }
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        } catch (error) {
+          console.error("Failed to ban sponsor:", error);
+          return new Response(
+            JSON.stringify({ error: "Failed to ban sponsor" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
+        }
+      }
+
+      // PUT /api/admin/sponsors/:id/unban
+      if (
+        request.method === "PUT" &&
+        url.pathname.match(/^\/api\/admin\/sponsors\/[^/]+\/unban$/)
+      ) {
+        const id = url.pathname.split("/")[4];
+        const now = Math.floor(Date.now() / 1000);
+        try {
+          const sponsor = (await env.DB.prepare(
+            `SELECT user_id FROM sponsors WHERE id = ?`,
+          )
+            .bind(id)
+            .first()) as { user_id: string } | null;
+          if (sponsor) {
+            await env.DB.prepare(
+              `UPDATE sponsors SET is_banned = 0, banned_at = NULL, updated_at = ? WHERE id = ?`,
+            )
+              .bind(now, id)
+              .run();
+            await env.DB.prepare(
+              `UPDATE user SET is_banned = 0, updatedAt = ? WHERE id = ?`,
+            )
+              .bind(now * 1000, sponsor.user_id)
+              .run();
+          }
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        } catch (error) {
+          console.error("Failed to unban sponsor:", error);
+          return new Response(
+            JSON.stringify({ error: "Failed to unban sponsor" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
+        }
+      }
+
+      // PUT /api/admin/sponsors/:id/verify
+      if (
+        request.method === "PUT" &&
+        url.pathname.match(/^\/api\/admin\/sponsors\/[^/]+\/verify$/)
+      ) {
+        const id = url.pathname.split("/")[4];
+        const now = Math.floor(Date.now() / 1000);
+        try {
+          await env.DB.prepare(
+            `UPDATE sponsors SET is_verified = 1, status = 'approved', approved_at = ?, updated_at = ? WHERE id = ?`,
+          )
+            .bind(now, now, id)
+            .run();
+
+          notifySponsorVerified(env, id).catch((e) =>
+            console.error("[email] notifySponsorVerified failed:", e),
+          );
+
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        } catch (error) {
+          console.error("Failed to verify sponsor:", error);
+          return new Response(
+            JSON.stringify({ error: "Failed to verify sponsor" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
+        }
+      }
+
+      // PUT /api/admin/sponsors/:id/unverify
+      if (
+        request.method === "PUT" &&
+        url.pathname.match(/^\/api\/admin\/sponsors\/[^/]+\/unverify$/)
+      ) {
+        const id = url.pathname.split("/")[4];
+        const now = Math.floor(Date.now() / 1000);
+        try {
+          await env.DB.prepare(
+            `UPDATE sponsors SET is_verified = 0, status = 'pending', approved_at = NULL, updated_at = ? WHERE id = ?`,
+          )
+            .bind(now, id)
+            .run();
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        } catch (error) {
+          console.error("Failed to unverify sponsor:", error);
+          return new Response(
+            JSON.stringify({ error: "Failed to unverify sponsor" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json", ...corsHeaders },
+            },
+          );
+        }
+      }
+
       // GET /api/admin/submission-stats - Submission analysis
       if (url.pathname === "/api/admin/submission-stats") {
         // Total submissions and approved
@@ -602,6 +749,56 @@ const worker = {
         );
       }
 
+      // GET /api/admin/email-logs - Resend email send history
+      if (url.pathname === "/api/admin/email-logs") {
+        const page = parseInt(url.searchParams.get("page") || "1", 10);
+        const limit = 50;
+        const offset = (page - 1) * limit;
+        const type = url.searchParams.get("type") || "";
+
+        const whereClause = type ? "WHERE type = ?" : "";
+        const bindings = type ? [limit, offset, type] : [limit, offset];
+
+        const query = type
+          ? `SELECT * FROM email_logs WHERE type = ? ORDER BY created_at DESC LIMIT ? OFFSET ?`
+          : `SELECT * FROM email_logs ORDER BY created_at DESC LIMIT ? OFFSET ?`;
+
+        const countQuery = type
+          ? `SELECT COUNT(*) as count FROM email_logs WHERE type = ?`
+          : `SELECT COUNT(*) as count FROM email_logs`;
+
+        try {
+          const [logs, total] = await Promise.all([
+            type
+              ? env.DB.prepare(query).bind(type, limit, offset).all()
+              : env.DB.prepare(query).bind(limit, offset).all(),
+            type
+              ? env.DB.prepare(countQuery).bind(type).first()
+              : env.DB.prepare(countQuery).first(),
+          ]);
+
+          const stats = await env.DB.prepare(
+            `SELECT type, COUNT(*) as count, SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed FROM email_logs GROUP BY type`,
+          ).all();
+
+          return new Response(
+            JSON.stringify({
+              logs: logs?.results || [],
+              total: total?.count || 0,
+              page,
+              stats: stats?.results || [],
+            }),
+            { headers: { "Content-Type": "application/json", ...corsHeaders } },
+          );
+        } catch (e) {
+          console.error("email-logs error:", e);
+          return new Response(
+            JSON.stringify({ logs: [], total: 0, page: 1, stats: [] }),
+            { headers: { "Content-Type": "application/json", ...corsHeaders } },
+          );
+        }
+      }
+
       // ==========================================
       // End Admin Analytics APIs
       // ==========================================
@@ -710,6 +907,11 @@ const worker = {
 
       // Wallet endpoints
       if (url.pathname.startsWith("/api/wallet")) {
+        return handleUsersAPI(request, env, url, _ctx);
+      }
+
+      // Internal endpoints (active-addresses counts, etc.)
+      if (url.pathname.startsWith("/api/internal")) {
         return handleUsersAPI(request, env, url, _ctx);
       }
 
@@ -899,6 +1101,111 @@ const worker = {
       );
     }
   },
+
+  // ── Scheduled: index active addresses from Alephium Explorer ──────────────
+  // Runs every hour via cron trigger. Reads the cursor from indexer_state,
+  // fetches blocks since last run, extracts sender addresses, and upserts into
+  // active_addresses. After 7 days the dashboard will show real data.
+  async scheduled(_event: any, env: Env, ctx: any): Promise<void> {
+    const EXPLORER = "https://lb-fullnode-alephium.notrustverify.ch";
+    const MAX_WINDOW_MS = 2 * 60 * 60_000; // process at most 2 hours per run
+    const now = Date.now();
+
+    try {
+      // Read cursor — if missing, start 1 hour ago (collect forward from now)
+      const cursorRow = (await env.DB.prepare(
+        `SELECT value FROM indexer_state WHERE key = 'active_addr_cursor'`,
+      ).first()) as { value: string } | null;
+
+      const fromTs = cursorRow?.value
+        ? Math.min(Number(cursorRow.value), now - 60_000)
+        : now - 60 * 60_000;
+
+      const toTs = Math.min(now, fromTs + MAX_WINDOW_MS);
+
+      // Fetch blocks in the time window
+      const res = await fetch(
+        `${EXPLORER}/blockflow/blocks?fromTs=${fromTs}&toTs=${toTs}`,
+        { headers: { Accept: "application/json" } },
+      );
+
+      if (!res.ok) {
+        console.error(`[active-addr] blocks fetch failed: ${res.status}`);
+        return;
+      }
+
+      type AlphOutput = { address?: string };
+      type AlphTx = {
+        unsigned?: { inputs?: unknown[]; fixedOutputs?: AlphOutput[] };
+      };
+      type AlphBlock = { timestamp?: number; transactions?: AlphTx[] };
+      const data = (await res.json()) as { blocks?: AlphBlock[][] };
+
+      if (!Array.isArray(data?.blocks)) {
+        console.warn("[active-addr] unexpected blocks response shape");
+        return;
+      }
+
+      // Collect address → max timestamp seen (from fixedOutputs; skip coinbase txs)
+      const addrMap = new Map<string, number>();
+      for (const shardBlocks of data.blocks) {
+        for (const block of shardBlocks) {
+          const ts = block.timestamp ?? toTs;
+          for (const tx of block.transactions ?? []) {
+            // Skip coinbase transactions (no inputs)
+            if (
+              !Array.isArray(tx.unsigned?.inputs) ||
+              tx.unsigned.inputs.length === 0
+            )
+              continue;
+            for (const output of tx.unsigned?.fixedOutputs ?? []) {
+              if (output.address) {
+                const prev = addrMap.get(output.address) ?? 0;
+                addrMap.set(output.address, Math.max(prev, ts));
+              }
+            }
+          }
+        }
+      }
+
+      console.log(
+        `[active-addr] window ${new Date(fromTs).toISOString()} → ${new Date(toTs).toISOString()}: ${addrMap.size} unique senders`,
+      );
+
+      // Batch upsert in chunks of 100 to stay within D1 batch limits
+      if (addrMap.size > 0) {
+        const stmt = env.DB.prepare(
+          `INSERT INTO active_addresses (address, last_seen_at) VALUES (?, ?)
+           ON CONFLICT(address) DO UPDATE
+             SET last_seen_at = MAX(last_seen_at, excluded.last_seen_at)`,
+        );
+        const entries = Array.from(addrMap.entries());
+        for (let i = 0; i < entries.length; i += 100) {
+          const chunk = entries.slice(i, i + 100);
+          await env.DB.batch(
+            chunk.map(([addr, ts]: [string, number]) => stmt.bind(addr, ts)),
+          );
+        }
+      }
+
+      // Advance cursor
+      await env.DB.prepare(
+        `INSERT INTO indexer_state (key, value) VALUES ('active_addr_cursor', ?)
+         ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+      )
+        .bind(String(toTs))
+        .run();
+
+      // Cleanup in background — don't block the scheduled handler
+      ctx.waitUntil(
+        env.DB.prepare(`DELETE FROM active_addresses WHERE last_seen_at < ?`)
+          .bind(now - 31 * 24 * 3600_000)
+          .run(),
+      );
+    } catch (err: any) {
+      console.error("[active-addr] scheduled error:", err?.message ?? err);
+    }
+  },
 };
 
 export default worker;
@@ -1037,7 +1344,7 @@ async function handleBountiesAPI(
         );
       }
 
-      // Verify sponsor exists and is verified
+      // Verify sponsor exists, is verified, and is not banned
       const sponsor = (await env.DB.prepare(
         "SELECT id, is_verified, is_banned FROM sponsors WHERE id = ?",
       )
@@ -1055,6 +1362,18 @@ async function handleBountiesAPI(
           }),
           {
             status: 404,
+            headers: corsHeaders,
+          },
+        );
+      }
+
+      if (sponsor.is_banned) {
+        return new Response(
+          JSON.stringify({
+            error: "Sponsor account is banned and cannot create bounties.",
+          }),
+          {
+            status: 403,
             headers: corsHeaders,
           },
         );
@@ -1207,6 +1526,146 @@ async function handleBountiesAPI(
           status: 500,
           headers: corsHeaders,
         },
+      );
+    }
+  }
+
+  // POST /api/bounties/:id/republish - Create a new copy of an existing bounty with updated dates
+  if (
+    request.method === "POST" &&
+    pathname.match(/^\/api\/bounties\/[^/]+\/republish$/)
+  ) {
+    try {
+      const id = pathname.split("/")[3];
+      const body = (await request.json()) as {
+        user_id: string;
+        end_date: string;
+        start_date?: string;
+      };
+
+      if (!body.user_id || !body.end_date) {
+        return new Response(
+          JSON.stringify({ error: "user_id and end_date are required" }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+
+      const original = (await env.DB.prepare(
+        "SELECT * FROM bounties WHERE id = ? AND status != 'deleted'",
+      )
+        .bind(id)
+        .first()) as any | null;
+
+      if (!original) {
+        return new Response(JSON.stringify({ error: "Bounty not found" }), {
+          status: 404,
+          headers: corsHeaders,
+        });
+      }
+
+      // Verify the requesting user owns the sponsor, or is a god user
+      const sponsor = (await env.DB.prepare(
+        "SELECT user_id FROM sponsors WHERE id = ?",
+      )
+        .bind(original.sponsor_id)
+        .first()) as { user_id: string } | null;
+
+      const creatorRole = (await env.DB.prepare(
+        "SELECT role FROM user WHERE id = ?",
+      )
+        .bind(body.user_id)
+        .first()) as { role: string | null } | null;
+      const isGod = creatorRole?.role === "god";
+
+      if (!isGod && sponsor?.user_id !== body.user_id) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 403,
+          headers: corsHeaders,
+        });
+      }
+
+      const newId = crypto.randomUUID();
+      const now = Math.floor(Date.now() / 1000);
+      const startDate =
+        body.start_date || new Date().toISOString().split("T")[0];
+
+      await env.DB.prepare(
+        `INSERT INTO bounties (
+          id, sponsor_id, title, description,
+          requirements, deliverables, skills,
+          reward_amount, reward_currency, reward_type, reward_usd_value, tier_count,
+          category, difficulty, dapp_name,
+          start_date, end_date,
+          status, created_by, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+        .bind(
+          newId,
+          original.sponsor_id,
+          original.title,
+          original.description,
+          original.requirements,
+          original.deliverables,
+          original.skills,
+          original.reward_amount,
+          original.reward_currency,
+          original.reward_type,
+          original.reward_usd_value,
+          original.tier_count,
+          original.category,
+          original.difficulty,
+          original.dapp_name,
+          startDate,
+          body.end_date,
+          "open",
+          body.user_id,
+          now,
+          now,
+        )
+        .run();
+
+      // Update bounty_overview
+      try {
+        const rewardCurrency = original.reward_currency || "ALPH";
+        const rewardUsd =
+          rewardCurrency === "USD"
+            ? original.reward_amount
+            : original.reward_usd_value || 0;
+        const rewardAlph =
+          rewardCurrency === "ALPH" ? original.reward_amount : 0;
+
+        await env.DB.prepare(
+          `UPDATE bounty_overview
+           SET total_value_usd = total_value_usd + ?,
+               total_value_alph = total_value_alph + ?,
+               list_number = list_number + 1,
+               updated_at = ?
+           WHERE id = 1`,
+        )
+          .bind(rewardUsd, rewardAlph, now)
+          .run();
+      } catch {
+        // don't fail if overview update fails
+      }
+
+      const newBounty = await env.DB.prepare(
+        "SELECT * FROM bounties WHERE id = ?",
+      )
+        .bind(newId)
+        .first();
+
+      return new Response(
+        JSON.stringify({ bounty: transformBounty(newBounty) }),
+        { status: 201, headers: corsHeaders },
+      );
+    } catch (error: any) {
+      console.error("Error republishing bounty:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to republish bounty",
+          details: error.message,
+        }),
+        { status: 500, headers: corsHeaders },
       );
     }
   }

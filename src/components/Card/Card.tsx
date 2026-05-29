@@ -2,16 +2,6 @@ import truncate from "../../helpers/truncate";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 
-const DAPP_TAGS = ["DeFi", "NFTs", "Games", "Quests", "Social"];
-
-function getEntryTypeLabel(tags: string[]): string {
-  if (tags.some((t) => DAPP_TAGS.includes(t))) return "dApp";
-  if (tags.includes("Wallets")) return "Wallet";
-  if (tags.includes("CEX") || tags.includes("Onramps")) return "Exchange";
-  if (tags.includes("Bridges")) return "Bridge";
-  return tags[0] ?? "Tool";
-}
-
 interface CardProps {
   image: string | StaticImageData;
   logo: string | StaticImageData;
@@ -31,7 +21,6 @@ const Card = ({
 }: CardProps) => {
   // Show all tags at the bottom
   const displayTags = tags;
-  const typeLabel = getEntryTypeLabel(tags);
   return (
     <Link href={url || "/"}>
       <a className="block w-full cursor-pointer group">
@@ -49,10 +38,7 @@ const Card = ({
               {/* Overlay for better readability */}
               <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/40" />
             </div>
-            {/* Type badge */}
-            <span className="absolute top-3 right-3 z-10 text-xs font-semibold px-2 py-0.5 rounded-full backdrop-blur-sm bg-white/20 text-white border border-white/30">
-              {typeLabel}
-            </span>
+            {/* DO NOT add a top-right type badge here — it duplicates the bottom tags. */}
           </div>
 
           {/* Bottom Left Logo Circle - Overlapping both sections */}

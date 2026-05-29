@@ -8,18 +8,19 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useCallback, useEffect } from "react";
 import { normalizeUrl } from "../utils/validators";
+import { toast } from "react-toastify";
 
 interface FormData {
   // About You
   username: string;
   telegram: string;
   email: string;
-  // About Your Company
-  company_name: string;
-  company_url: string;
-  company_twitter: string;
+  // About Your Organization
+  org_name: string;
+  org_url: string;
+  org_twitter: string;
   industry: string;
-  company_bio: string;
+  org_bio: string;
 }
 
 interface ImageFile {
@@ -63,11 +64,11 @@ export default function CreateSponsorProfile() {
     username: "",
     telegram: "",
     email: "",
-    company_name: "",
-    company_url: "",
-    company_twitter: "",
+    org_name: "",
+    org_url: "",
+    org_twitter: "",
     industry: "",
-    company_bio: "",
+    org_bio: "",
   });
 
   // Pre-fill user data from session and profile (only once)
@@ -234,7 +235,7 @@ export default function CreateSponsorProfile() {
           if (!uploadResponse.ok) {
             const errorText = await uploadResponse.text();
             console.error("Upload failed:", errorText);
-            alert("Failed to upload logo. Please try again.");
+            toast.error("Failed to upload logo. Please try again.");
             throw new Error("Failed to upload logo");
           }
 
@@ -281,11 +282,11 @@ export default function CreateSponsorProfile() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             user_id: session.user.id,
-            name: formData.company_name,
-            description: formData.company_bio,
+            name: formData.org_name,
+            description: formData.org_bio,
             industry: formData.industry,
-            website: formData.company_url,
-            twitter: formData.company_twitter,
+            website: formData.org_url,
+            twitter: formData.org_twitter,
             contact_username: formData.username,
             contact_telegram: formData.telegram || null,
             contact_email: formData.email || null,
@@ -309,7 +310,7 @@ export default function CreateSponsorProfile() {
     [formData, logoFile, bannerFile, agreed, router, session?.user?.id],
   );
 
-  const bioCharactersLeft = MAX_BIO_LENGTH - formData.company_bio.length;
+  const bioCharactersLeft = MAX_BIO_LENGTH - formData.org_bio.length;
 
   // Show loading state
   if (isPending) {
@@ -492,13 +493,13 @@ export default function CreateSponsorProfile() {
                 {/* About Your Company Section */}
                 <div className="space-y-6">
                   <h2 className="text-xl font-bold text-black dark:text-white">
-                    About Your Company
+                    About Your Organization
                   </h2>
 
-                  {/* Company Name - Emphasized */}
+                  {/* Organization Name - Emphasized */}
                   <div className="space-y-2 p-4 bg-orange/5 dark:bg-orange/10 border border-orange/20 rounded-lg">
                     <label className="block text-sm font-semibold text-black dark:text-white">
-                      Company Name <span className="text-orange">*</span>
+                      Organization Name <span className="text-orange">*</span>
                     </label>
                     <p className="text-xs text-light-charcoal dark:text-lightgrey mb-2">
                       This will be displayed as your sponsor identity on the
@@ -506,15 +507,15 @@ export default function CreateSponsorProfile() {
                     </p>
                     <input
                       type="text"
-                      value={formData.company_name}
+                      value={formData.org_name}
                       onChange={(e) =>
                         setFormData((prev) => ({
                           ...prev,
-                          company_name: e.target.value,
+                          org_name: e.target.value,
                         }))
                       }
                       className="w-full px-4 py-3 bg-white dark:bg-hero-dark border-2 border-orange/30 dark:border-orange/40 rounded-lg text-black dark:text-white text-lg font-medium placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange focus:border-orange"
-                      placeholder="Enter your company name"
+                      placeholder="Your company, project, or personal name"
                       required
                     />
                   </div>
@@ -522,32 +523,34 @@ export default function CreateSponsorProfile() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="block text-sm font-medium text-black dark:text-white">
-                        Company Website <span className="text-orange">*</span>
+                        Website{" "}
+                        <span className="text-light-charcoal dark:text-lightgrey text-xs">
+                          (optional)
+                        </span>
                       </label>
                       <input
                         type="text"
-                        value={formData.company_url}
+                        value={formData.org_url}
                         onChange={(e) =>
                           setFormData((prev) => ({
                             ...prev,
-                            company_url: e.target.value,
+                            org_url: e.target.value,
                           }))
                         }
                         onBlur={(e) =>
                           setFormData((prev) => ({
                             ...prev,
-                            company_url: normalizeUrl(e.target.value),
+                            org_url: normalizeUrl(e.target.value),
                           }))
                         }
                         className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
                         placeholder="https://example.com"
-                        required
                       />
                     </div>
 
                     <div className="space-y-2">
                       <label className="block text-sm font-medium text-black dark:text-white">
-                        Company X{" "}
+                        X / Twitter{" "}
                         <span className="text-light-charcoal dark:text-lightgrey text-xs">
                           (optional)
                         </span>
@@ -558,11 +561,11 @@ export default function CreateSponsorProfile() {
                         </span>
                         <input
                           type="text"
-                          value={formData.company_twitter}
+                          value={formData.org_twitter}
                           onChange={(e) =>
                             setFormData((prev) => ({
                               ...prev,
-                              company_twitter: e.target.value.replace("@", ""),
+                              org_twitter: e.target.value.replace("@", ""),
                             }))
                           }
                           className="flex-1 px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-r-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
@@ -572,10 +575,10 @@ export default function CreateSponsorProfile() {
                     </div>
                   </div>
 
-                  {/* Company Logo */}
+                  {/* Logo */}
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-black dark:text-white">
-                      Company Logo <span className="text-orange">*</span>
+                      Logo <span className="text-orange">*</span>
                     </label>
                     <p className="text-xs text-light-charcoal dark:text-lightgrey">
                       Recommended size: 200x200 pixels (square format)
@@ -585,7 +588,7 @@ export default function CreateSponsorProfile() {
                       <div className="flex items-center gap-4 p-4 border border-border-grey dark:border-dark-charcoal rounded-lg bg-smoked-white dark:bg-light-black">
                         <Image
                           src={logoFile.preview}
-                          alt="Company logo"
+                          alt="Logo"
                           width={64}
                           height={64}
                           className="w-16 h-16 rounded-lg object-cover"
@@ -749,23 +752,23 @@ export default function CreateSponsorProfile() {
                     </select>
                   </div>
 
-                  {/* Company Short Bio */}
+                  {/* Short Bio */}
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-black dark:text-white">
-                      Company Short Bio <span className="text-orange">*</span>
+                      Short Bio <span className="text-orange">*</span>
                     </label>
                     <textarea
-                      value={formData.company_bio}
+                      value={formData.org_bio}
                       onChange={(e) => {
                         if (e.target.value.length <= MAX_BIO_LENGTH) {
                           setFormData((prev) => ({
                             ...prev,
-                            company_bio: e.target.value,
+                            org_bio: e.target.value,
                           }));
                         }
                       }}
                       className="w-full px-4 py-2.5 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder:text-light-charcoal dark:placeholder:text-lightgrey resize-none focus:outline-none focus:ring-2 focus:ring-orange/50 focus:border-orange"
-                      placeholder="What does your company do?"
+                      placeholder="What are you building or working on?"
                       rows={3}
                       required
                     />
@@ -804,10 +807,9 @@ export default function CreateSponsorProfile() {
                       loading ||
                       !agreed ||
                       !formData.username ||
-                      !formData.company_name ||
-                      !formData.company_url ||
+                      !formData.org_name ||
                       !formData.industry ||
-                      !formData.company_bio ||
+                      !formData.org_bio ||
                       !logoFile
                     }
                   >

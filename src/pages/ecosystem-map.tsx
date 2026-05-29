@@ -63,10 +63,7 @@ const EcosystemMapPage = ({
       description="Explore the complete Alephium ecosystem landscape"
     >
       {/* Full width background */}
-      <div
-        className="min-h-screen bg-[#f5f3ef] dark:bg-[#1a1a1a]"
-        style={{ zoom: 1.25 }}
-      >
+      <div className="bg-[#f5f3ef] dark:bg-[#1a1a1a]" style={{ zoom: 1.25 }}>
         <div className="container px-3 lg:px-4 mx-auto pb-8 lg:pb-12">
           {/* Header - Compact */}
           <header className="py-4 lg:py-6">
@@ -90,7 +87,7 @@ const EcosystemMapPage = ({
                     {totalDapps}
                   </span>
                   <span className="text-xs text-[#5a5a5a] dark:text-gray-400">
-                    dApps
+                    Projects
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -139,10 +136,15 @@ const EcosystemMapPage = ({
                   >
                     {dapps.map((dapp) => (
                       <Link key={dapp.url} href={`/${dapp.url}`}>
-                        <a
-                          className="group flex flex-col items-center text-center p-0.5 rounded hover:bg-[#f5f3ef] dark:hover:bg-[#333] transition-all duration-150"
-                          title={dapp.name}
-                        >
+                        <a className="group relative flex flex-col items-center text-center p-0.5 rounded hover:bg-[#f5f3ef] dark:hover:bg-[#333] transition-all duration-150">
+                          {/* Tooltip */}
+                          <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                            <div className="bg-[#2a2a2a] dark:bg-white text-white dark:text-[#2a2a2a] text-[10px] font-medium px-2 py-1 rounded whitespace-nowrap shadow-lg">
+                              {dapp.name}
+                            </div>
+                            <div className="mx-auto w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-[#2a2a2a] dark:border-t-white" />
+                          </div>
+
                           <div className="relative w-6 h-6 lg:w-7 lg:h-7 rounded-full overflow-hidden bg-[#f5f3ef] dark:bg-[#333] border border-[#e5e3df] dark:border-[#444] group-hover:border-orange transition-colors duration-150 flex items-center justify-center">
                             <Image
                               src={dapp.logo}

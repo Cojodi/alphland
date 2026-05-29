@@ -19,6 +19,8 @@ import {
   ChevronDown,
   ChevronUp,
   X,
+  Mail,
+  AlertCircle,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -131,8 +133,25 @@ interface UserDetail {
   bookmarks: any[];
 }
 
+interface EmailLog {
+  id: string;
+  to_email: string;
+  subject: string;
+  type: string;
+  status: string;
+  resend_id: string | null;
+  error: string | null;
+  created_at: number;
+}
+
+interface EmailLogStats {
+  type: string;
+  count: number;
+  failed: number;
+}
+
 type SponsorFilter = "active" | "banned" | "pending";
-type AdminTab = "sponsors" | "users";
+type AdminTab = "sponsors" | "users" | "emails";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -141,9 +160,10 @@ export default function AdminDashboard() {
   const [passwordError, setPasswordError] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
 
-  // Derive active tab from URL: /admin/sponsors → "sponsors", /admin/users → "users"
-  const tabFromUrl =
-    (router.query.tab as string) === "users" ? "users" : "sponsors";
+  // Derive active tab from URL
+  const rawTab = router.query.tab as string;
+  const tabFromUrl: AdminTab =
+    rawTab === "users" ? "users" : rawTab === "emails" ? "emails" : "sponsors";
   const [activeTab, setActiveTab] = useState<AdminTab>(tabFromUrl);
 
   // Sponsor state
@@ -152,6 +172,13 @@ export default function AdminDashboard() {
   const [sponsorFilter, setSponsorFilter] = useState<SponsorFilter>("active");
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [showBanModal, setShowBanModal] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const copyUserId = (userId: string) => {
+    navigator.clipboard.writeText(userId);
+    setCopiedId(userId);
+    setTimeout(() => setCopiedId(null), 1500);
+  };
   const [bountyOverview, setBountyOverview] = useState<BountyOverview | null>(
     null,
   );
@@ -171,10 +198,20 @@ export default function AdminDashboard() {
     "stats",
   );
 
+  // Email logs state
+  const [emailLogs, setEmailLogs] = useState<EmailLog[]>([]);
+  const [emailStats, setEmailStats] = useState<EmailLogStats[]>([]);
+  const [emailLogsLoading, setEmailLogsLoading] = useState(false);
+  const [emailLogsTotal, setEmailLogsTotal] = useState(0);
+  const [emailLogsPage, setEmailLogsPage] = useState(1);
+  const [emailTypeFilter, setEmailTypeFilter] = useState("");
+
   // Sync tab state when URL changes (browser back/forward)
   useEffect(() => {
     if (router.isReady) {
-      const t = (router.query.tab as string) === "users" ? "users" : "sponsors";
+      const raw = router.query.tab as string;
+      const t: AdminTab =
+        raw === "users" ? "users" : raw === "emails" ? "emails" : "sponsors";
       setActiveTab(t);
     }
   }, [router.isReady, router.query.tab]);
@@ -226,11 +263,12 @@ export default function AdminDashboard() {
   const fetchSponsors = useCallback(async () => {
     try {
       let url: string;
-      if (sponsorFilter === "pending") {
-        url = `/api/sponsors?pending=true`;
+      if (sponsorFilter === "banned") {
+        url = `/api/sponsors?is_banned=true`;
+      } else if (sponsorFilter === "pending") {
+        url = `/api/sponsors?status=pending`;
       } else {
-        const isBanned = sponsorFilter === "banned" ? "true" : "false";
-        url = `/api/sponsors?is_banned=${isBanned}`;
+        url = `/api/sponsors?status=approved`;
       }
       const response = await fetch(url);
       const data = await response.json();
@@ -290,6 +328,25 @@ export default function AdminDashboard() {
     }
   }, []);
 
+  // Fetch email logs
+  const fetchEmailLogs = useCallback(async (page = 1, type = "") => {
+    setEmailLogsLoading(true);
+    try {
+      const params = new URLSearchParams({ page: String(page) });
+      if (type) params.set("type", type);
+      const response = await fetch(`/api/admin/email-logs?${params}`);
+      const data = await response.json();
+      setEmailLogs(data.logs || []);
+      setEmailLogsTotal(data.total || 0);
+      setEmailStats(data.stats || []);
+      setEmailLogsPage(page);
+    } catch (error) {
+      console.error("Failed to fetch email logs:", error);
+    } finally {
+      setEmailLogsLoading(false);
+    }
+  }, []);
+
   // Fetch user details
   const fetchUserDetail = async (userId: string) => {
     try {
@@ -309,6 +366,12 @@ export default function AdminDashboard() {
       setLoading(false),
     );
   }, [fetchBountyOverview, fetchSponsors, isAuthenticated]);
+
+  // Load email logs when emails tab is active
+  useEffect(() => {
+    if (!isAuthenticated || activeTab !== "emails") return;
+    fetchEmailLogs(1, emailTypeFilter);
+  }, [isAuthenticated, activeTab, fetchEmailLogs, emailTypeFilter]);
 
   // Load user management data when tab switches
   useEffect(() => {
@@ -330,7 +393,7 @@ export default function AdminDashboard() {
   const handleBanSponsor = async (sponsorId: string) => {
     setActionLoading(sponsorId);
     try {
-      const response = await fetch(`/api/sponsors/${sponsorId}/ban`, {
+      const response = await fetch(`/api/admin/sponsors/${sponsorId}/ban`, {
         method: "PUT",
       });
       if (response.ok) {
@@ -348,7 +411,7 @@ export default function AdminDashboard() {
   const handleUnbanSponsor = async (sponsorId: string) => {
     setActionLoading(sponsorId);
     try {
-      const response = await fetch(`/api/sponsors/${sponsorId}/unban`, {
+      const response = await fetch(`/api/admin/sponsors/${sponsorId}/unban`, {
         method: "PUT",
       });
       if (response.ok) {
@@ -365,7 +428,7 @@ export default function AdminDashboard() {
   const handleVerifySponsor = async (sponsorId: string) => {
     setActionLoading(sponsorId);
     try {
-      const response = await fetch(`/api/sponsors/${sponsorId}/verify`, {
+      const response = await fetch(`/api/admin/sponsors/${sponsorId}/verify`, {
         method: "PUT",
       });
       if (response.ok) {
@@ -382,9 +445,10 @@ export default function AdminDashboard() {
   const handleUnverifySponsor = async (sponsorId: string) => {
     setActionLoading(sponsorId);
     try {
-      const response = await fetch(`/api/sponsors/${sponsorId}/unverify`, {
-        method: "PUT",
-      });
+      const response = await fetch(
+        `/api/admin/sponsors/${sponsorId}/unverify`,
+        { method: "PUT" },
+      );
       if (response.ok) {
         await fetchSponsors();
       }
@@ -446,11 +510,18 @@ export default function AdminDashboard() {
   };
 
   const getStatusBadge = (sponsor: Sponsor) => {
-    if (sponsor.is_banned) {
+    if ((sponsor as any).is_banned === 1) {
       return (
         <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-orange/10 text-orange">
           <Ban className="w-3 h-3" />
           Banned
+        </span>
+      );
+    }
+    if ((sponsor as any).status === "pending") {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-600 dark:text-yellow-400">
+          Pending
         </span>
       );
     }
@@ -681,6 +752,20 @@ export default function AdminDashboard() {
                 <Users className="w-4 h-4" />
                 User Management
               </button>
+              <button
+                onClick={() => {
+                  setActiveTab("emails");
+                  router.push("/admin/emails", undefined, { shallow: true });
+                }}
+                className={`flex items-center gap-2 px-1 py-3 font-barlow font-medium text-sm transition-colors ${
+                  activeTab === "emails"
+                    ? "text-light-black dark:text-white border-b-2 border-orange -mb-px"
+                    : "text-light-charcoal hover:text-light-black dark:hover:text-white"
+                }`}
+              >
+                <Mail className="w-4 h-4" />
+                Email Logs
+              </button>
               <a
                 href="/admin/index.html#/collections/dapps"
                 className="flex items-center gap-2 px-1 py-3 font-barlow font-medium text-sm text-light-charcoal hover:text-light-black dark:hover:text-white transition-colors"
@@ -781,6 +866,23 @@ export default function AdminDashboard() {
                                 </span>
                               )}
                             </div>
+                            <button
+                              onClick={() => copyUserId(sponsor.user_id)}
+                              className="mt-1.5 flex items-center gap-1.5 text-xs text-light-charcoal font-barlow font-mono hover:text-light-black dark:hover:text-white transition-colors group"
+                              title="Click to copy user ID"
+                            >
+                              <span className="opacity-60 font-sans">
+                                User ID:
+                              </span>
+                              <span className="bg-smoked-white dark:bg-light-black px-1.5 py-0.5 rounded border border-border-grey dark:border-dark-charcoal group-hover:border-orange/40 transition-colors">
+                                {sponsor.user_id}
+                              </span>
+                              <span className="opacity-0 group-hover:opacity-60 transition-opacity font-sans font-normal">
+                                {copiedId === sponsor.user_id
+                                  ? "✓ copied"
+                                  : "copy"}
+                              </span>
+                            </button>
                             {(sponsor as any).user_email && (
                               <p className="text-xs text-light-charcoal font-barlow mt-1 flex items-center gap-1">
                                 <span className="opacity-60">Account:</span>
@@ -833,7 +935,7 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="flex flex-wrap gap-3 pt-4 border-t border-border-grey dark:border-dark-charcoal">
-                          {sponsor.is_banned ? (
+                          {(sponsor as any).is_banned === 1 ? (
                             <button
                               onClick={() => handleUnbanSponsor(sponsor.id)}
                               disabled={actionLoading === sponsor.id}
@@ -1370,6 +1472,173 @@ export default function AdminDashboard() {
                       </div>
                     ))}
                   </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Email Logs Tab */}
+          {activeTab === "emails" && (
+            <div className="space-y-6">
+              {/* Email Stats */}
+              {emailStats.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {emailStats.map((stat) => (
+                    <div
+                      key={stat.type}
+                      className="bg-white dark:bg-hero-dark rounded-xl border border-border-grey dark:border-dark-charcoal p-5"
+                    >
+                      <p className="text-xs text-light-charcoal font-barlow capitalize mb-1">
+                        {stat.type.replace(/_/g, " ")}
+                      </p>
+                      <p className="text-2xl font-bold text-light-black dark:text-white font-barlow">
+                        {stat.count}
+                      </p>
+                      {stat.failed > 0 && (
+                        <p className="text-xs text-orange mt-1 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          {stat.failed} failed
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                  <div className="bg-white dark:bg-hero-dark rounded-xl border border-border-grey dark:border-dark-charcoal p-5">
+                    <p className="text-xs text-light-charcoal font-barlow mb-1">
+                      Total Sent
+                    </p>
+                    <p className="text-2xl font-bold text-orange font-barlow">
+                      {emailStats.reduce((sum, s) => sum + s.count, 0)}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Filter */}
+              <div className="flex flex-wrap gap-2">
+                {["", "otp", "email_verification", "password_reset"].map(
+                  (t) => (
+                    <button
+                      key={t}
+                      onClick={() => setEmailTypeFilter(t)}
+                      className={`px-4 py-2 rounded-lg font-barlow font-medium text-sm transition-all ${
+                        emailTypeFilter === t
+                          ? "bg-light-black dark:bg-white text-white dark:text-light-black"
+                          : "bg-white dark:bg-hero-dark text-light-black dark:text-white hover:bg-smoked-white dark:hover:bg-light-black border border-border-grey dark:border-dark-charcoal"
+                      }`}
+                    >
+                      {t === "" ? "All" : t.replace(/_/g, " ")}
+                    </button>
+                  ),
+                )}
+              </div>
+
+              {/* Log Table */}
+              <div className="bg-white dark:bg-hero-dark rounded-xl border border-border-grey dark:border-dark-charcoal overflow-hidden">
+                <div className="p-5 border-b border-border-grey dark:border-dark-charcoal flex items-center justify-between">
+                  <h2 className="text-lg font-semibold text-light-black dark:text-white font-barlow flex items-center gap-2">
+                    <Mail className="w-5 h-5 text-orange" />
+                    Email History
+                    <span className="text-sm font-normal text-light-charcoal">
+                      ({emailLogsTotal} total)
+                    </span>
+                  </h2>
+                </div>
+
+                {emailLogsLoading ? (
+                  <div className="p-12 text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-2 border-orange border-t-transparent mx-auto" />
+                  </div>
+                ) : emailLogs.length === 0 ? (
+                  <div className="p-12 text-center">
+                    <Mail className="w-12 h-12 text-light-charcoal mx-auto mb-4" />
+                    <p className="text-light-charcoal font-barlow">
+                      No emails recorded yet
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="divide-y divide-border-grey dark:divide-dark-charcoal">
+                      {emailLogs.map((log) => (
+                        <div
+                          key={log.id}
+                          className="px-5 py-3 flex items-center gap-4 hover:bg-smoked-white dark:hover:bg-light-black transition-colors"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span
+                                className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                  log.status === "sent"
+                                    ? "bg-accessible-green/10 text-accessible-green"
+                                    : "bg-orange/10 text-orange"
+                                }`}
+                              >
+                                {log.status === "sent" ? (
+                                  <CheckCircle className="w-3 h-3 mr-1" />
+                                ) : (
+                                  <AlertCircle className="w-3 h-3 mr-1" />
+                                )}
+                                {log.status}
+                              </span>
+                              <span className="text-xs px-2 py-0.5 rounded-full bg-smoked-white dark:bg-light-black text-light-charcoal capitalize">
+                                {log.type.replace(/_/g, " ")}
+                              </span>
+                            </div>
+                            <p className="text-sm font-medium text-light-black dark:text-white mt-1 truncate">
+                              {log.to_email}
+                            </p>
+                            <p className="text-xs text-light-charcoal truncate">
+                              {log.subject}
+                            </p>
+                            {log.error && (
+                              <p className="text-xs text-orange mt-0.5 truncate">
+                                Error: {log.error}
+                              </p>
+                            )}
+                          </div>
+                          <div className="text-right shrink-0">
+                            <p className="text-xs text-light-charcoal">
+                              {formatDate(log.created_at)}
+                            </p>
+                            {log.resend_id && (
+                              <p className="text-xs text-light-charcoal opacity-50 mt-0.5 font-mono">
+                                {log.resend_id.slice(0, 12)}…
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Pagination */}
+                    {emailLogsTotal > 50 && (
+                      <div className="p-4 border-t border-border-grey dark:border-dark-charcoal flex items-center justify-between">
+                        <button
+                          disabled={emailLogsPage <= 1}
+                          onClick={() =>
+                            fetchEmailLogs(emailLogsPage - 1, emailTypeFilter)
+                          }
+                          className="px-4 py-2 text-sm font-barlow text-light-charcoal hover:text-light-black dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          Previous
+                        </button>
+                        <span className="text-sm text-light-charcoal font-barlow">
+                          Page {emailLogsPage} of{" "}
+                          {Math.ceil(emailLogsTotal / 50)}
+                        </span>
+                        <button
+                          disabled={
+                            emailLogsPage >= Math.ceil(emailLogsTotal / 50)
+                          }
+                          onClick={() =>
+                            fetchEmailLogs(emailLogsPage + 1, emailTypeFilter)
+                          }
+                          className="px-4 py-2 text-sm font-barlow text-light-charcoal hover:text-light-black dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>

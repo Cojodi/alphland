@@ -2,7 +2,7 @@
   "name": "Deadrare",
   "description": "Deadrare is an NFT marketplace enabling users to mint, buy, and sell NFTs. It supports dynamic NFTs and offers secondary market trading and collection management.",
   "short_description": "NFT marketplace.",
-  "tags": ["NFTs"],
+  "tags": ["NFTs", "Grant Recipient"],
   "contracts": [],
   "audits": [],
   "verified": false,

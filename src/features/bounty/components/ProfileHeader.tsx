@@ -8,12 +8,12 @@ import TwitterIcon from "@/assets/icons/socials/icon-twitter.icon.svg";
 import { Edit, Share2, Globe } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 interface ProfileHeaderProps {
   username: string;
   avatarUrl?: string;
   isOwnProfile?: boolean;
-  isUsingGoogleNameFallback?: boolean;
   socials?: {
     twitter?: string;
     linkedin?: string;
@@ -28,26 +28,11 @@ export function ProfileHeader({
   username,
   avatarUrl,
   isOwnProfile = false,
-  isUsingGoogleNameFallback = false,
   socials = {},
 }: ProfileHeaderProps) {
   return (
     <div className="bg-gradient-to-r from-orange/10 to-accessible-green/10 dark:from-orange/5 dark:to-accessible-green/5 pt-12 pb-8">
       <div className="max-w-6xl mx-auto px-4">
-        {/* Username Setup Prompt */}
-        {isOwnProfile && isUsingGoogleNameFallback && (
-          <div className="mb-6 bg-orange/10 dark:bg-orange/20 border border-orange/30 rounded-lg p-4">
-            <p className="text-sm text-orange-800 dark:text-orange-200">
-              Hi! Set a personalized username for your profile.
-            </p>
-            <Link href="/bounty/profile/edit">
-              <span className="inline-block mt-2 text-sm font-medium text-orange hover:underline cursor-pointer">
-                Set Username →
-              </span>
-            </Link>
-          </div>
-        )}
-
         <div className="flex flex-col sm:flex-row sm:items-end gap-6 mb-6">
           {/* Avatar */}
           <div className="relative">
@@ -89,7 +74,7 @@ export function ProfileHeader({
             <button
               onClick={() => {
                 navigator.clipboard.writeText(window.location.href);
-                alert("Profile link copied!");
+                toast.success("Profile link copied!");
               }}
               className="flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-orange text-orange rounded-lg font-medium hover:bg-orange/5 transition-colors w-full sm:w-auto"
             >

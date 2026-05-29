@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, ExternalLink, CheckCircle, XCircle, Copy } from "lucide-react";
+import {
+  X,
+  ExternalLink,
+  CheckCircle,
+  XCircle,
+  Copy,
+  RotateCcw,
+} from "lucide-react";
 import Link from "next/link";
 import { apiClient, BountySubmission } from "@/lib/api-client";
 import { notificationService } from "../services/notificationService";
@@ -17,7 +24,7 @@ interface SubmissionReviewModalProps {
 }
 
 const initialFormState = {
-  reviewAction: null as "approved" | "rejected" | null,
+  reviewAction: null as "approved" | "rejected" | "revision_requested" | null,
   reviewerNotes: "",
   transactionHash: "",
   rewardAmount: "",
@@ -35,9 +42,10 @@ export function SubmissionReviewModal({
   const [form, setForm] = useState(initialFormState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [txError, setTxError] = useState<string | null>(null);
   const [successState, setSuccessState] = useState<{
     show: boolean;
-    action: "approved" | "rejected" | null;
+    action: "approved" | "rejected" | "revision_requested" | null;
   }>({ show: false, action: null });
   const [userWalletAddress, setUserWalletAddress] = useState<string | null>(
     null,
@@ -99,6 +107,7 @@ export function SubmissionReviewModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setTxError(null);
 
     if (!submission || !form.reviewAction || !bounty) {
       setError("Please select a review action");
@@ -198,11 +207,20 @@ export function SubmissionReviewModal({
       setForm(initialFormState);
     } catch (err) {
       console.error("Failed to update submission:", err);
-      setError(
+      const msg =
         err instanceof Error
           ? err.message
-          : "Failed to update submission. Please try again.",
-      );
+          : "Failed to update submission. Please try again.";
+      const isTxError =
+        msg.includes("Transaction not found") ||
+        msg.includes("not confirmed yet") ||
+        msg.includes("does not contain a payment") ||
+        msg.includes("tx hash");
+      if (isTxError) {
+        setTxError(msg);
+      } else {
+        setError(msg);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -212,6 +230,7 @@ export function SubmissionReviewModal({
     setForm(initialFormState);
     setSuccessState({ show: false, action: null });
     setError(null);
+    setTxError(null);
     onSuccess?.();
     onClose();
   };
@@ -239,8 +258,11 @@ export function SubmissionReviewModal({
         reviewerNotes: reviewer_notes || "",
       });
     } else if (status === "revision_requested") {
-      // Legacy status: no longer selectable, but show saved notes
-      setForm({ ...initialFormState, reviewerNotes: reviewer_notes || "" });
+      setForm({
+        ...initialFormState,
+        reviewAction: "revision_requested",
+        reviewerNotes: reviewer_notes || "",
+      });
     } else {
       setForm(initialFormState);
     }
@@ -557,7 +579,7 @@ export function SubmissionReviewModal({
               <label className="block text-sm font-semibold text-black dark:text-white mb-3">
                 Review Decision <span className="text-red-500">*</span>
               </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   type="button"
                   onClick={() =>
@@ -584,6 +606,38 @@ export function SubmissionReviewModal({
                     }`}
                   >
                     Approve
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      reviewAction: "revision_requested",
+                    }))
+                  }
+                  className={`p-4 border-2 rounded-lg transition-all ${
+                    form.reviewAction === "revision_requested"
+                      ? "border-orange bg-orange/10"
+                      : "border-border-grey dark:border-dark-charcoal hover:border-orange"
+                  }`}
+                >
+                  <RotateCcw
+                    className={`w-6 h-6 mx-auto mb-2 ${
+                      form.reviewAction === "revision_requested"
+                        ? "text-orange"
+                        : "text-light-charcoal dark:text-lightgrey"
+                    }`}
+                  />
+                  <span
+                    className={`text-sm font-medium ${
+                      form.reviewAction === "revision_requested"
+                        ? "text-orange"
+                        : "text-black dark:text-white"
+                    }`}
+                  >
+                    Revision
                   </span>
                 </button>
 
@@ -798,19 +852,50 @@ export function SubmissionReviewModal({
                   type="text"
                   id="transaction_hash"
                   value={form.transactionHash}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    setTxError(null);
                     setForm((prev) => ({
                       ...prev,
                       transactionHash: e.target.value,
-                    }))
-                  }
+                    }));
+                  }}
                   placeholder="0x..."
-                  className="w-full px-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white placeholder-light-charcoal dark:placeholder-lightgrey focus:outline-none focus:ring-2 focus:ring-orange/50 font-mono"
+                  className={`w-full px-4 py-3 bg-smoked-white dark:bg-light-black border rounded-lg text-black dark:text-white placeholder-light-charcoal dark:placeholder-lightgrey focus:outline-none focus:ring-2 font-mono ${
+                    txError
+                      ? "border-red-500 focus:ring-red-500/50"
+                      : "border-border-grey dark:border-dark-charcoal focus:ring-orange/50"
+                  }`}
                   required
                 />
-                <p className="text-xs text-light-charcoal dark:text-lightgrey mt-1">
-                  Provide the Alephium transaction hash for the reward payment
-                </p>
+                {txError ? (
+                  <div className="mt-2 p-4 bg-red-50 dark:bg-red-900/30 border-2 border-red-500 dark:border-red-500 rounded-lg">
+                    <div className="flex items-center gap-2 mb-1">
+                      <XCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                      <p className="text-sm font-bold text-red-600 dark:text-red-400">
+                        Approval failed — submission was NOT approved
+                      </p>
+                    </div>
+                    <p className="text-sm text-red-600 dark:text-red-400 ml-6">
+                      {txError}
+                    </p>
+                    <p className="text-xs text-red-500 mt-2 ml-6">
+                      Check the hash on{" "}
+                      <a
+                        href={`https://explorer.alephium.org/transactions/${form.transactionHash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline font-medium hover:opacity-80"
+                      >
+                        Alephium Explorer
+                      </a>{" "}
+                      and re-submit with the correct hash.
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-xs text-light-charcoal dark:text-lightgrey mt-1">
+                    Provide the Alephium transaction hash for the reward payment
+                  </p>
+                )}
               </div>
             )}
 

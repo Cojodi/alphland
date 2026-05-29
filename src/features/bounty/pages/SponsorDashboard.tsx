@@ -4,13 +4,17 @@ import type { Submission } from "../types/submission.types";
 import { SubmissionReviewModal } from "../components/SubmissionReviewModal";
 import { BountySubmission } from "@/lib/api-client";
 import {
-  CircleDollarSign,
-  Plus,
+  AlertTriangle,
   BarChart3,
-  Edit,
-  TrendingUp,
   ChevronLeft,
   ChevronRight,
+  CircleDollarSign,
+  Edit,
+  Mail,
+  Plus,
+  RefreshCw,
+  TrendingUp,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -99,6 +103,14 @@ export default function SponsorDashboard() {
     (bountyId: string, e: React.MouseEvent) => {
       e.stopPropagation();
       router.push(`/bounty/edit/${bountyId}`);
+    },
+    [router],
+  );
+
+  const handleRepublish = useCallback(
+    (bounty: Bounty, e: React.MouseEvent) => {
+      e.stopPropagation();
+      router.push(`/bounty/create/manual?copy_from=${bounty.id}`);
     },
     [router],
   );
@@ -627,7 +639,10 @@ export default function SponsorDashboard() {
                 )}
                 <button
                   onClick={() => router.push("/bounty/create")}
-                  className="bg-white dark:bg-hero-dark text-orange dark:text-white hover:bg-smoked-white dark:hover:bg-light-black font-barlow font-semibold px-6 py-3 text-base shadow-lg rounded-lg flex items-center gap-2 whitespace-nowrap border border-orange dark:border-white/20"
+                  disabled={
+                    sponsor.status === "pending" || sponsor.is_banned === 1
+                  }
+                  className="bg-white dark:bg-hero-dark text-orange dark:text-white font-barlow font-semibold px-6 py-3 text-base shadow-lg rounded-lg flex items-center gap-2 whitespace-nowrap border border-orange dark:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-smoked-white dark:hover:bg-light-black disabled:hover:bg-white dark:disabled:hover:bg-hero-dark"
                 >
                   <Plus className="w-5 h-5" />
                   New Listing
@@ -638,6 +653,51 @@ export default function SponsorDashboard() {
         </section>
 
         <div className="max-w-7xl mx-auto px-6 sm:px-8 py-8 space-y-8">
+          {/* Banned banner */}
+          {sponsor.is_banned === 1 && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/50 rounded-xl p-4 flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-red-800 dark:text-red-300 font-barlow text-sm">
+                  Your account has been banned and cannot publish bounties
+                </p>
+                <p className="text-red-700 dark:text-red-400 text-sm font-barlow mt-1">
+                  If you have any questions, please contact the admin.
+                </p>
+                <a
+                  href="mailto:alph.land@alephium.org"
+                  className="inline-flex items-center gap-1.5 mt-2 text-red-600 dark:text-red-400 text-sm font-barlow font-medium hover:underline"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  alph.land@alephium.org
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Pending verification banner */}
+          {sponsor.status === "pending" && (
+            <div className="bg-orange/5 dark:bg-orange/10 border border-orange/25 dark:border-orange/30 rounded-xl p-4 flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-orange flex-shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-black dark:text-white font-barlow text-sm">
+                  Verification required before publishing bounties
+                </p>
+                <p className="text-light-charcoal dark:text-lightgrey text-sm font-barlow mt-1">
+                  Your sponsor profile is awaiting admin approval. Contact us to
+                  complete verification and unlock bounty publishing.
+                </p>
+                <a
+                  href="mailto:alph.land@alephium.org"
+                  className="inline-flex items-center gap-1.5 mt-2 text-orange text-sm font-barlow font-medium hover:underline"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  alph.land@alephium.org
+                </a>
+              </div>
+            </div>
+          )}
+
           {/* Stats Overview - 3 Column Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Total Bounties Card */}
@@ -866,17 +926,34 @@ export default function SponsorDashboard() {
                                       </span>
                                     </div>
                                   </div>
-                                  {bounty.status !== "completed" && (
-                                    <button
-                                      className="text-orange hover:bg-orange/10 p-2 rounded"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleEditBounty(bounty.id, e);
-                                      }}
-                                    >
-                                      <Edit className="w-4 h-4" />
-                                    </button>
-                                  )}
+                                  <div className="flex gap-1">
+                                    {bounty.status !== "completed" && (
+                                      <button
+                                        className="text-orange hover:bg-orange/10 p-2 rounded"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleEditBounty(bounty.id, e);
+                                        }}
+                                      >
+                                        <Edit className="w-4 h-4" />
+                                      </button>
+                                    )}
+                                    {(() => {
+                                      const ds = getBountyDisplayStatus(bounty);
+                                      return ds === "closed" ||
+                                        ds === "completed" ? (
+                                        <button
+                                          className="text-orange hover:bg-orange/10 p-2 rounded"
+                                          title="Republish"
+                                          onClick={(e) =>
+                                            handleRepublish(bounty, e)
+                                          }
+                                        >
+                                          <RefreshCw className="w-4 h-4" />
+                                        </button>
+                                      ) : null;
+                                    })()}
+                                  </div>
                                 </div>
                               </div>
                             ))}
@@ -1049,7 +1126,7 @@ export default function SponsorDashboard() {
             )}
 
             {/* Transfer Ownership — only visible to the actual owner, not god */}
-            {activeTab === "overview" && !isGod && (
+            {/* {activeTab === "overview" && !isGod && (
               <div className="bg-white dark:bg-hero-dark rounded-xl border border-red-200 dark:border-red-900/40 p-6 space-y-4">
                 <h2 className="text-base font-bold text-red-500 font-barlow">
                   Transfer Ownership
@@ -1105,7 +1182,7 @@ export default function SponsorDashboard() {
                   </div>
                 )}
               </div>
-            )}
+            )} */}
 
             {/* Bounties Tab */}
             {activeTab === "bounties" && (
@@ -1117,7 +1194,10 @@ export default function SponsorDashboard() {
                     </p>
                     <button
                       onClick={() => router.push("/bounty/create")}
-                      className="bg-orange hover:bg-orange/90 text-white font-barlow font-medium px-6 py-2 rounded-lg mx-auto"
+                      disabled={
+                        sponsor.status === "pending" || sponsor.is_banned === 1
+                      }
+                      className="bg-orange hover:bg-orange/90 text-white font-barlow font-medium px-6 py-2 rounded-lg mx-auto disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       <Plus className="w-4 h-4 mr-2" />
                       Create Your First Bounty
@@ -1177,6 +1257,21 @@ export default function SponsorDashboard() {
                                     Edit
                                   </button>
                                 )}
+                                {(() => {
+                                  const ds = getBountyDisplayStatus(bounty);
+                                  return ds === "closed" ||
+                                    ds === "completed" ? (
+                                    <button
+                                      className="border border-orange text-orange hover:bg-orange/10 font-barlow px-3 py-1 rounded text-sm flex items-center gap-1"
+                                      onClick={(e) =>
+                                        handleRepublish(bounty, e)
+                                      }
+                                    >
+                                      <RefreshCw className="w-4 h-4" />
+                                      Republish
+                                    </button>
+                                  ) : null;
+                                })()}
                               </div>
                             </div>
                           </div>

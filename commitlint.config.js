@@ -1,5 +1,5 @@
-const capturingGroupType = /(\w*:\s)/ // 'type: '
-const capturingGroupSubject = /([^[].+)/ // 'subject'
+const capturingGroupType = /(\w*:\s)/; // 'type: '
+const capturingGroupSubject = /([^[].+)/; // 'subject'
 
 /*
   ❌ Bad commit messages
@@ -26,16 +26,16 @@ module.exports = {
     {
       rules: {
         "header-match-pattern": (parsed) => {
-          const { type, subject } = parsed
+          const { type, subject } = parsed;
 
           if (type === null && subject === null)
-            return [false, "commit message must be in format 'type: subject'"]
+            return [false, "commit message must be in format 'type: subject'"];
 
-          return [true, ""]
+          return [true, ""];
         },
 
         "check-type": (parsed, _when, expectedValues) => {
-          const { type } = parsed
+          const { type } = parsed;
 
           if (type && !Object.keys(expectedValues).includes(type.split(":")[0]))
             return [
@@ -45,9 +45,9 @@ module.exports = {
               )
                 .map((type) => `${type} - ${expectedValues[type]}`)
                 .join("\n")}`,
-            ]
+            ];
 
-          return [true, ""]
+          return [true, ""];
         },
       },
     },
@@ -68,4 +68,4 @@ module.exports = {
       },
     ],
   },
-}
+};

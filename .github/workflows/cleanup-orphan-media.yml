@@ -9,8 +9,8 @@ on:
   push:
     branches: [testing]
     paths:
-      - 'public/dapps/**'
-      - 'data/**'
+      - "public/dapps/**"
+      - "data/**"
 
 jobs:
   # ── PR check: post a comment listing orphan files ─────────────────────────
@@ -96,7 +96,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2   # Need parent commit to diff
+          fetch-depth: 2 # Need parent commit to diff
 
       - name: Remove unreferenced root-level media files
         id: cleanup

@@ -1,6 +1,10 @@
 import Layout from "../components/Layout";
 import { useEffect, useRef, useState, useCallback } from "react";
-import type { DashboardStats } from "./api/dashboard-stats";
+import type { GetStaticProps } from "next";
+import {
+  fetchDashboardStats,
+  type DashboardStats,
+} from "../lib/dashboard-stats-fetcher";
 
 // ─── Count-up hook ────────────────────────────────────────────────────────────
 
@@ -132,7 +136,39 @@ function SupplyRing({
 
   if (!total) return null;
 
-  let cumulative = 0;
+  // Only include segments with a non-zero value
+  const active = segments.filter((s) => s.value > 0);
+  const segTotal = active.reduce((sum, s) => sum + s.value, 0);
+  if (!segTotal) return null;
+  // Available pixels after reserving a GAP between each segment
+  const available = C - active.length * GAP;
+  // Natural proportional arc lengths — use segment sum, not the external total prop,
+  // so proportions are always correct regardless of what totalAlph the API returns.
+  const natural = active.map((s) => (s.value / segTotal) * available);
+  // Boost any segment below MIN_ARC; subtract the excess from larger segments
+  const MIN_ARC = 1;
+  const smallBudget = natural.reduce(
+    (sum, n) => (n < MIN_ARC ? sum + MIN_ARC : sum),
+    0,
+  );
+  const largePropSum = natural.reduce(
+    (sum, n) => (n >= MIN_ARC ? sum + n : sum),
+    0,
+  );
+  const largeBudget = available - smallBudget;
+  const draws = natural.map((n) =>
+    n < MIN_ARC
+      ? MIN_ARC
+      : largePropSum > 0
+        ? (n / largePropSum) * largeBudget
+        : MIN_ARC,
+  );
+  const arcs = active.map((seg, i) => {
+    const previousDrawsSum = draws.slice(0, i).reduce((sum, d) => sum + d, 0);
+    const currentPos = previousDrawsSum + i * GAP;
+    const rotation = (currentPos / C) * 360 - 90;
+    return { color: seg.color, draw: draws[i], space: C - draws[i], rotation };
+  });
 
   return (
     <svg
@@ -151,27 +187,19 @@ function SupplyRing({
         strokeWidth={SW}
         className="text-border-grey dark:text-white/5"
       />
-      {segments.map((seg, i) => {
-        const fraction = seg.value / total;
-        const draw = Math.max(0, fraction * C - GAP);
-        const space = C - draw;
-        const rotation = (cumulative / total) * 360 - 90;
-        cumulative += seg.value;
-        if (draw <= 0) return null;
-        return (
-          <circle
-            key={i}
-            cx={CX}
-            cy={CY}
-            r={R}
-            fill="none"
-            stroke={seg.color}
-            strokeWidth={SW}
-            strokeDasharray={`${draw} ${space}`}
-            transform={`rotate(${rotation} ${CX} ${CY})`}
-          />
-        );
-      })}
+      {arcs.map((arc, i) => (
+        <circle
+          key={i}
+          cx={CX}
+          cy={CY}
+          r={R}
+          fill="none"
+          stroke={arc.color}
+          strokeWidth={SW}
+          strokeDasharray={`${arc.draw} ${arc.space}`}
+          transform={`rotate(${arc.rotation} ${CX} ${CY})`}
+        />
+      ))}
     </svg>
   );
 }
@@ -219,7 +247,13 @@ function SupplyRow({
       <div className="h-1 rounded-full bg-smoked-white dark:bg-white/5 overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-700"
-          style={{ width: `${fraction * 100}%`, background: color }}
+          style={{
+            width:
+              value != null && value > 0
+                ? `max(3px, ${fraction * 100}%)`
+                : "0%",
+            background: color,
+          }}
         />
       </div>
     </div>
@@ -423,11 +457,26 @@ function Section({
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
-export default function DashboardPage() {
-  const [data, setData] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
+interface Props {
+  initialData: DashboardStats | null;
+}
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  try {
+    const initialData = await fetchDashboardStats(process.env.INTERNAL_SECRET);
+    return { props: { initialData }, revalidate: 300 };
+  } catch {
+    return { props: { initialData: null }, revalidate: 60 };
+  }
+};
+
+export default function DashboardPage({ initialData }: Props) {
+  const [data, setData] = useState<DashboardStats | null>(initialData);
+  const [loading, setLoading] = useState(initialData === null);
   const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(
+    initialData ? new Date(initialData.checkedAt) : null,
+  );
 
   const fetchStats = useCallback(async () => {
     try {

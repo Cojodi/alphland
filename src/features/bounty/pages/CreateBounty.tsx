@@ -4,6 +4,7 @@ import { useSession } from "@/lib/auth-client";
 import Layout from "@/components/Layout";
 import Image from "next/image";
 import { PenLine, ChevronDown, Sparkles } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function CreateBountyPage() {
   const router = useRouter();
@@ -47,7 +48,9 @@ export default function CreateBountyPage() {
 
   const handleAIGenerate = () => {
     // V2 Feature - Coming Soon
-    alert("Coming Soon: AI-powered bounty generation will be available in V2!");
+    toast.info(
+      "Coming Soon: AI-powered bounty generation will be available in V2!",
+    );
   };
 
   if (loading || isPending) {

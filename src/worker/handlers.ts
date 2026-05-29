@@ -3,6 +3,13 @@
  * Separate file for better organization
  */
 import { Env } from "./index";
+import {
+  notifyUserSubmissionApproved,
+  notifyUserSubmissionRejected,
+  notifySponsorNewSubmission,
+  notifyUserRevisionRequested,
+  notifySponsorSubmissionResubmitted,
+} from "./email";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -112,7 +119,10 @@ export async function handleSubmissionsAPI(
 
       if (existing) {
         return new Response(
-          JSON.stringify({ error: "Already submitted to this bounty" }),
+          JSON.stringify({
+            error: "Already submitted to this bounty",
+            submission_id: (existing as any).id,
+          }),
           { status: 409, headers: corsHeaders },
         );
       }
@@ -142,6 +152,10 @@ export async function handleSubmissionsAPI(
       )
         .bind(id)
         .first();
+
+      notifySponsorNewSubmission(env, id).catch((e) =>
+        console.error("[email] notifySponsorNewSubmission failed:", e),
+      );
 
       return new Response(JSON.stringify({ submission }), {
         status: 201,
@@ -477,6 +491,104 @@ export async function handleSubmissionsAPI(
     )
       .bind(id)
       .first();
+
+    if (body.status === "approved") {
+      notifyUserSubmissionApproved(env, id as string).catch((e) =>
+        console.error("[email] notifyUserSubmissionApproved failed:", e),
+      );
+    } else if (body.status === "rejected") {
+      notifyUserSubmissionRejected(env, id as string).catch((e) =>
+        console.error("[email] notifyUserSubmissionRejected failed:", e),
+      );
+    } else if (body.status === "revision_requested") {
+      notifyUserRevisionRequested(env, id as string).catch((e) =>
+        console.error("[email] notifyUserRevisionRequested failed:", e),
+      );
+    }
+
+    return new Response(JSON.stringify({ submission }), {
+      headers: corsHeaders,
+    });
+  }
+
+  // PATCH /api/submissions/:id — user edits their own submission and resubmits
+  if (
+    request.method === "PATCH" &&
+    pathname.match(/^\/api\/submissions\/[^/]+$/)
+  ) {
+    const id = pathname.split("/").pop();
+    const body = (await request.json()) as any;
+    const now = Math.floor(Date.now() / 1000);
+
+    if (!body.user_id || !body.submission_url) {
+      return new Response(
+        JSON.stringify({ error: "Missing required fields" }),
+        { status: 400, headers: corsHeaders },
+      );
+    }
+
+    // Verify the submission belongs to this user and check bounty is still open
+    const existing = (await env.DB.prepare(
+      `SELECT bs.id, bs.user_id, bs.status, b.status as bounty_status, b.end_date
+       FROM bounty_submissions bs
+       JOIN bounties b ON bs.bounty_id = b.id
+       WHERE bs.id = ?`,
+    )
+      .bind(id)
+      .first()) as {
+      id: string;
+      user_id: string;
+      status: string;
+      bounty_status: string;
+      end_date: number;
+    } | null;
+
+    if (!existing) {
+      return new Response(JSON.stringify({ error: "Submission not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    if (existing.user_id !== body.user_id) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 403,
+        headers: corsHeaders,
+      });
+    }
+
+    if (existing.status === "approved" || existing.status === "rejected") {
+      return new Response(
+        JSON.stringify({ error: "Cannot edit a finalized submission" }),
+        { status: 400, headers: corsHeaders },
+      );
+    }
+
+    const isExpired = existing.end_date && existing.end_date < now;
+    if (existing.bounty_status === "completed" || isExpired) {
+      return new Response(
+        JSON.stringify({ error: "Cannot edit submission for a closed bounty" }),
+        { status: 400, headers: corsHeaders },
+      );
+    }
+
+    await env.DB.prepare(
+      `UPDATE bounty_submissions
+       SET submission_url = ?, description = ?, status = 'submitted', updated_at = ?
+       WHERE id = ?`,
+    )
+      .bind(body.submission_url, body.description || null, now, id)
+      .run();
+
+    const submission = await env.DB.prepare(
+      `SELECT * FROM bounty_submissions WHERE id = ?`,
+    )
+      .bind(id)
+      .first();
+
+    notifySponsorSubmissionResubmitted(env, id as string).catch((e) =>
+      console.error("[email] notifySponsorSubmissionResubmitted failed:", e),
+    );
 
     return new Response(JSON.stringify({ submission }), {
       headers: corsHeaders,
@@ -1152,29 +1264,28 @@ export async function handleSponsorsAPI(
   // GET /api/sponsors - List all sponsors (for admin)
   if (request.method === "GET" && pathname === "/api/sponsors") {
     const isBanned = url.searchParams.get("is_banned");
-    const isPending = url.searchParams.get("pending");
+    const statusParam = url.searchParams.get("status");
 
-    let query = `SELECT s.*, b.bounty_count,
-                        u.email as user_email, u.name as user_name, u.image as user_image
-                 FROM sponsors s
-                 LEFT JOIN (
-                   SELECT sponsor_id, COUNT(*) as bounty_count
-                   FROM bounties
-                   GROUP BY sponsor_id
-                 ) b ON s.id = b.sponsor_id
-                 LEFT JOIN user u ON s.user_id = u.id`;
+    const baseQuery = `SELECT s.*, b.bounty_count,
+                              u.email as user_email, u.name as user_name, u.image as user_image
+                       FROM sponsors s
+                       LEFT JOIN (
+                         SELECT sponsor_id, COUNT(*) as bounty_count
+                         FROM bounties
+                         GROUP BY sponsor_id
+                       ) b ON s.id = b.sponsor_id
+                       LEFT JOIN user u ON s.user_id = u.id`;
 
-    // Try to filter by is_banned if param provided
-    // Use COALESCE to handle case where column might not exist or is NULL
-    if (isPending === "true") {
-      query += ` WHERE COALESCE(s.is_verified, 0) = 0 AND COALESCE(s.is_banned, 0) = 0`;
-    } else if (isBanned === "true") {
-      query += ` WHERE COALESCE(s.is_banned, 0) = 1`;
-    } else if (isBanned === "false") {
-      query += ` WHERE COALESCE(s.is_banned, 0) = 0`;
+    let where = "";
+    if (isBanned === "true") {
+      where = ` WHERE s.is_banned = 1`;
+    } else if (statusParam === "pending") {
+      where = ` WHERE s.status = 'pending'`;
+    } else if (statusParam === "approved") {
+      where = ` WHERE s.status = 'approved'`;
     }
 
-    query += ` ORDER BY s.created_at DESC`;
+    const query = baseQuery + where + ` ORDER BY s.created_at DESC`;
 
     try {
       const { results } = await env.DB.prepare(query).all();
@@ -1182,23 +1293,8 @@ export async function handleSponsorsAPI(
         headers: corsHeaders,
       });
     } catch (error) {
-      // Fallback: if is_banned column doesn't exist, query without filter
-      console.error(
-        "Sponsors query failed, trying without is_banned filter:",
-        error,
-      );
-      const fallbackQuery = `SELECT s.*, b.bounty_count,
-                                    u.email as user_email, u.name as user_name, u.image as user_image
-                             FROM sponsors s
-                             LEFT JOIN (
-                               SELECT sponsor_id, COUNT(*) as bounty_count
-                               FROM bounties
-                               GROUP BY sponsor_id
-                             ) b ON s.id = b.sponsor_id
-                             LEFT JOIN user u ON s.user_id = u.id
-                             ORDER BY s.created_at DESC`;
-      const { results } = await env.DB.prepare(fallbackQuery).all();
-      return new Response(JSON.stringify({ sponsors: results }), {
+      console.error("Sponsors query failed:", error);
+      return new Response(JSON.stringify({ sponsors: [] }), {
         headers: corsHeaders,
       });
     }
@@ -1277,27 +1373,17 @@ export async function handleSponsorsAPI(
         .first();
 
       if (sponsor) {
-        // Ban the sponsor (may fail if columns don't exist)
-        try {
-          await env.DB.prepare(
-            `UPDATE sponsors SET is_banned = 1, banned_at = ?, updated_at = ? WHERE id = ?`,
-          )
-            .bind(now, now, id)
-            .run();
-        } catch (e) {
-          console.error("Failed to update sponsor is_banned:", e);
-        }
+        await env.DB.prepare(
+          `UPDATE sponsors SET is_banned = 1, banned_at = ?, updated_at = ? WHERE id = ?`,
+        )
+          .bind(now, now, id)
+          .run();
 
-        // Also ban the associated user (may fail if column doesn't exist)
-        try {
-          await env.DB.prepare(
-            `UPDATE user SET is_banned = 1, updatedAt = ? WHERE id = ?`,
-          )
-            .bind(now * 1000, sponsor.user_id)
-            .run();
-        } catch (e) {
-          console.error("Failed to update user is_banned:", e);
-        }
+        await env.DB.prepare(
+          `UPDATE user SET is_banned = 1, updatedAt = ? WHERE id = ?`,
+        )
+          .bind(now * 1000, sponsor.user_id)
+          .run();
       }
 
       return new Response(JSON.stringify({ success: true }), {
@@ -1305,12 +1391,10 @@ export async function handleSponsorsAPI(
       });
     } catch (error) {
       console.error("Failed to ban sponsor:", error);
-      return new Response(
-        JSON.stringify({
-          error: "Failed to ban sponsor. Run migrations 020 and 021 first.",
-        }),
-        { status: 500, headers: corsHeaders },
-      );
+      return new Response(JSON.stringify({ error: "Failed to ban sponsor." }), {
+        status: 500,
+        headers: corsHeaders,
+      });
     }
   }
 
@@ -1343,14 +1427,13 @@ export async function handleSponsorsAPI(
 
     // Verify requester is the current owner
     const sponsor = (await env.DB.prepare(
-      `SELECT id, user_id, name, is_banned FROM sponsors WHERE id = ?`,
+      `SELECT id, user_id, name FROM sponsors WHERE id = ?`,
     )
       .bind(id)
       .first()) as {
       id: string;
       user_id: string;
       name: string;
-      is_banned: number;
     } | null;
 
     if (!sponsor) {
@@ -1421,18 +1504,18 @@ export async function handleSponsorsAPI(
         .bind(newOwnerId, now, id)
         .run();
 
-      // Clear old owner's sponsor flags; also lift any sponsor-derived ban
+      // Clear old owner's sponsor flags
       await env.DB.prepare(
-        `UPDATE user SET is_sponsor = 0, sponsor_id = NULL, is_banned = 0, updatedAt = ? WHERE id = ?`,
+        `UPDATE user SET is_sponsor = 0, sponsor_id = NULL, updatedAt = ? WHERE id = ?`,
       )
         .bind(now * 1000, sponsor.user_id)
         .run();
 
-      // Set new owner's sponsor flags; propagate ban if sponsor is currently banned
+      // Set new owner's sponsor flags
       await env.DB.prepare(
-        `UPDATE user SET is_sponsor = 1, sponsor_id = ?, is_banned = ?, updatedAt = ? WHERE id = ?`,
+        `UPDATE user SET is_sponsor = 1, sponsor_id = ?, updatedAt = ? WHERE id = ?`,
       )
-        .bind(id, sponsor.is_banned ?? 0, now * 1000, newOwnerId)
+        .bind(id, now * 1000, newOwnerId)
         .run();
 
       return new Response(JSON.stringify({ success: true }), {
@@ -1470,27 +1553,17 @@ export async function handleSponsorsAPI(
         .first();
 
       if (sponsor) {
-        // Unban the sponsor (may fail if columns don't exist)
-        try {
-          await env.DB.prepare(
-            `UPDATE sponsors SET is_banned = 0, banned_at = NULL, updated_at = ? WHERE id = ?`,
-          )
-            .bind(now, id)
-            .run();
-        } catch (e) {
-          console.error("Failed to update sponsor is_banned:", e);
-        }
+        await env.DB.prepare(
+          `UPDATE sponsors SET is_banned = 0, banned_at = NULL, updated_at = ? WHERE id = ?`,
+        )
+          .bind(now, id)
+          .run();
 
-        // Also unban the associated user (may fail if column doesn't exist)
-        try {
-          await env.DB.prepare(
-            `UPDATE user SET is_banned = 0, updatedAt = ? WHERE id = ?`,
-          )
-            .bind(now * 1000, sponsor.user_id)
-            .run();
-        } catch (e) {
-          console.error("Failed to update user is_banned:", e);
-        }
+        await env.DB.prepare(
+          `UPDATE user SET is_banned = 0, updatedAt = ? WHERE id = ?`,
+        )
+          .bind(now * 1000, sponsor.user_id)
+          .run();
       }
 
       return new Response(JSON.stringify({ success: true }), {
@@ -1499,9 +1572,7 @@ export async function handleSponsorsAPI(
     } catch (error) {
       console.error("Failed to unban sponsor:", error);
       return new Response(
-        JSON.stringify({
-          error: "Failed to unban sponsor. Run migrations 020 and 021 first.",
-        }),
+        JSON.stringify({ error: "Failed to unban sponsor." }),
         { status: 500, headers: corsHeaders },
       );
     }

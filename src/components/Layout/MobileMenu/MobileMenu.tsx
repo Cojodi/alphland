@@ -69,7 +69,7 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
   const navbarItems: NavbarItem[] = [
     {
       name: "Explore dApps",
-      href: "/",
+      href: "/explore",
       icon: currentTheme === "dark" ? homeDark : home,
     },
     {
@@ -95,6 +95,11 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
     {
       name: "Ecosystem Map",
       href: "/ecosystem-map",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
+    {
+      name: "Dashboard",
+      href: "/dashboard",
       icon: currentTheme === "dark" ? homeDark : home,
     },
   ];
