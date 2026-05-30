@@ -62,3 +62,4 @@ migrations/
 alephium-brand-guide
 deploy.md
 burn.js
+.agents/

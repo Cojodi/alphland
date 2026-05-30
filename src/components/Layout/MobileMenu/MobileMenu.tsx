@@ -102,6 +102,11 @@ const MobileMenu = ({ currentTheme, setTheme }: MobileMenuProps) => {
       href: "/dashboard",
       icon: currentTheme === "dark" ? homeDark : home,
     },
+    {
+      name: "Security",
+      href: "/security",
+      icon: currentTheme === "dark" ? homeDark : home,
+    },
   ];
 
   // Check if current page is bounty, sponsor, or user profile related

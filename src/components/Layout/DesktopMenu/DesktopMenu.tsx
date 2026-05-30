@@ -205,6 +205,17 @@ const DesktopMenu = ({ currentTheme, setTheme }: DesktopMenuProps) => {
               Dashboard
             </span>
           </Link>
+          <Link href="/security">
+            <span
+              className={`px-4 py-2 text-sm font-medium uppercase transition-colors cursor-pointer ${
+                isActivePath("/security")
+                  ? "text-orange dark:text-orange font-bold"
+                  : "text-black dark:text-white hover:text-orange dark:hover:text-orange"
+              }`}
+            >
+              Security
+            </span>
+          </Link>
         </div>
         <div className="flex gap-3.5 z-[2] items-center">
           <button
