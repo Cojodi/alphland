@@ -1,0 +1,38 @@
+{
+  "name": "Bridgers",
+  "description": "One Stop Cross-Chain swap, supporting 600+ tokens on 50+ chains",
+  "short_description": "One Stop Cross-Chain swap",
+  "tags": [
+    "Bridges"
+  ],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://app.bridgers.xyz/#/?sourceFlag=alephium",
+    "careers": "",
+    "twitter": "https://x.com/Bridgersxyz",
+    "telegram": "",
+    "discord": "",
+    "docs": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "support@bridgers.xyz",
+    "founded": "2017-12-04T00:00:00.000Z",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/bridgers/bridgers-logo.webp",
+    "bannerUrl": "/dapps/bridgers/bridgers-banner.webp",
+    "previewUrl": "/dapps/bridgers/bridgers-preview.webp"
+  },
+  "contracts": [],
+  "audits": [],
+  "tokens": []
+}
