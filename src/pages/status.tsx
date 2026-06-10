@@ -8,6 +8,8 @@ type ServiceStatus = {
   name: string;
   up: boolean;
   latency: number;
+  version: string | null;
+  versionOutdated: boolean;
 };
 
 type ChainStatus = {
@@ -92,11 +94,25 @@ function ServiceCard({ svc }: { svc: ServiceStatus }) {
           <p className="font-semibold text-black dark:text-white text-sm truncate">
             {svc.name}
           </p>
-          <p
-            className={`text-xs mt-0.5 ${svc.up ? "text-accessible-green" : "text-danger-red"}`}
-          >
-            {svc.up ? "Operational" : "Unreachable"}
-          </p>
+          <div className="flex items-center gap-2 flex-wrap mt-0.5">
+            <p
+              className={`text-xs ${svc.up ? "text-accessible-green" : "text-danger-red"}`}
+            >
+              {svc.up ? "Operational" : "Unreachable"}
+            </p>
+            {svc.version && (
+              <span
+                className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                  svc.versionOutdated
+                    ? "bg-yellow-400/10 text-yellow-600 dark:text-yellow-400"
+                    : "bg-accessible-green/10 text-accessible-green"
+                }`}
+              >
+                v{svc.version}
+                {svc.versionOutdated && " ⚠"}
+              </span>
+            )}
+          </div>
         </div>
       </div>
       <div className="text-right shrink-0">
