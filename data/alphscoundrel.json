@@ -1,0 +1,38 @@
+{
+  "name": "AlphScoundrel",
+  "description": "AlphScoundrel is a deterministic dungeon card game built on Alephium. Players enter with 24 HP and work through a 44-card deck, fighting monsters, equipping weapons, banking potions, and maximizing a progress-based score. Guest practice runs stay local, while wallet-signed runs are transcript-verified before leaderboard submission; paid ALPH entries can follow a prize-eligible on-chain path.",
+  "short_description": "Scoundrel dungeon card game on Alephium",
+  "tags": [
+    "Games"
+  ],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://alphscoundrel.alehpium.org/",
+    "careers": "",
+    "twitter": "",
+    "telegram": "",
+    "discord": "",
+    "docs": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/alphscoundrel/alphscoundrel-logo.webp",
+    "bannerUrl": "/dapps/alphscoundrel/alphscoundrel-banner.webp",
+    "previewUrl": "/dapps/alphscoundrel/alphscoundrel-preview.webp"
+  },
+  "contracts": [],
+  "audits": [],
+  "tokens": []
+}
