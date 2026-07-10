@@ -16,6 +16,7 @@ const ALPH_NODE = "https://node.mainnet.alephium.org";
 const ALPH_EXPLORER = "https://backend.mainnet.alephium.org";
 const ALPH_TESTNET_NODE = "https://node.testnet.alephium.org";
 const ALPH_TESTNET_EXPLORER = "https://backend.testnet.alephium.org";
+const EXPECTED_NODE_VERSION = "4.5.3";
 const BLOCK_DELAY_THRESHOLD_S = 180;
 const HASHRATE_1H_THRESHOLD_PCT = 20;
 const HASHRATE_24H_THRESHOLD_PCT = 30;
@@ -208,30 +209,45 @@ export default async function handler(
       ),
     ]);
 
+  const mainnetNodeVersion = nodeResult.data?.releaseVersion ?? null;
+  const testnetNodeVersion = testnetNodeResult.data?.releaseVersion ?? null;
+
   const services = [
     {
       name: "Public Mainnet Node",
       network: "MAINNET" as const,
       up: nodeResult.ok,
       latency: nodeResult.latency,
+      version: mainnetNodeVersion,
+      versionOutdated:
+        mainnetNodeVersion !== null &&
+        mainnetNodeVersion !== EXPECTED_NODE_VERSION,
     },
     {
       name: "Public Explorer Backend",
       network: "MAINNET" as const,
       up: explorerResult.ok,
       latency: explorerResult.latency,
+      version: null,
+      versionOutdated: false,
     },
     {
       name: "Public Testnet Node",
       network: "TESTNET" as const,
       up: testnetNodeResult.ok,
       latency: testnetNodeResult.latency,
+      version: testnetNodeVersion,
+      versionOutdated:
+        testnetNodeVersion !== null &&
+        testnetNodeVersion !== EXPECTED_NODE_VERSION,
     },
     {
       name: "Testnet Explorer Backend",
       network: "TESTNET" as const,
       up: testnetExplorerResult.ok,
       latency: testnetExplorerResult.latency,
+      version: null,
+      versionOutdated: false,
     },
   ];
 
