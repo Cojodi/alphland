@@ -1813,6 +1813,22 @@ async function handleBountiesAPI(
         updates.push("reward_usd_value = ?");
         values.push(body.reward_usd_value);
       }
+      if (body.reward_type !== undefined) {
+        if (body.reward_type !== "fixed" && body.reward_type !== "tiered") {
+          return new Response(
+            JSON.stringify({
+              error: "reward_type must be 'fixed' or 'tiered'",
+            }),
+            { status: 400, headers: corsHeaders },
+          );
+        }
+        updates.push("reward_type = ?");
+        values.push(body.reward_type);
+      }
+      if (body.tier_count !== undefined) {
+        updates.push("tier_count = ?");
+        values.push(body.tier_count);
+      }
       if (body.status !== undefined) {
         updates.push("status = ?");
         // "closed" is not in the DB CHECK constraint — store as "cancelled"

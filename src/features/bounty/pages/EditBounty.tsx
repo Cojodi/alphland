@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Modal from "@/components/Modal/Modal";
 import { toast } from "react-toastify";
+import { generateTieredRewards } from "../utils/rewardCalculator";
 
 interface BountyFormData {
   title: string;
@@ -20,6 +21,8 @@ interface BountyFormData {
   reward_amount: string;
   reward_currency: string;
   reward_usd_value: string;
+  reward_type: "fixed" | "tiered";
+  tier_count: number;
   status: string;
   start_date: string;
   end_date: string;
@@ -53,6 +56,8 @@ export default function EditBounty() {
     reward_amount: "",
     reward_currency: "USD",
     reward_usd_value: "",
+    reward_type: "fixed",
+    tier_count: 5,
     status: "open",
     start_date: "",
     end_date: "",
@@ -125,6 +130,8 @@ export default function EditBounty() {
             b.reward?.usd_equivalent?.toString() ||
             b.reward_usd_value?.toString() ||
             "",
+          reward_type: b.reward_type === "tiered" ? "tiered" : "fixed",
+          tier_count: b.tier_count || 5,
           status: b.status || "open",
           start_date: startDate,
           end_date: endDate,
@@ -170,6 +177,9 @@ export default function EditBounty() {
           reward_usd_value: formData.reward_usd_value
             ? parseFloat(formData.reward_usd_value)
             : 0,
+          reward_type: formData.reward_type,
+          tier_count:
+            formData.reward_type === "tiered" ? formData.tier_count : null,
           status: formData.status,
           start_date: formData.start_date || null,
           end_date: formData.end_date || null,
@@ -388,6 +398,73 @@ export default function EditBounty() {
                 </div>
               )}
 
+              {/* Reward Type Selection */}
+              <div>
+                <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
+                  Reward Type *
+                </label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      checked={
+                        formData.reward_type === "fixed" &&
+                        formData.reward_currency === "USD"
+                      }
+                      onChange={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          reward_type: "fixed",
+                          reward_currency: "USD",
+                        }))
+                      }
+                      className="w-4 h-4 text-orange focus:ring-orange"
+                    />
+                    <span className="text-black dark:text-white font-barlow">
+                      Fixed (USD)
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      checked={
+                        formData.reward_type === "fixed" &&
+                        formData.reward_currency === "ALPH"
+                      }
+                      onChange={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          reward_type: "fixed",
+                          reward_currency: "ALPH",
+                          reward_usd_value: "",
+                        }))
+                      }
+                      className="w-4 h-4 text-orange focus:ring-orange"
+                    />
+                    <span className="text-black dark:text-white font-barlow">
+                      Fixed Token (ALPH)
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      checked={formData.reward_type === "tiered"}
+                      onChange={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          reward_type: "tiered",
+                          reward_currency: "USD",
+                        }))
+                      }
+                      className="w-4 h-4 text-orange focus:ring-orange"
+                    />
+                    <span className="text-black dark:text-white font-barlow">
+                      Tiered (USD)
+                    </span>
+                  </label>
+                </div>
+              </div>
+
               {formData.reward_currency === "ALPH" ? (
                 <>
                   <div>
@@ -453,6 +530,82 @@ export default function EditBounty() {
                       className="w-full pl-10 pr-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
                     />
                   </div>
+                </div>
+              )}
+
+              {/* Tiered Reward Configuration */}
+              {formData.reward_type === "tiered" && (
+                <div className="space-y-4">
+                  <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow">
+                    Number of Winners *
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[3, 5, 10].map((count) => (
+                      <button
+                        key={count}
+                        type="button"
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            tier_count: count,
+                          }))
+                        }
+                        className={`p-4 rounded-lg border-2 transition-all ${
+                          formData.tier_count === count
+                            ? "border-orange bg-orange/5"
+                            : "border-border-grey dark:border-dark-charcoal hover:border-orange/50"
+                        }`}
+                      >
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-black dark:text-white font-barlow mb-2">
+                            {count}
+                          </div>
+                          <div className="text-xs text-light-charcoal dark:text-lightgrey font-barlow">
+                            Winners
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Prize Distribution Preview */}
+                  {formData.reward_amount && (
+                    <div className="mt-4 bg-smoked-white dark:bg-light-black rounded-lg p-4">
+                      <h4 className="text-sm font-semibold text-black dark:text-white font-barlow mb-3">
+                        Prize Distribution
+                      </h4>
+                      <div className="space-y-2">
+                        {generateTieredRewards(
+                          {
+                            amount: parseFloat(formData.reward_amount) || 0,
+                            token: formData.reward_currency,
+                            usd_equivalent:
+                              parseFloat(formData.reward_usd_value) || 0,
+                          },
+                          formData.tier_count,
+                        ).map((tier) => (
+                          <div
+                            key={tier.position}
+                            className="flex justify-between items-center text-sm"
+                          >
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              {tier.position === 1
+                                ? "1st Place"
+                                : tier.position === 2
+                                  ? "2nd Place"
+                                  : tier.position === 3
+                                    ? "3rd Place"
+                                    : `${tier.position}th Place`}
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              {tier.amount.toLocaleString()} {tier.token} (
+                              {Math.round(tier.percentage * 100)}%)
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
