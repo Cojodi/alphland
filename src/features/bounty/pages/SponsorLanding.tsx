@@ -49,8 +49,8 @@ export default function SponsorLanding() {
         if (response.ok) {
           const data = await response.json();
           setExistingSponsor(data.sponsor);
-          // If user is already a sponsor, redirect to dashboard
-          if (data.sponsor && !data.sponsor.is_banned) {
+          // If user is already a sponsor, or is a god user (superadmin), redirect to dashboard
+          if (data.is_god || (data.sponsor && !data.sponsor.is_banned)) {
             router.push("/bounty/sponsor/dashboard");
           }
         }
