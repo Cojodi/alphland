@@ -10,8 +10,10 @@ export function sponsorSlug(name: string): string {
 
 export function isValidUrl(url: string): boolean {
   try {
-    new URL(url);
-    return true;
+    const parsed = new URL(url);
+    // Only http(s) links are safe to store and render as a clickable <a href>.
+    // Rejects javascript:, data:, vbscript:, etc.
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
   } catch {
     return false;
   }

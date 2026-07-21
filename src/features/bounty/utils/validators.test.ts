@@ -26,6 +26,12 @@ describe("isValidUrl", () => {
     expect(isValidUrl("")).toBe(false);
     expect(isValidUrl("ftp://")).toBe(false);
   });
+
+  it("rejects dangerous URL schemes that could execute as script", () => {
+    expect(isValidUrl("javascript:alert(1)")).toBe(false);
+    expect(isValidUrl("data:text/html,<script>alert(1)</script>")).toBe(false);
+    expect(isValidUrl("vbscript:msgbox(1)")).toBe(false);
+  });
 });
 
 describe("normalizeUrl", () => {

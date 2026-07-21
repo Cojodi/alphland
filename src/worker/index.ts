@@ -19,6 +19,8 @@ import {
   handleImageServingAPI,
   handleProofOfWorkAPI,
   handleSubmitDappAPI,
+  getSessionUserId,
+  isGodUser,
 } from "./handlers";
 
 // Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
@@ -1311,26 +1313,18 @@ async function handleBountiesAPI(
   // POST /api/bounties - Create new bounty
   if (request.method === "POST" && pathname === "/api/bounties") {
     try {
+      const created_by = await getSessionUserId(env, request);
+      if (!created_by) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: corsHeaders,
+        });
+      }
+
       const body = (await request.json()) as any;
 
       const id = crypto.randomUUID();
       const now = Math.floor(Date.now() / 1000);
-
-      // Get user_id from session or request
-      const created_by = body.created_by || body.user_id;
-
-      // Validate required fields
-      if (!created_by) {
-        return new Response(
-          JSON.stringify({
-            error: "User ID is required",
-          }),
-          {
-            status: 400,
-            headers: corsHeaders,
-          },
-        );
-      }
 
       if (!body.sponsor_id) {
         return new Response(
@@ -1346,11 +1340,12 @@ async function handleBountiesAPI(
 
       // Verify sponsor exists, is verified, and is not banned
       const sponsor = (await env.DB.prepare(
-        "SELECT id, is_verified, is_banned FROM sponsors WHERE id = ?",
+        "SELECT id, user_id, is_verified, is_banned FROM sponsors WHERE id = ?",
       )
         .bind(body.sponsor_id)
         .first()) as {
         id: string;
+        user_id: string;
         is_verified: number;
         is_banned: number;
       } | null;
@@ -1379,13 +1374,28 @@ async function handleBountiesAPI(
         );
       }
 
-      // God users bypass the is_verified check
+      // God users bypass the is_verified check and the sponsor-ownership check
       const creatorRole = (await env.DB.prepare(
         "SELECT role FROM user WHERE id = ?",
       )
         .bind(created_by)
         .first()) as { role: string | null } | null;
       const creatorIsGod = creatorRole?.role === "god";
+
+      // Only the sponsor's own owner (or a god user) may create bounties
+      // under that sponsor's identity.
+      if (sponsor.user_id !== created_by && !creatorIsGod) {
+        return new Response(
+          JSON.stringify({
+            error:
+              "You do not have permission to create bounties for this sponsor.",
+          }),
+          {
+            status: 403,
+            headers: corsHeaders,
+          },
+        );
+      }
 
       if (!sponsor.is_verified && !creatorIsGod) {
         return new Response(
@@ -1395,23 +1405,6 @@ async function handleBountiesAPI(
           }),
           {
             status: 403,
-            headers: corsHeaders,
-          },
-        );
-      }
-
-      // Verify user exists
-      const user = await env.DB.prepare("SELECT id FROM user WHERE id = ?")
-        .bind(created_by)
-        .first();
-
-      if (!user) {
-        return new Response(
-          JSON.stringify({
-            error: "User not found",
-          }),
-          {
-            status: 404,
             headers: corsHeaders,
           },
         );
@@ -1536,18 +1529,25 @@ async function handleBountiesAPI(
     pathname.match(/^\/api\/bounties\/[^/]+\/republish$/)
   ) {
     try {
+      const sessionUserId = await getSessionUserId(env, request);
+      if (!sessionUserId) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: corsHeaders,
+        });
+      }
+
       const id = pathname.split("/")[3];
       const body = (await request.json()) as {
-        user_id: string;
         end_date: string;
         start_date?: string;
       };
 
-      if (!body.user_id || !body.end_date) {
-        return new Response(
-          JSON.stringify({ error: "user_id and end_date are required" }),
-          { status: 400, headers: corsHeaders },
-        );
+      if (!body.end_date) {
+        return new Response(JSON.stringify({ error: "end_date is required" }), {
+          status: 400,
+          headers: corsHeaders,
+        });
       }
 
       const original = (await env.DB.prepare(
@@ -1570,14 +1570,9 @@ async function handleBountiesAPI(
         .bind(original.sponsor_id)
         .first()) as { user_id: string } | null;
 
-      const creatorRole = (await env.DB.prepare(
-        "SELECT role FROM user WHERE id = ?",
-      )
-        .bind(body.user_id)
-        .first()) as { role: string | null } | null;
-      const isGod = creatorRole?.role === "god";
+      const isGod = await isGodUser(env, sessionUserId);
 
-      if (!isGod && sponsor?.user_id !== body.user_id) {
+      if (!isGod && sponsor?.user_id !== sessionUserId) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
           status: 403,
           headers: corsHeaders,
@@ -1618,7 +1613,7 @@ async function handleBountiesAPI(
           startDate,
           body.end_date,
           "open",
-          body.user_id,
+          sessionUserId,
           now,
           now,
         )
@@ -1676,20 +1671,50 @@ async function handleBountiesAPI(
     pathname.match(/^\/api\/bounties\/[^/]+$/)
   ) {
     try {
+      const sessionUserId = await getSessionUserId(env, request);
+      if (!sessionUserId) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: corsHeaders,
+        });
+      }
+
       const id = pathname.split("/").pop();
 
       // Get the bounty before deleting to update overview
-      const bounty = await env.DB.prepare(
-        "SELECT reward_amount, reward_currency, reward_usd_value, status FROM bounties WHERE id = ?",
+      const bounty = (await env.DB.prepare(
+        "SELECT reward_amount, reward_currency, reward_usd_value, status, sponsor_id FROM bounties WHERE id = ?",
       )
         .bind(id)
-        .first();
+        .first()) as {
+        reward_amount: number;
+        reward_currency: string;
+        reward_usd_value: number;
+        status: string;
+        sponsor_id: string;
+      } | null;
 
       if (!bounty) {
         return new Response(JSON.stringify({ error: "Bounty not found" }), {
           status: 404,
           headers: corsHeaders,
         });
+      }
+
+      const owningSponsor = (await env.DB.prepare(
+        "SELECT user_id FROM sponsors WHERE id = ?",
+      )
+        .bind(bounty.sponsor_id)
+        .first()) as { user_id: string } | null;
+
+      if (owningSponsor && owningSponsor.user_id !== sessionUserId) {
+        const isGod = await isGodUser(env, sessionUserId);
+        if (!isGod) {
+          return new Response(JSON.stringify({ error: "Forbidden" }), {
+            status: 403,
+            headers: corsHeaders,
+          });
+        }
       }
 
       // Only update overview if bounty is not already deleted
@@ -1770,22 +1795,52 @@ async function handleBountiesAPI(
   // PUT /api/bounties/:id - Update a bounty
   if (request.method === "PUT" && pathname.match(/^\/api\/bounties\/[^/]+$/)) {
     try {
+      const sessionUserId = await getSessionUserId(env, request);
+      if (!sessionUserId) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: corsHeaders,
+        });
+      }
+
       const id = pathname.split("/").pop();
       const body = (await request.json()) as any;
       const now = Math.floor(Date.now() / 1000);
 
       // Get the old bounty data to calculate overview changes
-      const oldBounty = await env.DB.prepare(
-        "SELECT reward_amount, reward_currency, reward_usd_value, status FROM bounties WHERE id = ?",
+      const oldBounty = (await env.DB.prepare(
+        "SELECT reward_amount, reward_currency, reward_usd_value, status, sponsor_id FROM bounties WHERE id = ?",
       )
         .bind(id)
-        .first();
+        .first()) as {
+        reward_amount: number;
+        reward_currency: string;
+        reward_usd_value: number;
+        status: string;
+        sponsor_id: string;
+      } | null;
 
       if (!oldBounty) {
         return new Response(JSON.stringify({ error: "Bounty not found" }), {
           status: 404,
           headers: corsHeaders,
         });
+      }
+
+      const owningSponsor = (await env.DB.prepare(
+        "SELECT user_id FROM sponsors WHERE id = ?",
+      )
+        .bind(oldBounty.sponsor_id)
+        .first()) as { user_id: string } | null;
+
+      if (owningSponsor && owningSponsor.user_id !== sessionUserId) {
+        const isGod = await isGodUser(env, sessionUserId);
+        if (!isGod) {
+          return new Response(JSON.stringify({ error: "Forbidden" }), {
+            status: 403,
+            headers: corsHeaders,
+          });
+        }
       }
 
       // Build update query dynamically based on provided fields

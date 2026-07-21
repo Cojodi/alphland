@@ -17,7 +17,7 @@ const corsHeaders = {
 };
 
 /** Returns true if the user with the given ID has the 'god' superadmin role. */
-async function isGodUser(env: Env, userId: string): Promise<boolean> {
+export async function isGodUser(env: Env, userId: string): Promise<boolean> {
   try {
     const result = (await env.DB.prepare("SELECT role FROM user WHERE id = ?")
       .bind(userId)
@@ -29,24 +29,53 @@ async function isGodUser(env: Env, userId: string): Promise<boolean> {
 }
 
 /**
- * Resolves the god role of the requester directly from the session cookie,
- * without needing the full auth instance. Returns true if the session belongs
- * to a god user.
+ * Resolves the requester's userId from the better-auth session cookie.
+ * Returns null if there's no cookie, the token doesn't match a live
+ * session, or the session has expired. This is the single source of truth
+ * for "who is actually making this request" — never trust a client-supplied
+ * user_id for authorization decisions, only for authorization *targets*.
  */
-async function requestIsFromGod(env: Env, request: Request): Promise<boolean> {
+export async function getSessionUserId(
+  env: Env,
+  request: Request,
+): Promise<string | null> {
   try {
     const cookieHeader = request.headers.get("cookie") || "";
     // better-auth stores the token in "better-auth.session_token"
     const match = cookieHeader.match(/better-auth\.session_token=([^;]+)/);
-    if (!match) return false;
+    if (!match) return null;
     const token = decodeURIComponent(match[1]);
     const session = (await env.DB.prepare(
       "SELECT userId FROM session WHERE token = ? AND expiresAt > ?",
     )
       .bind(token, Date.now())
       .first()) as { userId: string } | null;
-    if (!session?.userId) return false;
-    return isGodUser(env, session.userId);
+    return session?.userId ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Resolves the god role of the requester directly from the session cookie,
+ * without needing the full auth instance. Returns true if the session belongs
+ * to a god user.
+ */
+async function requestIsFromGod(env: Env, request: Request): Promise<boolean> {
+  const userId = await getSessionUserId(env, request);
+  if (!userId) return false;
+  return isGodUser(env, userId);
+}
+
+/**
+ * Rejects dangerous URL schemes (javascript:, data:, vbscript:, etc.) that
+ * would execute in a viewer's session if rendered as a raw <a href>. Only
+ * http/https links are considered safe to store and render.
+ */
+function isSafeSubmissionUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
   } catch {
     return false;
   }
@@ -82,24 +111,27 @@ export async function handleSubmissionsAPI(
   // POST /api/submissions - Create submission
   if (request.method === "POST" && pathname === "/api/submissions") {
     try {
+      const sessionUserId = await getSessionUserId(env, request);
+      if (!sessionUserId) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: corsHeaders,
+        });
+      }
+
       const body = (await request.json()) as any;
 
       console.log("Creating submission:", {
         bounty_id: body.bounty_id,
-        user_id: body.user_id || body.submitted_by,
+        user_id: sessionUserId,
         submission_url: body.submission_url,
         description: body.description,
       });
 
       // Validate required fields
-      if (
-        !body.bounty_id ||
-        !(body.user_id || body.submitted_by) ||
-        !body.submission_url
-      ) {
+      if (!body.bounty_id || !body.submission_url) {
         console.log("Missing required fields:", {
           bounty_id: !!body.bounty_id,
-          user_id: !!(body.user_id || body.submitted_by),
           submission_url: !!body.submission_url,
         });
         return new Response(
@@ -111,10 +143,38 @@ export async function handleSubmissionsAPI(
         );
       }
 
+      if (!isSafeSubmissionUrl(body.submission_url)) {
+        return new Response(
+          JSON.stringify({ error: "submission_url must be an http(s) URL" }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+
+      // Only accept submissions to bounties that are actually open.
+      const bounty = (await env.DB.prepare(
+        "SELECT status FROM bounties WHERE id = ?",
+      )
+        .bind(body.bounty_id)
+        .first()) as { status: string } | null;
+
+      if (!bounty) {
+        return new Response(JSON.stringify({ error: "Bounty not found" }), {
+          status: 404,
+          headers: corsHeaders,
+        });
+      }
+      if (bounty.status !== "open") {
+        return new Response(
+          JSON.stringify({ error: "This bounty is not accepting submissions" }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+
+      // Identity always comes from the session, never from the request body.
       const existing = await env.DB.prepare(
         `SELECT id FROM bounty_submissions WHERE bounty_id = ? AND user_id = ?`,
       )
-        .bind(body.bounty_id, body.submitted_by || body.user_id)
+        .bind(body.bounty_id, sessionUserId)
         .first();
 
       if (existing) {
@@ -139,7 +199,7 @@ export async function handleSubmissionsAPI(
         .bind(
           id,
           body.bounty_id,
-          body.submitted_by || body.user_id,
+          sessionUserId,
           body.submission_url,
           body.description || null,
           now,
@@ -336,9 +396,60 @@ export async function handleSubmissionsAPI(
     const body = (await request.json()) as any;
     const now = Math.floor(Date.now() / 1000);
 
+    const ALLOWED_REVIEW_STATUSES = [
+      "approved",
+      "rejected",
+      "revision_requested",
+    ];
+    if (!ALLOWED_REVIEW_STATUSES.includes(body.status)) {
+      return new Response(
+        JSON.stringify({
+          error: `status must be one of: ${ALLOWED_REVIEW_STATUSES.join(", ")}`,
+        }),
+        { status: 400, headers: corsHeaders },
+      );
+    }
+
+    const sessionUserId = await getSessionUserId(env, request);
+    if (!sessionUserId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
+
+    // Only the sponsor who owns this submission's bounty (or a god user)
+    // may approve/reject/request revision on it.
+    const owningSponsor = (await env.DB.prepare(
+      `SELECT s.user_id
+       FROM bounty_submissions bs
+       JOIN bounties b ON bs.bounty_id = b.id
+       JOIN sponsors s ON b.sponsor_id = s.id
+       WHERE bs.id = ?`,
+    )
+      .bind(id)
+      .first()) as { user_id: string } | null;
+
+    if (!owningSponsor) {
+      return new Response(JSON.stringify({ error: "Submission not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    if (owningSponsor.user_id !== sessionUserId) {
+      const isGod = await isGodUser(env, sessionUserId);
+      if (!isGod) {
+        return new Response(JSON.stringify({ error: "Forbidden" }), {
+          status: 403,
+          headers: corsHeaders,
+        });
+      }
+    }
+
     // God users can approve directly without transaction verification
     const godOverride =
-      body.status === "approved" && (await requestIsFromGod(env, request));
+      body.status === "approved" && (await isGodUser(env, sessionUserId));
 
     // Verify transaction on Alephium if transaction_hash is provided (skipped for god users)
     if (!godOverride && body.transaction_hash && body.status === "approved") {
@@ -516,13 +627,28 @@ export async function handleSubmissionsAPI(
     request.method === "PATCH" &&
     pathname.match(/^\/api\/submissions\/[^/]+$/)
   ) {
+    const sessionUserId = await getSessionUserId(env, request);
+    if (!sessionUserId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
+
     const id = pathname.split("/").pop();
     const body = (await request.json()) as any;
     const now = Math.floor(Date.now() / 1000);
 
-    if (!body.user_id || !body.submission_url) {
+    if (!body.submission_url) {
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
+        { status: 400, headers: corsHeaders },
+      );
+    }
+
+    if (!isSafeSubmissionUrl(body.submission_url)) {
+      return new Response(
+        JSON.stringify({ error: "submission_url must be an http(s) URL" }),
         { status: 400, headers: corsHeaders },
       );
     }
@@ -550,11 +676,14 @@ export async function handleSubmissionsAPI(
       });
     }
 
-    if (existing.user_id !== body.user_id) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 403,
-        headers: corsHeaders,
-      });
+    if (existing.user_id !== sessionUserId) {
+      const isGod = await requestIsFromGod(env, request);
+      if (!isGod) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 403,
+          headers: corsHeaders,
+        });
+      }
     }
 
     if (existing.status === "approved" || existing.status === "rejected") {
@@ -668,7 +797,41 @@ export async function handleCommentsAPI(
 
   // POST /api/comments - Create comment
   if (request.method === "POST" && pathname === "/api/comments") {
+    const sessionUserId = await getSessionUserId(env, request);
+    if (!sessionUserId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
+
     const body = (await request.json()) as any;
+
+    if (!body.bounty_id || !body.content?.trim()) {
+      return new Response(
+        JSON.stringify({ error: "bounty_id and content are required" }),
+        { status: 400, headers: corsHeaders },
+      );
+    }
+
+    // A reply must point at a parent comment that actually belongs to the
+    // same bounty — otherwise replies can be misattached across bounties.
+    if (body.parent_comment_id) {
+      const parent = await env.DB.prepare(
+        `SELECT id FROM bounty_comments WHERE id = ? AND bounty_id = ?`,
+      )
+        .bind(body.parent_comment_id, body.bounty_id)
+        .first();
+      if (!parent) {
+        return new Response(
+          JSON.stringify({
+            error: "parent_comment_id does not belong to this bounty",
+          }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+    }
+
     const id = crypto.randomUUID();
     const now = Math.floor(Date.now() / 1000);
 
@@ -681,7 +844,7 @@ export async function handleCommentsAPI(
       .bind(
         id,
         body.bounty_id,
-        body.user_id,
+        sessionUserId,
         body.content,
         body.parent_comment_id || null,
         now,
@@ -709,9 +872,40 @@ export async function handleCommentsAPI(
 
   // PUT /api/comments/:id - Edit comment
   if (request.method === "PUT" && pathname.match(/^\/api\/comments\/[^/]+$/)) {
+    const sessionUserId = await getSessionUserId(env, request);
+    if (!sessionUserId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
+
     const id = pathname.split("/").pop();
     const body = (await request.json()) as any;
     const now = Math.floor(Date.now() / 1000);
+
+    const existingComment = (await env.DB.prepare(
+      `SELECT user_id FROM bounty_comments WHERE id = ?`,
+    )
+      .bind(id)
+      .first()) as { user_id: string } | null;
+
+    if (!existingComment) {
+      return new Response(JSON.stringify({ error: "Comment not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    if (existingComment.user_id !== sessionUserId) {
+      const isGod = await isGodUser(env, sessionUserId);
+      if (!isGod) {
+        return new Response(JSON.stringify({ error: "Forbidden" }), {
+          status: 403,
+          headers: corsHeaders,
+        });
+      }
+    }
 
     await env.DB.prepare(
       `UPDATE bounty_comments SET content = ?, updated_at = ? WHERE id = ?`,
@@ -765,8 +959,39 @@ export async function handleCommentsAPI(
     request.method === "DELETE" &&
     pathname.match(/^\/api\/comments\/[^/]+$/)
   ) {
+    const sessionUserId = await getSessionUserId(env, request);
+    if (!sessionUserId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
+
     const id = pathname.split("/").pop();
     const now = Math.floor(Date.now() / 1000);
+
+    const existingComment = (await env.DB.prepare(
+      `SELECT user_id FROM bounty_comments WHERE id = ?`,
+    )
+      .bind(id)
+      .first()) as { user_id: string } | null;
+
+    if (!existingComment) {
+      return new Response(JSON.stringify({ error: "Comment not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    if (existingComment.user_id !== sessionUserId) {
+      const isGod = await isGodUser(env, sessionUserId);
+      if (!isGod) {
+        return new Response(JSON.stringify({ error: "Forbidden" }), {
+          status: 403,
+          headers: corsHeaders,
+        });
+      }
+    }
 
     await env.DB.prepare(
       `UPDATE bounty_comments SET deleted_at = ? WHERE id = ?`,
@@ -1046,6 +1271,26 @@ export async function handleSponsorsAPI(
 
   // POST /api/sponsors - Create sponsor (auto-approved)
   if (request.method === "POST" && pathname === "/api/sponsors") {
+    const sessionUserId = await getSessionUserId(env, request);
+    if (!sessionUserId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
+
+    const existingSponsor = await env.DB.prepare(
+      `SELECT id FROM sponsors WHERE user_id = ?`,
+    )
+      .bind(sessionUserId)
+      .first();
+    if (existingSponsor) {
+      return new Response(
+        JSON.stringify({ error: "This user already has a sponsor profile" }),
+        { status: 409, headers: corsHeaders },
+      );
+    }
+
     const body = (await request.json()) as any;
     const id = crypto.randomUUID();
     const now = Math.floor(Date.now() / 1000);
@@ -1060,7 +1305,7 @@ export async function handleSponsorsAPI(
     )
       .bind(
         id,
-        body.user_id,
+        sessionUserId,
         body.name,
         body.username || null,
         body.description || null,
@@ -1089,7 +1334,7 @@ export async function handleSponsorsAPI(
       await env.DB.prepare(
         `UPDATE user SET is_sponsor = 1, sponsor_id = ? WHERE id = ?`,
       )
-        .bind(id, body.user_id)
+        .bind(id, sessionUserId)
         .run();
     } catch {
       // Columns don't exist yet, skip
@@ -1183,7 +1428,39 @@ export async function handleSponsorsAPI(
 
   // PUT /api/sponsors/:id - Update sponsor
   if (request.method === "PUT" && pathname.match(/^\/api\/sponsors\/[^/]+$/)) {
+    const sessionUserId = await getSessionUserId(env, request);
+    if (!sessionUserId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
+
     const id = pathname.split("/").pop();
+
+    const targetSponsor = (await env.DB.prepare(
+      `SELECT user_id FROM sponsors WHERE id = ?`,
+    )
+      .bind(id)
+      .first()) as { user_id: string } | null;
+
+    if (!targetSponsor) {
+      return new Response(JSON.stringify({ error: "Sponsor not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
+    }
+
+    if (targetSponsor.user_id !== sessionUserId) {
+      const isGod = await isGodUser(env, sessionUserId);
+      if (!isGod) {
+        return new Response(JSON.stringify({ error: "Forbidden" }), {
+          status: 403,
+          headers: corsHeaders,
+        });
+      }
+    }
+
     const body = (await request.json()) as any;
     const now = Math.floor(Date.now() / 1000);
 
@@ -1403,25 +1680,15 @@ export async function handleSponsorsAPI(
     request.method === "POST" &&
     pathname.match(/^\/api\/sponsors\/[^/]+\/transfer$/)
   ) {
-    const cookieHeader = request.headers.get("cookie") || "";
-    const tokenMatch = cookieHeader.match(/better-auth\.session_token=([^;]+)/);
-    const token = tokenMatch ? decodeURIComponent(tokenMatch[1]) : null;
-    const sessionRow = token
-      ? ((await env.DB.prepare(
-          "SELECT userId FROM session WHERE token = ? AND expiresAt > ?",
-        )
-          .bind(token, Date.now())
-          .first()) as { userId: string } | null)
-      : null;
+    const currentUserId = await getSessionUserId(env, request);
 
-    if (!sessionRow?.userId) {
+    if (!currentUserId) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: corsHeaders,
       });
     }
 
-    const currentUserId = sessionRow.userId;
     const id = pathname.split("/")[3];
     const now = Math.floor(Date.now() / 1000);
 
@@ -2032,14 +2299,16 @@ export async function handleBookmarksAPI(
 
   // GET /api/bookmarks - Get user's bookmarks
   if (request.method === "GET" && pathname === "/api/bookmarks") {
-    const userId = url.searchParams.get("user_id");
-
-    if (!userId) {
-      return new Response(JSON.stringify({ error: "user_id is required" }), {
-        status: 400,
+    const sessionUserId = await getSessionUserId(env, request);
+    if (!sessionUserId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
         headers: corsHeaders,
       });
     }
+    // Ignore any user_id query param for identity — only the session owner's
+    // own bookmarks can be listed this way.
+    const userId = sessionUserId;
 
     try {
       const bookmarks = await env.DB.prepare(
@@ -2093,17 +2362,21 @@ export async function handleBookmarksAPI(
 
   // GET /api/bookmarks/check - Check if bounty is bookmarked
   if (request.method === "GET" && pathname === "/api/bookmarks/check") {
-    const userId = url.searchParams.get("user_id");
+    const sessionUserId = await getSessionUserId(env, request);
+    if (!sessionUserId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
+    const userId = sessionUserId;
     const bountyId = url.searchParams.get("bounty_id");
 
-    if (!userId || !bountyId) {
-      return new Response(
-        JSON.stringify({ error: "user_id and bounty_id are required" }),
-        {
-          status: 400,
-          headers: corsHeaders,
-        },
-      );
+    if (!bountyId) {
+      return new Response(JSON.stringify({ error: "bounty_id is required" }), {
+        status: 400,
+        headers: corsHeaders,
+      });
     }
 
     try {
@@ -2131,6 +2404,14 @@ export async function handleBookmarksAPI(
   // POST /api/bookmarks - Create bookmark
   if (request.method === "POST" && pathname === "/api/bookmarks") {
     try {
+      const sessionUserId = await getSessionUserId(env, request);
+      if (!sessionUserId) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: corsHeaders,
+        });
+      }
+
       const body = (await request.json()) as any;
       const id = crypto.randomUUID();
       const now = Math.floor(Date.now() / 1000);
@@ -2139,7 +2420,7 @@ export async function handleBookmarksAPI(
       const existing = await env.DB.prepare(
         `SELECT id FROM bookmarks WHERE user_id = ? AND bounty_id = ?`,
       )
-        .bind(body.user_id, body.bounty_id)
+        .bind(sessionUserId, body.bounty_id)
         .first();
 
       if (existing) {
@@ -2156,7 +2437,7 @@ export async function handleBookmarksAPI(
         `INSERT INTO bookmarks (id, user_id, bounty_id, created_at)
          VALUES (?, ?, ?, ?)`,
       )
-        .bind(id, body.user_id, body.bounty_id, now)
+        .bind(id, sessionUserId, body.bounty_id, now)
         .run();
 
       const bookmark = await env.DB.prepare(
@@ -2183,17 +2464,21 @@ export async function handleBookmarksAPI(
 
   // DELETE /api/bookmarks - Delete bookmark
   if (request.method === "DELETE" && pathname === "/api/bookmarks") {
-    const userId = url.searchParams.get("user_id");
+    const sessionUserId = await getSessionUserId(env, request);
+    if (!sessionUserId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
+    const userId = sessionUserId;
     const bountyId = url.searchParams.get("bounty_id");
 
-    if (!userId || !bountyId) {
-      return new Response(
-        JSON.stringify({ error: "user_id and bounty_id are required" }),
-        {
-          status: 400,
-          headers: corsHeaders,
-        },
-      );
+    if (!bountyId) {
+      return new Response(JSON.stringify({ error: "bounty_id is required" }), {
+        status: 400,
+        headers: corsHeaders,
+      });
     }
 
     try {
