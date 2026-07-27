@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 /**
@@ -12,37 +12,34 @@ import { resolve } from "node:path";
  * blank review date on every submission, and the literal word "Submission" as
  * every submission's title.
  *
- * A field is legitimate if it is either a real column on bounty_submissions or
- * a registered join alias. Adding one that is neither fails here rather than
- * showing up as a blank cell months later.
+ * A declared field must be a real column or a registered join alias.
  */
 
 const ROOT = resolve(__dirname, "../../../..");
-
-/** Column names on bounty_submissions, read from the schema dumped from prod. */
-function schemaColumns(): string[] {
-  const sql = readFileSync(
-    resolve(ROOT, "migrations/000_baseline_schema.sql"),
-    "utf8",
-  );
-  const body = sql.split("CREATE TABLE bounty_submissions")[1]?.split(");")[0];
-  if (!body) throw new Error("bounty_submissions not found in schema dump");
-
-  const cols: string[] = [];
-  for (const line of body.split("\n")) {
-    const m = line.match(/^\s{2}(\w+)\s+(TEXT|INTEGER|REAL|BLOB|NUMERIC)/i);
-    if (m?.[1]) cols.push(m[1]);
-  }
-  return cols;
-}
+const SCHEMA_DUMP = resolve(ROOT, "migrations/000_baseline_schema.sql");
 
 /**
- * Columns added by migrations after the baseline was dumped.
+ * Columns on `bounty_submissions`, as of migration 029.
  *
- * Re-dump the baseline and empty this out when convenient; until then a new
- * migration has to be listed here, which is the reminder to do it.
+ * Inlined rather than read from the schema dump because `migrations/` is
+ * gitignored -- CI has no dump to read. That makes this a second copy of the
+ * schema, so the last test in this file re-derives it from the dump whenever
+ * one is present (i.e. on a machine that has run the migrations) and fails if
+ * the two have drifted apart.
  */
-const MIGRATION_COLUMNS = [
+const SUBMISSION_COLUMNS = [
+  "id",
+  "bounty_id",
+  "user_id",
+  "submission_url",
+  "description",
+  "status",
+  "reviewer_notes",
+  "reviewed_by",
+  "reviewed_at",
+  "transaction_hash",
+  "created_at",
+  "updated_at",
   // 029_structured_submission_result.sql
   "is_winner",
   "winner_position",
@@ -55,9 +52,9 @@ const MIGRATION_COLUMNS = [
 ];
 
 /**
- * Fields the API joins in or computes. Each one must be traceable to a SELECT
- * in the worker — if you cannot point at the query that produces it, it does
- * not belong here.
+ * Fields the API joins in or computes. Each must be traceable to a SELECT in
+ * the worker -- if you cannot point at the query that produces it, it does not
+ * belong here.
  */
 const JOIN_ALIASES = [
   "bounty_title", // b.title
@@ -70,6 +67,44 @@ const JOIN_ALIASES = [
   "user_wallet_address", // up.wallet_address
   "reward", // assembled by transformBounty
 ];
+
+const allowed = new Set(SUBMISSION_COLUMNS.concat(JOIN_ALIASES));
+
+/** Column names in the CREATE TABLE for bounty_submissions. */
+function columnsFromDump(): string[] {
+  const sql = readFileSync(SCHEMA_DUMP, "utf8");
+  const stmt = sql.split("CREATE TABLE bounty_submissions")[1]?.split(");")[0];
+  if (!stmt) throw new Error("bounty_submissions not found in schema dump");
+
+  // Drop everything up to the opening bracket; leaving it in would start the
+  // depth counter at 1 and no top-level comma would ever be seen.
+  const body = stmt.slice(stmt.indexOf("(") + 1);
+
+  // Columns added by ALTER TABLE are appended by SQLite onto a single line at
+  // the end of the statement, so splitting on newlines misses every one of
+  // them. Split on commas at bracket depth zero instead.
+  const parts: string[] = [];
+  let depth = 0;
+  let buf = "";
+  for (const ch of body) {
+    if (ch === "(") depth++;
+    if (ch === ")") depth--;
+    if (ch === "," && depth === 0) {
+      parts.push(buf);
+      buf = "";
+    } else {
+      buf += ch;
+    }
+  }
+  parts.push(buf);
+
+  const cols: string[] = [];
+  for (const part of parts) {
+    const m = part.trim().match(/^(\w+)\s+(TEXT|INTEGER|REAL|BLOB|NUMERIC)\b/i);
+    if (m?.[1]) cols.push(m[1]);
+  }
+  return cols;
+}
 
 function declaredFields(file: string, iface: string): string[] {
   const src = readFileSync(resolve(ROOT, file), "utf8");
@@ -90,23 +125,13 @@ function declaredFields(file: string, iface: string): string[] {
   return fields;
 }
 
-const allowed = new Set(
-  schemaColumns().concat(MIGRATION_COLUMNS, JOIN_ALIASES),
-);
+const INTERFACES = [
+  ["src/features/bounty/types/submission.types.ts", "Submission"],
+  ["src/lib/api-client.ts", "BountySubmission"],
+] as const;
 
 describe("submission types match what the API returns", () => {
-  it("reads the schema dump successfully", () => {
-    const cols = schemaColumns();
-    expect(cols).toContain("id");
-    expect(cols).toContain("reviewer_notes");
-    expect(cols).toContain("created_at");
-    expect(cols.length).toBeGreaterThan(8);
-  });
-
-  for (const [file, iface] of [
-    ["src/features/bounty/types/submission.types.ts", "Submission"],
-    ["src/lib/api-client.ts", "BountySubmission"],
-  ] as const) {
+  for (const [file, iface] of INTERFACES) {
     it(`${iface} declares no field the API cannot supply`, () => {
       const unknown = declaredFields(file, iface).filter(
         (f) => !allowed.has(f),
@@ -129,21 +154,15 @@ describe("submission types match what the API returns", () => {
       "tweet_url",
       "title",
     ];
-    for (const file of [
-      "src/features/bounty/types/submission.types.ts",
-      "src/lib/api-client.ts",
-    ]) {
-      const iface = file.includes("api-client")
-        ? "BountySubmission"
-        : "Submission";
+    for (const [file, iface] of INTERFACES) {
       const fields = declaredFields(file, iface);
       for (const f of gone) expect(fields).not.toContain(f);
     }
   });
 
   it("keeps every join alias traceable to a worker query", () => {
-    // A stale alias is how the list stops being a guard and starts being a
-    // rubber stamp, so each must still appear in a SELECT.
+    // A stale alias is how the list stops being a guard and becomes a rubber
+    // stamp, so each must still appear in a SELECT.
     const worker =
       readFileSync(resolve(ROOT, "src/worker/handlers.ts"), "utf8") +
       readFileSync(resolve(ROOT, "src/worker/index.ts"), "utf8");
@@ -160,4 +179,18 @@ describe("submission types match what the API returns", () => {
       );
     }
   });
+
+  // Reported as skipped, not passed, when there is no dump -- a silent pass
+  // would quietly turn the inlined list into an unchecked second source.
+  it.skipIf(!existsSync(SCHEMA_DUMP))(
+    "inlined column list still matches the schema dump",
+    () => {
+      expect(
+        columnsFromDump().sort(),
+        "SUBMISSION_COLUMNS has drifted from the database. Re-dump the " +
+          "baseline and update the list — the command is in the header of " +
+          "migrations/000_baseline_schema.sql.",
+      ).toEqual([...SUBMISSION_COLUMNS].sort());
+    },
+  );
 });
