@@ -82,6 +82,51 @@ function isSafeSubmissionUrl(url: string): boolean {
 }
 
 /**
+ * Canonical form of a sponsor's public URL segment.
+ *
+ * `/bounty/sponsor/:slug` resolves a sponsor by matching the slug against
+ * either `username` or the punctuation-stripped, lowercased `name`, so both
+ * must be compared in the same normalised space — otherwise "Alephium",
+ * "alephium" and "aleph-ium" look distinct to a uniqueness check while
+ * colliding at lookup time.
+ */
+export function normalizeSponsorSlug(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+/**
+ * Whether `slug` is already taken by a sponsor other than `excludeSponsorId`.
+ *
+ * Checks against other sponsors' usernames *and* their normalised names,
+ * because the lookup in `GET /api/sponsors/name/:slug` ORs across both with
+ * a LIMIT 1. Without covering the name side, a sponsor could set its username
+ * to a rival's name and make that profile URL resolve non-deterministically
+ * to whichever row the planner returned first.
+ */
+export async function isSponsorSlugTaken(
+  env: Env,
+  slug: string,
+  excludeSponsorId?: string,
+): Promise<boolean> {
+  const normalized = normalizeSponsorSlug(slug);
+  if (!normalized) return false;
+
+  const rows = (await env.DB.prepare(
+    `SELECT id, name, username FROM sponsors WHERE id IS NOT ?`,
+  )
+    .bind(excludeSponsorId ?? null)
+    .all()) as {
+    results: { id: string; name: string; username: string | null }[];
+  };
+
+  return (rows.results || []).some(
+    (s) =>
+      (s.username && normalizeSponsorSlug(s.username) === normalized) ||
+      (s.name && normalizeSponsorSlug(s.name) === normalized),
+  );
+}
+
+/**
  * Transform bounty object to include computed reward field for backwards compatibility
  */
 function transformBounty(bounty: any) {
@@ -1181,6 +1226,38 @@ export async function handleSponsorsAPI(
 ): Promise<Response> {
   const pathname = url.pathname;
 
+  // GET /api/sponsors/check-username?u=xxx[&exclude=<sponsorId>]
+  // Live availability check for the sign-up / edit forms, mirroring the
+  // server-side rule so the user finds out before submitting rather than
+  // through a 409. Must be matched before /api/sponsors/:id below, which
+  // would otherwise swallow "check-username" as an id.
+  if (request.method === "GET" && pathname === "/api/sponsors/check-username") {
+    const url = new URL(request.url);
+    const raw = url.searchParams.get("u") || "";
+    const normalized = normalizeSponsorSlug(raw);
+
+    if (!normalized) {
+      return new Response(
+        JSON.stringify({
+          available: false,
+          normalized,
+          reason: "Username must contain at least one letter or number",
+        }),
+        { status: 200, headers: corsHeaders },
+      );
+    }
+
+    const taken = await isSponsorSlugTaken(
+      env,
+      normalized,
+      url.searchParams.get("exclude") || undefined,
+    );
+
+    return new Response(JSON.stringify({ available: !taken, normalized }), {
+      headers: corsHeaders,
+    });
+  }
+
   // GET /api/sponsors/:id - Get sponsor
   if (request.method === "GET" && pathname.match(/^\/api\/sponsors\/[^/]+$/)) {
     const id = pathname.split("/").pop();
@@ -1304,6 +1381,39 @@ export async function handleSponsorsAPI(
     const id = crypto.randomUUID();
     const now = Math.floor(Date.now() / 1000);
 
+    // Same slug rules as the update path — a sponsor must not be able to
+    // claim another's public URL at sign-up either.
+    const desiredUsername = body.username
+      ? normalizeSponsorSlug(String(body.username))
+      : null;
+
+    if (body.username && !desiredUsername) {
+      return new Response(
+        JSON.stringify({
+          error: "Username must contain at least one letter or number",
+        }),
+        { status: 400, headers: corsHeaders },
+      );
+    }
+
+    if (desiredUsername && (await isSponsorSlugTaken(env, desiredUsername))) {
+      return new Response(
+        JSON.stringify({ error: "That username is already taken" }),
+        { status: 409, headers: corsHeaders },
+      );
+    }
+
+    // The org name feeds the same lookup via its normalised form, so it needs
+    // the same collision check even though it is not called a slug.
+    if (body.name && (await isSponsorSlugTaken(env, String(body.name)))) {
+      return new Response(
+        JSON.stringify({
+          error: "A sponsor with a conflicting name already exists",
+        }),
+        { status: 409, headers: corsHeaders },
+      );
+    }
+
     await env.DB.prepare(
       `INSERT INTO sponsors (
         id, user_id, name, username, description, entity_name, industry,
@@ -1316,7 +1426,7 @@ export async function handleSponsorsAPI(
         id,
         sessionUserId,
         body.name,
-        body.username || null,
+        desiredUsername,
         body.description || null,
         body.entity_name || null,
         body.industry || null,
@@ -1525,8 +1635,31 @@ export async function handleSponsorsAPI(
       values.push(body.contact_telegram || null);
     }
     if (body.username !== undefined) {
+      // Normalise before storing so the stored value and the slug used at
+      // lookup time are the same string — `username` is matched exactly by
+      // GET /api/sponsors/name/:slug, so "Alephium" would never resolve.
+      const desired = body.username
+        ? normalizeSponsorSlug(String(body.username))
+        : null;
+
+      if (body.username && !desired) {
+        return new Response(
+          JSON.stringify({
+            error: "Username must contain at least one letter or number",
+          }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+
+      if (desired && (await isSponsorSlugTaken(env, desired, id))) {
+        return new Response(
+          JSON.stringify({ error: "That username is already taken" }),
+          { status: 409, headers: corsHeaders },
+        );
+      }
+
       updates.push("username = ?");
-      values.push(body.username || null);
+      values.push(desired);
     }
     if (body.entity_name !== undefined) {
       updates.push("entity_name = ?");
