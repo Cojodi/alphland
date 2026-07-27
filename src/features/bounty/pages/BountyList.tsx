@@ -567,6 +567,7 @@ export default function BountyList() {
                             logo={bounty.sponsor_logo_url || "💼"}
                             title={bounty.title}
                             company={bounty.sponsor_name || "Sponsor"}
+                            companySlug={bounty.sponsor_slug}
                             reward={`${bounty.reward_amount?.toLocaleString() || "0"} ${
                               bounty.reward_currency || "ALPH"
                             }`}

@@ -39,6 +39,8 @@ export interface Bounty {
   completed_at: string | null;
   sponsor_id?: string;
   sponsor_name?: string;
+  /** Stored routing key for /bounty/sponsor/:slug — stable across renames. */
+  sponsor_slug?: string;
   sponsor_logo_url?: string | null;
   sponsor_is_verified?: number;
   submission_count?: number;

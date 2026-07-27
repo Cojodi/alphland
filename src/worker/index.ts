@@ -1347,7 +1347,8 @@ async function handleBountiesAPI(
     const dappName = url.searchParams.get("dapp_name");
 
     let query = `
-      SELECT b.*, s.name as sponsor_name, s.logo_url as sponsor_logo_url,
+      SELECT b.*, s.name as sponsor_name, s.slug as sponsor_slug,
+             s.logo_url as sponsor_logo_url,
              s.is_verified as sponsor_is_verified,
              (SELECT COUNT(*) FROM bounty_submissions WHERE bounty_id = b.id) as submission_count
       FROM bounties b
@@ -1387,6 +1388,7 @@ async function handleBountiesAPI(
       `
       SELECT b.*,
              s.name as sponsor_name,
+             s.slug as sponsor_slug,
              s.logo_url as sponsor_logo_url,
              s.is_verified as sponsor_is_verified,
              (SELECT COUNT(*) FROM bounty_submissions WHERE bounty_id = b.id) as submission_count

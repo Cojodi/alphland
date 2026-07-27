@@ -97,11 +97,9 @@ export function normalizeSponsorSlug(value: string): string {
 /**
  * Whether `slug` is already taken by a sponsor other than `excludeSponsorId`.
  *
- * Checks against other sponsors' usernames *and* their normalised names,
- * because the lookup in `GET /api/sponsors/name/:slug` ORs across both with
- * a LIMIT 1. Without covering the name side, a sponsor could set its username
- * to a rival's name and make that profile URL resolve non-deterministically
- * to whichever row the planner returned first.
+ * A courtesy check so the form can say so before submitting; the UNIQUE index
+ * on sponsors(slug) is what actually guarantees it, closing the race between
+ * this read and the write that follows.
  */
 export async function isSponsorSlugTaken(
   env: Env,
@@ -111,19 +109,13 @@ export async function isSponsorSlugTaken(
   const normalized = normalizeSponsorSlug(slug);
   if (!normalized) return false;
 
-  const rows = (await env.DB.prepare(
-    `SELECT id, name, username FROM sponsors WHERE id IS NOT ?`,
+  const row = await env.DB.prepare(
+    `SELECT id FROM sponsors WHERE slug = ? AND id IS NOT ?`,
   )
-    .bind(excludeSponsorId ?? null)
-    .all()) as {
-    results: { id: string; name: string; username: string | null }[];
-  };
+    .bind(normalized, excludeSponsorId ?? null)
+    .first();
 
-  return (rows.results || []).some(
-    (s) =>
-      (s.username && normalizeSponsorSlug(s.username) === normalized) ||
-      (s.name && normalizeSponsorSlug(s.name) === normalized),
-  );
+  return row !== null;
 }
 
 /**
@@ -1226,12 +1218,12 @@ export async function handleSponsorsAPI(
 ): Promise<Response> {
   const pathname = url.pathname;
 
-  // GET /api/sponsors/check-username?u=xxx[&exclude=<sponsorId>]
+  // GET /api/sponsors/check-slug?u=xxx[&exclude=<sponsorId>]
   // Live availability check for the sign-up / edit forms, mirroring the
   // server-side rule so the user finds out before submitting rather than
   // through a 409. Must be matched before /api/sponsors/:id below, which
-  // would otherwise swallow "check-username" as an id.
-  if (request.method === "GET" && pathname === "/api/sponsors/check-username") {
+  // would otherwise swallow "check-slug" as an id.
+  if (request.method === "GET" && pathname === "/api/sponsors/check-slug") {
     const url = new URL(request.url);
     const raw = url.searchParams.get("u") || "";
     const normalized = normalizeSponsorSlug(raw);
@@ -1241,7 +1233,7 @@ export async function handleSponsorsAPI(
         JSON.stringify({
           available: false,
           normalized,
-          reason: "Username must contain at least one letter or number",
+          reason: "Profile URL must contain at least one letter or number",
         }),
         { status: 200, headers: corsHeaders },
       );
@@ -1283,16 +1275,17 @@ export async function handleSponsorsAPI(
     request.method === "GET" &&
     pathname.match(/^\/api\/sponsors\/name\/[^/]+$/)
   ) {
-    const slug = pathname.split("/").pop()!;
+    const slug = normalizeSponsorSlug(
+      decodeURIComponent(pathname.split("/").pop()!),
+    );
 
-    // Normalize: lowercase, remove all non-alphanumeric characters for slug comparison
+    // Single-column exact match against a UNIQUE index. The previous query
+    // ORed `username` against a normalised `name`, which meant one slug could
+    // match two rows and LIMIT 1 returned whichever the planner reached first.
     const sponsor = await env.DB.prepare(
-      `SELECT * FROM sponsors
-       WHERE username = ?
-          OR LOWER(REPLACE(REPLACE(REPLACE(name, ' ', ''), '-', ''), '_', '')) = LOWER(REPLACE(REPLACE(?, '-', ''), '_', ''))
-       LIMIT 1`,
+      `SELECT * FROM sponsors WHERE slug = ?`,
     )
-      .bind(slug, slug)
+      .bind(slug)
       .first();
 
     if (!sponsor) {
@@ -1383,32 +1376,26 @@ export async function handleSponsorsAPI(
 
     // Same slug rules as the update path — a sponsor must not be able to
     // claim another's public URL at sign-up either.
-    const desiredUsername = body.username
+    const desiredSlug = body.username
       ? normalizeSponsorSlug(String(body.username))
-      : null;
+      : normalizeSponsorSlug(String(body.name || ""));
 
-    if (body.username && !desiredUsername) {
+    // The slug is the profile URL and cannot be derived later, so a name that
+    // normalises to nothing (e.g. all punctuation) has to be rejected here
+    // rather than silently producing an unreachable profile.
+    if (!desiredSlug) {
       return new Response(
         JSON.stringify({
-          error: "Username must contain at least one letter or number",
+          error: "Sponsor name must contain at least one letter or number",
         }),
         { status: 400, headers: corsHeaders },
       );
     }
 
-    if (desiredUsername && (await isSponsorSlugTaken(env, desiredUsername))) {
-      return new Response(
-        JSON.stringify({ error: "That username is already taken" }),
-        { status: 409, headers: corsHeaders },
-      );
-    }
-
-    // The org name feeds the same lookup via its normalised form, so it needs
-    // the same collision check even though it is not called a slug.
-    if (body.name && (await isSponsorSlugTaken(env, String(body.name)))) {
+    if (await isSponsorSlugTaken(env, desiredSlug)) {
       return new Response(
         JSON.stringify({
-          error: "A sponsor with a conflicting name already exists",
+          error: `The URL /bounty/sponsor/${desiredSlug} is already taken`,
         }),
         { status: 409, headers: corsHeaders },
       );
@@ -1416,7 +1403,7 @@ export async function handleSponsorsAPI(
 
     await env.DB.prepare(
       `INSERT INTO sponsors (
-        id, user_id, name, username, description, entity_name, industry,
+        id, user_id, name, slug, description, entity_name, industry,
         logo_url, banner_url, website, twitter, discord, telegram, wallet_address,
         contact_first_name, contact_last_name, contact_username, contact_telegram, contact_email,
         status, approved_at, created_at, updated_at
@@ -1426,7 +1413,7 @@ export async function handleSponsorsAPI(
         id,
         sessionUserId,
         body.name,
-        desiredUsername,
+        desiredSlug,
         body.description || null,
         body.entity_name || null,
         body.industry || null,
@@ -1634,31 +1621,32 @@ export async function handleSponsorsAPI(
       updates.push("contact_telegram = ?");
       values.push(body.contact_telegram || null);
     }
-    if (body.username !== undefined) {
-      // Normalise before storing so the stored value and the slug used at
-      // lookup time are the same string — `username` is matched exactly by
-      // GET /api/sponsors/name/:slug, so "Alephium" would never resolve.
-      const desired = body.username
-        ? normalizeSponsorSlug(String(body.username))
-        : null;
+    // `slug` is only ever changed when explicitly asked for. Renaming a
+    // sponsor deliberately leaves it alone -- that stability is the point of
+    // storing it, since links previously derived from the name at render time
+    // and every one of them broke on a rename.
+    if (body.slug !== undefined) {
+      const desired = normalizeSponsorSlug(String(body.slug || ""));
 
-      if (body.username && !desired) {
+      if (!desired) {
         return new Response(
           JSON.stringify({
-            error: "Username must contain at least one letter or number",
+            error: "Profile URL must contain at least one letter or number",
           }),
           { status: 400, headers: corsHeaders },
         );
       }
 
-      if (desired && (await isSponsorSlugTaken(env, desired, id))) {
+      if (await isSponsorSlugTaken(env, desired, id)) {
         return new Response(
-          JSON.stringify({ error: "That username is already taken" }),
+          JSON.stringify({
+            error: `The URL /bounty/sponsor/${desired} is already taken`,
+          }),
           { status: 409, headers: corsHeaders },
         );
       }
 
-      updates.push("username = ?");
+      updates.push("slug = ?");
       values.push(desired);
     }
     if (body.entity_name !== undefined) {
@@ -2491,6 +2479,7 @@ export async function handleBookmarksAPI(
           bo.end_date,
           bo.sponsor_id,
           s.name as sponsor_name,
+          s.slug as sponsor_slug,
           s.logo_url as sponsor_logo_url
         FROM bookmarks b
         LEFT JOIN bounties bo ON b.bounty_id = bo.id

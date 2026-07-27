@@ -27,6 +27,7 @@ interface BookmarkItem {
   status: string;
   end_date: string;
   sponsor_name: string;
+  sponsor_slug?: string;
   sponsor_logo_url: string | null;
 }
 
@@ -208,7 +209,7 @@ export function BookmarksSection({
                       by{" "}
                       {bookmark.sponsor_id && bookmark.sponsor_name ? (
                         <Link
-                          href={`/bounty/sponsor/${sponsorSlug(bookmark.sponsor_name)}`}
+                          href={`/bounty/sponsor/${bookmark.sponsor_slug || sponsorSlug(bookmark.sponsor_name)}`}
                         >
                           <a
                             className="hover:text-orange transition-colors"

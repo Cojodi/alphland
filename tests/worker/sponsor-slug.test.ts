@@ -1,10 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { normalizeSponsorSlug, isSponsorSlugTaken } from "@/worker/handlers";
 
-/** D1 stand-in holding a fixed sponsor table. */
-function makeEnv(
-  sponsors: { id: string; name: string; username: string | null }[],
-) {
+/**
+ * D1 stand-in over a fixed sponsors table, answering the single-column
+ * `WHERE slug = ? AND id IS NOT ?` lookup the collision check now uses.
+ */
+function makeEnv(sponsors: { id: string; slug: string | null }[]) {
   const DB = {
     prepare(_sql: string) {
       let args: any[] = [];
@@ -13,12 +14,13 @@ function makeEnv(
           args = a;
           return b;
         },
-        async all() {
-          const exclude = args[0];
-          return { results: sponsors.filter((s) => s.id !== exclude) };
-        },
         async first() {
-          return null;
+          const [slug, exclude] = args;
+          const hit = sponsors.find((s) => s.slug === slug && s.id !== exclude);
+          return hit ? { id: hit.id } : null;
+        },
+        async all() {
+          return { results: sponsors };
         },
         async run() {
           return { success: true };
@@ -30,23 +32,33 @@ function makeEnv(
   return { DB } as any;
 }
 
+/** Slugs as migration 027 backfilled them in production. */
 const PROD = [
-  { id: "s1", name: "Alephium", username: null },
-  { id: "s2", name: "Linx Labs", username: null },
-  { id: "s3", name: "BabyPoolTool", username: null },
+  { id: "s1", slug: "alephium" },
+  { id: "s2", slug: "linxlabs" },
+  { id: "s3", slug: "babypooltool" },
 ];
 
 describe("normalizeSponsorSlug", () => {
-  it("lowercases and strips punctuation and spaces", () => {
-    expect(normalizeSponsorSlug("Linx Labs")).toBe("linxlabs");
-    expect(normalizeSponsorSlug("Very Good Company")).toBe("verygoodcompany");
-    expect(normalizeSponsorSlug("aleph-ium")).toBe("alephium");
-    expect(normalizeSponsorSlug("ALPH_2048")).toBe("alph2048");
+  it("matches the client-side sponsorSlug() exactly", () => {
+    // validators.ts:7 — name.toLowerCase().replace(/[^a-z0-9]/g, "")
+    // Any divergence means a link the UI renders would 404.
+    const clientSide = (n: string) => n.toLowerCase().replace(/[^a-z0-9]/g, "");
+    for (const n of [
+      "Alephium",
+      "Linx Labs",
+      "Very Good Company",
+      "ALPH2048",
+      "BlockflowDAO",
+      "Alph & Co.",
+      "über-sponsor",
+      "  spaced  out  ",
+    ]) {
+      expect(normalizeSponsorSlug(n)).toBe(clientSide(n));
+    }
   });
 
-  it("collapses the variants that the lookup query treats as equal", () => {
-    // GET /api/sponsors/name/:slug strips spaces, dashes and underscores and
-    // lowercases, so these must not be considered distinct usernames.
+  it("collapses the variants the old lookup treated as equal", () => {
     const forms = [
       "Alephium",
       "alephium",
@@ -54,33 +66,26 @@ describe("normalizeSponsorSlug", () => {
       "aleph-ium",
       "aleph_ium",
     ];
-    const normalized = new Set(forms.map(normalizeSponsorSlug));
-    expect(normalized.size).toBe(1);
+    expect(new Set(forms.map(normalizeSponsorSlug)).size).toBe(1);
   });
 
-  it("returns empty for input with nothing usable", () => {
+  it("returns empty when nothing usable remains", () => {
     expect(normalizeSponsorSlug("---")).toBe("");
     expect(normalizeSponsorSlug("  ")).toBe("");
+    expect(normalizeSponsorSlug("")).toBe("");
   });
 });
 
 describe("isSponsorSlugTaken", () => {
-  it("blocks claiming another sponsor's name as a username", async () => {
-    // The hijack this whole change exists to prevent: a rival sets
-    // username='alephium', and /bounty/sponsor/alephium then matches two rows
-    // (one by username, one by normalised name) under a LIMIT 1.
+  it("reports a slug already held by another sponsor", async () => {
     expect(await isSponsorSlugTaken(makeEnv(PROD), "alephium")).toBe(true);
-    expect(await isSponsorSlugTaken(makeEnv(PROD), "Alephium")).toBe(true);
-    expect(await isSponsorSlugTaken(makeEnv(PROD), "aleph-ium")).toBe(true);
   });
 
-  it("blocks a username already held by another sponsor", async () => {
-    const env = makeEnv([
-      ...PROD,
-      { id: "s4", name: "Some Org", username: "coolname" },
-    ]);
-    expect(await isSponsorSlugTaken(env, "coolname")).toBe(true);
-    expect(await isSponsorSlugTaken(env, "COOL-NAME")).toBe(true);
+  it("normalises the candidate before comparing", async () => {
+    // A rival typing "Aleph-ium" must not slip past a check on the raw string.
+    for (const attempt of ["Alephium", "ALEPHIUM", "aleph-ium", "aleph_ium"]) {
+      expect(await isSponsorSlugTaken(makeEnv(PROD), attempt)).toBe(true);
+    }
   });
 
   it("allows a genuinely free slug", async () => {
@@ -90,20 +95,21 @@ describe("isSponsorSlugTaken", () => {
   });
 
   it("does not report a sponsor as colliding with itself", async () => {
-    // Re-saving the edit form without changing the username must not 409.
-    const env = makeEnv([{ id: "s1", name: "Alephium", username: "alephium" }]);
-    expect(await isSponsorSlugTaken(env, "alephium", "s1")).toBe(false);
-    expect(await isSponsorSlugTaken(env, "alephium")).toBe(true);
+    // Re-saving the edit form unchanged must not 409.
+    expect(await isSponsorSlugTaken(makeEnv(PROD), "alephium", "s1")).toBe(
+      false,
+    );
+    expect(await isSponsorSlugTaken(makeEnv(PROD), "alephium")).toBe(true);
   });
 
   it("treats an empty normalised slug as not taken", async () => {
-    // Callers reject this with a 400 before reaching the collision check;
-    // it must not match every row via the empty string.
+    // Callers reject this with a 400 first; it must not match rows whose slug
+    // is NULL by comparing empty-to-empty.
     expect(await isSponsorSlugTaken(makeEnv(PROD), "---")).toBe(false);
   });
 
-  it("is safe against sponsors with a null username", async () => {
-    // Every production row has username=NULL today.
-    expect(await isSponsorSlugTaken(makeEnv(PROD), "linxlabs")).toBe(true);
+  it("ignores sponsors whose slug is still NULL", async () => {
+    const env = makeEnv([...PROD, { id: "s9", slug: null }]);
+    expect(await isSponsorSlugTaken(env, "anything")).toBe(false);
   });
 });

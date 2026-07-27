@@ -36,6 +36,8 @@ export interface Bounty {
   difficulty?: string;
   dapp_name?: string;
   sponsor_name?: string;
+  /** Stored routing key for /bounty/sponsor/:slug — stable across renames. */
+  sponsor_slug?: string;
   sponsor_logo_url?: string | null;
   created_at: string;
   updated_at: string;

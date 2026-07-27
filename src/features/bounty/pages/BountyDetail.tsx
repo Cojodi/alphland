@@ -223,7 +223,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                   <div className="flex items-center gap-2">
                     {bounty.sponsor_id && bounty.sponsor_name ? (
                       <Link
-                        href={`/bounty/sponsor/${sponsorSlug(bounty.sponsor_name)}`}
+                        href={`/bounty/sponsor/${bounty.sponsor_slug || sponsorSlug(bounty.sponsor_name)}`}
                       >
                         <a className="font-medium hover:text-orange transition-colors">
                           by{" "}
