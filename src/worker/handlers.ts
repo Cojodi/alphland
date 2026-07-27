@@ -10,6 +10,14 @@ import {
   notifyUserRevisionRequested,
   notifySponsorSubmissionResubmitted,
 } from "./email";
+import {
+  notifySubmissionReviewed,
+  notifyNewSubmission as notifySponsorOfSubmission,
+  notifySponsorStatusChanged,
+  notifyCommentReply,
+  notifyNewComment,
+  notifyCommentLike,
+} from "./notifications";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -249,6 +257,34 @@ export async function handleSubmissionsAPI(
       )
         .bind(id)
         .first();
+
+      const forSponsor = (await env.DB.prepare(
+        `SELECT sp.user_id AS sponsor_user_id,
+                b.title    AS bounty_title,
+                COALESCE(up.username, u.name, u.email) AS submitter_name
+           FROM bounties b
+           JOIN sponsors sp ON b.sponsor_id = sp.id
+           LEFT JOIN user u ON u.id = ?
+           LEFT JOIN user_profiles up ON up.user_id = u.id
+          WHERE b.id = ?`,
+      )
+        .bind(sessionUserId, body.bounty_id)
+        .first()) as {
+        sponsor_user_id: string;
+        bounty_title: string;
+        submitter_name: string;
+      } | null;
+
+      if (forSponsor) {
+        await notifySponsorOfSubmission(env, {
+          sponsorUserId: forSponsor.sponsor_user_id,
+          actorUserId: sessionUserId,
+          bountyId: body.bounty_id,
+          submissionId: id,
+          bountyTitle: forSponsor.bounty_title,
+          submitterName: forSponsor.submitter_name || "Someone",
+        });
+      }
 
       notifySponsorNewSubmission(env, id).catch((e) =>
         console.error("[email] notifySponsorNewSubmission failed:", e),
@@ -667,6 +703,32 @@ export async function handleSubmissionsAPI(
       .bind(id)
       .first();
 
+    // In-app notification, written here rather than by the browser so the
+    // submitter is told even if the reviewer closes the tab straight after.
+    const reviewed = (await env.DB.prepare(
+      `SELECT bs.user_id, bs.bounty_id, b.title AS bounty_title
+         FROM bounty_submissions bs
+         JOIN bounties b ON bs.bounty_id = b.id
+        WHERE bs.id = ?`,
+    )
+      .bind(id)
+      .first()) as {
+      user_id: string;
+      bounty_id: string;
+      bounty_title: string;
+    } | null;
+
+    if (reviewed) {
+      await notifySubmissionReviewed(env, {
+        submitterUserId: reviewed.user_id,
+        bountyId: reviewed.bounty_id,
+        submissionId: id as string,
+        bountyTitle: reviewed.bounty_title,
+        status: body.status,
+        reviewerNotes: body.reviewer_notes,
+      });
+    }
+
     if (body.status === "approved") {
       notifyUserSubmissionApproved(env, id as string).catch((e) =>
         console.error("[email] notifyUserSubmissionApproved failed:", e),
@@ -916,7 +978,7 @@ export async function handleCommentsAPI(
       )
       .run();
 
-    const comment = await env.DB.prepare(
+    const comment = (await env.DB.prepare(
       `SELECT c.*,
         COALESCE(up.username, usr.name, usr.email) as user_username,
         usr.image as user_avatar
@@ -926,7 +988,50 @@ export async function handleCommentsAPI(
        WHERE c.id = ?`,
     )
       .bind(id)
-      .first();
+      .first()) as any;
+
+    // Notify server-side. A reply pings the parent author; a top-level comment
+    // pings the bounty's sponsor. Both go through notify(), which skips muted
+    // bounties -- the old client-side code only checked mutes on the top-level
+    // path, so a muted bounty still delivered replies.
+    const ctx = (await env.DB.prepare(
+      `SELECT b.title AS bounty_title, sp.user_id AS sponsor_user_id
+         FROM bounties b
+         LEFT JOIN sponsors sp ON b.sponsor_id = sp.id
+        WHERE b.id = ?`,
+    )
+      .bind(body.bounty_id)
+      .first()) as {
+      bounty_title: string;
+      sponsor_user_id: string | null;
+    } | null;
+
+    const commenterName = comment?.user_username || "Someone";
+
+    if (body.parent_comment_id) {
+      const parent = (await env.DB.prepare(
+        `SELECT user_id FROM bounty_comments WHERE id = ?`,
+      )
+        .bind(body.parent_comment_id)
+        .first()) as { user_id: string } | null;
+
+      if (parent) {
+        await notifyCommentReply(env, {
+          parentAuthorUserId: parent.user_id,
+          actorUserId: sessionUserId,
+          bountyId: body.bounty_id,
+          replierName: commenterName,
+        });
+      }
+    } else if (ctx?.sponsor_user_id) {
+      await notifyNewComment(env, {
+        sponsorUserId: ctx.sponsor_user_id,
+        actorUserId: sessionUserId,
+        bountyId: body.bounty_id,
+        bountyTitle: ctx.bounty_title,
+        commenterName,
+      });
+    }
 
     return new Response(JSON.stringify({ comment }), {
       status: 201,
@@ -1140,6 +1245,30 @@ export async function handleCommentsAPI(
     )
       .bind(JSON.stringify(likedBy), likedBy.length, now, commentId)
       .run();
+
+    const liked = (await env.DB.prepare(
+      `SELECT c.user_id, c.bounty_id,
+              COALESCE(up.username, u.name, u.email) AS liker_name
+         FROM bounty_comments c
+         LEFT JOIN user u ON u.id = ?
+         LEFT JOIN user_profiles up ON up.user_id = u.id
+        WHERE c.id = ?`,
+    )
+      .bind(body.user_id, commentId)
+      .first()) as {
+      user_id: string;
+      bounty_id: string;
+      liker_name: string;
+    } | null;
+
+    if (liked) {
+      await notifyCommentLike(env, {
+        commentAuthorUserId: liked.user_id,
+        actorUserId: body.user_id,
+        bountyId: liked.bounty_id,
+        likerName: liked.liker_name || "Someone",
+      });
+    }
 
     return new Response(
       JSON.stringify({ success: true, like_count: likedBy.length }),
@@ -2070,6 +2199,24 @@ export async function handleNotificationsAPI(
 
   // POST /api/notifications - Create notification
   if (request.method === "POST" && pathname === "/api/notifications") {
+    // Notifications are created by the worker in the same handler as the state
+    // change they describe (see notifications.ts). This endpoint used to accept
+    // an arbitrary user_id/title/message/link from anyone, which made it a
+    // ready-made phishing channel; it is now god-only and kept for admin use.
+    const sessionUserId = await getSessionUserId(env, request);
+    if (!sessionUserId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
+    if (!(await isGodUser(env, sessionUserId))) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: corsHeaders,
+      });
+    }
+
     const body = (await request.json()) as any;
 
     // Validate required fields

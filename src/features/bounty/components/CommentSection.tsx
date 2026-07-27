@@ -1,6 +1,5 @@
 "use client";
 
-import { notificationService } from "../services/notificationService";
 import { apiClient, BountyComment } from "@/lib/api-client";
 import { containsProfanity } from "@/lib/profanity-filter";
 import Link from "next/link";
@@ -115,12 +114,6 @@ function SingleComment({
 
         // Notify comment owner (if not liking own comment)
         if (comment.user_id !== currentUserId) {
-          await notificationService.notifyCommentLike(
-            comment.user_id,
-            bountyId,
-            bountyTitle,
-            currentUsername,
-          );
         }
       }
     } catch (error) {
@@ -392,47 +385,9 @@ export function CommentSection({
         parent_comment_id: replyingTo || undefined,
       });
 
-      // Send notifications
-      if (replyingTo) {
-        // Find the parent comment to get its author
-        const findComment = (
-          comments: CommentWithReplies[],
-          id: string,
-        ): CommentWithReplies | null => {
-          for (const c of comments) {
-            if (c.id === id) return c;
-            if (c.replies) {
-              const found = findComment(c.replies, id);
-              if (found) return found;
-            }
-          }
-          return null;
-        };
-        const parentComment = findComment(comments, replyingTo);
-        if (parentComment && parentComment.user_id !== currentUserId) {
-          await notificationService.notifyCommentReply(
-            parentComment.user_id,
-            bountyId,
-            bountyTitle,
-            currentUsername,
-          );
-        }
-      } else if (sponsorUserId && sponsorUserId !== currentUserId) {
-        // Notify sponsor of new comment (if not muted)
-        const shouldNotify = await notificationService.shouldNotify(
-          sponsorUserId,
-          bountyId,
-          "comments",
-        );
-        if (shouldNotify) {
-          await notificationService.notifyNewComment(
-            sponsorUserId,
-            bountyId,
-            bountyTitle,
-            currentUsername,
-          );
-        }
-      }
+      // Notifications are written by the worker when the comment is created --
+      // it knows the parent author and the sponsor, and it honours the bounty
+      // mute for replies too, which this path never did.
 
       setNewComment("");
       setReplyingTo(null);

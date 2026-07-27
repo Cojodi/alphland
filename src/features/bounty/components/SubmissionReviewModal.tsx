@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { apiClient, BountySubmission } from "@/lib/api-client";
-import { notificationService } from "../services/notificationService";
 import { Bounty, TieredReward } from "../types/bounty.types";
 import { generateTieredRewards } from "../utils/rewardCalculator";
 
@@ -184,23 +183,9 @@ export function SubmissionReviewModal({
         }
       }
 
-      // Send notification to submitter
-      if (form.reviewAction === "approved") {
-        await notificationService.notifySubmissionApproved(
-          submission.user_id,
-          submission.bounty_id,
-          bounty.title,
-          parseFloat(form.rewardAmount),
-          bounty.reward?.token || "ALPH",
-        );
-      } else if (form.reviewAction === "rejected") {
-        await notificationService.notifySubmissionRejected(
-          submission.user_id,
-          submission.bounty_id,
-          bounty.title,
-          form.reviewerNotes,
-        );
-      }
+      // The submitter's notification is written by the worker inside the same
+      // request that records the review, so it survives this tab closing --
+      // and covers revision_requested, which was never handled here.
 
       // Show success state then reset form
       setSuccessState({ show: true, action: form.reviewAction });

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { apiClient } from "@/lib/api-client";
-import { notificationService } from "../services/notificationService";
 import { isValidUrl, normalizeUrl } from "../utils/validators";
 
 interface SubmissionModalProps {
@@ -85,16 +84,8 @@ export function SubmissionModal({
         description: `**${formData.title}**\n\n${descriptionWithNotes}`,
       });
 
-      // Notify sponsor if available
-      if (sponsorUserId) {
-        await notificationService.notifyNewSubmission(
-          sponsorUserId,
-          bountyId,
-          bountyTitle,
-          username,
-          result.submission?.id,
-        );
-      }
+      // The sponsor's notification is written by the worker when the
+      // submission is created.
 
       // Reset form
       setFormData({

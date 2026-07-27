@@ -4,6 +4,7 @@
  */
 import { createAuth } from "./auth";
 import { notifySponsorVerified } from "./email";
+import { notifySponsorStatusChanged } from "./notifications";
 import { verifySignedMessage } from "@alephium/web3";
 import { DAPP_LIST } from "./dappList";
 import {
@@ -522,6 +523,8 @@ const worker = {
             )
               .bind(now, now, id)
               .run();
+
+            await notifySponsorNotice(env, id, "banned");
             await env.DB.prepare(
               `UPDATE user SET is_banned = 1, updatedAt = ? WHERE id = ?`,
             )
@@ -562,6 +565,8 @@ const worker = {
             )
               .bind(now, id)
               .run();
+
+            await notifySponsorNotice(env, id, "unbanned");
             await env.DB.prepare(
               `UPDATE user SET is_banned = 0, updatedAt = ? WHERE id = ?`,
             )
@@ -597,6 +602,8 @@ const worker = {
             .bind(now, now, id)
             .run();
 
+          await notifySponsorNotice(env, id, "verified");
+
           notifySponsorVerified(env, id).catch((e) =>
             console.error("[email] notifySponsorVerified failed:", e),
           );
@@ -629,6 +636,8 @@ const worker = {
           )
             .bind(now, id)
             .run();
+
+          await notifySponsorNotice(env, id, "unverified");
           return new Response(JSON.stringify({ success: true }), {
             headers: { "Content-Type": "application/json", ...corsHeaders },
           });
@@ -1302,6 +1311,39 @@ const worker = {
     }
   },
 };
+
+/**
+ * In-app notice for an admin-driven sponsor status change.
+ *
+ * These four routes previously only sent email (and only on verify), so a
+ * sponsor whose account was suspended or whose verification was pulled had no
+ * way to find out in the product.
+ */
+async function notifySponsorNotice(
+  env: Env,
+  sponsorId: string,
+  change: "verified" | "unverified" | "banned" | "unbanned",
+): Promise<void> {
+  try {
+    const sponsor = (await env.DB.prepare(
+      `SELECT user_id, name FROM sponsors WHERE id = ?`,
+    )
+      .bind(sponsorId)
+      .first()) as { user_id: string; name: string } | null;
+    if (!sponsor) return;
+
+    await notifySponsorStatusChanged(env, {
+      sponsorUserId: sponsor.user_id,
+      sponsorName: sponsor.name,
+      change,
+    });
+  } catch (err: any) {
+    console.error(
+      "[notify] sponsor status notice failed:",
+      err?.message ?? err,
+    );
+  }
+}
 
 export default worker;
 
