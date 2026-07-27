@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { submissionTitle } from "../utils";
 import { apiClient, BountySubmission } from "@/lib/api-client";
 import {
   Clock,
@@ -161,20 +162,6 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
     });
   };
 
-  const extractTitle = (description: string | null): string => {
-    if (!description) return "Submission";
-
-    // Try to extract title from markdown bold syntax
-    const titleMatch = description.match(/^\*\*(.+?)\*\*/);
-    if (titleMatch) {
-      return titleMatch[1];
-    }
-
-    // Fallback to first line
-    const firstLine = description.split("\n")[0];
-    return firstLine.substring(0, 50) + (firstLine.length > 50 ? "..." : "");
-  };
-
   const extractNotes = (description: string | null): string | null => {
     if (!description) return null;
     const notesMatch = description.match(/Notes:\n([\s\S]+)$/);
@@ -242,7 +229,7 @@ export function SubmissionsSection({ userId }: SubmissionsSectionProps) {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-black dark:text-white mb-2">
-                      {extractTitle(submission.description)}
+                      {submissionTitle(submission.description)}
                     </h3>
 
                     <div className="flex flex-wrap items-center gap-3 text-sm text-light-charcoal dark:text-lightgrey mb-3">

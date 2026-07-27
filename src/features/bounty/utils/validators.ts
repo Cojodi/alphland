@@ -86,18 +86,26 @@ export function validateSubmissionForm(data: {
 }
 
 /**
- * The submission's title, taken from the first bolded line of its description.
+ * The submission's title, read out of its description.
  *
  * There is no `title` column: SubmissionModal writes the title into the
- * description as `**Title**\n\nbody`. The dashboard used to read a `title`
- * field that no endpoint sends, so every submission displayed the literal
- * word "Submission".
+ * description as `**Title**\n\nbody`. The sponsor dashboard used to read a
+ * `title` field that no endpoint sends, so every submission there displayed
+ * the literal word "Submission".
+ *
+ * Falls back to the first line for submissions written before the modal
+ * added the bold wrapper, and only then to a placeholder.
  */
 export function submissionTitle(
   description: string | null | undefined,
   fallback = "Submission",
 ): string {
   if (!description) return fallback;
-  const match = description.match(/^\s*\*\*(.+?)\*\*/);
-  return match?.[1]?.trim() || fallback;
+
+  const bold = description.match(/^\s*\*\*(.+?)\*\*/);
+  if (bold?.[1]?.trim()) return bold[1].trim();
+
+  const firstLine = description.split("\n")[0]?.trim();
+  if (!firstLine) return fallback;
+  return firstLine.length > 50 ? `${firstLine.substring(0, 50)}...` : firstLine;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { submissionTitle } from "../utils";
 import {
   X,
   ExternalLink,
@@ -302,21 +303,6 @@ export function SubmissionReviewModal({
     );
   }
 
-  const extractTitle = (description: string | null): string => {
-    if (!description) return "Submission";
-
-    // Try to extract title from markdown bold syntax
-    const titleMatch = description.match(/^\*\*(.+?)\*\*/);
-    if (titleMatch) {
-      return titleMatch[1];
-    }
-
-    // Fallback to first line
-    const firstLine = description.split("\n")[0];
-    if (!firstLine) return "Submission";
-    return firstLine.substring(0, 50) + (firstLine.length > 50 ? "..." : "");
-  };
-
   const extractDescription = (description: string | null): string => {
     if (!description) return "";
 
@@ -377,7 +363,7 @@ export function SubmissionReviewModal({
           {/* Submission Info */}
           <div className="bg-smoked-white dark:bg-light-black rounded-lg p-4">
             <h3 className="font-semibold text-black dark:text-white mb-2">
-              {extractTitle(submission.description)}
+              {submissionTitle(submission.description)}
             </h3>
 
             {submission.description && (

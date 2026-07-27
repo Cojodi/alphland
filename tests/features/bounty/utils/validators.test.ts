@@ -4,6 +4,7 @@ import {
   isValidWalletAddress,
   normalizeUrl,
   sponsorSlug,
+  submissionTitle,
   validateSubmissionForm,
 } from "@/features/bounty/utils/validators";
 
@@ -132,5 +133,62 @@ describe("validateSubmissionForm", () => {
       submission_url: "bad",
     });
     expect(result.errors.length).toBeGreaterThanOrEqual(3);
+  });
+});
+
+describe("submissionTitle", () => {
+  it("reads the bolded title SubmissionModal writes", () => {
+    // Real shapes from production.
+    expect(
+      submissionTitle("**ALPH 2048 Arena**\n\nI made a video walkthrough."),
+    ).toBe("ALPH 2048 Arena");
+    expect(
+      submissionTitle(
+        "**Farm Linx Points from Ethereum (Aave → Bridge → Linx)**\n\nThread.",
+      ),
+    ).toBe("Farm Linx Points from Ethereum (Aave → Bridge → Linx)");
+  });
+
+  it("handles a title with no body after it", () => {
+    expect(submissionTitle("**ETH Farmers Are Missing This**")).toBe(
+      "ETH Farmers Are Missing This",
+    );
+  });
+
+  it("falls back to the first line for submissions with no bold wrapper", () => {
+    // Predates the modal adding the wrapper — a placeholder would lose real
+    // information that is sitting right there.
+    expect(submissionTitle("just a plain description\nsecond line")).toBe(
+      "just a plain description",
+    );
+  });
+
+  it("truncates a long first line", () => {
+    const long = "x".repeat(80);
+    const out = submissionTitle(long);
+    expect(out).toHaveLength(53); // 50 + "..."
+    expect(out.endsWith("...")).toBe(true);
+  });
+
+  it("does not truncate a bolded title", () => {
+    // The author chose it deliberately; only the guessed fallback is clipped.
+    const title = "A".repeat(80);
+    expect(submissionTitle(`**${title}**`)).toBe(title);
+  });
+
+  it("uses the placeholder only when there is nothing to read", () => {
+    for (const empty of [null, undefined, "", "   ", "\n\n"]) {
+      expect(submissionTitle(empty)).toBe("Submission");
+    }
+  });
+
+  it("accepts a caller-supplied fallback", () => {
+    expect(submissionTitle(null, "Untitled")).toBe("Untitled");
+  });
+
+  it("ignores bold that is not at the start", () => {
+    expect(submissionTitle("intro text **not the title**")).toBe(
+      "intro text **not the title**",
+    );
   });
 });
