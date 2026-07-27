@@ -624,24 +624,42 @@ export async function handleSubmissionsAPI(
       }
     }
 
-    await env.DB.prepare(
-      `UPDATE bounty_submissions
+    try {
+      await env.DB.prepare(
+        `UPDATE bounty_submissions
        SET status = ?,
            reviewer_notes = ?,
            transaction_hash = ?,
            reviewed_at = ?,
            updated_at = ?
        WHERE id = ?`,
-    )
-      .bind(
-        body.status,
-        body.reviewer_notes || null,
-        body.transaction_hash || null,
-        body.status === "approved" || body.status === "rejected" ? now : null,
-        now,
-        id,
       )
-      .run();
+        .bind(
+          body.status,
+          body.reviewer_notes || null,
+          body.transaction_hash || null,
+          body.status === "approved" || body.status === "rejected" ? now : null,
+          now,
+          id,
+        )
+        .run();
+    } catch (error: any) {
+      // A transaction hash may only pay one submission. The on-chain checks
+      // above confirm the transaction is real and large enough, but not that
+      // it has already been spent on someone else -- that is what the unique
+      // index catches.
+      if (String(error?.message || "").includes("UNIQUE constraint failed")) {
+        return new Response(
+          JSON.stringify({
+            error:
+              "That transaction hash has already been used to pay another " +
+              "submission. Each winner needs their own payment.",
+          }),
+          { status: 409, headers: corsHeaders },
+        );
+      }
+      throw error;
+    }
 
     const submission = await env.DB.prepare(
       `SELECT * FROM bounty_submissions WHERE id = ?`,
