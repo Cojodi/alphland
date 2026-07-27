@@ -660,6 +660,47 @@ export async function handleSubmissionsAPI(
       }
     }
 
+    // Structured outcome. Callers send winner_position / reward_amount /
+    // reward_usd as numbers; they used to be prose inside reviewer_notes and
+    // read back out with a regex, which meant rewording a note could change
+    // someone's lifetime earnings.
+    const isApproved = body.status === "approved";
+
+    const winnerPosition =
+      body.winner_position === undefined || body.winner_position === null
+        ? null
+        : Number(body.winner_position);
+    if (
+      winnerPosition !== null &&
+      (!Number.isInteger(winnerPosition) || winnerPosition < 1)
+    ) {
+      return new Response(
+        JSON.stringify({ error: "winner_position must be a positive integer" }),
+        { status: 400, headers: corsHeaders },
+      );
+    }
+
+    const numeric = (v: unknown, field: string): number | null => {
+      if (v === undefined || v === null || v === "") return null;
+      const n = Number(v);
+      if (!Number.isFinite(n) || n < 0) {
+        throw new Error(`${field} must be a non-negative number`);
+      }
+      return n;
+    };
+
+    let rewardAmount: number | null;
+    let rewardUsd: number | null;
+    try {
+      rewardAmount = numeric(body.reward_amount, "reward_amount");
+      rewardUsd = numeric(body.reward_usd, "reward_usd");
+    } catch (err: any) {
+      return new Response(JSON.stringify({ error: err.message }), {
+        status: 400,
+        headers: corsHeaders,
+      });
+    }
+
     try {
       await env.DB.prepare(
         `UPDATE bounty_submissions
@@ -667,7 +708,15 @@ export async function handleSubmissionsAPI(
            reviewer_notes = ?,
            transaction_hash = ?,
            reviewed_at = ?,
-           updated_at = ?
+           updated_at = ?,
+           is_winner = ?,
+           winner_position = ?,
+           reward_amount = ?,
+           reward_currency = ?,
+           reward_usd = ?,
+           is_paid = ?,
+           paid_at = ?,
+           label = 'reviewed'
        WHERE id = ?`,
       )
         .bind(
@@ -676,6 +725,15 @@ export async function handleSubmissionsAPI(
           body.transaction_hash || null,
           body.status === "approved" || body.status === "rejected" ? now : null,
           now,
+          isApproved ? 1 : 0,
+          isApproved ? winnerPosition : null,
+          isApproved ? rewardAmount : null,
+          isApproved ? body.reward_currency || "ALPH" : null,
+          isApproved ? rewardUsd : null,
+          // Paid is a separate fact from the verdict, but this flow only
+          // approves once a verified transaction hash is supplied.
+          isApproved && body.transaction_hash ? 1 : 0,
+          isApproved && body.transaction_hash ? now : null,
           id,
         )
         .run();

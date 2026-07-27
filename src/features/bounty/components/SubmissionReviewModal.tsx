@@ -133,30 +133,31 @@ export function SubmissionReviewModal({
     setIsSubmitting(true);
 
     try {
-      // Prepare reviewer notes with reward info
-      let finalReviewerNotes = form.reviewerNotes.trim();
-      if (form.reviewAction === "approved") {
-        const tierInfo =
-          bounty.reward_type === "tiered" && form.selectedTier
-            ? `Tier ${form.selectedTier} placement. `
-            : "";
-        // For ALPH bounties use the stored USD reference; for USD bounties use the bounty amount.
-        // Avoid toLocaleString to keep the number parseable by the earnings regex.
-        const usdBountyValue =
-          bounty.reward.token === "ALPH"
-            ? bounty.reward.usd_equivalent
-            : getTokenAmount().amount;
-        const rewardInfo = `${tierInfo}Reward: ${form.rewardAmount} ALPH (for ${usdBountyValue} USD bounty)`;
-        finalReviewerNotes = finalReviewerNotes
-          ? `${finalReviewerNotes}\n\n${rewardInfo}`
-          : rewardInfo;
-      }
+      // Notes are the sponsor's words only. Placement and payout go in their
+      // own fields so nothing has to be parsed back out of prose.
+      const finalReviewerNotes = form.reviewerNotes.trim();
 
       // Update submission status
       await apiClient.updateSubmission(submission.id, {
         status: form.reviewAction,
         reviewer_notes: finalReviewerNotes || undefined,
         transaction_hash: form.transactionHash.trim() || undefined,
+        ...(form.reviewAction === "approved"
+          ? {
+              winner_position:
+                bounty.reward_type === "tiered"
+                  ? (form.selectedTier ?? undefined)
+                  : 1,
+              reward_amount: parseFloat(form.rewardAmount) || 0,
+              reward_currency: "ALPH",
+              // Frozen at settlement: for an ALPH-priced bounty this is the
+              // stored USD value, for a USD-priced one the amount itself.
+              reward_usd:
+                bounty.reward.token === "ALPH"
+                  ? bounty.reward.usd_equivalent
+                  : getTokenAmount().amount,
+            }
+          : {}),
       });
 
       // Close bounty if requested and this is the last spot
@@ -325,26 +326,12 @@ export function SubmissionReviewModal({
     return text.trim();
   };
 
-  // Parse tier placement from reviewer_notes
-  // Format: "Tier X placement. Reward: Y ALPH (...)"
-  const parseTierFromNotes = (notes: string | null): number | null => {
-    if (!notes) return null;
-    const match = notes.match(/Tier (\d+) placement/);
-    return match ? parseInt(match[1]) : null;
-  };
-
-  // Parse ALPH reward amount from reviewer_notes
-  // Format: "Reward: Y ALPH (...)"
-  const parseAlphRewardFromNotes = (notes: string | null): string | null => {
-    if (!notes) return null;
-    const match = notes.match(/Reward:\s*([\d.]+)\s*ALPH/);
-    return match ? `${match[1]} ALPH` : null;
-  };
-
-  const tierPosition = parseTierFromNotes(submission.reviewer_notes ?? null);
-  const alphReward = parseAlphRewardFromNotes(
-    submission.reviewer_notes ?? null,
-  );
+  // Read from the columns rather than re-parsing the note.
+  const tierPosition = submission.winner_position ?? null;
+  const alphReward =
+    submission.reward_amount != null
+      ? `${submission.reward_amount} ALPH`
+      : null;
 
   const tierLabel = (pos: number) =>
     pos === 1

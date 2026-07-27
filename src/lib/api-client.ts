@@ -107,6 +107,15 @@ export interface BountySubmission {
     | "pending"
     | "revision_requested";
   reviewer_notes: string | null;
+  /** Structured review outcome — replaces parsing reviewer_notes. */
+  is_winner?: number;
+  winner_position?: number | null;
+  reward_amount?: number | null;
+  reward_currency?: string | null;
+  reward_usd?: number | null;
+  is_paid?: number;
+  paid_at?: number | null;
+  label?: string;
   review_started_at: number | null;
   completed_at: number | null;
   reward: {
@@ -134,6 +143,11 @@ export interface UpdateSubmissionInput {
   status: "approved" | "rejected" | "revision_requested";
   reviewer_notes?: string;
   transaction_hash?: string;
+  /** Structured outcome, sent only when approving. */
+  winner_position?: number;
+  reward_amount?: number;
+  reward_currency?: string;
+  reward_usd?: number;
 }
 
 export interface BountyComment {

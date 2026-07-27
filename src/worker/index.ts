@@ -2460,41 +2460,30 @@ async function handleUsersAPI(
         .first();
       const totalSubmissions = (submissionsResult?.count as number) || 0;
 
-      // Get approved submissions count (won)
+      // Wins count is_winner, not status='approved'. They agree today, but
+      // once winners can be picked before payment the two diverge.
       const wonResult = await env.DB.prepare(
-        `SELECT COUNT(*) as count FROM bounty_submissions WHERE user_id = ? AND status = 'approved'`,
+        `SELECT COUNT(*) as count FROM bounty_submissions WHERE user_id = ? AND is_winner = 1`,
       )
         .bind(id)
         .first();
       const totalWon = (wonResult?.count as number) || 0;
 
-      // Get total earnings (sum of approved submission rewards in USD from reviewer_notes field)
-      const { results: approvedSubmissions } = await env.DB.prepare(
-        `SELECT reviewer_notes FROM bounty_submissions WHERE user_id = ? AND status = 'approved'`,
+      // Earnings come straight from the frozen settlement columns. This used
+      // to parse reviewer_notes with three regexes, so a sponsor rewording a
+      // note -- or writing one containing "Reward: 100 ALPH" -- silently
+      // changed a user's lifetime total with nothing to catch it.
+      const earnings = (await env.DB.prepare(
+        `SELECT COALESCE(SUM(reward_usd), 0)    AS earned,
+                COALESCE(SUM(reward_amount), 0) AS alph_earned
+           FROM bounty_submissions
+          WHERE user_id = ? AND is_winner = 1`,
       )
         .bind(id)
-        .all();
+        .first()) as { earned: number; alph_earned: number } | null;
 
-      let totalEarned = 0;
-      let totalAlphEarned = 0;
-      for (const submission of approvedSubmissions) {
-        // Format written by SubmissionReviewModal: "Reward: X ALPH (for Y USD bounty)"
-        // Extract both the actual ALPH paid and the USD reference value.
-        // Handle legacy entries with locale-formatted numbers (e.g. "1,500").
-        const notes = submission.reviewer_notes as string;
-        if (notes) {
-          const usdMatch = notes.match(
-            /for\s+\$?([\d,]+\.?\d*)\s*USD\s+bounty/i,
-          );
-          if (usdMatch) {
-            totalEarned += parseFloat(usdMatch[1].replace(/,/g, ""));
-          }
-          const alphMatch = notes.match(/Reward:\s+([\d.]+)\s*ALPH/i);
-          if (alphMatch) {
-            totalAlphEarned += parseFloat(alphMatch[1]);
-          }
-        }
-      }
+      const totalEarned = earnings?.earned || 0;
+      const totalAlphEarned = earnings?.alph_earned || 0;
 
       return new Response(
         JSON.stringify({
