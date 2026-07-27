@@ -84,3 +84,20 @@ export function validateSubmissionForm(data: {
     errors,
   };
 }
+
+/**
+ * The submission's title, taken from the first bolded line of its description.
+ *
+ * There is no `title` column: SubmissionModal writes the title into the
+ * description as `**Title**\n\nbody`. The dashboard used to read a `title`
+ * field that no endpoint sends, so every submission displayed the literal
+ * word "Submission".
+ */
+export function submissionTitle(
+  description: string | null | undefined,
+  fallback = "Submission",
+): string {
+  if (!description) return fallback;
+  const match = description.match(/^\s*\*\*(.+?)\*\*/);
+  return match?.[1]?.trim() || fallback;
+}

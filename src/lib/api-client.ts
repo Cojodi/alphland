@@ -95,10 +95,8 @@ export interface BountySubmission {
   sponsor_name: string;
   sponsor_logo_url: string | null;
   user_id: string;
-  title: string;
   description: string;
   submission_url: string;
-  tweet_url: string | null;
   status:
     | "submitted"
     | "in_review"
@@ -116,8 +114,7 @@ export interface BountySubmission {
   is_paid?: number;
   paid_at?: number | null;
   label?: string;
-  review_started_at: number | null;
-  completed_at: number | null;
+  reviewed_at: number | null;
   reward: {
     token: string;
     amount: number;

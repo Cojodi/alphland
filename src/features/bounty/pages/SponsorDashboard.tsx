@@ -3,6 +3,7 @@ import type { Sponsor } from "../types/sponsor.types";
 import type { Submission } from "../types/submission.types";
 import { SubmissionReviewModal } from "../components/SubmissionReviewModal";
 import { BountySubmission } from "@/lib/api-client";
+import { submissionTitle } from "../utils";
 import {
   AlertTriangle,
   BarChart3,
@@ -117,23 +118,14 @@ export default function SponsorDashboard() {
 
   const viewSubmission = useCallback(
     (submission: any, bountyId: string, skipUrlUpdate = false) => {
-      // Convert Submission to BountySubmission format
+      // Field names now match the API, so the submission passes straight
+      // through. This used to be a rename table between the type's invented
+      // names and the real ones -- and `reviewed_at` read `completed_at`,
+      // which no endpoint sends, so the review date was always blank.
       const bountySubmission: any = {
-        id: submission.id,
+        ...submission,
         bounty_id: bountyId,
-        user_id: submission.user_id,
         submitted_by: submission.user_id,
-        submission_url: submission.submission_url || "",
-        description: submission.description || submission.title || null,
-        status: submission.status || "pending",
-        reviewer_notes: submission.reviewer_notes || null,
-        reviewed_by: null,
-        reviewed_at: submission.completed_at || null,
-        transaction_hash: submission.transaction_hash || null,
-        created_at: submission.submitted_at,
-        updated_at: submission.submitted_at,
-        user_username: submission.user_username || null,
-        user_name: submission.user_name || null,
       };
 
       // Find the associated bounty
@@ -246,7 +238,7 @@ export default function SponsorDashboard() {
           dashboardData.submissions || []
         ).map((s: any) => ({
           id: s.id,
-          title: s.title || "Submission",
+          title: submissionTitle(s.description),
           description: s.description || "",
           submission_url: s.submission_url,
           user_username: s.user_username || null,
@@ -260,7 +252,6 @@ export default function SponsorDashboard() {
           status: s.status,
           reviewer_notes: s.reviewer_notes || null,
           transaction_hash: s.transaction_hash || null,
-          submitted_at: s.created_at,
         }));
 
         setAllSubmissions(transformedSubmissions);
@@ -348,7 +339,7 @@ export default function SponsorDashboard() {
           dashboardData.submissions || []
         ).map((s: any) => ({
           id: s.id,
-          title: s.title || "Submission",
+          title: submissionTitle(s.description),
           description: s.description || "",
           submission_url: s.submission_url,
           user_username: s.user_username || null,
@@ -362,7 +353,6 @@ export default function SponsorDashboard() {
           status: s.status,
           reviewer_notes: s.reviewer_notes || null,
           transaction_hash: s.transaction_hash || null,
-          submitted_at: s.created_at,
         }));
 
         // Count submissions per bounty
@@ -457,7 +447,7 @@ export default function SponsorDashboard() {
         const godSubmissions = (dashboardData.submissions || []).map(
           (s: any) => ({
             id: s.id,
-            title: s.title || "Submission",
+            title: submissionTitle(s.description),
             description: s.description || "",
             submission_url: s.submission_url,
             user_username: s.user_username || null,
@@ -471,7 +461,6 @@ export default function SponsorDashboard() {
             status: s.status,
             reviewer_notes: s.reviewer_notes || null,
             transaction_hash: s.transaction_hash || null,
-            submitted_at: s.created_at,
           }),
         );
         const godSubmissionCountByBounty: Record<string, number> = {};
@@ -1057,7 +1046,7 @@ export default function SponsorDashboard() {
                                           getBountyTitle(
                                             submission.bounty_id,
                                           )}{" "}
-                                        • {formatDate(submission.submitted_at)}
+                                        • {formatDate(submission.created_at)}
                                       </p>
                                     </div>
                                   </div>
@@ -1366,7 +1355,7 @@ export default function SponsorDashboard() {
                                 </h4>
                                 <p className="text-sm text-light-charcoal dark:text-lightgrey font-barlow truncate">
                                   {submission.user_username || "Anonymous"} •{" "}
-                                  {formatDate(submission.submitted_at)}
+                                  {formatDate(submission.created_at)}
                                 </p>
                               </div>
                             </div>
