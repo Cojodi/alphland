@@ -168,6 +168,20 @@ const worker = {
       // Admin Analytics APIs
       // ==========================================
 
+      // All /api/admin/* routes require a god-user session
+      if (url.pathname.startsWith("/api/admin/")) {
+        const sessionUserId = await getSessionUserId(env, request);
+        const isGod = sessionUserId
+          ? await isGodUser(env, sessionUserId)
+          : false;
+        if (!isGod) {
+          return new Response(JSON.stringify({ error: "Unauthorized" }), {
+            status: sessionUserId ? 403 : 401,
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        }
+      }
+
       // GET /api/admin/user-stats - User statistics overview
       if (url.pathname === "/api/admin/user-stats") {
         const nowMs = Date.now();
