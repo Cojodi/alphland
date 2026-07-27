@@ -22,6 +22,13 @@ import {
   getSessionUserId,
   isGodUser,
 } from "./handlers";
+import {
+  getAlphPrice,
+  maybeRefreshDailyPrice,
+  refreshAlphPrice,
+  resolveRewardInput,
+  RateUnavailableError,
+} from "./price";
 
 // Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
 type D1Database = any;
@@ -40,6 +47,7 @@ export interface Env {
   GITHUB_ISSUES_TOKEN?: string; // GitHub token for creating issues
   GITHUB_BOT_TOKEN?: string; // unused — dApp submissions use GITHUB_ISSUES_TOKEN
   INTERNAL_SECRET?: string; // shared secret for internal Vercel → Worker calls
+  COINGECKO_API_KEY?: string; // optional demo key; keyless works at 1 call/day
 }
 
 // Note: Do NOT cache auth instance globally
@@ -683,12 +691,7 @@ const worker = {
         // Average reward for approved submissions
         // Get reward from bounties table, not submissions
         const avgReward = await env.DB.prepare(
-          `SELECT AVG(
-             CASE
-               WHEN b.reward_currency = 'USD' THEN b.reward_amount
-               ELSE COALESCE(b.reward_usd_value, 0)
-             END
-           ) as avg_amount
+          `SELECT AVG(COALESCE(b.reward_usd, 0)) as avg_amount
            FROM bounty_submissions s
            JOIN bounties b ON s.bounty_id = b.id
            WHERE s.status = 'approved'`,
@@ -819,15 +822,86 @@ const worker = {
       // End Admin Analytics APIs
       // ==========================================
 
+      // ALPH/USD rate — public read. Frontend uses this for the "≈ $X"
+      // secondary figure next to every ALPH amount.
+      if (url.pathname === "/api/price/alph" && request.method === "GET") {
+        const price = await getAlphPrice(env);
+
+        if (!price) {
+          return new Response(
+            JSON.stringify({ error: "No ALPH price available yet" }),
+            { status: 503, headers: corsHeaders },
+          );
+        }
+
+        return new Response(
+          JSON.stringify({
+            usd: price.usd,
+            fetched_at: price.fetched_at,
+            source_updated_at: price.source_updated_at,
+            source: price.source,
+            // Age lets the UI grey out or hide the USD figure if the feed
+            // has been stuck (e.g. several failed daily runs in a row).
+            age_seconds: Math.floor(Date.now() / 1000) - price.fetched_at,
+          }),
+          {
+            headers: {
+              ...corsHeaders,
+              // Rate changes at most once a day; let the edge hold it.
+              "Cache-Control": "public, max-age=300",
+            },
+          },
+        );
+      }
+
+      // Manual refresh — god users only. For testing and for recovering
+      // after a failed daily run without waiting for the next 08:00.
+      if (
+        url.pathname === "/api/price/alph/refresh" &&
+        request.method === "POST"
+      ) {
+        const sessionUserId = await getSessionUserId(env, request);
+        if (!sessionUserId) {
+          return new Response(JSON.stringify({ error: "Unauthorized" }), {
+            status: 401,
+            headers: corsHeaders,
+          });
+        }
+        if (!(await isGodUser(env, sessionUserId))) {
+          return new Response(JSON.stringify({ error: "Forbidden" }), {
+            status: 403,
+            headers: corsHeaders,
+          });
+        }
+
+        try {
+          const price = await refreshAlphPrice(env);
+          return new Response(JSON.stringify({ price }), {
+            headers: corsHeaders,
+          });
+        } catch (err: any) {
+          return new Response(
+            JSON.stringify({ error: err?.message ?? "Refresh failed" }),
+            { status: 502, headers: corsHeaders },
+          );
+        }
+      }
+
       // Bounty overview stats endpoint - compute dynamically
       if (url.pathname === "/api/bounty-overview") {
         // Get bounty stats
+        // reward_amount is ALPH and reward_usd is USD for every row regardless
+        // of denomination, so both totals are now real totals covering all
+        // bounties — not the two disjoint piles the old CASE expressions
+        // produced (an ALPH bounty contributed nothing to the USD figure and
+        // vice versa, so neither number described the whole programme).
         const bountyStats = await env.DB.prepare(
           `SELECT
             COUNT(*) as list_number,
-            COALESCE(SUM(CASE WHEN reward_currency = 'USD' THEN reward_amount ELSE 0 END), 0) as total_value_usd,
-            COALESCE(SUM(CASE WHEN reward_currency = 'ALPH' THEN reward_amount ELSE 0 END), 0) as total_value_alph
-          FROM bounties`,
+            COALESCE(SUM(reward_usd), 0) as total_value_usd,
+            COALESCE(SUM(reward_amount), 0) as total_value_alph
+          FROM bounties
+          WHERE status != 'deleted'`,
         ).first();
 
         // Get user count
@@ -1123,6 +1197,11 @@ const worker = {
   // fetches blocks since last run, extracts sender addresses, and upserts into
   // active_addresses. After 7 days the dashboard will show real data.
   async scheduled(_event: any, env: Env, ctx: any): Promise<void> {
+    // Daily ALPH/USD refresh at 08:00 Europe/Berlin. The cron fires hourly;
+    // this is a no-op on the other 23 runs. Never throws, so a price-feed
+    // outage cannot stop the address indexer below.
+    await maybeRefreshDailyPrice(env);
+
     const EXPLORER = "https://lb-fullnode-alephium.notrustverify.ch";
     const MAX_WINDOW_MS = 2 * 60 * 60_000; // process at most 2 hours per run
     const now = Date.now();
@@ -1234,10 +1313,17 @@ function transformBounty(bounty: any) {
   return {
     ...bounty,
     reward: {
+      // Always ALPH. For a USD-denominated bounty this is the derived figure
+      // at the last daily valuation, not a promise — the UI should lead with
+      // usd_equivalent for those and label the ALPH figure as approximate.
       amount: bounty.reward_amount || 0,
       token: bounty.reward_currency || "ALPH",
-      usd_equivalent: bounty.reward_usd_value || 0,
+      // Always USD, and populated for both denominations now.
+      usd_equivalent: bounty.reward_usd || 0,
     },
+    // Which side the sponsor fixed. Drives whether the UI shows
+    // "500 ALPH (≈ $19)" or "$100 (≈ 2,565 ALPH)".
+    denomination: bounty.denomination || "alph",
   };
 }
 
@@ -1424,10 +1510,64 @@ async function handleBountiesAPI(
         );
       }
 
+      // Required fields
+      if (
+        !body.title?.trim() ||
+        !body.description?.trim() ||
+        !body.start_date ||
+        !body.end_date
+      ) {
+        return new Response(
+          JSON.stringify({
+            error: "title, description, start_date, and end_date are required",
+          }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+
+      // reward_amount is always ALPH; target_usd is always USD. Which one the
+      // caller must supply depends on `denomination`, and the other side is
+      // derived from the daily rate.
+      let reward: Awaited<ReturnType<typeof resolveRewardInput>>;
+      try {
+        reward = await resolveRewardInput(env, body);
+      } catch (err: any) {
+        // A missing rate is a server-side outage, not bad input.
+        const status = err instanceof RateUnavailableError ? 503 : 400;
+        return new Response(JSON.stringify({ error: err.message }), {
+          status,
+          headers: corsHeaders,
+        });
+      }
+
+      const rewardType = body.reward_type || "fixed";
+      if (rewardType !== "fixed" && rewardType !== "tiered") {
+        return new Response(
+          JSON.stringify({ error: "reward_type must be 'fixed' or 'tiered'" }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+
+      const tierCount = body.tier_count ?? 5;
+      if (![3, 5, 10].includes(Number(tierCount))) {
+        return new Response(
+          JSON.stringify({ error: "tier_count must be 3, 5, or 10" }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+
+      if (new Date(body.end_date) <= new Date(body.start_date)) {
+        return new Response(
+          JSON.stringify({ error: "end_date must be after start_date" }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+
       // Convert arrays to JSON strings
       const requirements = JSON.stringify(body.requirements || []);
       const deliverables = JSON.stringify(body.deliverables || []);
       const skills = JSON.stringify(body.skills || []);
+      const tags = JSON.stringify(body.tags || []);
 
       // Normalize category and difficulty to lowercase for CHECK constraint
       const category = body.category ? body.category.toLowerCase() : null;
@@ -1440,12 +1580,14 @@ async function handleBountiesAPI(
         `
         INSERT INTO bounties (
           id, sponsor_id, title, description,
-          requirements, deliverables, skills,
-          reward_amount, reward_currency, reward_type, reward_usd_value, tier_count,
+          requirements, deliverables, skills, tags,
+          reward_amount, reward_currency, reward_type, tier_count,
+          denomination, target_usd, reward_usd, token_usd_at_valuation,
+          valuation_updated_at,
           category, difficulty, dapp_name,
           start_date, end_date,
           status, created_by, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       )
         .bind(
@@ -1456,11 +1598,16 @@ async function handleBountiesAPI(
           requirements,
           deliverables,
           skills,
-          body.reward_amount || 0,
-          body.reward_currency || "ALPH",
-          body.reward_type || "fixed",
-          body.reward_usd_value || 0,
-          body.tier_count || 5,
+          tags,
+          reward.reward_amount,
+          "ALPH", // settlement token
+          rewardType,
+          Number(tierCount),
+          reward.denomination,
+          reward.target_usd,
+          reward.reward_usd,
+          reward.token_usd_at_valuation,
+          reward.token_usd_at_valuation ? now : null,
           category,
           difficulty,
           body.dapp_name || null,
@@ -1477,46 +1624,11 @@ async function handleBountiesAPI(
         .bind(id)
         .first();
 
-      // Update bounty_overview statistics
-      try {
-        // Get current overview
-        const overview = await env.DB.prepare(
-          "SELECT * FROM bounty_overview WHERE id = 1",
-        ).first();
-
-        // Calculate reward value - use USD value or ALPH amount
-        const rewardCurrency = body.reward_currency || "ALPH";
-        const rewardAmount = body.reward_amount || 0;
-        const rewardUsdValue = body.reward_usd_value || 0;
-
-        const rewardUsd =
-          rewardCurrency === "USD" ? rewardAmount : rewardUsdValue;
-        const rewardAlph = rewardCurrency === "ALPH" ? rewardAmount : 0;
-
-        if (overview) {
-          await env.DB.prepare(
-            `UPDATE bounty_overview
-             SET total_value_usd = total_value_usd + ?,
-                 total_value_alph = total_value_alph + ?,
-                 list_number = list_number + 1,
-                 updated_at = ?
-             WHERE id = 1`,
-          )
-            .bind(rewardUsd, rewardAlph, now)
-            .run();
-        } else {
-          // Initialize overview if it doesn't exist
-          await env.DB.prepare(
-            `INSERT INTO bounty_overview (id, total_value_usd, total_value_alph, list_number, user_number, sponsor_number, updated_at)
-             VALUES (1, ?, ?, 1, 0, 0, ?)`,
-          )
-            .bind(rewardUsd, rewardAlph, now)
-            .run();
-        }
-      } catch (overviewError) {
-        console.error("Failed to update bounty_overview:", overviewError);
-        // Don't fail the bounty creation if overview update fails
-      }
+      // The bounty_overview table used to be incremented here with the old
+      // split total_value_usd / total_value_alph counters. Nothing reads that
+      // table — /api/bounty-overview computes its numbers live — and those two
+      // counters could not be added together anyway. Dropped rather than
+      // ported onto the new columns.
 
       return new Response(JSON.stringify({ bounty: transformBounty(bounty) }), {
         status: 201,
@@ -1598,15 +1710,26 @@ async function handleBountiesAPI(
       const startDate =
         body.start_date || new Date().toISOString().split("T")[0];
 
+      // Carry over which side the sponsor fixed, but revalue the derived side
+      // at today's rate — a republished bounty is a new promise, and copying a
+      // months-old valuation would misstate it.
+      const republishReward = await resolveRewardInput(env, {
+        denomination: original.denomination,
+        reward_amount: original.reward_amount,
+        target_usd: original.target_usd,
+      });
+
       await env.DB.prepare(
         `INSERT INTO bounties (
           id, sponsor_id, title, description,
           requirements, deliverables, skills,
-          reward_amount, reward_currency, reward_type, reward_usd_value, tier_count,
+          reward_amount, reward_currency, reward_type, tier_count,
+          denomination, target_usd, reward_usd, token_usd_at_valuation,
+          valuation_updated_at,
           category, difficulty, dapp_name,
           start_date, end_date,
           status, created_by, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
         .bind(
           newId,
@@ -1616,11 +1739,15 @@ async function handleBountiesAPI(
           original.requirements,
           original.deliverables,
           original.skills,
-          original.reward_amount,
-          original.reward_currency,
+          republishReward.reward_amount,
+          "ALPH",
           original.reward_type,
-          original.reward_usd_value,
           original.tier_count,
+          republishReward.denomination,
+          republishReward.target_usd,
+          republishReward.reward_usd,
+          republishReward.token_usd_at_valuation,
+          republishReward.token_usd_at_valuation ? now : null,
           original.category,
           original.difficulty,
           original.dapp_name,
@@ -1632,30 +1759,6 @@ async function handleBountiesAPI(
           now,
         )
         .run();
-
-      // Update bounty_overview
-      try {
-        const rewardCurrency = original.reward_currency || "ALPH";
-        const rewardUsd =
-          rewardCurrency === "USD"
-            ? original.reward_amount
-            : original.reward_usd_value || 0;
-        const rewardAlph =
-          rewardCurrency === "ALPH" ? original.reward_amount : 0;
-
-        await env.DB.prepare(
-          `UPDATE bounty_overview
-           SET total_value_usd = total_value_usd + ?,
-               total_value_alph = total_value_alph + ?,
-               list_number = list_number + 1,
-               updated_at = ?
-           WHERE id = 1`,
-        )
-          .bind(rewardUsd, rewardAlph, now)
-          .run();
-      } catch {
-        // don't fail if overview update fails
-      }
 
       const newBounty = await env.DB.prepare(
         "SELECT * FROM bounties WHERE id = ?",
@@ -1697,13 +1800,10 @@ async function handleBountiesAPI(
 
       // Get the bounty before deleting to update overview
       const bounty = (await env.DB.prepare(
-        "SELECT reward_amount, reward_currency, reward_usd_value, status, sponsor_id FROM bounties WHERE id = ?",
+        "SELECT status, sponsor_id FROM bounties WHERE id = ?",
       )
         .bind(id)
         .first()) as {
-        reward_amount: number;
-        reward_currency: string;
-        reward_usd_value: number;
         status: string;
         sponsor_id: string;
       } | null;
@@ -1742,44 +1842,9 @@ async function handleBountiesAPI(
           .bind(now, id)
           .run();
 
-        // Update bounty_overview statistics
-        try {
-          // Get reward values from actual columns
-          const rewardCurrency = bounty.reward_currency || "ALPH";
-          const rewardAmount = bounty.reward_amount || 0;
-
-          const rewardUsd =
-            rewardCurrency === "USD"
-              ? rewardAmount
-              : bounty.reward_usd_value || 0;
-          const rewardAlph = rewardCurrency === "ALPH" ? rewardAmount : 0;
-
-          await env.DB.prepare(
-            `UPDATE bounty_overview
-             SET total_value_usd = CASE
-                   WHEN total_value_usd - ? >= 0 THEN total_value_usd - ?
-                   ELSE 0
-                 END,
-                 total_value_alph = CASE
-                   WHEN total_value_alph - ? >= 0 THEN total_value_alph - ?
-                   ELSE 0
-                 END,
-                 list_number = CASE
-                   WHEN list_number > 0 THEN list_number - 1
-                   ELSE 0
-                 END,
-                 updated_at = ?
-             WHERE id = 1`,
-          )
-            .bind(rewardUsd, rewardUsd, rewardAlph, rewardAlph, now)
-            .run();
-        } catch (overviewError) {
-          console.error(
-            "Failed to update bounty_overview after deletion:",
-            overviewError,
-          );
-          // Don't fail the deletion if overview update fails
-        }
+        // The bounty_overview decrement that used to live here is gone along
+        // with the increments on create/republish — /api/bounty-overview
+        // computes from bounties directly and already excludes status='deleted'.
       }
 
       return new Response(
@@ -1823,15 +1888,17 @@ async function handleBountiesAPI(
 
       // Get the old bounty data to calculate overview changes
       const oldBounty = (await env.DB.prepare(
-        "SELECT reward_amount, reward_currency, reward_usd_value, status, sponsor_id FROM bounties WHERE id = ?",
+        "SELECT reward_amount, denomination, target_usd, status, sponsor_id, start_date, end_date FROM bounties WHERE id = ?",
       )
         .bind(id)
         .first()) as {
-        reward_amount: number;
-        reward_currency: string;
-        reward_usd_value: number;
+        reward_amount: number | null;
+        denomination: string | null;
+        target_usd: number | null;
         status: string;
         sponsor_id: string;
+        start_date: string | null;
+        end_date: string | null;
       } | null;
 
       if (!oldBounty) {
@@ -1869,18 +1936,48 @@ async function handleBountiesAPI(
         updates.push("description = ?");
         values.push(body.description);
       }
-      // Update reward fields if provided
-      if (body.reward_amount !== undefined) {
-        updates.push("reward_amount = ?");
-        values.push(body.reward_amount);
-      }
-      if (body.reward_currency !== undefined) {
-        updates.push("reward_currency = ?");
-        values.push(body.reward_currency);
-      }
-      if (body.reward_usd_value !== undefined) {
-        updates.push("reward_usd_value = ?");
-        values.push(body.reward_usd_value);
+      // Reward edits go through resolveRewardInput so both sides stay
+      // consistent — writing reward_amount without recomputing reward_usd is
+      // what let the two drift apart before. Touching either the amount or
+      // the denomination re-derives the whole set.
+      if (
+        body.reward_amount !== undefined ||
+        body.target_usd !== undefined ||
+        body.denomination !== undefined
+      ) {
+        let reward: Awaited<ReturnType<typeof resolveRewardInput>>;
+        try {
+          reward = await resolveRewardInput(env, {
+            // Fall back to what the bounty already uses, so a caller can send
+            // just a new amount without restating the denomination.
+            denomination: body.denomination ?? oldBounty.denomination,
+            reward_amount: body.reward_amount ?? oldBounty.reward_amount,
+            target_usd: body.target_usd ?? oldBounty.target_usd,
+          });
+        } catch (err: any) {
+          const status = err instanceof RateUnavailableError ? 503 : 400;
+          return new Response(JSON.stringify({ error: err.message }), {
+            status,
+            headers: corsHeaders,
+          });
+        }
+
+        updates.push(
+          "reward_amount = ?",
+          "denomination = ?",
+          "target_usd = ?",
+          "reward_usd = ?",
+          "token_usd_at_valuation = ?",
+          "valuation_updated_at = ?",
+        );
+        values.push(
+          reward.reward_amount,
+          reward.denomination,
+          reward.target_usd,
+          reward.reward_usd,
+          reward.token_usd_at_valuation,
+          reward.token_usd_at_valuation ? now : null,
+        );
       }
       if (body.reward_type !== undefined) {
         if (body.reward_type !== "fixed" && body.reward_type !== "tiered") {
@@ -1895,8 +1992,14 @@ async function handleBountiesAPI(
         values.push(body.reward_type);
       }
       if (body.tier_count !== undefined) {
+        if (![3, 5, 10].includes(Number(body.tier_count))) {
+          return new Response(
+            JSON.stringify({ error: "tier_count must be 3, 5, or 10" }),
+            { status: 400, headers: corsHeaders },
+          );
+        }
         updates.push("tier_count = ?");
-        values.push(body.tier_count);
+        values.push(Number(body.tier_count));
       }
       if (body.status !== undefined) {
         updates.push("status = ?");
@@ -1907,6 +2010,46 @@ async function handleBountiesAPI(
         updates.push("category = ?");
         values.push(body.category);
       }
+      if (body.difficulty !== undefined) {
+        updates.push("difficulty = ?");
+        values.push(body.difficulty ? body.difficulty.toLowerCase() : null);
+      }
+      if (body.dapp_name !== undefined) {
+        updates.push("dapp_name = ?");
+        values.push(body.dapp_name || null);
+      }
+      if (body.tags !== undefined) {
+        updates.push("tags = ?");
+        values.push(JSON.stringify(body.tags || []));
+      }
+      if (body.requirements !== undefined) {
+        updates.push("requirements = ?");
+        values.push(JSON.stringify(body.requirements || []));
+      }
+      if (body.deliverables !== undefined) {
+        updates.push("deliverables = ?");
+        values.push(JSON.stringify(body.deliverables || []));
+      }
+      if (body.skills !== undefined) {
+        updates.push("skills = ?");
+        values.push(JSON.stringify(body.skills || []));
+      }
+
+      const effectiveStartDate =
+        body.start_date !== undefined ? body.start_date : oldBounty.start_date;
+      const effectiveEndDate =
+        body.end_date !== undefined ? body.end_date : oldBounty.end_date;
+      if (
+        effectiveStartDate &&
+        effectiveEndDate &&
+        new Date(effectiveEndDate) <= new Date(effectiveStartDate)
+      ) {
+        return new Response(
+          JSON.stringify({ error: "end_date must be after start_date" }),
+          { status: 400, headers: corsHeaders },
+        );
+      }
+
       if (body.start_date !== undefined) {
         updates.push("start_date = ?");
         values.push(body.start_date);
@@ -1928,53 +2071,8 @@ async function handleBountiesAPI(
           .bind(...values)
           .run();
 
-        // Update overview if reward changed
-        if (
-          body.reward_amount !== undefined ||
-          body.reward_currency !== undefined ||
-          body.reward_usd_value !== undefined
-        ) {
-          try {
-            // Get old reward values from actual columns
-            const oldCurrency = oldBounty.reward_currency || "ALPH";
-            const oldAmount = oldBounty.reward_amount || 0;
-            const oldRewardUsd =
-              oldCurrency === "USD"
-                ? oldAmount
-                : oldBounty.reward_usd_value || 0;
-            const oldRewardAlph = oldCurrency === "ALPH" ? oldAmount : 0;
-
-            // Calculate new reward
-            const newCurrency = body.reward_currency || oldCurrency;
-            const newAmount =
-              body.reward_amount !== undefined ? body.reward_amount : oldAmount;
-            const newUsdValue =
-              body.reward_usd_value !== undefined
-                ? body.reward_usd_value
-                : oldBounty.reward_usd_value || 0;
-            const newRewardUsd =
-              newCurrency === "USD" ? newAmount : newUsdValue;
-            const newRewardAlph = newCurrency === "ALPH" ? newAmount : 0;
-
-            const diffUsd = newRewardUsd - oldRewardUsd;
-            const diffAlph = newRewardAlph - oldRewardAlph;
-
-            await env.DB.prepare(
-              `UPDATE bounty_overview
-               SET total_value_usd = total_value_usd + ?,
-                   total_value_alph = total_value_alph + ?,
-                   updated_at = ?
-               WHERE id = 1`,
-            )
-              .bind(diffUsd, diffAlph, now)
-              .run();
-          } catch (overviewError) {
-            console.error(
-              "Failed to update bounty_overview after edit:",
-              overviewError,
-            );
-          }
-        }
+        // The bounty_overview delta bookkeeping that used to run here is gone
+        // with the rest of that table's maintenance.
       }
 
       const updatedBounty = await env.DB.prepare(

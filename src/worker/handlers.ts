@@ -223,6 +223,15 @@ export async function handleSubmissionsAPI(
       });
     } catch (error: any) {
       console.error("Error creating submission:", error);
+      // Race-safe backstop for the SELECT-then-INSERT duplicate check above:
+      // a UNIQUE constraint violation means another request already inserted
+      // a submission for this (bounty_id, user_id) pair concurrently.
+      if (String(error?.message || "").includes("UNIQUE constraint failed")) {
+        return new Response(
+          JSON.stringify({ error: "Already submitted to this bounty" }),
+          { status: 409, headers: corsHeaders },
+        );
+      }
       return new Response(
         JSON.stringify({
           error: "Failed to create submission",
@@ -1514,6 +1523,30 @@ export async function handleSponsorsAPI(
     if (body.contact_telegram !== undefined) {
       updates.push("contact_telegram = ?");
       values.push(body.contact_telegram || null);
+    }
+    if (body.username !== undefined) {
+      updates.push("username = ?");
+      values.push(body.username || null);
+    }
+    if (body.entity_name !== undefined) {
+      updates.push("entity_name = ?");
+      values.push(body.entity_name || null);
+    }
+    if (body.industry !== undefined) {
+      updates.push("industry = ?");
+      values.push(body.industry || null);
+    }
+    if (body.contact_first_name !== undefined) {
+      updates.push("contact_first_name = ?");
+      values.push(body.contact_first_name || null);
+    }
+    if (body.contact_last_name !== undefined) {
+      updates.push("contact_last_name = ?");
+      values.push(body.contact_last_name || null);
+    }
+    if (body.contact_username !== undefined) {
+      updates.push("contact_username = ?");
+      values.push(body.contact_username || null);
     }
 
     // Always update updated_at

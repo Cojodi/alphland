@@ -1,6 +1,11 @@
 // Submission related types
 
-export type SubmissionStatus = "submitted" | "approved" | "rejected";
+export type SubmissionStatus =
+  | "pending"
+  | "submitted"
+  | "approved"
+  | "rejected"
+  | "revision_requested";
 
 export interface Submission {
   id: string;

@@ -649,7 +649,7 @@ export async function getServerSideProps(context: any) {
       reward: {
         amount: parseFloat(bountyData.reward_amount) || 0,
         token: bountyData.reward_currency || "ALPH",
-        usd_equivalent: parseFloat(bountyData.reward_usd_value) || 0,
+        usd_equivalent: Number(bountyData.reward_usd) || 0,
       },
       reward_type: bountyData.reward_type || "fixed",
       tier_count: bountyData.tier_count || 5,

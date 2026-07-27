@@ -389,7 +389,7 @@ export default function SponsorDashboard() {
           reward: {
             amount: parseFloat(b.reward_amount) || 0,
             token: b.reward_currency || "ALPH",
-            usd_equivalent: parseFloat(b.reward_usd_value) || 0,
+            usd_equivalent: Number(b.reward_usd) || 0,
           },
           reward_type: b.reward_type || "fixed",
           tier_count: b.tier_count || null,
