@@ -182,6 +182,18 @@ describe("non-approved outcomes do not create a winner", () => {
     expect(cols()[COL.winnerPosition]).toBeNull();
   });
 
+  it("does not record a transaction hash on a rejection", async () => {
+    // A stale hash left in the form would otherwise be consumed against the
+    // unique index from migration 028, and the actual winner could never be
+    // approved with that transaction -- they would get "already been used".
+    const { env, cols } = makeEnv();
+    await review(env, {
+      status: "rejected",
+      transaction_hash: "hash-meant-for-the-winner",
+    });
+    expect(cols()[COL.txHash]).toBeNull();
+  });
+
   it("ignores reward fields sent alongside a rejection", async () => {
     // A stale form must not leave payout data on a rejected submission.
     const { env, cols } = makeEnv();

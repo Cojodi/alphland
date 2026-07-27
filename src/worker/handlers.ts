@@ -722,7 +722,11 @@ export async function handleSubmissionsAPI(
         .bind(
           body.status,
           body.reviewer_notes || null,
-          body.transaction_hash || null,
+          // Only an approval records a payment. Writing a stale hash from the
+          // form onto a rejected submission would consume it against the
+          // unique index, and the real winner could then never be approved
+          // with that transaction.
+          isApproved ? body.transaction_hash || null : null,
           body.status === "approved" || body.status === "rejected" ? now : null,
           now,
           isApproved ? 1 : 0,
