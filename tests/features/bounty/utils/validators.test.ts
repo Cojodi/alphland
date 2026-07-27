@@ -5,7 +5,7 @@ import {
   normalizeUrl,
   sponsorSlug,
   validateSubmissionForm,
-} from "./validators";
+} from "@/features/bounty/utils/validators";
 
 describe("sponsorSlug", () => {
   it("lowercases and strips non-alphanumeric characters", () => {

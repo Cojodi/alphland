@@ -21,7 +21,7 @@ import {
   notifySubmissionApproved,
   notifySubmissionRejected,
   shouldNotify,
-} from "./notificationService";
+} from "@/features/bounty/services/notificationService";
 
 beforeEach(() => {
   createNotification.mockReset().mockResolvedValue({ notification: {} });
