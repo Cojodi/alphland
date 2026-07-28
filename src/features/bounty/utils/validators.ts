@@ -84,41 +84,6 @@ export function isValidWalletAddress(address: string): boolean {
   return ethAddressPattern.test(address.trim());
 }
 
-export function validateSubmissionForm(data: {
-  title: string;
-  description: string;
-  submission_url: string;
-  tweet_url?: string;
-  wallet_address?: string;
-}): { valid: boolean; errors: string[] } {
-  const errors: string[] = [];
-
-  if (!data.title || data.title.trim() === "") {
-    errors.push("Title is required");
-  }
-
-  if (!data.description || data.description.trim() === "") {
-    errors.push("Description is required");
-  }
-
-  if (!data.submission_url || !isValidUrl(data.submission_url)) {
-    errors.push("Valid submission URL is required");
-  }
-
-  if (data.tweet_url && !isValidUrl(data.tweet_url)) {
-    errors.push("Tweet URL must be a valid URL");
-  }
-
-  if (data.wallet_address && !isValidWalletAddress(data.wallet_address)) {
-    errors.push("Invalid wallet address format");
-  }
-
-  return {
-    valid: errors.length === 0,
-    errors,
-  };
-}
-
 /**
  * The submission's title, read out of its description.
  *

@@ -20,6 +20,7 @@ import {
   notifyCommentReply,
   notifyNewComment,
   notifyCommentLike,
+  notify,
 } from "./notifications";
 
 const corsHeaders = {
@@ -1344,13 +1345,15 @@ export async function handleCommentsAPI(
     // Add user to liked_by array
     likedBy.push(body.user_id);
 
-    // Update comment with new liked_by array and increment like_count
+    // liked_by is the single source of truth; the count is derived on read.
+    // The like_count column was dropped in 033 -- it was written here and
+    // never read back, so it could only ever drift.
     await env.DB.prepare(
       `UPDATE bounty_comments
-       SET liked_by = ?, like_count = ?, updated_at = ?
+       SET liked_by = ?, updated_at = ?
        WHERE id = ?`,
     )
-      .bind(JSON.stringify(likedBy), likedBy.length, now, commentId)
+      .bind(JSON.stringify(likedBy), now, commentId)
       .run();
 
     const liked = (await env.DB.prepare(
@@ -1439,13 +1442,12 @@ export async function handleCommentsAPI(
     // Remove user from liked_by array
     const newLikedBy = likedBy.filter((id: string) => id !== userId);
 
-    // Update comment with new liked_by array and decrement like_count
     await env.DB.prepare(
       `UPDATE bounty_comments
-       SET liked_by = ?, like_count = ?, updated_at = ?
+       SET liked_by = ?, updated_at = ?
        WHERE id = ?`,
     )
-      .bind(JSON.stringify(newLikedBy), newLikedBy.length, now, commentId)
+      .bind(JSON.stringify(newLikedBy), now, commentId)
       .run();
 
     return new Response(
@@ -2371,31 +2373,35 @@ export async function handleNotificationsAPI(
       );
     }
 
-    const id = crypto.randomUUID();
-    const now = Math.floor(Date.now() / 1000);
+    // Routed through notify() rather than inserting directly, so this path
+    // honours notification_mutes like every other one. A direct INSERT here
+    // meant an admin-authored notice about a bounty reached users who had
+    // explicitly muted that bounty. Mutes are bounty-scoped, so a
+    // notification with no bounty attached is unaffected.
+    const created = await notify(env, {
+      userId: body.user_id,
+      type: body.type,
+      title: body.title,
+      message: body.message,
+      link: body.link || null,
+      bountyId: body.related_bounty_id || null,
+      submissionId: body.related_submission_id || null,
+    });
 
-    await env.DB.prepare(
-      `INSERT INTO notifications (
-        id, user_id, type, title, message, link, related_bounty_id, related_submission_id, read, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?)`,
-    )
-      .bind(
-        id,
-        body.user_id,
-        body.type,
-        body.title,
-        body.message,
-        body.link || null,
-        body.related_bounty_id || null,
-        body.related_submission_id || null,
-        now,
-      )
-      .run();
+    if (!created) {
+      return new Response(
+        JSON.stringify({
+          suppressed: true,
+          reason: "recipient muted this bounty",
+        }),
+        { status: 200, headers: corsHeaders },
+      );
+    }
 
     const notification = await env.DB.prepare(
-      `SELECT * FROM notifications WHERE id = ?`,
+      `SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 1`,
     )
-      .bind(id)
+      .bind(body.user_id)
       .first();
 
     return new Response(JSON.stringify({ notification }), {
@@ -2576,39 +2582,6 @@ export async function handleNotificationPreferencesAPI(
     status: 405,
     headers: corsHeaders,
   });
-}
-
-/**
- * Helper function to create a notification
- */
-export async function createNotification(
-  env: Env,
-  data: {
-    user_id: string;
-    type: string;
-    title: string;
-    message: string;
-    link?: string;
-  },
-): Promise<void> {
-  const id = crypto.randomUUID();
-  const now = Math.floor(Date.now() / 1000);
-
-  await env.DB.prepare(
-    `INSERT INTO notifications (
-      id, user_id, type, title, message, link, read, created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, 0, ?)`,
-  )
-    .bind(
-      id,
-      data.user_id,
-      data.type,
-      data.title,
-      data.message,
-      data.link || null,
-      now,
-    )
-    .run();
 }
 
 /**

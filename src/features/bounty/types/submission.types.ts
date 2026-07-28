@@ -52,10 +52,3 @@ export interface Submission {
   user_avatar_url?: string;
   user_wallet_address?: string;
 }
-
-export interface SubmissionFormData {
-  title: string;
-  description: string;
-  submission_url: string;
-  tweet_url?: string;
-}

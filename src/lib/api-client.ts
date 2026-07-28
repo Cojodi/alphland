@@ -28,7 +28,6 @@ export interface Bounty {
     | "closed"
     | "deleted";
   created_by: string;
-  assigned_to: string | null;
   tags: string | null;
   requirements: string | null;
   submission_url: string | null;
@@ -36,7 +35,6 @@ export interface Bounty {
   end_date: string | null;
   created_at: string;
   updated_at: string;
-  completed_at: string | null;
   sponsor_id?: string;
   sponsor_name?: string;
   /** Stored routing key for /bounty/sponsor/:slug — stable across renames. */

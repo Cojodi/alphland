@@ -5,7 +5,6 @@ import {
   normalizeUrl,
   sponsorSlug,
   submissionTitle,
-  validateSubmissionForm,
 } from "@/features/bounty/utils/validators";
 
 describe("sponsorSlug", () => {
@@ -72,67 +71,6 @@ describe("isValidWalletAddress", () => {
     expect(
       isValidWalletAddress("AbCdEf1234567890AbCdEf1234567890AbCdEf12"),
     ).toBe(false);
-  });
-});
-
-describe("validateSubmissionForm", () => {
-  const validForm = {
-    title: "My Submission",
-    description: "A detailed description",
-    submission_url: "https://github.com/example/repo",
-  };
-
-  it("accepts a valid form", () => {
-    const result = validateSubmissionForm(validForm);
-    expect(result.valid).toBe(true);
-    expect(result.errors).toHaveLength(0);
-  });
-
-  it("requires title", () => {
-    const result = validateSubmissionForm({ ...validForm, title: "" });
-    expect(result.valid).toBe(false);
-    expect(result.errors).toContain("Title is required");
-  });
-
-  it("requires description", () => {
-    const result = validateSubmissionForm({ ...validForm, description: "  " });
-    expect(result.valid).toBe(false);
-    expect(result.errors).toContain("Description is required");
-  });
-
-  it("requires a valid submission URL", () => {
-    const result = validateSubmissionForm({
-      ...validForm,
-      submission_url: "not-a-url",
-    });
-    expect(result.valid).toBe(false);
-    expect(result.errors).toContain("Valid submission URL is required");
-  });
-
-  it("rejects an invalid optional tweet URL", () => {
-    const result = validateSubmissionForm({
-      ...validForm,
-      tweet_url: "bad-url",
-    });
-    expect(result.valid).toBe(false);
-    expect(result.errors).toContain("Tweet URL must be a valid URL");
-  });
-
-  it("accepts a valid optional tweet URL", () => {
-    const result = validateSubmissionForm({
-      ...validForm,
-      tweet_url: "https://x.com/user/status/123",
-    });
-    expect(result.valid).toBe(true);
-  });
-
-  it("can accumulate multiple errors", () => {
-    const result = validateSubmissionForm({
-      title: "",
-      description: "",
-      submission_url: "bad",
-    });
-    expect(result.errors.length).toBeGreaterThanOrEqual(3);
   });
 });
 

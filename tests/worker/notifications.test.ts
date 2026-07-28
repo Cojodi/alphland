@@ -345,3 +345,50 @@ describe("POST /api/notifications lockdown", () => {
     expect(res.status).toBe(201);
   });
 });
+
+describe("mute enforcement is a single chokepoint", () => {
+  it("suppresses a bounty notification for a user who muted that bounty", async () => {
+    const { env, inserted } = makeEnv([["u1", "b1"]]);
+
+    const created = await notify(env, {
+      userId: "u1",
+      type: "comment_reply",
+      title: "New Reply",
+      message: "someone replied",
+      bountyId: "b1",
+    });
+
+    expect(created).toBe(false);
+    expect(inserted).toHaveLength(0);
+  });
+
+  it("still delivers a notification that is not tied to a bounty", async () => {
+    // Mutes are bounty-scoped; a global notice must not be swallowed by one.
+    const { env, inserted } = makeEnv([["u1", "b1"]]);
+
+    expect(
+      await notify(env, {
+        userId: "u1",
+        type: "comment_reply",
+        title: "Announcement",
+        message: "platform news",
+      }),
+    ).toBe(true);
+    expect(inserted).toHaveLength(1);
+  });
+
+  it("delivers a reply on a bounty the user did not mute", async () => {
+    const { env, inserted } = makeEnv([["u1", "b1"]]);
+
+    expect(
+      await notify(env, {
+        userId: "u1",
+        type: "comment_reply",
+        title: "New Reply",
+        message: "someone replied",
+        bountyId: "b2",
+      }),
+    ).toBe(true);
+    expect(inserted).toHaveLength(1);
+  });
+});
