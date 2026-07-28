@@ -3,7 +3,7 @@
  * This worker handles API requests and connects to D1 database
  */
 import { createAuth } from "./auth";
-import { notifySponsorVerified } from "./email";
+import { notifySponsorAccountChange } from "./email";
 import { notifySponsorStatusChanged } from "./notifications";
 import { verifySignedMessage } from "@alephium/web3";
 import { DAPP_LIST } from "./dappList";
@@ -608,11 +608,8 @@ const worker = {
             .bind(now, now, id)
             .run();
 
+          // Both the in-app notice and the approval email come from here now.
           await notifySponsorNotice(env, id, "verified");
-
-          notifySponsorVerified(env, id).catch((e) =>
-            console.error("[email] notifySponsorVerified failed:", e),
-          );
 
           return new Response(JSON.stringify({ success: true }), {
             headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -1355,6 +1352,11 @@ async function notifySponsorNotice(
       sponsorName: sponsor.name,
       change,
     });
+
+    // Email from the same place as the in-app notice. Previously only
+    // `verified` sent one, from its own call site, so the two channels could
+    // — and did — disagree about which changes are worth telling someone.
+    await notifySponsorAccountChange(env, sponsorId, change);
   } catch (err: any) {
     console.error(
       "[notify] sponsor status notice failed:",

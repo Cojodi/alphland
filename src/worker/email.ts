@@ -531,44 +531,6 @@ export async function notifySponsorSubmissionResubmitted(
   );
 }
 
-export async function notifySponsorVerified(
-  env: Env,
-  sponsorId: string,
-): Promise<void> {
-  const row = (await env.DB.prepare(
-    `SELECT u.id as user_id, u.email, u.name, s.name as sponsor_name
-     FROM sponsors s
-     JOIN user u ON s.user_id = u.id
-     WHERE s.id = ?`,
-  )
-    .bind(sponsorId)
-    .first()) as {
-    user_id: string;
-    email: string;
-    name: string | null;
-    sponsor_name: string;
-  } | null;
-
-  if (!row?.email) return;
-
-  await sendAndLog(
-    env,
-    row.email,
-    "Your sponsor account has been approved – Alphland",
-    "sponsor_verified",
-    `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#111;">
-      <h2 style="color:#E05C2A;">Your account is approved! 🎉</h2>
-      <p>Hi ${row.name || "there"},</p>
-      <p>Your sponsor account <strong>${row.sponsor_name}</strong> has been reviewed and approved on Alphland.</p>
-      <p>You can now post bounties and start receiving submissions from the community.</p>
-      <a href="${BASE_URL}/sponsor/dashboard" style="display:inline-block;padding:12px 24px;background:#E05C2A;color:#fff;text-decoration:none;border-radius:6px;margin:16px 0;">Go to Dashboard</a>
-      <hr style="border:none;border-top:1px solid #eee;margin:24px 0;">
-      <p style="color:#888;font-size:12px;">Alphland · <a href="${BASE_URL}" style="color:#888;">alph.land</a></p>
-    </div>`,
-    { userId: row.user_id },
-  );
-}
-
 /**
  * "Closing soon" nudge to someone who bookmarked a bounty.
  *
@@ -663,5 +625,98 @@ export async function notifyAdminReviewEscalation(
       <p style="color:#888;font-size:12px;">Alphland admin notification</p>
     </div>`,
     { userId: admin.id, bountyId: b.id },
+  );
+}
+
+/**
+ * Email for any sponsor account status change.
+ *
+ * One function for all four transitions rather than one per verb. The
+ * previous shape had `verified` wired to its own email and the other three
+ * to nothing, which is how "we notify sponsors" ended up meaning "we notify
+ * them when it is good news" — a ban is precisely the change someone needs
+ * to be told about.
+ *
+ * Uncategorised, so it is transactional and can never be suppressed by an
+ * opt-out: these are account-state facts, not updates a user can decline.
+ */
+export async function notifySponsorAccountChange(
+  env: Env,
+  sponsorId: string,
+  change: "verified" | "unverified" | "banned" | "unbanned",
+): Promise<void> {
+  const row = (await env.DB.prepare(
+    `SELECT u.id as user_id, u.email, u.name, s.name as sponsor_name
+       FROM sponsors s JOIN user u ON s.user_id = u.id
+      WHERE s.id = ?`,
+  )
+    .bind(sponsorId)
+    .first()) as {
+    user_id: string;
+    email: string;
+    name: string | null;
+    sponsor_name: string;
+  } | null;
+
+  if (!row?.email) return;
+
+  const copy = {
+    verified: {
+      subject: "Your sponsor account has been approved – Alphland",
+      heading: "Your account is approved! 🎉",
+      body: `Your sponsor account <strong>${row.sponsor_name}</strong> has been reviewed and approved. You can now post bounties and start receiving submissions from the community.`,
+      cta: {
+        label: "Go to Dashboard",
+        href: `${BASE_URL}/bounty/sponsor/dashboard`,
+      },
+      accent: "#E05C2A",
+    },
+    unverified: {
+      subject: "Your sponsor account needs review – Alphland",
+      heading: "Your account is back under review",
+      body: `Verification for <strong>${row.sponsor_name}</strong> has been withdrawn, so new bounties cannot be published until it is approved again. Bounties already live are unaffected.`,
+      cta: {
+        label: "View Account",
+        href: `${BASE_URL}/bounty/sponsor/dashboard`,
+      },
+      accent: "#111",
+    },
+    banned: {
+      subject: "Your sponsor account has been suspended – Alphland",
+      heading: "Your account has been suspended",
+      body: `The sponsor account <strong>${row.sponsor_name}</strong> has been suspended and can no longer post bounties. If you believe this is a mistake, reply to this email.`,
+      cta: null,
+      accent: "#dc2626",
+    },
+    unbanned: {
+      subject: "Your sponsor account has been restored – Alphland",
+      heading: "Your account has been restored",
+      body: `The suspension on <strong>${row.sponsor_name}</strong> has been lifted. You can post bounties again.`,
+      cta: {
+        label: "Go to Dashboard",
+        href: `${BASE_URL}/bounty/sponsor/dashboard`,
+      },
+      accent: "#E05C2A",
+    },
+  }[change];
+
+  await sendAndLog(
+    env,
+    row.email,
+    copy.subject,
+    `sponsor_${change}`,
+    `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#111;">
+      <h2 style="color:${copy.accent};">${copy.heading}</h2>
+      <p>Hi ${row.name || "there"},</p>
+      <p>${copy.body}</p>
+      ${
+        copy.cta
+          ? `<a href="${copy.cta.href}" style="display:inline-block;padding:12px 24px;background:${copy.accent};color:#fff;text-decoration:none;border-radius:6px;margin:16px 0;">${copy.cta.label}</a>`
+          : ""
+      }
+      <hr style="border:none;border-top:1px solid #eee;margin:24px 0;">
+      <p style="color:#888;font-size:12px;">Alphland · <a href="${BASE_URL}" style="color:#888;">alph.land</a></p>
+    </div>`,
+    { userId: row.user_id },
   );
 }
