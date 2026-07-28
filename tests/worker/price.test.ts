@@ -44,7 +44,21 @@ function makeEnv(seed: Record<string, string> = {}) {
   return { env: { DB } as any, state };
 }
 
+/** A CoinPaprika-shaped body — the first source in the chain. */
 const okResponse = (usd: number, lastUpdated: number | null = 1785160310) =>
+  ({
+    ok: true,
+    status: 200,
+    json: async () => ({
+      quotes: { USD: { price: usd } },
+      ...(lastUpdated === null
+        ? {}
+        : { last_updated: new Date(lastUpdated * 1000).toISOString() }),
+    }),
+  }) as any;
+
+/** A CoinGecko-shaped body — the second source. */
+const geckoResponse = (usd: number, lastUpdated: number | null = 1785160310) =>
   ({
     ok: true,
     status: 200,
@@ -53,6 +67,10 @@ const okResponse = (usd: number, lastUpdated: number | null = 1785160310) =>
         lastUpdated === null ? { usd } : { usd, last_updated_at: lastUpdated },
     }),
   }) as any;
+
+/** An upstream refusal, e.g. CoinGecko's shared-IP 429. */
+const errResponse = (status: number, body = "") =>
+  ({ ok: false, status, text: async () => body }) as any;
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -96,7 +114,7 @@ describe("berlinParts — DST correctness", () => {
 });
 
 describe("fetchAlphPrice", () => {
-  it("parses a well-formed CoinGecko response", async () => {
+  it("parses a well-formed response from the primary source", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => okResponse(0.03890974)),
@@ -106,37 +124,125 @@ describe("fetchAlphPrice", () => {
     const result = await fetchAlphPrice(env);
     expect(result.usd).toBeCloseTo(0.03890974);
     expect(result.source_updated_at).toBe(1785160310);
+    expect(result.source).toBe("coinpaprika");
   });
 
-  it("sends the demo key header only when configured", async () => {
-    const spy = vi.fn(async (_url: string, _init: any) => okResponse(0.04));
+  it("stops at the first source that answers", async () => {
+    const spy = vi.fn(async () => okResponse(0.04));
     vi.stubGlobal("fetch", spy);
 
-    await fetchAlphPrice({ DB: null, COINGECKO_API_KEY: "cg-demo-123" } as any);
-    expect(spy.mock.calls[0]?.[1]?.headers["x-cg-demo-api-key"]).toBe(
+    await fetchAlphPrice(makeEnv().env);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it("falls back to the next source when one refuses", async () => {
+    // The live failure: CoinGecko 429s on the shared Worker egress IP.
+    const spy = vi
+      .fn()
+      .mockResolvedValueOnce(errResponse(503, "paprika down"))
+      .mockResolvedValueOnce(geckoResponse(0.041));
+    vi.stubGlobal("fetch", spy);
+
+    const result = await fetchAlphPrice(makeEnv().env);
+    expect(result.usd).toBeCloseTo(0.041);
+    expect(result.source).toBe("coingecko");
+  });
+
+  it("falls through to the last source when both aggregators fail", async () => {
+    const spy = vi
+      .fn()
+      .mockResolvedValueOnce(errResponse(503))
+      .mockResolvedValueOnce(errResponse(429, "rate limited"))
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ symbol: "ALPHUSDT", price: "0.0381" }),
+      } as any);
+    vi.stubGlobal("fetch", spy);
+
+    const result = await fetchAlphPrice(makeEnv().env);
+    expect(result.usd).toBeCloseTo(0.0381);
+    expect(result.source).toBe("mexc");
+    expect(result.source_updated_at).toBeNull();
+  });
+
+  it("keeps going when a source throws rather than refusing", async () => {
+    const spy = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("network unreachable"))
+      .mockResolvedValueOnce(geckoResponse(0.042));
+    vi.stubGlobal("fetch", spy);
+
+    expect((await fetchAlphPrice(makeEnv().env)).source).toBe("coingecko");
+  });
+
+  it("reports every source's error when all of them fail", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => errResponse(429, "rate limited")),
+    );
+
+    await expect(fetchAlphPrice(makeEnv().env)).rejects.toThrow(
+      /all price sources failed[\s\S]*coinpaprika[\s\S]*coingecko[\s\S]*mexc/,
+    );
+  });
+
+  it("sends the demo key header to CoinGecko only, and only when configured", async () => {
+    // Reached only after the primary fails, so fail it deliberately.
+    const spy = vi
+      .fn()
+      .mockResolvedValueOnce(errResponse(503))
+      .mockResolvedValueOnce(geckoResponse(0.04));
+    vi.stubGlobal("fetch", spy);
+
+    await fetchAlphPrice({
+      DB: null,
+      COINGECKO_API_KEY: "cg-demo-123",
+    } as any);
+    expect(
+      spy.mock.calls[0]?.[1]?.headers["x-cg-demo-api-key"],
+    ).toBeUndefined();
+    expect(spy.mock.calls[1]?.[1]?.headers["x-cg-demo-api-key"]).toBe(
       "cg-demo-123",
     );
 
+    const spy2 = vi
+      .fn()
+      .mockResolvedValueOnce(errResponse(503))
+      .mockResolvedValueOnce(geckoResponse(0.04));
+    vi.stubGlobal("fetch", spy2);
+
     await fetchAlphPrice({ DB: null } as any);
     expect(
-      spy.mock.calls[1]?.[1]?.headers["x-cg-demo-api-key"],
+      spy2.mock.calls[1]?.[1]?.headers["x-cg-demo-api-key"],
     ).toBeUndefined();
+  });
+
+  it("sends a descriptive User-Agent", async () => {
+    const spy = vi.fn(async (_url: string, _init: any) => okResponse(0.04));
+    vi.stubGlobal("fetch", spy);
+
+    await fetchAlphPrice(makeEnv().env);
+    expect(spy.mock.calls[0]?.[1]?.headers["User-Agent"]).toMatch(/alphland/);
   });
 
   it("throws on a rate-limit response rather than storing garbage", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn(async () => ({ ok: false, status: 429 }) as any),
+      vi.fn(
+        async () =>
+          ({ ok: false, status: 429, text: async () => "rate limited" }) as any,
+      ),
     );
     await expect(fetchAlphPrice(makeEnv().env)).rejects.toThrow("429");
   });
 
   it("rejects a zero / missing / non-numeric price", async () => {
     const bodies = [
-      { alephium: { usd: 0 } },
-      { alephium: {} },
+      { quotes: { USD: { price: 0 } } },
+      { quotes: { USD: {} } },
       {},
-      { alephium: { usd: "0.04" } },
+      { quotes: { USD: { price: "0.04" } } },
     ];
     for (const body of bodies) {
       vi.stubGlobal(
@@ -342,14 +448,18 @@ describe("refreshAlphPrice — manual/god path", () => {
     const record = await refreshAlphPrice(env);
 
     expect(record.usd).toBeCloseTo(0.042);
-    expect(record.source).toBe("coingecko");
+    // Records whichever source answered, not a hardcoded name.
+    expect(record.source).toBe("coinpaprika");
     expect(JSON.parse(state.get("alph_usd_price")!).usd).toBeCloseTo(0.042);
   });
 
   it("propagates failures to the caller so the endpoint can 502", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn(async () => ({ ok: false, status: 500 }) as any),
+      vi.fn(
+        async () =>
+          ({ ok: false, status: 500, text: async () => "upstream" }) as any,
+      ),
     );
     await expect(refreshAlphPrice(makeEnv().env)).rejects.toThrow("500");
   });

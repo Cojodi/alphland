@@ -17,23 +17,87 @@ interface PriceEnv {
   COINGECKO_API_KEY?: string;
 }
 
+export type AlphPriceSource = "coinpaprika" | "coingecko" | "mexc";
+
 /** Row stored in indexer_state under key 'alph_usd_price'. */
 export interface AlphPrice {
   /** USD per 1 ALPH. */
   usd: number;
   /** When we fetched it (unix seconds). */
   fetched_at: number;
-  /** CoinGecko's own last_updated_at (unix seconds), if provided. */
+  /** The upstream's own last-updated time (unix seconds), if it provides one. */
   source_updated_at: number | null;
   /** Berlin-local date of the run that wrote this row, 'YYYY-MM-DD'. */
   run_date: string;
-  source: "coingecko";
+  /** Which upstream actually answered — sources are tried in order. */
+  source: AlphPriceSource;
 }
 
 const STATE_KEY = "alph_usd_price";
-const COINGECKO_URL =
-  "https://api.coingecko.com/api/v3/simple/price" +
-  "?ids=alephium&vs_currencies=usd&include_last_updated_at=true";
+
+/**
+ * Every request needs a descriptive User-Agent. Workers' fetch() sends none by
+ * default, and CoinGecko answers anonymous requests with a 403 telling you so.
+ */
+const USER_AGENT = "alphland-price-bot (+https://alph.land)";
+
+interface PriceSource {
+  name: AlphPriceSource;
+  url: string;
+  /** Returns null when the body parsed but held no usable price. */
+  parse(body: any): { usd: number; source_updated_at: number | null } | null;
+}
+
+/**
+ * Keyless price sources, tried in order until one answers.
+ *
+ * Why a chain rather than one source with an API key: CoinGecko's keyless
+ * tier rate-limits per client IP, and a Worker's egress IP is shared with
+ * everyone else on that Cloudflare edge — so the quota is routinely spent by
+ * strangers before our once-a-day call arrives, and no amount of retrying
+ * fixes it. Every source here works without signup.
+ *
+ * CoinPaprika leads because it is the least contended of the aggregators;
+ * CoinGecko stays as second so we still prefer it whenever it is reachable.
+ * MEXC is a single venue quoting ALPH/USDT rather than a volume-weighted USD
+ * aggregate, so it is last resort only — close enough to keep the site
+ * working, not the number we would choose.
+ */
+const PRICE_SOURCES: PriceSource[] = [
+  {
+    name: "coinpaprika",
+    url: "https://api.coinpaprika.com/v1/tickers/alph-alephium",
+    parse: (b) => {
+      const usd = b?.quotes?.USD?.price;
+      if (typeof usd !== "number") return null;
+      const t = Date.parse(b?.last_updated ?? "");
+      return {
+        usd,
+        source_updated_at: Number.isFinite(t) ? Math.floor(t / 1000) : null,
+      };
+    },
+  },
+  {
+    name: "coingecko",
+    url:
+      "https://api.coingecko.com/api/v3/simple/price" +
+      "?ids=alephium&vs_currencies=usd&include_last_updated_at=true",
+    parse: (b) => {
+      const usd = b?.alephium?.usd;
+      if (typeof usd !== "number") return null;
+      const t = b?.alephium?.last_updated_at;
+      return { usd, source_updated_at: typeof t === "number" ? t : null };
+    },
+  },
+  {
+    name: "mexc",
+    url: "https://api.mexc.com/api/v3/ticker/price?symbol=ALPHUSDT",
+    parse: (b) => {
+      const usd = Number(b?.price);
+      return Number.isFinite(usd) ? { usd, source_updated_at: null } : null;
+    },
+  },
+];
 
 /** Hour of the Berlin day at which the daily refresh runs. */
 export const REFRESH_HOUR_BERLIN = 8;
@@ -86,43 +150,59 @@ export async function getAlphPrice(env: PriceEnv): Promise<AlphPrice | null> {
 }
 
 /**
- * Fetch the current ALPH/USD rate from CoinGecko.
+ * Fetch the current ALPH/USD rate, trying each keyless source in turn.
  *
- * Works without an API key (keyless tier). A demo key raises the rate limit;
- * at one call per day we do not need one, but we send it when configured.
+ * Only throws when every source failed, and then the message carries all of
+ * their errors — one upstream being down looks nothing like all of them being
+ * down, and the difference decides whether anyone needs to act.
  */
-export async function fetchAlphPrice(
-  env: PriceEnv,
-): Promise<{ usd: number; source_updated_at: number | null }> {
-  const headers: Record<string, string> = { Accept: "application/json" };
-  if (env.COINGECKO_API_KEY) {
-    headers["x-cg-demo-api-key"] = env.COINGECKO_API_KEY;
+export async function fetchAlphPrice(env: PriceEnv): Promise<{
+  usd: number;
+  source_updated_at: number | null;
+  source: AlphPriceSource;
+}> {
+  const failures: string[] = [];
+
+  for (const src of PRICE_SOURCES) {
+    const headers: Record<string, string> = {
+      Accept: "application/json",
+      "User-Agent": USER_AGENT,
+    };
+    // Harmless on the other sources' requests, so only sent where it means
+    // something. A demo key raises CoinGecko's limit if one is ever set.
+    if (src.name === "coingecko" && env.COINGECKO_API_KEY) {
+      headers["x-cg-demo-api-key"] = env.COINGECKO_API_KEY;
+    }
+
+    try {
+      const res = await fetch(src.url, { headers });
+
+      if (!res.ok) {
+        // Include the body: upstreams say why they refused, and a bare status
+        // makes a policy rejection look identical to an IP block.
+        const detail = (await res.text()).slice(0, 200);
+        failures.push(`${src.name} ${res.status}: ${detail}`);
+        continue;
+      }
+
+      const parsed = src.parse(await res.json());
+      if (!parsed || !Number.isFinite(parsed.usd) || parsed.usd <= 0) {
+        failures.push(`${src.name}: no usable price in response`);
+        continue;
+      }
+
+      if (failures.length > 0) {
+        console.warn(
+          `[price] fell back to ${src.name}: ${failures.join("; ")}`,
+        );
+      }
+      return { ...parsed, source: src.name };
+    } catch (err: any) {
+      failures.push(`${src.name}: ${err?.message ?? err}`);
+    }
   }
 
-  const res = await fetch(COINGECKO_URL, { headers });
-
-  if (!res.ok) {
-    throw new Error(`CoinGecko responded ${res.status}`);
-  }
-
-  const body = (await res.json()) as {
-    alephium?: { usd?: number; last_updated_at?: number };
-  };
-
-  const usd = body?.alephium?.usd;
-  if (typeof usd !== "number" || !Number.isFinite(usd) || usd <= 0) {
-    throw new Error(
-      `CoinGecko returned no usable price: ${JSON.stringify(body)}`,
-    );
-  }
-
-  return {
-    usd,
-    source_updated_at:
-      typeof body.alephium?.last_updated_at === "number"
-        ? body.alephium.last_updated_at
-        : null,
-  };
+  throw new Error(`all price sources failed — ${failures.join("; ")}`);
 }
 
 /**
@@ -133,14 +213,14 @@ export async function refreshAlphPrice(
   env: PriceEnv,
   runDate: string = berlinParts().date,
 ): Promise<AlphPrice> {
-  const { usd, source_updated_at } = await fetchAlphPrice(env);
+  const { usd, source_updated_at, source } = await fetchAlphPrice(env);
 
   const record: AlphPrice = {
     usd,
     fetched_at: Math.floor(Date.now() / 1000),
     source_updated_at,
     run_date: runDate,
-    source: "coingecko",
+    source,
   };
 
   await env.DB.prepare(
@@ -334,7 +414,7 @@ export async function maybeRefreshDailyPrice(env: PriceEnv): Promise<void> {
     // Log the hour we actually ran at, not the target — a value other than
     // 08 means an earlier attempt that day failed and this was a retry.
     console.log(
-      `[price] ALPH/USD = ${record.usd} (Berlin ${date} ${String(hour).padStart(2, "0")}:00)`,
+      `[price] ALPH/USD = ${record.usd} via ${record.source} (Berlin ${date} ${String(hour).padStart(2, "0")}:00)`,
     );
 
     // Revalue separately: if this fails we still keep the new rate, and the
