@@ -12,6 +12,7 @@ import {
   handleCommentsAPI,
   handleSponsorsAPI,
   handleNotificationsAPI,
+  handleEmailAPI,
   handleNotificationPreferencesAPI,
   handleUserDeletionAPI,
   handleBookmarksAPI,
@@ -1032,6 +1033,12 @@ const worker = {
       // Notifications endpoints
       if (url.pathname.startsWith("/api/notifications")) {
         return handleNotificationsAPI(request, env, url);
+      }
+
+      // Email preferences + one-click unsubscribe (the latter is unauthenticated
+      // by design — see handleEmailAPI)
+      if (url.pathname.startsWith("/api/email/")) {
+        return handleEmailAPI(request, env, url);
       }
 
       // Notification preferences and mutes endpoints

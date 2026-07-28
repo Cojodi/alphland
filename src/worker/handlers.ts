@@ -9,6 +9,8 @@ import {
   notifySponsorNewSubmission,
   notifyUserRevisionRequested,
   notifySponsorSubmissionResubmitted,
+  verifyUnsubscribe,
+  EMAIL_CATEGORIES,
 } from "./email";
 import {
   notifySubmissionReviewed,
@@ -3977,6 +3979,131 @@ ${body.description}
     return json({ prUrl: pr.html_url, prNumber: pr.number });
   } catch (err) {
     console.error("[submit-dapp] error:", err);
+    return json(
+      { error: err instanceof Error ? err.message : "Internal server error" },
+      500,
+    );
+  }
+}
+
+/**
+ * Email preferences and one-click unsubscribe.
+ *
+ *   GET  /api/email/preferences        -> { unsubscribed: string[] }   (session)
+ *   PUT  /api/email/preferences        <- { unsubscribed: string[] }   (session)
+ *   GET  /api/email/unsubscribe?u&c&t  -> HTML confirmation            (signed)
+ *   POST /api/email/unsubscribe?u&c&t  -> 200                          (signed)
+ *
+ * The unsubscribe routes take no session on purpose: the link is followed
+ * from a mail client, often on a device that is not logged in, and RFC 8058
+ * one-click requires an unauthenticated POST. Authorization comes from the
+ * HMAC over (userId, category) instead — a bare user id in the URL would let
+ * anyone unsubscribe anyone.
+ */
+export async function handleEmailAPI(
+  request: Request,
+  env: Env,
+  url: URL,
+): Promise<Response> {
+  const json = (obj: unknown, status = 200) =>
+    new Response(JSON.stringify(obj), { status, headers: corsHeaders });
+
+  try {
+    if (url.pathname === "/api/email/unsubscribe") {
+      const userId = url.searchParams.get("u") || "";
+      const category = url.searchParams.get("c") || "";
+      const token = url.searchParams.get("t") || "";
+
+      if (!userId || !category || !token) {
+        return json({ error: "Missing parameters" }, 400);
+      }
+      if (category !== "all" && !EMAIL_CATEGORIES.includes(category as any)) {
+        return json({ error: "Unknown category" }, 400);
+      }
+      if (!(await verifyUnsubscribe(env, userId, category, token))) {
+        return json({ error: "Invalid or expired link" }, 403);
+      }
+
+      await env.DB.prepare(
+        `INSERT INTO email_unsubscribes (user_id, category) VALUES (?, ?)
+         ON CONFLICT(user_id, category) DO NOTHING`,
+      )
+        .bind(userId, category)
+        .run();
+
+      // One-click clients want a bare 200, not a page.
+      if (request.method === "POST") return json({ ok: true });
+
+      return new Response(
+        `<!doctype html><meta charset="utf-8">
+         <title>Unsubscribed – Alphland</title>
+         <div style="font-family:Arial,sans-serif;max-width:520px;margin:80px auto;color:#111;text-align:center;">
+           <h2 style="color:#E05C2A;">You're unsubscribed</h2>
+           <p>You will no longer receive <strong>${category}</strong> emails from Alphland.</p>
+           <p style="color:#888;font-size:14px;">Changed your mind? Turn them back on in your account settings.</p>
+           <a href="https://alph.land/bounty/profile" style="display:inline-block;padding:12px 24px;background:#111;color:#fff;text-decoration:none;border-radius:6px;margin-top:16px;">Account settings</a>
+         </div>`,
+        {
+          status: 200,
+          headers: { "Content-Type": "text/html; charset=utf-8" },
+        },
+      );
+    }
+
+    if (url.pathname === "/api/email/preferences") {
+      const sessionUserId = await getSessionUserId(env, request);
+      if (!sessionUserId) return json({ error: "Unauthorized" }, 401);
+
+      if (request.method === "GET") {
+        const rows = (await env.DB.prepare(
+          `SELECT category FROM email_unsubscribes WHERE user_id = ?`,
+        )
+          .bind(sessionUserId)
+          .all()) as { results?: { category: string }[] };
+
+        return json({
+          categories: EMAIL_CATEGORIES,
+          unsubscribed: (rows.results ?? []).map((r) => r.category),
+        });
+      }
+
+      if (request.method === "PUT") {
+        const body = (await request.json()) as { unsubscribed?: unknown };
+        const list = Array.isArray(body.unsubscribed) ? body.unsubscribed : [];
+
+        const valid = list.filter(
+          (c): c is string =>
+            typeof c === "string" &&
+            (c === "all" || EMAIL_CATEGORIES.includes(c as any)),
+        );
+        if (valid.length !== list.length) {
+          return json({ error: "Unknown category" }, 400);
+        }
+
+        // Replace the whole set: the settings page always sends the full
+        // state, so a removed entry means "resubscribe".
+        await env.DB.prepare(`DELETE FROM email_unsubscribes WHERE user_id = ?`)
+          .bind(sessionUserId)
+          .run();
+
+        for (const category of valid) {
+          await env.DB.prepare(
+            `INSERT INTO email_unsubscribes (user_id, category) VALUES (?, ?)
+             ON CONFLICT(user_id, category) DO NOTHING`,
+          )
+            .bind(sessionUserId, category)
+            .run();
+        }
+
+        return json({ ok: true, unsubscribed: valid });
+      }
+
+      return json({ error: "Method not allowed" }, 405);
+    }
+
+    return json({ error: "Not found" }, 404);
+  } catch (err) {
+    console.error("[email-api] error:", err);
     return json(
       { error: err instanceof Error ? err.message : "Internal server error" },
       500,
