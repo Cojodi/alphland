@@ -568,3 +568,100 @@ export async function notifySponsorVerified(
     { userId: row.user_id },
   );
 }
+
+/**
+ * "Closing soon" nudge to someone who bookmarked a bounty.
+ *
+ * Takes the rows it needs as arguments rather than re-querying by id: the
+ * reminder cron has already loaded and filtered them, and re-reading per
+ * recipient would turn one query into hundreds.
+ */
+export async function notifyBountyDeadlineSoon(
+  env: Env,
+  user: { user_id: string; email: string; name: string | null },
+  bounty: { id: string; title: string; end_date: number },
+): Promise<void> {
+  const closes = new Date(bounty.end_date * 1000).toUTCString();
+
+  await sendAndLog(
+    env,
+    user.email,
+    `Closing soon – ${bounty.title}`,
+    "bounty_deadline",
+    `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#111;">
+      <h2 style="color:#E05C2A;">This bounty closes soon</h2>
+      <p>Hi ${user.name || "there"},</p>
+      <p>You bookmarked <strong>${bounty.title}</strong> and it stops accepting submissions on <strong>${closes}</strong>.</p>
+      <a href="${BASE_URL}/bounty/${bounty.id}" style="display:inline-block;padding:12px 24px;background:#E05C2A;color:#fff;text-decoration:none;border-radius:6px;margin:16px 0;">View Bounty</a>
+      <hr style="border:none;border-top:1px solid #eee;margin:24px 0;">
+      <p style="color:#888;font-size:12px;">Alphland · <a href="${BASE_URL}" style="color:#888;">alph.land</a></p>
+    </div>`,
+    { userId: user.user_id, bountyId: bounty.id },
+  );
+}
+
+/** Remind a sponsor that submissions have been waiting since the deadline. */
+export async function notifySponsorReviewOverdue(
+  env: Env,
+  b: {
+    id: string;
+    title: string;
+    sponsor_user_id: string;
+    sponsor_email: string;
+    sponsor_contact: string | null;
+    submission_count: number;
+  },
+): Promise<void> {
+  const plural = b.submission_count === 1 ? "submission" : "submissions";
+
+  await sendAndLog(
+    env,
+    b.sponsor_email,
+    `${b.submission_count} ${plural} still waiting – ${b.title}`,
+    "review_overdue",
+    `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#111;">
+      <h2 style="color:#E05C2A;">Submissions are waiting on you</h2>
+      <p>Hi ${b.sponsor_contact || "there"},</p>
+      <p><strong>${b.title}</strong> closed a week ago and <strong>${b.submission_count} ${plural}</strong> have not been reviewed yet.</p>
+      <p>Participants cannot be paid until winners are announced.</p>
+      <a href="${BASE_URL}/bounty/sponsor/dashboard" style="display:inline-block;padding:12px 24px;background:#E05C2A;color:#fff;text-decoration:none;border-radius:6px;margin:16px 0;">Review Submissions</a>
+      <hr style="border:none;border-top:1px solid #eee;margin:24px 0;">
+      <p style="color:#888;font-size:12px;">Alphland · <a href="${BASE_URL}" style="color:#888;">alph.land</a></p>
+    </div>`,
+    { userId: b.sponsor_user_id, bountyId: b.id },
+  );
+}
+
+/**
+ * Tell admins a bounty has gone two weeks without a verdict.
+ *
+ * Uncategorised on purpose — this is operational mail to staff, not a
+ * newsletter, and must not be silenced by an opt-out.
+ */
+export async function notifyAdminReviewEscalation(
+  env: Env,
+  admin: { id: string; email: string },
+  b: {
+    id: string;
+    title: string;
+    sponsor_name: string;
+    submission_count: number;
+  },
+): Promise<void> {
+  await sendAndLog(
+    env,
+    admin.email,
+    `Unreviewed for 14 days – ${b.title}`,
+    "review_escalation",
+    `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#111;">
+      <h2>Bounty unreviewed for 14 days</h2>
+      <p><strong>${b.title}</strong> by <strong>${b.sponsor_name}</strong> closed two weeks ago with
+         <strong>${b.submission_count}</strong> submission(s) and still has no announced winners.</p>
+      <p>The sponsor was reminded at 7 days. This needs a human decision.</p>
+      <a href="${BASE_URL}/bounty/${b.id}" style="display:inline-block;padding:12px 24px;background:#111;color:#fff;text-decoration:none;border-radius:6px;margin:16px 0;">View Bounty</a>
+      <hr style="border:none;border-top:1px solid #eee;margin:24px 0;">
+      <p style="color:#888;font-size:12px;">Alphland admin notification</p>
+    </div>`,
+    { userId: admin.id, bountyId: b.id },
+  );
+}

@@ -12,6 +12,7 @@ import {
   verifyUnsubscribe,
   EMAIL_CATEGORIES,
 } from "./email";
+import { isAcceptingSubmissions } from "@/features/bounty/utils/bountyStatus";
 import {
   notifySubmissionReviewed,
   notifyNewSubmission as notifySponsorOfSubmission,
@@ -197,20 +198,62 @@ export async function handleSubmissionsAPI(
         );
       }
 
-      // Only accept submissions to bounties that are actually open.
+      // A submitter must be reachable and payable before they can enter.
+      // Checked here rather than in the form: the form can be bypassed, and
+      // the cost of finding out at payout time is a winner nobody can pay.
+      const profile = (await env.DB.prepare(
+        `SELECT username, wallet_address FROM user_profiles WHERE user_id = ?`,
+      )
+        .bind(sessionUserId)
+        .first()) as {
+        username: string | null;
+        wallet_address: string | null;
+      } | null;
+
+      const missing = [
+        !profile?.username?.trim() && "a username",
+        !profile?.wallet_address?.trim() && "a wallet address",
+      ].filter(Boolean) as string[];
+
+      if (missing.length > 0) {
+        return new Response(
+          JSON.stringify({
+            error: `Add ${missing.join(" and ")} to your profile before submitting.`,
+            missing_profile_fields: missing,
+          }),
+          { status: 403, headers: corsHeaders },
+        );
+      }
+
+      // Only accept submissions to bounties that are actually live.
+      //
+      // The check used to be `status !== 'open'`, which 032 turned into a
+      // hole: a draft also carries status 'open', so an unpublished bounty
+      // would have accepted submissions. It also never looked at the
+      // deadline, so a closed bounty stayed open to submissions. Both are
+      // covered by the shared derivation.
       const bounty = (await env.DB.prepare(
-        "SELECT status FROM bounties WHERE id = ?",
+        `SELECT status, is_published, published_at, is_winners_announced, end_date
+           FROM bounties WHERE id = ?`,
       )
         .bind(body.bounty_id)
-        .first()) as { status: string } | null;
+        .first()) as {
+        status: string;
+        is_published: number;
+        published_at: number | null;
+        is_winners_announced: number;
+        end_date: number | null;
+      } | null;
 
-      if (!bounty) {
+      if (!bounty || !bounty.is_published) {
+        // A draft's existence is not something a stranger should be able to
+        // confirm, so this is 404 rather than "not accepting".
         return new Response(JSON.stringify({ error: "Bounty not found" }), {
           status: 404,
           headers: corsHeaders,
         });
       }
-      if (bounty.status !== "open") {
+      if (!isAcceptingSubmissions(bounty)) {
         return new Response(
           JSON.stringify({ error: "This bounty is not accepting submissions" }),
           { status: 400, headers: corsHeaders },

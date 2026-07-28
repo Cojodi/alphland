@@ -35,6 +35,7 @@ import {
 // both sides. The module is dependency-free so it bundles into the Worker.
 import { getBountyDisplayStatus } from "@/features/bounty/utils/bountyStatus";
 import { bountySlug } from "@/features/bounty/utils/validators";
+import { runBountyReminders } from "./reminders";
 
 // Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
 type D1Database = any;
@@ -1222,6 +1223,12 @@ const worker = {
     // outage cannot stop the address indexer below.
     await maybeRefreshDailyPrice(env);
 
+    // Deadline and overdue-review reminders. Also never throws — each stage
+    // is isolated inside runBountyReminders, so a reminder failure cannot
+    // stop the indexer either. Deduplicated against email_logs, not by the
+    // schedule: this handler fires hourly.
+    await runBountyReminders(env);
+
     const EXPLORER = "https://lb-fullnode-alephium.notrustverify.ch";
     const MAX_WINDOW_MS = 2 * 60 * 60_000; // process at most 2 hours per run
     const now = Date.now();
@@ -1930,6 +1937,37 @@ async function handleBountiesAPI(
             status: 400,
             headers: corsHeaders,
           });
+        }
+
+        // Sponsor standing is re-checked at publish, not just at create: a
+        // sponsor can be banned or have their verification pulled while a
+        // draft sits unpublished, and the draft must not become live anyway.
+        const standing = (await env.DB.prepare(
+          `SELECT s.is_verified, s.is_banned
+             FROM bounties b JOIN sponsors s ON b.sponsor_id = s.id
+            WHERE b.id = ?`,
+        )
+          .bind(id)
+          .first()) as { is_verified: number; is_banned: number } | null;
+
+        const publisherIsGod = await isGodUser(env, sessionUserId);
+
+        if (standing?.is_banned) {
+          return new Response(
+            JSON.stringify({
+              error: "This sponsor account is banned and cannot publish.",
+            }),
+            { status: 403, headers: corsHeaders },
+          );
+        }
+        if (!standing?.is_verified && !publisherIsGod) {
+          return new Response(
+            JSON.stringify({
+              error:
+                "Sponsor account is pending review. Please wait for admin approval before publishing.",
+            }),
+            { status: 403, headers: corsHeaders },
+          );
         }
       }
 
