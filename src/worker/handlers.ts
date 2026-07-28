@@ -1675,9 +1675,9 @@ export async function handleSponsorsAPI(
     const id = pathname.replace("/dashboard", "").split("/").pop();
 
     // Get sponsor info
-    const sponsor = await env.DB.prepare(`SELECT * FROM sponsors WHERE id = ?`)
+    const sponsor = (await env.DB.prepare(`SELECT * FROM sponsors WHERE id = ?`)
       .bind(id)
-      .first();
+      .first()) as { user_id: string } | null;
 
     if (!sponsor) {
       return new Response(JSON.stringify({ error: "Sponsor not found" }), {
@@ -1686,14 +1686,40 @@ export async function handleSponsorsAPI(
       });
     }
 
-    // Get bounties for this sponsor
+    // This endpoint serves two audiences: the sponsor's own dashboard, and
+    // the public sponsor profile page (SponsorProfile.tsx fetches it from
+    // getServerSideProps). It had no authorization at all, so anyone who knew
+    // a sponsor id could read every submission -- including
+    // user_wallet_address and the submitter's identity -- and, once drafts
+    // existed, their unpublished bounties too.
+    //
+    // Rather than lock the whole route and break the public page, the owner
+    // gets everything and everyone else gets only what that page actually
+    // reads: the sponsor record and the published bounties.
+    const sessionUserId = await getSessionUserId(env, request);
+    const isOwner =
+      !!sessionUserId &&
+      (sponsor.user_id === sessionUserId ||
+        (await isGodUser(env, sessionUserId)));
+
     const { results: bounties } = await env.DB.prepare(
-      `SELECT * FROM bounties
-       WHERE sponsor_id = ?
-       ORDER BY created_at DESC`,
+      isOwner
+        ? `SELECT * FROM bounties
+            WHERE sponsor_id = ?
+            ORDER BY created_at DESC`
+        : `SELECT * FROM bounties
+            WHERE sponsor_id = ? AND is_published = 1 AND status != 'deleted'
+            ORDER BY created_at DESC`,
     )
       .bind(id)
       .all();
+
+    if (!isOwner) {
+      return new Response(
+        JSON.stringify({ sponsor, bounties, submissions: [] }),
+        { headers: corsHeaders },
+      );
+    }
 
     // Get submissions for all bounties by this sponsor (with user info)
     const { results: submissions } = await env.DB.prepare(

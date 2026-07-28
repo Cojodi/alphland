@@ -5,6 +5,10 @@ import { SubmissionReviewModal } from "../components/SubmissionReviewModal";
 import { BountySubmission } from "@/lib/api-client";
 import { submissionTitle } from "../utils";
 import {
+  getBountyDisplayStatus,
+  type BountyDisplayStatus,
+} from "../utils/bountyStatus";
+import {
   AlertTriangle,
   BarChart3,
   ChevronLeft,
@@ -14,6 +18,7 @@ import {
   Mail,
   Plus,
   RefreshCw,
+  Send,
   TrendingUp,
   X,
 } from "lucide-react";
@@ -21,6 +26,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect, useCallback } from "react";
+import { toast } from "react-toastify";
 import { useSession } from "@/lib/auth-client";
 import Layout from "@/components/Layout";
 
@@ -116,6 +122,58 @@ export default function SponsorDashboard() {
     [router],
   );
 
+  const [publishingId, setPublishingId] = useState<string | null>(null);
+
+  /**
+   * Take a draft live.
+   *
+   * The endpoint is a conditional UPDATE, so a double click cannot publish
+   * twice — the second request comes back 409 and is reported as "already
+   * published" rather than as a failure. A 400 means the draft is still
+   * missing required fields, and the server's message names them.
+   */
+  const handlePublish = useCallback(
+    async (bounty: Bounty, e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (publishingId) return;
+      setPublishingId(bounty.id);
+
+      try {
+        const res = await fetch(`/api/bounties/${bounty.id}/publish`, {
+          method: "POST",
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(
+            data?.error ||
+              (res.status === 400
+                ? "This draft is missing required fields."
+                : "Failed to publish."),
+          );
+        }
+
+        toast.success("Bounty published");
+        setBounties((prev) =>
+          prev.map((b) =>
+            b.id === bounty.id
+              ? {
+                  ...b,
+                  is_published: 1,
+                  published_at: data?.bounty?.published_at,
+                }
+              : b,
+          ),
+        );
+      } catch (err: any) {
+        toast.error(err?.message || "Failed to publish.");
+      } finally {
+        setPublishingId(null);
+      }
+    },
+    [publishingId],
+  );
+
   const viewSubmission = useCallback(
     (submission: any, bountyId: string, skipUrlUpdate = false) => {
       // Field names now match the API, so the submission passes straight
@@ -172,41 +230,52 @@ export default function SponsorDashboard() {
     return dateObj.toLocaleDateString();
   };
 
-  // Compute display status for a bounty using end_date + submission review state
-  const getBountyDisplayStatus = (
-    bounty: Bounty,
-  ): "open" | "closed" | "completed" => {
-    // DB status takes priority
-    if (bounty.status === "completed") return "completed";
-    if (!bounty.end_date) return "open";
-    const ts = Number(bounty.end_date);
-    const endMs =
-      !isNaN(ts) && ts < 10000000000
-        ? ts * 1000
-        : new Date(bounty.end_date).getTime();
-    const isExpired = endMs < Date.now();
-    if (!isExpired) return "open";
-    const bountySubmissions = allSubmissions.filter(
-      (s) => s.bounty_id === bounty.id,
+  /**
+   * Display status for a bounty.
+   *
+   * Delegates to the shared derivation the worker also uses, so the dashboard
+   * and the rest of the site cannot disagree. The previous local version
+   * inferred everything from end_date plus submission review state, which
+   * predates the is_published / is_winners_announced columns and therefore
+   * had no way to show a draft at all.
+   *
+   * Payment counts come from the submissions already loaded here, which is
+   * what lets the dashboard distinguish "Payment Pending" from "Completed".
+   */
+  const bountyStatusOf = (bounty: Bounty): BountyDisplayStatus => {
+    const mine = allSubmissions.filter((s) => s.bounty_id === bounty.id);
+    const winners = mine.filter((s) => (s as any).is_winner);
+    return getBountyDisplayStatus(
+      bounty,
+      {
+        winnerCount: winners.length,
+        paidCount: winners.filter((s) => (s as any).is_paid).length,
+      },
+      Date.now(),
     );
-    const allReviewed =
-      bountySubmissions.length === 0 ||
-      bountySubmissions.every(
-        (s) =>
-          (s.status as string) === "approved" ||
-          (s.status as string) === "rejected",
-      );
-    return allReviewed ? "completed" : "closed";
   };
 
-  const getStatusBadgeStyle = (status: "open" | "closed" | "completed") => {
+  /**
+   * Badge colours follow DESIGN_SYSTEM.md's semantic rules:
+   * green for accepting-submissions, red for negative/action-overdue,
+   * orange for the achievement-like end state, neutral for the merely
+   * informational ones.
+   */
+  const getStatusBadgeStyle = (status: BountyDisplayStatus) => {
     switch (status) {
-      case "open":
+      case "In Progress":
         return "bg-accessible-green/20 text-accessible-green";
-      case "closed":
-        return "bg-danger-red/10 text-danger-red";
-      case "completed":
-        return "bg-accessible-green/10 text-light-charcoal dark:text-lightgrey";
+      case "Completed":
+        return "bg-orange/10 text-orange";
+      case "Payment Pending":
+        return "bg-red-500/10 text-red-500";
+      case "Cancelled":
+        return "bg-red-500/10 text-red-500";
+      case "Draft":
+      case "Unpublished":
+      case "In Review":
+      default:
+        return "bg-smoked-white dark:bg-light-black text-light-charcoal dark:text-lightgrey";
     }
   };
 
@@ -384,6 +453,11 @@ export default function SponsorDashboard() {
           reward_type: b.reward_type || "fixed",
           tier_count: b.tier_count || null,
           category: b.category || "Development",
+          slug: b.slug ?? null,
+          is_published: b.is_published,
+          published_at: b.published_at ?? null,
+          is_winners_announced: b.is_winners_announced,
+          winners_announced_at: b.winners_announced_at ?? null,
           created_at: b.created_at,
           updated_at: b.updated_at,
         }));
@@ -900,11 +974,10 @@ export default function SponsorDashboard() {
                                     </h4>
                                     <div className="flex items-center gap-2 mt-2">
                                       {(() => {
-                                        const ds =
-                                          getBountyDisplayStatus(bounty);
+                                        const ds = bountyStatusOf(bounty);
                                         return (
                                           <span
-                                            className={`text-xs font-barlow font-medium px-2 py-1 rounded capitalize ${getStatusBadgeStyle(ds)}`}
+                                            className={`text-xs font-barlow font-medium px-2 py-1 rounded ${getStatusBadgeStyle(ds)}`}
                                           >
                                             {ds}
                                           </span>
@@ -916,6 +989,20 @@ export default function SponsorDashboard() {
                                     </div>
                                   </div>
                                   <div className="flex gap-1">
+                                    {bountyStatusOf(bounty) === "Draft" ||
+                                    bountyStatusOf(bounty) === "Unpublished" ? (
+                                      <button
+                                        className="text-orange hover:bg-orange/10 p-2 rounded disabled:opacity-50"
+                                        title="Publish this draft"
+                                        aria-label="Publish this draft"
+                                        disabled={publishingId === bounty.id}
+                                        onClick={(e) =>
+                                          handlePublish(bounty, e)
+                                        }
+                                      >
+                                        <Send className="w-4 h-4" />
+                                      </button>
+                                    ) : null}
                                     {bounty.status !== "completed" && (
                                       <button
                                         className="text-orange hover:bg-orange/10 p-2 rounded"
@@ -928,9 +1015,9 @@ export default function SponsorDashboard() {
                                       </button>
                                     )}
                                     {(() => {
-                                      const ds = getBountyDisplayStatus(bounty);
-                                      return ds === "closed" ||
-                                        ds === "completed" ? (
+                                      const ds = bountyStatusOf(bounty);
+                                      return ds === "In Review" ||
+                                        ds === "Completed" ? (
                                         <button
                                           className="text-orange hover:bg-orange/10 p-2 rounded"
                                           title="Republish"
@@ -1212,10 +1299,10 @@ export default function SponsorDashboard() {
                               </h3>
                               <div className="flex flex-wrap gap-2 mb-3">
                                 {(() => {
-                                  const ds = getBountyDisplayStatus(bounty);
+                                  const ds = bountyStatusOf(bounty);
                                   return (
                                     <span
-                                      className={`text-xs font-barlow font-medium px-2 py-1 rounded capitalize ${getStatusBadgeStyle(ds)}`}
+                                      className={`text-xs font-barlow font-medium px-2 py-1 rounded ${getStatusBadgeStyle(ds)}`}
                                     >
                                       {ds}
                                     </span>
@@ -1235,6 +1322,19 @@ export default function SponsorDashboard() {
                                 {bounty.reward.amount} {bounty.reward.token}
                               </div>
                               <div className="flex gap-2">
+                                {bountyStatusOf(bounty) === "Draft" ||
+                                bountyStatusOf(bounty) === "Unpublished" ? (
+                                  <button
+                                    className="bg-orange text-white hover:opacity-90 transition-opacity font-barlow px-3 py-1 rounded text-sm flex items-center gap-1 disabled:opacity-50"
+                                    disabled={publishingId === bounty.id}
+                                    onClick={(e) => handlePublish(bounty, e)}
+                                  >
+                                    <Send className="w-4 h-4" />
+                                    {publishingId === bounty.id
+                                      ? "Publishing..."
+                                      : "Publish"}
+                                  </button>
+                                ) : null}
                                 {bounty.status !== "completed" && (
                                   <button
                                     className="border border-orange text-orange hover:bg-orange/10 font-barlow px-3 py-1 rounded text-sm flex items-center gap-1"
@@ -1247,9 +1347,9 @@ export default function SponsorDashboard() {
                                   </button>
                                 )}
                                 {(() => {
-                                  const ds = getBountyDisplayStatus(bounty);
-                                  return ds === "closed" ||
-                                    ds === "completed" ? (
+                                  const ds = bountyStatusOf(bounty);
+                                  return ds === "In Review" ||
+                                    ds === "Completed" ? (
                                     <button
                                       className="border border-orange text-orange hover:bg-orange/10 font-barlow px-3 py-1 rounded text-sm flex items-center gap-1"
                                       onClick={(e) =>

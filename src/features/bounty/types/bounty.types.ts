@@ -39,6 +39,14 @@ export interface Bounty {
   /** Stored routing key for /bounty/sponsor/:slug — stable across renames. */
   sponsor_slug?: string;
   sponsor_logo_url?: string | null;
+  /** Readable routing key. Null for drafts whose title yields no slug. */
+  slug?: string | null;
+  /** 0 while a draft; 1 once live. See getBountyDisplayStatus(). */
+  is_published?: number;
+  /** Set the first time it was published, so a later unpublish is not a draft. */
+  published_at?: number | null;
+  is_winners_announced?: number;
+  winners_announced_at?: number | null;
   created_at: string;
   updated_at: string;
 }
