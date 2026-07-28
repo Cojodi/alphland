@@ -8,6 +8,40 @@ export function sponsorSlug(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
+/** Longest slug we will generate, before any uniqueness suffix. */
+export const BOUNTY_SLUG_MAX = 60;
+
+/**
+ * Generate a URL-friendly slug from a bounty title.
+ *
+ *   "Create a YouTube Tutorial: How to Use Linx App"
+ *     -> "create-a-youtube-tutorial-how-to-use-linx-app"
+ *
+ * Deliberately NOT sponsorSlug(). That one deletes every non-alphanumeric
+ * character, which suits a short org name ("Linx Labs" -> "linxlabs") but
+ * turns a sentence into "createayoutubetutorialhowtouselinxapp" — unreadable,
+ * and worthless for the search ranking that is the only reason to have slugs
+ * on bounties at all. Words are joined with hyphens instead.
+ *
+ * Truncation cuts on a word boundary so the tail is not a fragment, and the
+ * result can be empty (a title of only punctuation or non-Latin script), which
+ * callers must handle by falling back to the id rather than storing "".
+ */
+export function bountySlug(title: string): string {
+  const base = (title || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  if (base.length <= BOUNTY_SLUG_MAX) return base;
+
+  const cut = base.slice(0, BOUNTY_SLUG_MAX);
+  const lastHyphen = cut.lastIndexOf("-");
+  // Only honour the word boundary if it leaves a usable slug; a title whose
+  // first word is longer than the cap would otherwise slice to nothing.
+  return (lastHyphen > 20 ? cut.slice(0, lastHyphen) : cut).replace(/-+$/, "");
+}
+
 export function isValidUrl(url: string): boolean {
   try {
     const parsed = new URL(url);

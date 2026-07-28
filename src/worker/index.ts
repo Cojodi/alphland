@@ -34,6 +34,7 @@ import {
 // Shared with the frontend on purpose — one derivation of display status for
 // both sides. The module is dependency-free so it bundles into the Worker.
 import { getBountyDisplayStatus } from "@/features/bounty/utils/bountyStatus";
+import { bountySlug } from "@/features/bounty/utils/validators";
 
 // Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
 type D1Database = any;
@@ -1385,6 +1386,42 @@ function transformBounty(bounty: any) {
 }
 
 /**
+ * Pick a free slug for a title.
+ *
+ * The UNIQUE index is what actually guarantees uniqueness; this just avoids
+ * losing the insert to an avoidable collision. Two bounties named the same
+ * thing become "…-2", "…-3". Returns null when the title yields no usable
+ * slug (all punctuation, or non-Latin script) — the row then keeps NULL and
+ * stays reachable by id, which is why the index is partial.
+ */
+async function pickBountySlug(
+  env: Env,
+  title: string,
+  excludeId?: string,
+): Promise<string | null> {
+  const base = bountySlug(title);
+  if (!base) return null;
+
+  for (let n = 1; n <= 20; n++) {
+    const candidate = n === 1 ? base : `${base}-${n}`;
+    const taken = (await env.DB.prepare(
+      `SELECT id FROM bounties WHERE slug = ? AND id IS NOT ? LIMIT 1`,
+    )
+      .bind(candidate, excludeId ?? null)
+      .first()) as { id: string } | null;
+    if (!taken) return candidate;
+  }
+
+  // Twenty identical titles is not a real case; fall back to id-only routing
+  // rather than looping forever or throwing away the whole create.
+  return null;
+}
+
+/** A bare UUID, i.e. the pre-slug URL form that must keep resolving. */
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
  * What a bounty must have before it can be public.
  *
  * Returns an error message, or null when it is publishable. Used by both
@@ -1497,9 +1534,14 @@ async function handleBountiesAPI(
     );
   }
 
-  // GET /api/bounties/:id - Get single bounty
+  // GET /api/bounties/:idOrSlug - Get single bounty
+  //
+  // Accepts either form. Every /bounty/<uuid> link already shared publicly
+  // predates slugs, so dropping id lookup would 404 them; matching on both
+  // keeps those alive permanently. A bare UUID is matched against id only, so
+  // a slug can never shadow an id (and vice versa).
   if (request.method === "GET" && pathname.match(/^\/api\/bounties\/[^/]+$/)) {
-    const id = pathname.split("/").pop();
+    const key = decodeURIComponent(pathname.split("/").pop() || "");
     const bounty = await env.DB.prepare(
       `
       SELECT b.*,
@@ -1510,10 +1552,11 @@ async function handleBountiesAPI(
              (SELECT COUNT(*) FROM bounty_submissions WHERE bounty_id = b.id) as submission_count
       FROM bounties b
       LEFT JOIN sponsors s ON b.sponsor_id = s.id
-      WHERE b.id = ?
+      WHERE b.id = ? OR (? = 0 AND b.slug = ?)
+      LIMIT 1
     `,
     )
-      .bind(id)
+      .bind(key, UUID_RE.test(key) ? 1 : 0, key)
       .first();
 
     if (!bounty) {
@@ -1738,9 +1781,9 @@ async function handleBountiesAPI(
           valuation_updated_at,
           category, difficulty, dapp_name,
           start_date, end_date,
-          is_published, published_at,
+          is_published, published_at, slug,
           status, created_by, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       )
         .bind(
@@ -1769,6 +1812,7 @@ async function handleBountiesAPI(
           body.end_date || null,
           isPublished,
           isPublished ? now : null,
+          await pickBountySlug(env, body.title),
           "open",
           created_by,
           now,
