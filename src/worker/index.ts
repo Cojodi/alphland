@@ -31,6 +31,9 @@ import {
   resolveRewardInput,
   RateUnavailableError,
 } from "./price";
+// Shared with the frontend on purpose — one derivation of display status for
+// both sides. The module is dependency-free so it bundles into the Worker.
+import { getBountyDisplayStatus } from "@/features/bounty/utils/bountyStatus";
 
 // Type definition for D1Database (fallback for when @cloudflare/workers-types is not available)
 type D1Database = any;
@@ -1373,7 +1376,42 @@ function transformBounty(bounty: any) {
     // Which side the sponsor fixed. Drives whether the UI shows
     // "500 ALPH (≈ $19)" or "$100 (≈ 2,565 ALPH)".
     denomination: bounty.denomination || "alph",
+    // Derived server-side from the same function the client uses, so a list
+    // rendered from this payload and a page that recomputes it can never
+    // disagree. Payment counts are not in scope here, so an announced bounty
+    // reports "Payment Pending" rather than guessing "Completed".
+    display_status: getBountyDisplayStatus(bounty),
   };
+}
+
+/**
+ * What a bounty must have before it can be public.
+ *
+ * Returns an error message, or null when it is publishable. Used by both
+ * POST /api/bounties (creating as published) and POST /api/bounties/:id/publish
+ * (promoting a draft) — the gate has to be the same on both paths, or a draft
+ * becomes a way to publish a bounty that direct creation would have rejected.
+ *
+ * Takes a plain object so it works on a request body and on a database row.
+ */
+function publishRequirements(b: {
+  title?: unknown;
+  description?: unknown;
+  start_date?: unknown;
+  end_date?: unknown;
+}): string | null {
+  const filled = (v: unknown) =>
+    typeof v === "string" ? v.trim() !== "" : v !== null && v !== undefined;
+
+  const missing = [
+    !filled(b.title) && "title",
+    !filled(b.description) && "description",
+    !filled(b.start_date) && "start_date",
+    !filled(b.end_date) && "end_date",
+  ].filter(Boolean) as string[];
+
+  if (missing.length === 0) return null;
+  return `Cannot publish without: ${missing.join(", ")}`;
 }
 
 /**
@@ -1394,6 +1432,26 @@ async function handleBountiesAPI(
   // GET /api/bounties - List all bounties (with optional dapp_name filter)
   if (request.method === "GET" && pathname === "/api/bounties") {
     const dappName = url.searchParams.get("dapp_name");
+    // The sponsor dashboard needs its own drafts back; nothing else does.
+    // Scoped to one sponsor and checked against the session below, so this
+    // cannot be used to read someone else's unpublished work.
+    const includeDrafts = url.searchParams.get("include_drafts") === "1";
+    const sponsorId = url.searchParams.get("sponsor_id");
+
+    let showDrafts = false;
+    if (includeDrafts && sponsorId) {
+      const sessionUserId = await getSessionUserId(env, request);
+      if (sessionUserId) {
+        const owner = (await env.DB.prepare(
+          "SELECT user_id FROM sponsors WHERE id = ?",
+        )
+          .bind(sponsorId)
+          .first()) as { user_id: string } | null;
+        showDrafts =
+          owner?.user_id === sessionUserId ||
+          (await isGodUser(env, sessionUserId));
+      }
+    }
 
     let query = `
       SELECT b.*, s.name as sponsor_name, s.slug as sponsor_slug,
@@ -1406,6 +1464,15 @@ async function handleBountiesAPI(
     `;
 
     const params: string[] = [];
+
+    if (showDrafts) {
+      query += ` AND b.sponsor_id = ?`;
+      params.push(sponsorId!);
+    } else {
+      // A draft has never been public. Filtering here rather than in each
+      // caller means a new consumer of this endpoint cannot leak them.
+      query += ` AND b.is_published = 1`;
+    }
 
     // Filter by dapp_name if provided (case-insensitive)
     if (dappName) {
@@ -1454,6 +1521,23 @@ async function handleBountiesAPI(
         status: 404,
         headers: corsHeaders,
       });
+    }
+
+    // A draft is visible only to its own sponsor (so they can preview it) and
+    // to god. 404 rather than 403 — the id of an unpublished bounty is not
+    // something a stranger should be able to confirm exists.
+    if ((bounty as any).is_published === 0) {
+      const sessionUserId = await getSessionUserId(env, request);
+      const owner = (bounty as any).created_by;
+      const allowed =
+        !!sessionUserId &&
+        (sessionUserId === owner || (await isGodUser(env, sessionUserId)));
+      if (!allowed) {
+        return new Response(JSON.stringify({ error: "Bounty not found" }), {
+          status: 404,
+          headers: corsHeaders,
+        });
+      }
     }
 
     return new Response(JSON.stringify({ bounty: transformBounty(bounty) }), {
@@ -1561,19 +1645,31 @@ async function handleBountiesAPI(
         );
       }
 
-      // Required fields
-      if (
-        !body.title?.trim() ||
-        !body.description?.trim() ||
-        !body.start_date ||
-        !body.end_date
-      ) {
-        return new Response(
-          JSON.stringify({
-            error: "title, description, start_date, and end_date are required",
-          }),
-          { status: 400, headers: corsHeaders },
-        );
+      // Draft vs publish. Absent means publish, so every existing client that
+      // does not know about drafts keeps working exactly as before.
+      const isPublished = body.is_published === false ? 0 : 1;
+
+      // A draft is unfinished by definition — refusing to save one because
+      // the deadline is still blank defeats the point of the button. Only a
+      // title is required, so the dashboard has something to list it under.
+      // Everything else is enforced at publish time, in one place: the
+      // publishRequirements() check used by both this endpoint and
+      // POST /api/bounties/:id/publish.
+      if (!body.title?.trim()) {
+        return new Response(JSON.stringify({ error: "title is required" }), {
+          status: 400,
+          headers: corsHeaders,
+        });
+      }
+
+      if (isPublished) {
+        const missing = publishRequirements(body);
+        if (missing) {
+          return new Response(JSON.stringify({ error: missing }), {
+            status: 400,
+            headers: corsHeaders,
+          });
+        }
       }
 
       // reward_amount is always ALPH; target_usd is always USD. Which one the
@@ -1607,7 +1703,12 @@ async function handleBountiesAPI(
         );
       }
 
-      if (new Date(body.end_date) <= new Date(body.start_date)) {
+      // Only meaningful once both dates exist — a draft may have neither.
+      if (
+        body.start_date &&
+        body.end_date &&
+        new Date(body.end_date) <= new Date(body.start_date)
+      ) {
         return new Response(
           JSON.stringify({ error: "end_date must be after start_date" }),
           { status: 400, headers: corsHeaders },
@@ -1637,15 +1738,17 @@ async function handleBountiesAPI(
           valuation_updated_at,
           category, difficulty, dapp_name,
           start_date, end_date,
+          is_published, published_at,
           status, created_by, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       )
         .bind(
           id,
           body.sponsor_id,
           body.title,
-          body.description,
+          // NOT NULL in the schema, and a draft may not have one yet.
+          body.description ?? "",
           requirements,
           deliverables,
           skills,
@@ -1662,8 +1765,10 @@ async function handleBountiesAPI(
           category,
           difficulty,
           body.dapp_name || null,
-          body.start_date,
-          body.end_date,
+          body.start_date || null,
+          body.end_date || null,
+          isPublished,
+          isPublished ? now : null,
           "open",
           created_by,
           now,
@@ -1696,6 +1801,162 @@ async function handleBountiesAPI(
           status: 500,
           headers: corsHeaders,
         },
+      );
+    }
+  }
+
+  // POST /api/bounties/:id/publish - Take a draft live (idempotent)
+  // POST /api/bounties/:id/announce - Declare winners announced (idempotent)
+  //
+  // Both are conditional UPDATEs rather than SELECT-then-UPDATE. D1 is single
+  // writer, so `WHERE <flag> = 0` plus a check on meta.changes gives us
+  // idempotency without a distributed lock: a double-clicked button, a
+  // retried request or two tabs racing all leave exactly one transition, and
+  // the loser gets 409 instead of silently re-stamping the timestamp.
+  if (
+    request.method === "POST" &&
+    pathname.match(/^\/api\/bounties\/[^/]+\/(publish|announce)$/)
+  ) {
+    const action = pathname.endsWith("/publish") ? "publish" : "announce";
+    const id = pathname.split("/")[3];
+
+    try {
+      const sessionUserId = await getSessionUserId(env, request);
+      if (!sessionUserId) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: corsHeaders,
+        });
+      }
+
+      const bounty = (await env.DB.prepare(
+        `SELECT b.id, b.created_by, b.status, b.is_published, b.is_winners_announced,
+                b.title, b.description, b.start_date, b.end_date,
+                s.user_id as sponsor_user_id
+           FROM bounties b
+           LEFT JOIN sponsors s ON b.sponsor_id = s.id
+          WHERE b.id = ?`,
+      )
+        .bind(id)
+        .first()) as {
+        id: string;
+        created_by: string;
+        status: string;
+        is_published: number;
+        is_winners_announced: number;
+        title: string | null;
+        description: string | null;
+        start_date: number | null;
+        end_date: number | null;
+        sponsor_user_id: string | null;
+      } | null;
+
+      if (!bounty || bounty.status === "deleted") {
+        return new Response(JSON.stringify({ error: "Bounty not found" }), {
+          status: 404,
+          headers: corsHeaders,
+        });
+      }
+
+      const isOwner =
+        bounty.created_by === sessionUserId ||
+        bounty.sponsor_user_id === sessionUserId;
+      if (!isOwner && !(await isGodUser(env, sessionUserId))) {
+        return new Response(
+          JSON.stringify({ error: "You do not have permission to do that." }),
+          { status: 403, headers: corsHeaders },
+        );
+      }
+
+      if (bounty.status === "cancelled") {
+        return new Response(
+          JSON.stringify({ error: "This bounty has been cancelled." }),
+          { status: 409, headers: corsHeaders },
+        );
+      }
+
+      const now = Math.floor(Date.now() / 1000);
+
+      if (action === "publish") {
+        // Same gate as creating-as-published, so a draft is not a back door
+        // to publishing something direct creation would have rejected.
+        const missing = publishRequirements(bounty);
+        if (missing) {
+          return new Response(JSON.stringify({ error: missing }), {
+            status: 400,
+            headers: corsHeaders,
+          });
+        }
+      }
+
+      if (action === "announce") {
+        // Announcing with no winners picked would move the bounty into
+        // "Payment Pending" with nothing to pay, and the flag is one-way.
+        const winners = (await env.DB.prepare(
+          `SELECT COUNT(*) as n FROM bounty_submissions
+            WHERE bounty_id = ? AND is_winner = 1`,
+        )
+          .bind(id)
+          .first()) as { n: number } | null;
+
+        if (!winners?.n) {
+          return new Response(
+            JSON.stringify({
+              error: "Select at least one winner before announcing.",
+            }),
+            { status: 400, headers: corsHeaders },
+          );
+        }
+      }
+
+      const result =
+        action === "publish"
+          ? await env.DB.prepare(
+              `UPDATE bounties
+                  SET is_published = 1,
+                      published_at = COALESCE(published_at, ?),
+                      updated_at = ?
+                WHERE id = ? AND is_published = 0`,
+            )
+              .bind(now, now, id)
+              .run()
+          : await env.DB.prepare(
+              `UPDATE bounties
+                  SET is_winners_announced = 1,
+                      winners_announced_at = ?,
+                      updated_at = ?
+                WHERE id = ? AND is_winners_announced = 0`,
+            )
+              .bind(now, now, id)
+              .run();
+
+      if ((result?.meta?.changes ?? 0) === 0) {
+        return new Response(
+          JSON.stringify({
+            error:
+              action === "publish"
+                ? "This bounty is already published."
+                : "Winners have already been announced for this bounty.",
+          }),
+          { status: 409, headers: corsHeaders },
+        );
+      }
+
+      const updated = await env.DB.prepare(
+        "SELECT * FROM bounties WHERE id = ?",
+      )
+        .bind(id)
+        .first();
+
+      return new Response(
+        JSON.stringify({ bounty: transformBounty(updated) }),
+        { headers: corsHeaders },
+      );
+    } catch (error: any) {
+      console.error(`Error on bounty ${action}:`, error);
+      return new Response(
+        JSON.stringify({ error: `Failed to ${action} bounty` }),
+        { status: 500, headers: corsHeaders },
       );
     }
   }

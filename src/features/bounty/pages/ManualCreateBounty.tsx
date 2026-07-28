@@ -176,9 +176,15 @@ export default function ManualCreateBounty() {
     setFormData((prev) => ({ ...prev, [field]: newArray }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  /**
+   * Save the form.
+   *
+   * `publish: false` stores it as a draft — nobody but this sponsor can see
+   * it, and it can be finished later from the dashboard. The server treats a
+   * missing `is_published` as "publish", so this is the only place that has
+   * to know about the distinction.
+   */
+  const saveBounty = async (publish: boolean) => {
     if (
       containsProfanity(formData.title) ||
       containsProfanity(formData.description)
@@ -199,6 +205,7 @@ export default function ManualCreateBounty() {
         },
         body: JSON.stringify({
           ...formData,
+          is_published: publish,
           sponsor_id: sponsor.id,
           user_id: session?.user?.id,
           // Send only the number the sponsor actually fixed. The server
@@ -220,17 +227,35 @@ export default function ManualCreateBounty() {
         );
       }
 
-      const data = await response.json();
+      await response.json();
+      toast.success(publish ? "Bounty published" : "Draft saved");
       // Redirect to sponsor dashboard after successful creation
       router.push("/bounty/sponsor/dashboard");
     } catch (error: any) {
       console.error("Error creating bounty:", error);
       toast.error(
-        error?.message || "Failed to create bounty. Please try again.",
+        error?.message ||
+          `Failed to ${publish ? "publish" : "save"} bounty. Please try again.`,
       );
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    void saveBounty(true);
+  };
+
+  /**
+   * `type="button"` so the browser's required-field validation is bypassed:
+   * a draft is unfinished by definition, and refusing to save one because the
+   * deadline is blank defeats the purpose. The server matches this — a draft
+   * needs only a title, and the full requirements are checked when it is
+   * published.
+   */
+  const handleSaveDraft = () => {
+    void saveBounty(false);
   };
 
   if (loadingSponsor || isPending) {
@@ -859,11 +884,20 @@ export default function ManualCreateBounty() {
                 Cancel
               </button>
               <button
+                type="button"
+                onClick={handleSaveDraft}
+                disabled={loading}
+                title="Save without publishing. Only you can see a draft; finish and publish it later from your dashboard."
+                className="flex-1 px-6 py-4 border-2 border-orange text-orange hover:bg-orange/5 rounded-lg font-barlow font-semibold text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Saving..." : "Save as Draft"}
+              </button>
+              <button
                 type="submit"
                 disabled={loading}
                 className="flex-1 px-6 py-4 bg-orange hover:bg-orange/90 text-white rounded-lg font-barlow font-semibold text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? "Creating..." : "Create Bounty"}
+                {loading ? "Publishing..." : "Publish Bounty"}
               </button>
             </div>
           </form>
