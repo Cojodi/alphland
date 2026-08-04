@@ -1574,14 +1574,14 @@ export async function handleSponsorsAPI(
       let allSponsors: any[] = [];
       try {
         const { results } = await env.DB.prepare(
-          `SELECT id, name, username, logo_url, is_verified, is_banned, created_at FROM sponsors ORDER BY name ASC`,
+          `SELECT id, name, slug, logo_url, is_verified, is_banned, created_at FROM sponsors ORDER BY name ASC`,
         ).all();
         allSponsors = results;
       } catch {
         // Fallback: is_verified/is_banned columns may not exist yet
         try {
           const { results } = await env.DB.prepare(
-            `SELECT id, name, username, logo_url, created_at FROM sponsors ORDER BY name ASC`,
+            `SELECT id, name, slug, logo_url, created_at FROM sponsors ORDER BY name ASC`,
           ).all();
           allSponsors = results;
         } catch {
@@ -1631,10 +1631,10 @@ export async function handleSponsorsAPI(
     const now = Math.floor(Date.now() / 1000);
 
     // Same slug rules as the update path — a sponsor must not be able to
-    // claim another's public URL at sign-up either.
-    const desiredSlug = body.username
-      ? normalizeSponsorSlug(String(body.username))
-      : normalizeSponsorSlug(String(body.name || ""));
+    // claim another's public URL at sign-up either. The form has only ever
+    // sent `name`; the `username` branch that used to sit here read a field no
+    // client sends, against a column dropped in 034.
+    const desiredSlug = normalizeSponsorSlug(String(body.name || ""));
 
     // The slug is the profile URL and cannot be derived later, so a name that
     // normalises to nothing (e.g. all punctuation) has to be rejected here
@@ -1788,13 +1788,13 @@ export async function handleSponsorsAPI(
     const total_bounties_count = bounties.length;
     const total_projects_count = 0; // TODO: Implement projects
     const total_reward_amount = bounties.reduce((sum: number, b: any) => {
-      // If reward_currency is USD, use reward_amount
-      // Otherwise, use reward_usd_value if available, else use reward_amount
-      const rewardValue =
-        b.reward_currency === "USD"
-          ? parseFloat(b.reward_amount) || 0
-          : parseFloat(b.reward_usd_value) || parseFloat(b.reward_amount) || 0;
-      return sum + rewardValue;
+      // Since 025 reward_usd is the one USD figure, kept current by the daily
+      // revaluation. The branch that used to stand here predates it: it read
+      // reward_currency='USD' to mean "reward_amount is dollars" and otherwise
+      // fell back to the hand-typed reward_usd_value, so a post-025 bounty --
+      // reward_currency always 'ALPH', reward_usd_value always 0 -- summed its
+      // ALPH count as if it were dollars.
+      return sum + (parseFloat(b.reward_usd) || 0);
     }, 0);
 
     return new Response(

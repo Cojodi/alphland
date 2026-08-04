@@ -284,31 +284,17 @@ export async function resolveRewardInput(
     denomination?: unknown;
     reward_amount?: unknown;
     target_usd?: unknown;
-    /** Legacy field — see the compatibility note below. */
-    reward_currency?: unknown;
   },
 ): Promise<ResolvedReward> {
-  // Compatibility with the pre-025 client, which had no `denomination` and
-  // instead signalled a USD-priced bounty with reward_currency='USD' while
-  // putting the USD figure in reward_amount. Without this, a $100 bounty from
-  // an old client would be stored as 100 ALPH (~$4). Drop once every deployed
-  // client sends `denomination`.
-  const legacyUsd =
-    body.denomination === undefined &&
-    typeof body.reward_currency === "string" &&
-    body.reward_currency.toUpperCase() === "USD";
+  // `denomination` is the only signal. The pre-025 shim that read
+  // reward_currency='USD' with the USD figure in reward_amount is gone: every
+  // bounty write path (ManualCreateBounty, EditBounty, the republish handler)
+  // sends `denomination`, so the shim could only ever have fired on a payload
+  // no client produces.
+  const denomination = body.denomination === "usd" ? "usd" : "alph";
 
-  const denomination =
-    body.denomination === "usd" || legacyUsd ? "usd" : "alph";
-
-  const raw =
-    denomination === "usd"
-      ? legacyUsd
-        ? body.reward_amount // legacy clients put the USD figure here
-        : body.target_usd
-      : body.reward_amount;
-  const field =
-    denomination === "usd" && !legacyUsd ? "target_usd" : "reward_amount";
+  const raw = denomination === "usd" ? body.target_usd : body.reward_amount;
+  const field = denomination === "usd" ? "target_usd" : "reward_amount";
 
   const value = Number(raw ?? 0);
   if (!Number.isFinite(value) || value < 0) {

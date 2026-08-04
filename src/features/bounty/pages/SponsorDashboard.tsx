@@ -55,7 +55,7 @@ export default function SponsorDashboard() {
     {
       id: string;
       name: string;
-      username: string | null;
+      slug: string | null;
       logo_url: string | null;
       is_verified: number;
       is_banned: number;
@@ -497,9 +497,7 @@ export default function SponsorDashboard() {
       (s) =>
         !godSponsorSearch ||
         s.name.toLowerCase().includes(godSponsorSearch.toLowerCase()) ||
-        (s.username || "")
-          .toLowerCase()
-          .includes(godSponsorSearch.toLowerCase()),
+        (s.slug || "").toLowerCase().includes(godSponsorSearch.toLowerCase()),
     );
     const switchToSponsor = async (sponsorId: string) => {
       setLoading(true);
@@ -605,9 +603,9 @@ export default function SponsorDashboard() {
                     <p className="text-sm font-medium text-light-black dark:text-white truncate">
                       {s.name}
                     </p>
-                    {s.username && (
-                      <p className="text-xs text-light-charcoal">
-                        @{s.username}
+                    {s.slug && (
+                      <p className="text-xs text-light-charcoal truncate">
+                        /bounty/sponsor/{s.slug}
                       </p>
                     )}
                   </div>

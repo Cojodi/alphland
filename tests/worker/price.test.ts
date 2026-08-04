@@ -594,35 +594,21 @@ describe("resolveRewardInput — reward_amount is always ALPH", () => {
     }
   });
 
-  it("reads a pre-025 client's reward_currency='USD' payload as USD-denominated", async () => {
-    // The old form sent {reward_currency:'USD', reward_amount:100} meaning
-    // $100. Without the shim that becomes 100 ALPH (~$4) — a 25x underpay.
-    const r = await resolveRewardInput(envAtRate(0.04), {
-      reward_currency: "USD",
-      reward_amount: 100,
-    });
+  it("ignores reward_currency — denomination is the only signal", async () => {
+    // The pre-025 shim read {reward_currency:'USD', reward_amount:100} as
+    // $100. It is gone, so the field is inert and reward_amount is taken at
+    // face value in ALPH. Passed through a variable because the parameter type
+    // no longer names reward_currency at all.
+    const stale = { reward_currency: "USD", reward_amount: 100 };
+    const r = await resolveRewardInput(envAtRate(0.04), stale);
 
-    expect(r.denomination).toBe("usd");
-    expect(r.target_usd).toBe(100);
-    expect(r.reward_usd).toBe(100);
-    expect(r.reward_amount).toBeCloseTo(2500);
-  });
-
-  it("reads a pre-025 ALPH payload as ALPH-denominated", async () => {
-    const r = await resolveRewardInput(envAtRate(0.04), {
-      reward_currency: "ALPH",
-      reward_amount: 500,
-    });
     expect(r.denomination).toBe("alph");
-    expect(r.reward_amount).toBe(500);
+    expect(r.reward_amount).toBe(100);
+    expect(r.target_usd).toBeNull();
   });
 
-  it("lets an explicit denomination win over a stale reward_currency", async () => {
-    // A new client sends both; `denomination` is the real signal and the
-    // legacy shim must not hijack it.
+  it("defaults to ALPH when denomination is absent", async () => {
     const r = await resolveRewardInput(envAtRate(0.04), {
-      denomination: "alph",
-      reward_currency: "USD",
       reward_amount: 500,
     });
     expect(r.denomination).toBe("alph");
