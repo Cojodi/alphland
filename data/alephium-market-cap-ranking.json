@@ -1,0 +1,38 @@
+{
+  "name": "Alephium Market Cap Ranking",
+  "description": "Not a Dapp, only a website I've vibecoded with claude, i haven't a subscription for the CMC API so it works with CoinPaprika for now",
+  "short_description": "Tracking Alephium market cap ranking overtime",
+  "tags": [
+    "Analytics"
+  ],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://spikeblack-alph.github.io/Alephium-MC-overtime/",
+    "careers": "",
+    "twitter": "",
+    "telegram": "https://t.me/Spike_Black",
+    "discord": "",
+    "docs": "",
+    "github": "https://github.com/SpikeBlack-Alph/Alephium-MC-overtime",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "spikeblackalephium@gmail.com",
+    "founded": "2026-08-24T00:00:00.000Z",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/alephium-market-cap-ranking/alephium-market-cap-ranking-logo.webp",
+    "bannerUrl": "/dapps/alephium-market-cap-ranking/alephium-market-cap-ranking-banner.webp",
+    "previewUrl": "/dapps/alephium-market-cap-ranking/alephium-market-cap-ranking-preview.webp"
+  },
+  "contracts": [],
+  "audits": [],
+  "tokens": []
+}
