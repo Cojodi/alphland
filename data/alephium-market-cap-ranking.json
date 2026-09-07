@@ -1,7 +1,7 @@
 {
   "name": "Alephium Market Cap Ranking",
-  "description": "Not a Dapp, only a website I've vibecoded with claude, i haven't a subscription for the CMC API so it works with CoinPaprika for now",
-  "short_description": "Tracking Alephium market cap ranking overtime",
+  "description": "Alephium Market Cap Ranking is an analytics website that tracks Alephium’s market capitalization ranking over time. It visualizes historical ranking data to help users follow how Alephium’s position changes in the broader crypto market.",
+  "short_description": "Track Alephium market cap ranking over time",
   "tags": [
     "Analytics"
   ],
