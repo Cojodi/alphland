@@ -1,0 +1,38 @@
+{
+  "name": "Alephium Market Cap Ranking",
+  "description": "Alephium Market Cap Ranking is an analytics website that tracks Alephium’s market capitalization ranking over time. It visualizes historical ranking data to help users follow how Alephium’s position changes in the broader crypto market.",
+  "short_description": "Track Alephium market cap ranking over time",
+  "tags": [
+    "Analytics"
+  ],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://spikeblack-alph.github.io/Alephium-MC-overtime/",
+    "careers": "",
+    "twitter": "",
+    "telegram": "https://t.me/Spike_Black",
+    "discord": "",
+    "docs": "",
+    "github": "https://github.com/SpikeBlack-Alph/Alephium-MC-overtime",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "spikeblackalephium@gmail.com",
+    "founded": "2026-08-24T00:00:00.000Z",
+    "anonymous": false
+  },
+  "media": {
+    "logoUrl": "/dapps/alephium-market-cap-ranking/alephium-market-cap-ranking-logo.webp",
+    "bannerUrl": "/dapps/alephium-market-cap-ranking/alephium-market-cap-ranking-banner.webp",
+    "previewUrl": "/dapps/alephium-market-cap-ranking/alephium-market-cap-ranking-preview.webp"
+  },
+  "contracts": [],
+  "audits": [],
+  "tokens": []
+}
