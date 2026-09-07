@@ -7,8 +7,8 @@ export interface Sponsor {
   user_id: string; // Links to User table (one-to-zero-or-one relationship)
 
   // Organization Information
-  name: string; // Organization name
-  username: string; // Organization username (slug for URL)
+  name: string; // Organization name — display text only, never routing
+  slug: string; // Stored routing key for /bounty/sponsor/:slug (027)
   description: string; // Organization short bio
   entity_name: string; // Full legal entity name
   industry: string;

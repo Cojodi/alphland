@@ -4,5 +4,8 @@
   ],
   "**/*.+(ts|tsx|js|jsx|css|json)": [
     "prettier --write"
+  ],
+  "src/features/bounty/**/*.+(ts|tsx)": [
+    "vitest related --run"
   ]
 }

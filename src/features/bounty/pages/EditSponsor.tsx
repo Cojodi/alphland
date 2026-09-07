@@ -12,7 +12,6 @@ import { toast } from "react-toastify";
 
 interface FormData {
   name: string;
-  username: string;
   description: string;
   entity_name: string;
   industry: string;
@@ -63,7 +62,6 @@ export default function EditSponsorProfile() {
   const [userPersonalUsername, setUserPersonalUsername] = useState<string>("");
   const [formData, setFormData] = useState<FormData>({
     name: "",
-    username: "",
     description: "",
     entity_name: "",
     industry: "",
@@ -102,7 +100,6 @@ export default function EditSponsorProfile() {
             setSponsorId(data.sponsor.id);
             setFormData({
               name: data.sponsor.name || "",
-              username: data.sponsor.username || "",
               description: data.sponsor.description || "",
               entity_name: data.sponsor.entity_name || "",
               industry: data.sponsor.industry || "",

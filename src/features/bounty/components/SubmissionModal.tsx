@@ -4,8 +4,7 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { apiClient } from "@/lib/api-client";
-import { notificationService } from "../services/notificationService";
-import { normalizeUrl } from "../utils/validators";
+import { isValidUrl, normalizeUrl } from "../utils/validators";
 
 interface SubmissionModalProps {
   isOpen: boolean;
@@ -65,10 +64,8 @@ export function SubmissionModal({
     }
 
     // Validate URL format
-    try {
-      new URL(formData.submission_url);
-    } catch {
-      setError("Please provide a valid URL");
+    if (!isValidUrl(formData.submission_url)) {
+      setError("Please provide a valid http(s) URL");
       return;
     }
 
@@ -87,16 +84,8 @@ export function SubmissionModal({
         description: `**${formData.title}**\n\n${descriptionWithNotes}`,
       });
 
-      // Notify sponsor if available
-      if (sponsorUserId) {
-        await notificationService.notifyNewSubmission(
-          sponsorUserId,
-          bountyId,
-          bountyTitle,
-          username,
-          result.submission?.id,
-        );
-      }
+      // The sponsor's notification is written by the worker when the
+      // submission is created.
 
       // Reset form
       setFormData({

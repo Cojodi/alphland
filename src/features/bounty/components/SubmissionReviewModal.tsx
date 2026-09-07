@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { submissionTitle } from "../utils";
 import {
   X,
   ExternalLink,
@@ -11,7 +12,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { apiClient, BountySubmission } from "@/lib/api-client";
-import { notificationService } from "../services/notificationService";
 import { Bounty, TieredReward } from "../types/bounty.types";
 import { generateTieredRewards } from "../utils/rewardCalculator";
 
@@ -134,30 +134,31 @@ export function SubmissionReviewModal({
     setIsSubmitting(true);
 
     try {
-      // Prepare reviewer notes with reward info
-      let finalReviewerNotes = form.reviewerNotes.trim();
-      if (form.reviewAction === "approved") {
-        const tierInfo =
-          bounty.reward_type === "tiered" && form.selectedTier
-            ? `Tier ${form.selectedTier} placement. `
-            : "";
-        // For ALPH bounties use the stored USD reference; for USD bounties use the bounty amount.
-        // Avoid toLocaleString to keep the number parseable by the earnings regex.
-        const usdBountyValue =
-          bounty.reward.token === "ALPH"
-            ? bounty.reward.usd_equivalent
-            : getTokenAmount().amount;
-        const rewardInfo = `${tierInfo}Reward: ${form.rewardAmount} ALPH (for ${usdBountyValue} USD bounty)`;
-        finalReviewerNotes = finalReviewerNotes
-          ? `${finalReviewerNotes}\n\n${rewardInfo}`
-          : rewardInfo;
-      }
+      // Notes are the sponsor's words only. Placement and payout go in their
+      // own fields so nothing has to be parsed back out of prose.
+      const finalReviewerNotes = form.reviewerNotes.trim();
 
       // Update submission status
       await apiClient.updateSubmission(submission.id, {
         status: form.reviewAction,
         reviewer_notes: finalReviewerNotes || undefined,
         transaction_hash: form.transactionHash.trim() || undefined,
+        ...(form.reviewAction === "approved"
+          ? {
+              winner_position:
+                bounty.reward_type === "tiered"
+                  ? (form.selectedTier ?? undefined)
+                  : 1,
+              reward_amount: parseFloat(form.rewardAmount) || 0,
+              reward_currency: "ALPH",
+              // Frozen at settlement: for an ALPH-priced bounty this is the
+              // stored USD value, for a USD-priced one the amount itself.
+              reward_usd:
+                bounty.reward.token === "ALPH"
+                  ? bounty.reward.usd_equivalent
+                  : getTokenAmount().amount,
+            }
+          : {}),
       });
 
       // Close bounty if requested and this is the last spot
@@ -184,23 +185,9 @@ export function SubmissionReviewModal({
         }
       }
 
-      // Send notification to submitter
-      if (form.reviewAction === "approved") {
-        await notificationService.notifySubmissionApproved(
-          submission.user_id,
-          submission.bounty_id,
-          bounty.title,
-          parseFloat(form.rewardAmount),
-          bounty.reward?.token || "ALPH",
-        );
-      } else if (form.reviewAction === "rejected") {
-        await notificationService.notifySubmissionRejected(
-          submission.user_id,
-          submission.bounty_id,
-          bounty.title,
-          form.reviewerNotes,
-        );
-      }
+      // The submitter's notification is written by the worker inside the same
+      // request that records the review, so it survives this tab closing --
+      // and covers revision_requested, which was never handled here.
 
       // Show success state then reset form
       setSuccessState({ show: true, action: form.reviewAction });
@@ -316,21 +303,6 @@ export function SubmissionReviewModal({
     );
   }
 
-  const extractTitle = (description: string | null): string => {
-    if (!description) return "Submission";
-
-    // Try to extract title from markdown bold syntax
-    const titleMatch = description.match(/^\*\*(.+?)\*\*/);
-    if (titleMatch) {
-      return titleMatch[1];
-    }
-
-    // Fallback to first line
-    const firstLine = description.split("\n")[0];
-    if (!firstLine) return "Submission";
-    return firstLine.substring(0, 50) + (firstLine.length > 50 ? "..." : "");
-  };
-
   const extractDescription = (description: string | null): string => {
     if (!description) return "";
 
@@ -340,26 +312,12 @@ export function SubmissionReviewModal({
     return text.trim();
   };
 
-  // Parse tier placement from reviewer_notes
-  // Format: "Tier X placement. Reward: Y ALPH (...)"
-  const parseTierFromNotes = (notes: string | null): number | null => {
-    if (!notes) return null;
-    const match = notes.match(/Tier (\d+) placement/);
-    return match ? parseInt(match[1]) : null;
-  };
-
-  // Parse ALPH reward amount from reviewer_notes
-  // Format: "Reward: Y ALPH (...)"
-  const parseAlphRewardFromNotes = (notes: string | null): string | null => {
-    if (!notes) return null;
-    const match = notes.match(/Reward:\s*([\d.]+)\s*ALPH/);
-    return match ? `${match[1]} ALPH` : null;
-  };
-
-  const tierPosition = parseTierFromNotes(submission.reviewer_notes ?? null);
-  const alphReward = parseAlphRewardFromNotes(
-    submission.reviewer_notes ?? null,
-  );
+  // Read from the columns rather than re-parsing the note.
+  const tierPosition = submission.winner_position ?? null;
+  const alphReward =
+    submission.reward_amount != null
+      ? `${submission.reward_amount} ALPH`
+      : null;
 
   const tierLabel = (pos: number) =>
     pos === 1
@@ -405,7 +363,7 @@ export function SubmissionReviewModal({
           {/* Submission Info */}
           <div className="bg-smoked-white dark:bg-light-black rounded-lg p-4">
             <h3 className="font-semibold text-black dark:text-white mb-2">
-              {extractTitle(submission.description)}
+              {submissionTitle(submission.description)}
             </h3>
 
             {submission.description && (

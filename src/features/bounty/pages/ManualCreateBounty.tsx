@@ -4,6 +4,9 @@ import { useSession } from "@/lib/auth-client";
 import Layout from "@/components/Layout";
 import { Plus, X, Calendar, DollarSign, Copy } from "lucide-react";
 import { containsProfanity } from "@/lib/profanity-filter";
+import RewardInput, {
+  type Denomination,
+} from "@/features/bounty/components/RewardInput";
 import { toast } from "react-toastify";
 
 interface BountyFormData {
@@ -15,8 +18,7 @@ interface BountyFormData {
   deliverables: string[];
   skills: string[];
   reward_amount: string;
-  reward_currency: string;
-  reward_usd_value: string;
+  denomination: Denomination;
   reward_type: "fixed" | "tiered";
   tier_count: number;
   start_date: string;
@@ -42,8 +44,7 @@ export default function ManualCreateBounty() {
     deliverables: [""],
     skills: [""],
     reward_amount: "",
-    reward_currency: "USD",
-    reward_usd_value: "",
+    denomination: "alph",
     reward_type: "fixed",
     tier_count: 5,
     start_date: new Date().toISOString().split("T")[0],
@@ -122,9 +123,15 @@ export default function ManualCreateBounty() {
           requirements: parseJsonField(bounty.requirements),
           deliverables: parseJsonField(bounty.deliverables),
           skills: parseJsonField(bounty.skills),
-          reward_amount: bounty.reward_amount?.toString() || "",
-          reward_currency: bounty.reward_currency || "USD",
-          reward_usd_value: bounty.reward_usd_value?.toString() || "",
+          // Copy the side the source bounty fixed its promise on, so a USD
+          // bounty stays USD when duplicated rather than silently becoming a
+          // fixed ALPH amount at today's rate.
+          denomination: bounty.denomination === "usd" ? "usd" : "alph",
+          reward_amount:
+            (bounty.denomination === "usd"
+              ? bounty.target_usd
+              : bounty.reward_amount
+            )?.toString() || "",
           reward_type: bounty.reward_type || "fixed",
           tier_count: bounty.tier_count || 5,
           dapp_name: bounty.dapp_name || "",
@@ -169,9 +176,15 @@ export default function ManualCreateBounty() {
     setFormData((prev) => ({ ...prev, [field]: newArray }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  /**
+   * Save the form.
+   *
+   * `publish: false` stores it as a draft — nobody but this sponsor can see
+   * it, and it can be finished later from the dashboard. The server treats a
+   * missing `is_published` as "publish", so this is the only place that has
+   * to know about the distinction.
+   */
+  const saveBounty = async (publish: boolean) => {
     if (
       containsProfanity(formData.title) ||
       containsProfanity(formData.description)
@@ -192,11 +205,15 @@ export default function ManualCreateBounty() {
         },
         body: JSON.stringify({
           ...formData,
+          is_published: publish,
           sponsor_id: sponsor.id,
           user_id: session?.user?.id,
-          reward_usd_value: formData.reward_usd_value
-            ? parseFloat(formData.reward_usd_value)
-            : 0,
+          // Send only the number the sponsor actually fixed. The server
+          // derives the other side from its own rate — the client never
+          // decides what a bounty is worth.
+          ...(formData.denomination === "usd"
+            ? { target_usd: parseFloat(formData.reward_amount) || 0 }
+            : { reward_amount: parseFloat(formData.reward_amount) || 0 }),
           requirements: formData.requirements.filter((r) => r.trim() !== ""),
           deliverables: formData.deliverables.filter((d) => d.trim() !== ""),
           skills: formData.skills.filter((s) => s.trim() !== ""),
@@ -210,17 +227,35 @@ export default function ManualCreateBounty() {
         );
       }
 
-      const data = await response.json();
+      await response.json();
+      toast.success(publish ? "Bounty published" : "Draft saved");
       // Redirect to sponsor dashboard after successful creation
       router.push("/bounty/sponsor/dashboard");
     } catch (error: any) {
       console.error("Error creating bounty:", error);
       toast.error(
-        error?.message || "Failed to create bounty. Please try again.",
+        error?.message ||
+          `Failed to ${publish ? "publish" : "save"} bounty. Please try again.`,
       );
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    void saveBounty(true);
+  };
+
+  /**
+   * `type="button"` so the browser's required-field validation is bypassed:
+   * a draft is unfinished by definition, and refusing to save one because the
+   * deadline is blank defeats the purpose. The server matches this — a draft
+   * needs only a title, and the full requirements are checked when it is
+   * published.
+   */
+  const handleSaveDraft = () => {
+    void saveBounty(false);
   };
 
   if (loadingSponsor || isPending) {
@@ -536,152 +571,61 @@ export default function ManualCreateBounty() {
                 Reward Information
               </h2>
 
-              {/* Payment Notice — only for USD-denominated bounties */}
-              {formData.reward_currency !== "ALPH" && (
-                <div className="bg-orange/5 border border-orange/20 rounded-lg p-4">
-                  <p className="text-sm text-light-charcoal dark:text-lightgrey font-barlow">
-                    <span className="font-semibold text-orange">Note:</span>{" "}
-                    Rewards will be paid in ALPH, converted from USD at the
-                    current exchange rate.
-                  </p>
-                </div>
-              )}
+              {/* Denomination + amount. Which currency the sponsor fixes the
+                  promise in is independent of how the pot is split, so the
+                  two are now separate choices instead of three mixed radios
+                  (Fixed USD / Fixed ALPH / Tiered USD). */}
+              <RewardInput
+                denomination={formData.denomination}
+                amount={formData.reward_amount}
+                onDenominationChange={(d) =>
+                  setFormData((prev) => ({ ...prev, denomination: d }))
+                }
+                onAmountChange={(v) =>
+                  setFormData((prev) => ({ ...prev, reward_amount: v }))
+                }
+              />
 
-              {/* Reward Type Selection */}
+              {/* Reward Structure */}
               <div>
                 <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
-                  Reward Type *
+                  Reward Structure *
                 </label>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      checked={
-                        formData.reward_type === "fixed" &&
-                        formData.reward_currency === "USD"
-                      }
-                      onChange={() =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          reward_type: "fixed",
-                          reward_currency: "USD",
-                        }))
-                      }
-                      className="w-4 h-4 text-orange focus:ring-orange"
-                    />
-                    <span className="text-black dark:text-white font-barlow">
-                      Fixed (USD)
-                    </span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      checked={
-                        formData.reward_type === "fixed" &&
-                        formData.reward_currency === "ALPH"
-                      }
-                      onChange={() =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          reward_type: "fixed",
-                          reward_currency: "ALPH",
-                          reward_usd_value: "",
-                        }))
-                      }
-                      className="w-4 h-4 text-orange focus:ring-orange"
-                    />
-                    <span className="text-black dark:text-white font-barlow">
-                      Fixed Token (ALPH)
-                    </span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      checked={formData.reward_type === "tiered"}
-                      onChange={() =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          reward_type: "tiered",
-                          reward_currency: "USD",
-                        }))
-                      }
-                      className="w-4 h-4 text-orange focus:ring-orange"
-                    />
-                    <span className="text-black dark:text-white font-barlow">
-                      Tiered (USD)
-                    </span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Reward Amount inputs — vary by currency mode */}
-              {formData.reward_currency === "ALPH" ? (
-                <>
-                  <div>
-                    <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
-                      Reward Amount (ALPH) *
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-light-charcoal dark:text-lightgrey">
-                        ALPH
+                <div className="flex flex-wrap gap-4">
+                  {(
+                    [
+                      ["fixed", "Single reward"],
+                      ["tiered", "Tiered rewards"],
+                    ] as const
+                  ).map(([value, label]) => (
+                    <label
+                      key={value}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name="reward_type"
+                        checked={formData.reward_type === value}
+                        onChange={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            reward_type: value,
+                          }))
+                        }
+                        className="w-4 h-4 text-orange focus:ring-orange"
+                      />
+                      <span className="text-black dark:text-white font-barlow">
+                        {label}
                       </span>
-                      <input
-                        type="number"
-                        name="reward_amount"
-                        value={formData.reward_amount}
-                        onChange={handleInputChange}
-                        required
-                        min="0"
-                        step="0.01"
-                        placeholder="e.g., 100"
-                        className="w-full pl-14 pr-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
-                      USD Reference
                     </label>
-                    <div className="relative">
-                      <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-light-charcoal dark:text-lightgrey" />
-                      <input
-                        type="number"
-                        name="reward_usd_value"
-                        value={formData.reward_usd_value}
-                        onChange={handleInputChange}
-                        min="0"
-                        step="0.01"
-                        placeholder="0.00"
-                        className="w-full pl-10 pr-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
-                      />
-                    </div>
-                    <p className="text-xs text-light-charcoal dark:text-lightgrey mt-1 font-barlow">
-                      Approximate USD equivalent for reference (used for stats
-                      tracking)
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <div>
-                  <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
-                    Reward Amount (USD) *
-                  </label>
-                  <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-light-charcoal dark:text-lightgrey" />
-                    <input
-                      type="number"
-                      name="reward_amount"
-                      value={formData.reward_amount}
-                      onChange={handleInputChange}
-                      required
-                      min="0"
-                      step="0.01"
-                      placeholder="0.00"
-                      className="w-full pl-10 pr-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
-                    />
-                  </div>
+                  ))}
                 </div>
-              )}
+                <p className="text-xs text-light-charcoal dark:text-lightgrey mt-2 font-barlow">
+                  {formData.reward_type === "fixed"
+                    ? "One winner takes the whole reward."
+                    : "The reward is split across the top placements by a fixed percentage each."}
+                </p>
+              </div>
 
               {/* Tiered Reward Configuration */}
               {formData.reward_type === "tiered" && (
@@ -940,11 +884,20 @@ export default function ManualCreateBounty() {
                 Cancel
               </button>
               <button
+                type="button"
+                onClick={handleSaveDraft}
+                disabled={loading}
+                title="Save without publishing. Only you can see a draft; finish and publish it later from your dashboard."
+                className="flex-1 px-6 py-4 border-2 border-orange text-orange hover:bg-orange/5 rounded-lg font-barlow font-semibold text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Saving..." : "Save as Draft"}
+              </button>
+              <button
                 type="submit"
                 disabled={loading}
                 className="flex-1 px-6 py-4 bg-orange hover:bg-orange/90 text-white rounded-lg font-barlow font-semibold text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? "Creating..." : "Create Bounty"}
+                {loading ? "Publishing..." : "Publish Bounty"}
               </button>
             </div>
           </form>

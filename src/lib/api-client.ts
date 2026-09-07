@@ -28,7 +28,6 @@ export interface Bounty {
     | "closed"
     | "deleted";
   created_by: string;
-  assigned_to: string | null;
   tags: string | null;
   requirements: string | null;
   submission_url: string | null;
@@ -36,9 +35,10 @@ export interface Bounty {
   end_date: string | null;
   created_at: string;
   updated_at: string;
-  completed_at: string | null;
   sponsor_id?: string;
   sponsor_name?: string;
+  /** Stored routing key for /bounty/sponsor/:slug — stable across renames. */
+  sponsor_slug?: string;
   sponsor_logo_url?: string | null;
   sponsor_is_verified?: number;
   submission_count?: number;
@@ -93,10 +93,8 @@ export interface BountySubmission {
   sponsor_name: string;
   sponsor_logo_url: string | null;
   user_id: string;
-  title: string;
   description: string;
   submission_url: string;
-  tweet_url: string | null;
   status:
     | "submitted"
     | "in_review"
@@ -105,8 +103,16 @@ export interface BountySubmission {
     | "pending"
     | "revision_requested";
   reviewer_notes: string | null;
-  review_started_at: number | null;
-  completed_at: number | null;
+  /** Structured review outcome — replaces parsing reviewer_notes. */
+  is_winner?: number;
+  winner_position?: number | null;
+  reward_amount?: number | null;
+  reward_currency?: string | null;
+  reward_usd?: number | null;
+  is_paid?: number;
+  paid_at?: number | null;
+  label?: string;
+  reviewed_at: number | null;
   reward: {
     token: string;
     amount: number;
@@ -132,6 +138,11 @@ export interface UpdateSubmissionInput {
   status: "approved" | "rejected" | "revision_requested";
   reviewer_notes?: string;
   transaction_hash?: string;
+  /** Structured outcome, sent only when approving. */
+  winner_position?: number;
+  reward_amount?: number;
+  reward_currency?: string;
+  reward_usd?: number;
 }
 
 export interface BountyComment {

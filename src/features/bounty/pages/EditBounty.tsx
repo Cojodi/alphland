@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSession } from "@/lib/auth-client";
 import Layout from "@/components/Layout";
+import RewardInput, {
+  type Denomination,
+} from "@/features/bounty/components/RewardInput";
 import {
   Plus,
   X,
@@ -12,14 +15,16 @@ import {
 } from "lucide-react";
 import Modal from "@/components/Modal/Modal";
 import { toast } from "react-toastify";
+import { generateTieredRewards } from "../utils/rewardCalculator";
 
 interface BountyFormData {
   title: string;
   description: string;
   category: string;
   reward_amount: string;
-  reward_currency: string;
-  reward_usd_value: string;
+  denomination: Denomination;
+  reward_type: "fixed" | "tiered";
+  tier_count: number;
   status: string;
   start_date: string;
   end_date: string;
@@ -51,8 +56,9 @@ export default function EditBounty() {
     description: "",
     category: "Content",
     reward_amount: "",
-    reward_currency: "USD",
-    reward_usd_value: "",
+    denomination: "alph",
+    reward_type: "fixed",
+    tier_count: 5,
     status: "open",
     start_date: "",
     end_date: "",
@@ -118,13 +124,17 @@ export default function EditBounty() {
           title: b.title || "",
           description: b.description || "",
           category: b.category || "Content",
+          // Edit the side the sponsor actually fixed: target_usd for a
+          // USD-denominated bounty, reward_amount (ALPH) otherwise. Showing
+          // the derived side would let a save silently re-peg the promise.
+          denomination: b.denomination === "usd" ? "usd" : "alph",
           reward_amount:
-            b.reward?.amount?.toString() || b.reward_amount?.toString() || "",
-          reward_currency: b.reward?.token || b.reward_currency || "USD",
-          reward_usd_value:
-            b.reward?.usd_equivalent?.toString() ||
-            b.reward_usd_value?.toString() ||
-            "",
+            (b.denomination === "usd"
+              ? b.target_usd
+              : (b.reward?.amount ?? b.reward_amount)
+            )?.toString() || "",
+          reward_type: b.reward_type === "tiered" ? "tiered" : "fixed",
+          tier_count: b.tier_count || 5,
           status: b.status || "open",
           start_date: startDate,
           end_date: endDate,
@@ -165,11 +175,13 @@ export default function EditBounty() {
           title: formData.title,
           description: formData.description,
           category: formData.category,
-          reward_amount: parseFloat(formData.reward_amount),
-          reward_currency: formData.reward_currency,
-          reward_usd_value: formData.reward_usd_value
-            ? parseFloat(formData.reward_usd_value)
-            : 0,
+          denomination: formData.denomination,
+          ...(formData.denomination === "usd"
+            ? { target_usd: parseFloat(formData.reward_amount) || 0 }
+            : { reward_amount: parseFloat(formData.reward_amount) || 0 }),
+          reward_type: formData.reward_type,
+          tier_count:
+            formData.reward_type === "tiered" ? formData.tier_count : null,
           status: formData.status,
           start_date: formData.start_date || null,
           end_date: formData.end_date || null,
@@ -378,81 +390,126 @@ export default function EditBounty() {
                 Reward Information
               </h2>
 
-              {formData.reward_currency !== "ALPH" && (
-                <div className="bg-orange/5 border border-orange/20 rounded-lg p-4">
-                  <p className="text-sm text-light-charcoal dark:text-lightgrey font-barlow">
-                    <span className="font-semibold text-orange">Note:</span>{" "}
-                    Rewards will be paid in ALPH, converted from USD at the
-                    current exchange rate.
-                  </p>
-                </div>
-              )}
+              <RewardInput
+                denomination={formData.denomination}
+                amount={formData.reward_amount}
+                onDenominationChange={(d) =>
+                  setFormData((prev) => ({ ...prev, denomination: d }))
+                }
+                onAmountChange={(v) =>
+                  setFormData((prev) => ({ ...prev, reward_amount: v }))
+                }
+              />
 
-              {formData.reward_currency === "ALPH" ? (
-                <>
-                  <div>
-                    <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
-                      Reward Amount (ALPH) *
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-light-charcoal dark:text-lightgrey">
-                        ALPH
+              {/* Reward Structure */}
+              <div>
+                <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
+                  Reward Structure *
+                </label>
+                <div className="flex flex-wrap gap-4">
+                  {(
+                    [
+                      ["fixed", "Single reward"],
+                      ["tiered", "Tiered rewards"],
+                    ] as const
+                  ).map(([value, label]) => (
+                    <label
+                      key={value}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name="reward_type"
+                        checked={formData.reward_type === value}
+                        onChange={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            reward_type: value,
+                          }))
+                        }
+                        className="w-4 h-4 text-orange focus:ring-orange"
+                      />
+                      <span className="text-black dark:text-white font-barlow">
+                        {label}
                       </span>
-                      <input
-                        type="number"
-                        name="reward_amount"
-                        value={formData.reward_amount}
-                        onChange={handleInputChange}
-                        required
-                        min="0"
-                        step="0.01"
-                        placeholder="e.g., 100"
-                        className="w-full pl-14 pr-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
-                      USD Reference
                     </label>
-                    <div className="relative">
-                      <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-light-charcoal dark:text-lightgrey" />
-                      <input
-                        type="number"
-                        name="reward_usd_value"
-                        value={formData.reward_usd_value}
-                        onChange={handleInputChange}
-                        min="0"
-                        step="0.01"
-                        placeholder="0.00"
-                        className="w-full pl-10 pr-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
-                      />
-                    </div>
-                    <p className="text-xs text-light-charcoal dark:text-lightgrey mt-1 font-barlow">
-                      Approximate USD equivalent for reference (used for stats
-                      tracking)
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <div>
-                  <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow mb-2">
-                    Reward Amount (USD) *
+                  ))}
+                </div>
+              </div>
+
+              {/* Tiered Reward Configuration */}
+              {formData.reward_type === "tiered" && (
+                <div className="space-y-4">
+                  <label className="block text-sm font-semibold text-light-charcoal dark:text-lightgrey font-barlow">
+                    Number of Winners *
                   </label>
-                  <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-light-charcoal dark:text-lightgrey" />
-                    <input
-                      type="number"
-                      name="reward_amount"
-                      value={formData.reward_amount}
-                      onChange={handleInputChange}
-                      required
-                      min="0"
-                      step="0.01"
-                      placeholder="0.00"
-                      className="w-full pl-10 pr-4 py-3 bg-smoked-white dark:bg-light-black border border-border-grey dark:border-dark-charcoal rounded-lg text-black dark:text-white font-barlow focus:outline-none focus:ring-2 focus:ring-orange"
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[3, 5, 10].map((count) => (
+                      <button
+                        key={count}
+                        type="button"
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            tier_count: count,
+                          }))
+                        }
+                        className={`p-4 rounded-lg border-2 transition-all ${
+                          formData.tier_count === count
+                            ? "border-orange bg-orange/5"
+                            : "border-border-grey dark:border-dark-charcoal hover:border-orange/50"
+                        }`}
+                      >
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-black dark:text-white font-barlow mb-2">
+                            {count}
+                          </div>
+                          <div className="text-xs text-light-charcoal dark:text-lightgrey font-barlow">
+                            Winners
+                          </div>
+                        </div>
+                      </button>
+                    ))}
                   </div>
+
+                  {/* Prize Distribution Preview */}
+                  {formData.reward_amount && (
+                    <div className="mt-4 bg-smoked-white dark:bg-light-black rounded-lg p-4">
+                      <h4 className="text-sm font-semibold text-black dark:text-white font-barlow mb-3">
+                        Prize Distribution
+                      </h4>
+                      <div className="space-y-2">
+                        {generateTieredRewards(
+                          {
+                            amount: parseFloat(formData.reward_amount) || 0,
+                            token:
+                              formData.denomination === "usd" ? "USD" : "ALPH",
+                            usd_equivalent: 0,
+                          },
+                          formData.tier_count,
+                        ).map((tier) => (
+                          <div
+                            key={tier.position}
+                            className="flex justify-between items-center text-sm"
+                          >
+                            <span className="text-light-charcoal dark:text-lightgrey font-barlow">
+                              {tier.position === 1
+                                ? "1st Place"
+                                : tier.position === 2
+                                  ? "2nd Place"
+                                  : tier.position === 3
+                                    ? "3rd Place"
+                                    : `${tier.position}th Place`}
+                            </span>
+                            <span className="font-semibold text-accessible-green font-barlow">
+                              {tier.amount.toLocaleString()} {tier.token} (
+                              {Math.round(tier.percentage * 100)}%)
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

@@ -6,8 +6,8 @@ import {
   formatRewardAmount,
   formatUSDAmount,
   generateTieredRewards,
-} from "./rewardCalculator";
-import type { Reward } from "../types";
+} from "@/features/bounty/utils/rewardCalculator";
+import type { Reward } from "@/features/bounty/types";
 
 const baseReward: Reward = { amount: 1000, token: "ALPH", usd_equivalent: 500 };
 

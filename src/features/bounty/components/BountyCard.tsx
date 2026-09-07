@@ -9,6 +9,8 @@ interface BountyCardProps {
   logo?: string;
   title: string;
   company: string;
+  /** Stored routing key. Falls back to the name only for rows predating it. */
+  companySlug?: string;
   reward: string;
   tags: string[];
   sponsorVerified?: boolean;
@@ -54,6 +56,7 @@ export function BountyCard({
   logo,
   title,
   company,
+  companySlug,
   reward,
   tags,
   sponsorVerified = false,
@@ -92,7 +95,9 @@ export function BountyCard({
             </h3>
             <p className="text-sm text-light-charcoal dark:text-lightgrey mb-3 flex items-center gap-1">
               {sponsorId && company ? (
-                <Link href={`/bounty/sponsor/${sponsorSlug(company)}`}>
+                <Link
+                  href={`/bounty/sponsor/${companySlug || sponsorSlug(company)}`}
+                >
                   <a
                     className="hover:text-orange transition-colors"
                     onClick={(e) => e.stopPropagation()}

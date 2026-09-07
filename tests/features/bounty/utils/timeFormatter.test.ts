@@ -3,7 +3,7 @@ import {
   calculateTimeRemaining,
   formatDate,
   formatDateTime,
-} from "./timeFormatter";
+} from "@/features/bounty/utils/timeFormatter";
 
 describe("calculateTimeRemaining", () => {
   it('returns "Expired" for a past date', () => {

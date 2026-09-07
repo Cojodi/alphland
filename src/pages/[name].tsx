@@ -429,7 +429,13 @@ export const getStaticProps: GetStaticProps<DappPageProps> = async (
   }
 
   const dappFile = path.join(process.cwd(), "data", `${name}.json`);
-  const content = await readFile(dappFile, "utf8");
+
+  let content: string;
+  try {
+    content = await readFile(dappFile, "utf8");
+  } catch {
+    return { notFound: true };
+  }
 
   const dappInfo: DappInfo = JSON.parse(content);
 

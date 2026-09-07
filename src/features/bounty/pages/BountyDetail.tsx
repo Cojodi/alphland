@@ -223,7 +223,7 @@ export default function BountyDetail({ bounty }: BountyDetailProps) {
                   <div className="flex items-center gap-2">
                     {bounty.sponsor_id && bounty.sponsor_name ? (
                       <Link
-                        href={`/bounty/sponsor/${sponsorSlug(bounty.sponsor_name)}`}
+                        href={`/bounty/sponsor/${bounty.sponsor_slug || sponsorSlug(bounty.sponsor_name)}`}
                       >
                         <a className="font-medium hover:text-orange transition-colors">
                           by{" "}
@@ -649,7 +649,7 @@ export async function getServerSideProps(context: any) {
       reward: {
         amount: parseFloat(bountyData.reward_amount) || 0,
         token: bountyData.reward_currency || "ALPH",
-        usd_equivalent: parseFloat(bountyData.reward_usd_value) || 0,
+        usd_equivalent: Number(bountyData.reward_usd) || 0,
       },
       reward_type: bountyData.reward_type || "fixed",
       tier_count: bountyData.tier_count || 5,

@@ -1,0 +1,38 @@
+{
+  "name": "ALPHtris",
+  "description": "ALPHtris is a neon block-stacking arcade game on Alephium. Players connect an Alephium wallet, pay an ALPH entry fee, play a run, and submit scores on chain to compete on current-round, global, and recent leaderboards. It's Tetris. On Alephium.",
+  "short_description": "on-chain Alphtris (Tetris)",
+  "tags": [
+    "Games"
+  ],
+  "verified": false,
+  "dotw": false,
+  "councils_choice": false,
+  "links": {
+    "website": "https://alphtris.alehpium.org/",
+    "careers": "",
+    "twitter": "",
+    "telegram": "",
+    "discord": "",
+    "docs": "",
+    "github": "",
+    "youtube": "",
+    "medium": "",
+    "mirror": "",
+    "linkedin": ""
+  },
+  "twitterName": "",
+  "teamInfo": {
+    "contactEmail": "",
+    "founded": "",
+    "anonymous": true
+  },
+  "media": {
+    "logoUrl": "/dapps/alphtris/alphtris-logo.webp",
+    "bannerUrl": "/dapps/alphtris/alphtris-banner.webp",
+    "previewUrl": "/dapps/alphtris/alphtris-preview.webp"
+  },
+  "contracts": [],
+  "audits": [],
+  "tokens": []
+}
