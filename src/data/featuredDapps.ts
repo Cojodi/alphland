@@ -26,6 +26,5 @@ export const FEATURED_DAPPS = [
   "presenceprotocol",
   "safepal-wallet",
   "tangem-wallet",
-  "wemine",
   "alephium-detectives",
 ];
