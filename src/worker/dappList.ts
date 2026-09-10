@@ -20,12 +20,13 @@ import henrycoder from "../../data/henrycoder.json";
 import learnify from "../../data/learnify.json";
 import ledgerWallet from "../../data/ledger-wallet.json";
 import linxApp from "../../data/linx-app.json";
+import moonshotboxes from "../../data/moonshotboxes.json";
 import nightshade from "../../data/nightshade.json";
 import onekeyWallet from "../../data/onekey-wallet.json";
 import presenceprotocol from "../../data/presenceprotocol.json";
 import safepalWallet from "../../data/safepal-wallet.json";
 import tangemWallet from "../../data/tangem-wallet.json";
-import wemine from "../../data/wemine.json";
+import alephiumDetectives from "../../data/alephium-detectives.json";
 
 export interface DappData {
   name: string;
@@ -101,12 +102,13 @@ const RAW: DappData[] = [
   learnify,
   ledgerWallet,
   linxApp,
+  moonshotboxes,
   nightshade,
   onekeyWallet,
   presenceprotocol,
   safepalWallet,
   tangemWallet,
-  wemine,
+  alephiumDetectives,
 ];
 
 const seen = new Set<string>();
